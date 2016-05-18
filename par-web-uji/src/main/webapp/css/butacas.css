@@ -115,3 +115,53 @@ input[type=text] {
 .localizacion_anfiteatro {
 	margin-bottom: 7px;
 }
+.minimapa {
+	border: solid 1px white;
+	position:absolute;
+	height:14px;
+	width:9px;
+	cursor: pointer;
+}
+.mapa {
+    border: solid 1px white;
+    position:absolute;
+    height:28px;
+    width:19px;
+	cursor: pointer;
+}
+.mapaTexto {
+	height:28px;
+	width:19px;
+	font-size: 12px !important;
+}
+.mapaLibre {
+    background-color: #51D7E0;;
+}
+.mapaOcupada {
+    background-color: #E05C52;
+}
+.mapaSeleccionada {
+    background-color: #CFCD1A;
+}
+.mapaReservada {
+   background-color: rgb(0,0,240);
+}
+.mapaLibre.discap {
+    background-image: url('images/discap.png');
+}
+.mapaOcupada.discap {
+    background-image: url('images/discapOcupada.png');
+}
+.mapaSeleccionada.discap {
+    background-image: url('images/discapSeleccionada.png');
+}
+.mapaReservada.discap {
+	background-image: url('images/discapReservada.png');
+}
+
+div[id^=localizacion] {
+	display: none;
+}
+
+.miniarea{
+}

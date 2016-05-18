@@ -10,10 +10,7 @@ import es.uji.apps.par.db.TpvsDTO;
 import es.uji.apps.par.exceptions.*;
 import es.uji.apps.par.i18n.ResourceProperties;
 import es.uji.apps.par.model.*;
-import es.uji.apps.par.services.ButacasService;
-import es.uji.apps.par.services.ComprasService;
-import es.uji.apps.par.services.EntradasService;
-import es.uji.apps.par.services.SesionesService;
+import es.uji.apps.par.services.*;
 import es.uji.apps.par.tpv.HmacSha256TPVInterface;
 import es.uji.apps.par.tpv.IdTPVInterface;
 import es.uji.apps.par.tpv.SHA1TPVInterface;
@@ -56,6 +53,9 @@ public class EntradasResource extends BaseResource
 
     @InjectParam
     private ComprasService comprasService;
+
+    @InjectParam
+    private LocalizacionesService localizacionesService;
 
     @Context
     HttpServletResponse currentResponse;
@@ -126,6 +126,8 @@ public class EntradasResource extends BaseResource
         template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(urlBase, url, language.toString()));
         template.put("tipoEventoEs", sesion.getEvento().getParTiposEvento().getNombreEs());
         //template.put("tarifas", sesionesService)
+
+        template.put("estilosOcupadas", butacasService.estilosButacasOcupadas(sesionId, localizacionesService.getLocalizacionesSesion(sesionId), false));
 
         if (error != null && !error.equals(""))
         {
@@ -714,6 +716,8 @@ public class EntradasResource extends BaseResource
         Calendar cal = Calendar.getInstance();
         template.put("millis", cal.getTime().getTime());
         List<Tarifa> tarifas = new ArrayList<Tarifa>();
+
+        template.put("estilosOcupadas", butacasService.estilosButacasOcupadas(sesionId, localizacionesService.getLocalizacionesSesion(sesionId), isAdmin.equals("true")));
         
         if (sesion.getPlantillaPrecios() != null && sesion.getPlantillaPrecios().getId() != -1)
         	tarifas = sesionesService.getTarifasConPrecioConPlantilla(sesionId);

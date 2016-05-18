@@ -13,6 +13,7 @@ import es.uji.apps.par.exceptions.ButacaOcupadaException;
 import es.uji.apps.par.i18n.ResourceProperties;
 import es.uji.apps.par.model.Butaca;
 import es.uji.apps.par.model.DisponiblesLocalizacion;
+import es.uji.apps.par.model.Localizacion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +44,33 @@ public class ButacasService
     public boolean estaOcupada(long idSesion, String codigoLocalizacion, String fila, String numero)
     {
         return butacasDAO.estaOcupada(idSesion, codigoLocalizacion, fila, numero);
+    }
+
+    private Boolean esReserva(ButacaDTO butacaDTO)
+    {
+        return butacaDTO.getParCompra().getReserva();
+    }
+
+    public Map<String, String> estilosButacasOcupadas(Long sesionId, List<Localizacion> localizaciones, boolean mostrarReservadas)
+    {
+        Map<String, String> clasesOcupadas = new HashMap<>();
+        for (Localizacion localizacion : localizaciones) {
+            List<ButacaDTO> butacas = getButacas(sesionId, localizacion.getCodigo());
+            for (ButacaDTO butaca : butacas) {
+                if (butaca.getAnulada() == null || !butaca.getAnulada()) {
+                    String key = String.format("%s_%s_%s", butaca.getParLocalizacion().getCodigo(),
+                            butaca.getFila(), butaca.getNumero());
+
+                    String value = "mapaOcupada";
+                    if (mostrarReservadas && esReserva(butaca))
+                        value = "mapaReservada";
+
+                    clasesOcupadas.put(key, value);
+                }
+            }
+        }
+
+        return clasesOcupadas;
     }
 
     public List<Butaca> estanOcupadas(long sesionId, List<Butaca> butacas, String uuidCompra)
