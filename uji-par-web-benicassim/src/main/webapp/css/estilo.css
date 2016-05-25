@@ -1,0 +1,366 @@
+@media only screen and (max-width: 768px) {
+	#butacasRoot {
+		max-width: 850px;
+		width: 850px;
+	}
+	.evento-sesiones {
+		padding-top: 0px !important;
+		padding-left: 0px !important;
+	}
+}
+
+body {
+	color: #2B2829;
+	text-align: center;
+	background-color: #e0d9c6;
+	background-color: #ffffff;
+	font-family: Arial;
+	font-size: 12px;
+	background-image: url(../img/benicassim_background.png);
+	background-position: 50% 0%;
+	background-repeat: no-repeat;
+	background-color: #f5f4eb;
+	height: 100%;
+	width: 100%;
+	padding: 0px;
+	margin: 0px;
+}
+
+.logo {
+	clear: both;
+	text-align: left;
+	margin:30px;
+	margin-bottom: 0px;
+}
+
+#page {
+	width: 909px;
+	margin: auto;
+	text-align: left;
+	padding-top:25px;
+}
+
+#footer {
+	height: 140px;
+	float: left;
+	width: 100%;
+	border-top: 1px dotted #222;
+	text-align: center;
+}
+
+#footer .content {
+	margin: auto;
+	width: 890px;
+	text-align: left;
+	margin-top: 20px;
+	padding-bottom: 20px;
+}
+
+#footer .columna {
+	width: 300px;
+	float: left;
+	color: #666;
+}
+
+#footer .columna h2 {
+	color: #CC4B23;
+	font-size: 9pt;
+	font-weight: normal;
+	font-family: arial;
+}
+
+#divButacas {
+	min-width: 666px;
+}
+
+#localizacion_anfiteatro {
+	min-width: 378px;
+}
+
+#localizacion_platea1 {
+	min-width: 551px;
+}
+
+#localizacion_platea1 {
+	min-width: 608px;
+}
+
+.borde {
+	border: 1px solid #AAA;
+}
+
+.margen {
+	margin-top: 5px;
+}
+
+#noNumeradas {
+	width: 658px;
+	margin-right: 22px;
+	padding-left: 10px;
+	padding-bottom: 10px;
+	color: #2B2829;
+	border: 1px solid #AAA;
+	margin-top: 0px;
+	margin-right: 22px;
+}
+
+.segundaColumnaNoNumeradas {
+	width: 198px;
+	background: url('img/bco_trans.png');
+	border: 1px solid #AAA;
+	margin-top: 8px;
+	height: 25px;
+	padding-top: 10px;
+	padding-left: 10px;
+}
+
+#divSeleccionadas, #totalNoNumeradas {
+	color: #CC4B23;
+	background: #EAE5D9;
+	border: 1px solid #AAA;
+	padding: 5px;
+	margin-top: 0px;
+	font-size: 11px !important;
+	font-family: Arial !important;
+}
+
+.evento-imagen {
+	float: left;
+	margin: 25px 25px 20px 20px;
+}
+
+.evento-imagen img {
+	width: 350px;
+}
+
+.evento-tipo {
+	font-size: 20pt !important;
+	font-weight: bold;
+	text-transform: uppercase;
+	margin-bottom: 16px;
+	padding-top: 30px;
+}
+
+.evento-titulo {
+	font-size: 28px !important;
+	color: #666;
+	font-style: italic;
+	margin-bottom: 28px;
+}
+
+.evento-descripcion {
+	margin-top: 10px;
+	margin-bottom: 60px;
+}
+
+.evento-sesiones {
+	padding-top: 20px;
+	padding-left: 390px;
+	margin-bottom:20px;
+}
+
+.evento-sesiones table {
+	width: 100%;
+}
+
+.evento-sesiones table .diaEventoSesion {
+	width: 80%;
+	font-size: 13pt !important;
+	color: #444;
+	text-transform: uppercase;
+}
+
+.evento-sesiones .contieneBoton {
+	padding: 0px;
+	font-size: 11pt !important;
+	background-color: #CC4B23 !important;
+	text-align: center;
+	color: #E6E1CE;
+}
+
+.evento-sesiones a {
+	color: #FFFFFF;
+	font-weight: bold;
+	width: 100%;
+	height: 100%;
+}
+
+.evento-sesiones table {
+	border: 0px;
+}
+
+.evento-sesiones td {
+	background: #DFDCCF;
+	padding: 4px;
+	padding-left: 8px;
+	padding-right: 8px;
+}
+
+.evento-sesiones td {
+	vertical-align: middle;
+	height: 32px;
+}
+
+#entradasDetalles {
+	font-size: 11pt !important;
+	text-transform: uppercase;
+	padding-bottom: 5px;
+	color: #2B2829;
+}
+
+#infoPeriodica {
+	margin-bottom: 15px;
+	margin-top: 15px;
+	color: #222;
+}
+
+#divCondicionesPrivacidad {
+	margin-bottom: 15px;
+	color: #222;
+}
+
+#divCondicionesPrivacidad, #divCondicionesPrivacidad span, #divCondicionesPrivacidad a {
+	font-size: 11pt !important;
+	font-weight: normal !important;
+}
+
+#divCondicionesPrivacidad a {
+	color: #333;
+}
+
+#divCondicionesPrivacidad a:hover {
+	background: #CC4B23;
+}
+
+#observaciones {
+	margin-bottom: 15px;
+	color: #222;
+	font-size: 11pt !important;
+}
+
+#compraValida .botonera, #compraErronea .botonera {
+	margin-top: 30px;
+	padding: 0px;
+}
+
+#compraValida #referencia, #compraValida #email {
+	margin-top: 10px;
+}
+
+#compraValida #observaciones {
+	margin-top: 20px;
+}
+
+#compraErronea #observaciones {
+	margin-top: 20px;
+}
+
+#botonPagarNoNumeradas{
+	margin-top: 16px;
+}
+
+.tipoEventoButacas {
+	font-size: 12pt !important;
+	font-weight: bold;
+	padding-bottom: 2px;
+}
+
+.detallesSeleccionEntrada {
+	font-size: 12pt !important;
+	font-weight: bold;
+	padding-bottom: 2px;
+}
+
+.limiteTiempo {
+	padding-bottom: 25px !important;
+	color: #CC4B23 !important;
+}
+
+.entrada-datos .campo {
+	width: 100%;
+	background-color: #EAE5D9;
+	margin-bottom: 10px;
+	padding-bottom: 4px;
+	border: 1px solid #AAA;
+	font-size: 11pt !important;
+}
+
+.entrada-datos .campo span {
+	display: block;
+    overflow: hidden;
+    padding-right:10px;
+}
+
+.entrada-datos label {
+	padding: 3px 10px 0 10px;
+	float: left;
+	font-weight: normal;
+	color:#CC4B23;
+}
+
+.entrada-datos input {
+	margin-bottom: 0px;
+	width:100%;
+	margin-top: 4px;
+	background-color: #DFDCCF;
+	font-size: 11pt !important;
+	border: 0px;
+}
+
+#infoPeriodica input {
+	background-color: #DDD;
+	border: 0px;
+	font-size: 11pt !important;
+}
+
+#infoPeriodica label {
+	display: inline !important;
+	color: #222;
+	font-weight: normal !important;
+}
+
+#infoPeriodica input {
+	display: inline !important;
+}
+
+#infoPeriodica span {
+	font-size: 11pt !important;
+}
+
+#lineaTotalNoNumeradas {
+	margin-bottom:10px;
+}
+
+/** sustitucion foundation **/
+.twelve, .row .twelve {
+	width: 75%;
+}
+
+.sixteen, .row .sixteen {
+	width: 100%;
+}
+
+.row form .row .column, .row form .row .columns {
+	padding: 0 6px;
+}
+
+.column, .columns {
+	float: left;
+	min-height: 1px;
+	padding: 0 8px;
+	position: relative;
+}
+
+.four, .row .four {
+	width: 197px;
+}
+
+.one,.row .one{
+	width:200px;
+}
+
+.compraOk {
+	font-size: 12pt !important;
+	font-weight: bold;
+	padding-bottom: 2px;
+}

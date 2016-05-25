@@ -1,0 +1,147 @@
+.entrada-plano {
+	position: relative;
+	float:right;
+	margin-right: 0px;
+	border: 1px solid #AAA;
+}
+
+.butaca-seleccionada {
+	position: absolute;
+	display: none;
+	cursor: pointer;
+}
+
+#numeroSeleccionada,#filaSeleccionada,#seccionSeleccionada {
+	font-weight: bold;
+}
+
+.titulo-tipo {
+	font-size: 18px !important;
+	font-weight: bold;
+}
+
+#filtros {
+	margin-bottom: 20px;
+}
+
+.localizacion_platea1 {
+	margin-top: 34px;
+}
+
+#tituloSeleccionadas h3 {
+	display: inline;
+}
+
+#tituloSeleccionadas {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+#limpiarSeleccion {
+	display: none;
+}
+
+#divSeleccionadas {
+	color: #CC4B23;
+	background: #EAE5D9;
+	border: 1px solid #AAA;
+	padding: 5px;
+	margin-top: 0px;
+	font-size: 11px !important;
+	font-family: Arial !important;
+}
+
+#divSeleccionadas .titulo,#divSeleccionadas .hora, #divSeleccionadas .fecha, #divSeleccionadas .localidades {
+	margin-top: 4px;
+}
+
+ #divSeleccionadas .gastosGestion, #divSeleccionadas .totalEntradas {
+	margin-top: 16px;
+}
+
+#divSeleccionadas .tituloEspectaculo {
+	font-style: italic;
+	font-weight: bold;
+}
+
+.entrada-seleccionada {
+	background: #DDD;
+	margin-top: 5px;
+	padding: 5px;
+	color: #222;
+}
+
+#total {
+	margin-top: 16px;
+	margin-bottom: 10px;
+}
+
+select {
+	width: auto !important;
+	margin-right: 10px;
+	background: white;
+	border: 1px;
+	color: #222;
+	font-size: 10px;
+	text-transform: uppercase;
+}
+
+input[type=text] {
+	/*width: auto !important;*/
+}
+
+#escenario {
+	height: 80px;
+	width: 606px;
+	background: #EAE5D9;
+	margin: 0px 0px 10px 0px;
+	text-align: center;
+	font-size: 11pt !important;
+	font-weight: bold;
+	color: #CC4B23;
+	display: table;
+	float: right;
+	border: 1px solid #AAA;
+}
+
+#escenario div {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+#divButacas #anfiteatro {
+	float: left;
+	padding-top: 30px;
+	font-size: 18pt !important;
+	color: #666;
+}
+
+#divButacas #platea {
+	float: left;
+	clear: both;
+	padding-top: 30px;
+	font-size: 18pt !important;
+	color: #666;
+}
+
+.localizacion_anfiteatro {
+	margin-bottom: 7px;
+}
+
+.tipoEventoButacas {
+	font-size: 12pt !important;
+	font-weight: bold;
+	padding-bottom: 2px;
+}
+
+.detallesSeleccionEntrada {
+	font-size: 11pt !important;
+	padding-bottom: 22px;
+	color: #222;
+}
+
+.limiteTiempo {
+	font-size: 11pt !important;
+	padding-bottom: 30px;
+	color: #222;
+}
