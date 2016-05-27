@@ -99,6 +99,36 @@ public class TpvResource extends BaseResource implements TpvInterface {
         return getResponseResultadoTpv(recibo, estado, identificador);
     }
 
+    private Template checkCompra(CompraDTO compraDTO, String recibo, String estado) throws Exception {
+            Template template;
+
+        if (compraDTO.getCaducada())
+        {
+            // Guardamos código pago de pasarela para luego saber que pago anular
+            compras.rellenaCodigoPagoPasarela(compraDTO.getId(), recibo);
+
+            template = paginaError(compraDTO);
+
+            template.put("descripcionError", ResourceProperties.getProperty(getLocale(), "error.datosComprador.compraCaducadaTrasPagar"));
+
+            eliminaCompraDeSesion();
+	}
+	else if (estado != null && estado.equals("OK"))
+	{
+            compras.marcaPagadaPasarela(compraDTO.getId(), recibo);
+            enviaMail(compraDTO.getEmail(), compraDTO.getUuid(), recibo);
+
+            eliminaCompraDeSesion();
+
+            template = paginaExito(compraDTO, recibo);
+	}
+	else
+	{
+            template = paginaError(compraDTO);
+	}
+	return template;
+    }
+
     private Response getResponseResultadoTpv(String recibo, String estado, String identificador) throws SQLException {
         CompraDTO compra = compras.getCompraById(Long.parseLong(identificador));
         log.info("Identificador: " + Long.parseLong(identificador));
@@ -264,5 +294,12 @@ public class TpvResource extends BaseResource implements TpvInterface {
     @Override
     public Response testTPV(long identificadorCompra) throws Exception {
         return null;
+    }
+
+    @Override
+    public Response compraGratuita(long identificador) throws Exception {
+        CompraDTO compra = compras.getCompraById(identificador);
+        Template template = checkCompra(compra, "COMPRA_GRATUITA_" + identificador, "OK");
+        return Response.ok(template).build();
     }
 }
