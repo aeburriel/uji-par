@@ -1,6 +1,7 @@
 package es.uji.apps.par.auth;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
@@ -16,8 +17,8 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import es.uji.apps.par.auth.Authenticator;
 import es.uji.apps.par.config.Configuration;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class AuthFilter implements Filter
 {
@@ -26,15 +27,11 @@ public class AuthFilter implements Filter
 
     private Authenticator authClass;
 
-	@Autowired
-	Configuration configuration;
-
     public void init(FilterConfig filterConfig) throws ServletException
     {
         try
         {
-            authClass = (Authenticator) Class.forName(configuration.getAuthClass()).newInstance();
-			authClass.setConfiguration(configuration);
+            authClass = (Authenticator) Class.forName(Configuration.getAuthClass()).newInstance();
         }
         catch (Exception e)
         {
@@ -85,7 +82,7 @@ public class AuthFilter implements Filter
             	String url = ((HttpServletRequest)request).getRequestURL().toString();
             	log.info("Autenticamos " + url + " KO");
             	if (url.toLowerCase().contains("par/rest/index"))
-            		sResponse.sendRedirect(configuration.getUrlAdmin() + "/rest/login");
+            		sResponse.sendRedirect(Configuration.getUrlAdmin() + "/rest/login");
             	else
             		sResponse.sendError(403);
             }
