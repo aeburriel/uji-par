@@ -14,7 +14,9 @@
     <module>uji-par-base</module>
     <module>par-admin</module>
     <module>par-web</module>
-    <module>uji-par-reports</module>
+    <module>uji-par-admin-benicassim</module>
+    <module>uji-par-web-benicassim</module>
+    <module>uji-par-reports-benicassim</module>
   </modules>
 
   <scm>
