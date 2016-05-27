@@ -37,7 +37,6 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
     private String urlPublicidad;
     private String urlPortada;
     private String barcode;
-	private Configuration configuration;
 
 	public EntradaReport() throws ReportSerializerInitException {
     	super(reportSerializer, new EntradaReportStyle());
@@ -420,12 +419,10 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
             reportSerializer = new FopPDFSerializer();
     }
 
-    public EntradaReportOnlineInterface create(Locale locale, Configuration configuration)
+    public EntradaReportOnlineInterface create(Locale locale)
     {
         try
         {
-            initStatics();
-			this.configuration = configuration;
             EntradaReportStyle estilo = new EntradaReportStyle();
             estilo.setSimplePageMasterMarginBottom("0cm");
             estilo.setSimplePageMasterRegionBodyMarginBottom("0cm");
