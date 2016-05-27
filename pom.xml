@@ -26,13 +26,9 @@
 
   <distributionManagement>
     <repository>
-      <id>nexus</id>
-      <url>http://devel01.uji.es:8080/nexus/content/repositories/releases</url>
+      <id>maven2</id>
+      <url>http://repo1.maven.org/maven2</url>
     </repository>
-    <snapshotRepository>
-      <id>nexus</id>
-      <url>http://devel01.uji.es:8080/nexus/content/repositories/snapshots</url>
-    </snapshotRepository>
   </distributionManagement>
 
   <build>

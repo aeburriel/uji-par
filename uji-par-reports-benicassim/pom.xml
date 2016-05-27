@@ -24,5 +24,12 @@
 	    <artifactId>uji-fopreports</artifactId>
 	    <version>0.0.4</version>
     </dependency>
+
+    <!-- http://mvnrepository.com/artifact/org.apache.xmlgraphics/fop -->
+    <dependency>
+        <groupId>org.apache.xmlgraphics</groupId>
+        <artifactId>fop</artifactId>
+        <version>1.0</version>
+    </dependency>
    </dependencies>
 </project>
