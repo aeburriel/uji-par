@@ -1,33 +1,28 @@
 package es.uji.apps.par.report;
 
-import java.io.File;
-import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import es.uji.apps.fopreports.Report;
-import es.uji.apps.fopreports.fop.Block;
-import es.uji.apps.fopreports.fop.BorderStyleType;
-import es.uji.apps.fopreports.fop.ExternalGraphic;
-import es.uji.apps.fopreports.fop.PageBreakAfterType;
-import es.uji.apps.fopreports.fop.TableCell;
-import es.uji.apps.fopreports.fop.TextAlignType;
-import es.uji.apps.fopreports.fop.WhiteSpaceType;
+import es.uji.apps.fopreports.fop.*;
 import es.uji.apps.fopreports.serialization.FopPDFSerializer;
 import es.uji.apps.fopreports.serialization.ReportSerializationException;
 import es.uji.apps.fopreports.serialization.ReportSerializer;
 import es.uji.apps.fopreports.serialization.ReportSerializerInitException;
-import es.uji.apps.par.exceptions.SinIvaException;
 import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.exceptions.SinIvaException;
 import es.uji.apps.par.i18n.ResourceProperties;
 import es.uji.apps.par.model.Cine;
 import es.uji.apps.par.model.InformeSesion;
 import es.uji.apps.par.report.components.BaseTable;
 import es.uji.apps.par.report.components.InformeTaquillaReportStyle;
 import es.uji.apps.par.utils.ReportUtils;
+
+import java.io.File;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 
 public class InformeEventosReport extends Report implements InformeInterface
 {
@@ -60,14 +55,6 @@ public class InformeEventosReport extends Report implements InformeInterface
         else
             generaPdfCompras(inicio, fin, compras);
     }
-
-	public void genera(long sesionId) throws SinIvaException {
-
-	}
-
-	public void genera(String fechaInicio, String fechaFin) {
-
-	}
 
 	private void generaPdfSinCompras()
     {
@@ -456,23 +443,20 @@ public class InformeEventosReport extends Report implements InformeInterface
 		
 	}
 
-	public void genera(String inicio, String fin, List<InformeModelReport> compras, List<InformeAbonoReport> abonos, String cargoInformeEfectivo, String firmanteInformeEfectivo) throws SinIvaException {
-
-	}
-
 	public void genera(String inicio, String fin,
-			List<InformeModelReport> compras, String cargoInformeEfectivo,
+			List<InformeModelReport> compras, List<InformeAbonoReport> abonos, String cargoInformeEfectivo,
 			String firmanteInformeEfectivo) throws SinIvaException {
-		
-	}
-
-	public void genera(String inicio, List<InformeModelReport> compras,
-			String cargoInformeEfectivo, String firmanteInformeEfectivo)
-			throws SinIvaException {
 		
 	}
 
 	public void genera(String cargo, String firmante, List<InformeSesion> informesSesion, Cine cine, boolean printSesion) throws SinIvaException {
 		
 	}
+
+        public void genera(long sesionId) throws SinIvaException {
+        }
+
+        @Override
+        public void genera(String fechaInicio, String fechaFin) {
+        }
 }

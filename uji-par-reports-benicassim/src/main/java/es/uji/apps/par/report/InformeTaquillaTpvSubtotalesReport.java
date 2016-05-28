@@ -1,5 +1,20 @@
 package es.uji.apps.par.report;
 
+import es.uji.apps.fopreports.Report;
+import es.uji.apps.fopreports.fop.*;
+import es.uji.apps.fopreports.serialization.FopPDFSerializer;
+import es.uji.apps.fopreports.serialization.ReportSerializationException;
+import es.uji.apps.fopreports.serialization.ReportSerializer;
+import es.uji.apps.fopreports.serialization.ReportSerializerInitException;
+import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.exceptions.SinIvaException;
+import es.uji.apps.par.i18n.ResourceProperties;
+import es.uji.apps.par.model.Cine;
+import es.uji.apps.par.model.InformeSesion;
+import es.uji.apps.par.report.components.BaseTable;
+import es.uji.apps.par.report.components.InformeTaquillaReportStyle;
+import es.uji.apps.par.utils.ReportUtils;
+
 import java.io.File;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -7,26 +22,6 @@ import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-
-import es.uji.apps.fopreports.Report;
-import es.uji.apps.fopreports.fop.Block;
-import es.uji.apps.fopreports.fop.BorderStyleType;
-import es.uji.apps.fopreports.fop.ExternalGraphic;
-import es.uji.apps.fopreports.fop.TableCell;
-import es.uji.apps.fopreports.fop.TextAlignType;
-import es.uji.apps.fopreports.fop.WhiteSpaceType;
-import es.uji.apps.fopreports.serialization.FopPDFSerializer;
-import es.uji.apps.fopreports.serialization.ReportSerializationException;
-import es.uji.apps.fopreports.serialization.ReportSerializer;
-import es.uji.apps.fopreports.serialization.ReportSerializerInitException;
-import es.uji.apps.par.exceptions.SinIvaException;
-import es.uji.apps.par.config.Configuration;
-import es.uji.apps.par.i18n.ResourceProperties;
-import es.uji.apps.par.model.Cine;
-import es.uji.apps.par.model.InformeSesion;
-import es.uji.apps.par.report.components.BaseTable;
-import es.uji.apps.par.report.components.InformeTaquillaReportStyle;
-import es.uji.apps.par.utils.ReportUtils;
 
 public class InformeTaquillaTpvSubtotalesReport extends Report implements InformeInterface
 {
@@ -52,7 +47,7 @@ public class InformeTaquillaTpvSubtotalesReport extends Report implements Inform
         this.locale = locale;
     }
 
-    public void genera(String inicio, String fin, List<InformeModelReport> compras, 
+    public void genera(String inicio, String fin, List<InformeModelReport> compras, List<InformeAbonoReport> abonos,
     		String cargoInformeEfectivo, String firmanteInformeEfectivo) throws SinIvaException
     {
         creaCabecera();
@@ -416,10 +411,6 @@ public class InformeTaquillaTpvSubtotalesReport extends Report implements Inform
 		
 	}
 
-	public void genera(String inicio, String fin, List<InformeModelReport> compras, List<InformeAbonoReport> abonos, String cargoInformeEfectivo, String firmanteInformeEfectivo) throws SinIvaException {
-
-	}
-
 	public void genera(String inicio, String fin,
 			List<InformeModelReport> compras) throws SinIvaException {
 		
@@ -429,6 +420,7 @@ public class InformeTaquillaTpvSubtotalesReport extends Report implements Inform
 
 	}
 
+	@Override
 	public void genera(String fechaInicio, String fechaFin) {
 
 	}
@@ -436,7 +428,7 @@ public class InformeTaquillaTpvSubtotalesReport extends Report implements Inform
 	public void genera(String inicio, List<InformeModelReport> compras,
 			String cargoInformeEfectivo, String firmanteInformeEfectivo)
 			throws SinIvaException {
-		
+
 	}
 
 	public void genera(String cargo, String firmante, List<InformeSesion> informesSesion, Cine cine, boolean printSesion) throws SinIvaException {

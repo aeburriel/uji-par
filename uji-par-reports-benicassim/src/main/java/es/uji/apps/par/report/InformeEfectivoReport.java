@@ -1,5 +1,20 @@
 package es.uji.apps.par.report;
 
+import es.uji.apps.fopreports.Report;
+import es.uji.apps.fopreports.fop.*;
+import es.uji.apps.fopreports.serialization.FopPDFSerializer;
+import es.uji.apps.fopreports.serialization.ReportSerializationException;
+import es.uji.apps.fopreports.serialization.ReportSerializer;
+import es.uji.apps.fopreports.serialization.ReportSerializerInitException;
+import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.exceptions.SinIvaException;
+import es.uji.apps.par.i18n.ResourceProperties;
+import es.uji.apps.par.model.Cine;
+import es.uji.apps.par.model.InformeSesion;
+import es.uji.apps.par.report.components.BaseTable;
+import es.uji.apps.par.report.components.InformeTaquillaReportStyle;
+import es.uji.apps.par.utils.ReportUtils;
+
 import java.io.File;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -7,26 +22,6 @@ import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-
-import es.uji.apps.fopreports.Report;
-import es.uji.apps.fopreports.fop.Block;
-import es.uji.apps.fopreports.fop.BorderStyleType;
-import es.uji.apps.fopreports.fop.ExternalGraphic;
-import es.uji.apps.fopreports.fop.TableCell;
-import es.uji.apps.fopreports.fop.TextAlignType;
-import es.uji.apps.fopreports.fop.WhiteSpaceType;
-import es.uji.apps.fopreports.serialization.FopPDFSerializer;
-import es.uji.apps.fopreports.serialization.ReportSerializationException;
-import es.uji.apps.fopreports.serialization.ReportSerializer;
-import es.uji.apps.fopreports.serialization.ReportSerializerInitException;
-import es.uji.apps.par.exceptions.SinIvaException;
-import es.uji.apps.par.config.Configuration;
-import es.uji.apps.par.i18n.ResourceProperties;
-import es.uji.apps.par.model.Cine;
-import es.uji.apps.par.model.InformeSesion;
-import es.uji.apps.par.report.components.BaseTable;
-import es.uji.apps.par.report.components.InformeTaquillaReportStyle;
-import es.uji.apps.par.utils.ReportUtils;
 
 public class InformeEfectivoReport extends Report implements InformeInterface
 {
@@ -52,13 +47,16 @@ public class InformeEfectivoReport extends Report implements InformeInterface
         this.locale = locale;
     }
 
-    public void genera(String inicio, String fin, List<InformeModelReport> compras, String cargoInformeEfectivo, 
-    		String firmanteInformeEfectivo) throws SinIvaException
+    public void genera(String inicio, String fin, List<InformeModelReport> compras, List<InformeAbonoReport> abonos, String cargoInformeEfectivo,
+                       String firmanteInformeEfectivo) throws SinIvaException
     {
         creaLogo();
         creaCabecera(inicio, fin);
         creaIntro();
         creaTabla(compras);
+        if (abonos != null && abonos.size() > 0) {
+            creaSubtabla(abonos);
+        }
         creaFirma(cargoInformeEfectivo, firmanteInformeEfectivo);
     }
 
@@ -182,6 +180,41 @@ public class InformeEfectivoReport extends Report implements InformeInterface
         creaTotales(sumaEntradas, sumaBase, sumaIva, sumaTotal);
     }
 
+    private void creaSubtabla(List<InformeAbonoReport> abonos) throws SinIvaException
+    {
+        BaseTable table = new BaseTable(style, 3, "11.4cm", "3cm", "3cm");
+
+        table.withNewRow();
+        table.withNewCell(createBoldBlock(ResourceProperties.getProperty(locale, "informeEfectivo.tabla.abono")));
+
+        Block numeroBlock = createBoldBlock(ResourceProperties.getProperty(locale, "informeEfectivo.tabla.abonados"));
+        numeroBlock.setTextAlign(TextAlignType.RIGHT);
+        table.withNewCell(numeroBlock);
+
+        Block totalBlock = createBoldBlock(ResourceProperties.getProperty(locale, "informeEfectivo.tabla.total"));
+        totalBlock.setTextAlign(TextAlignType.RIGHT);
+        table.withNewCell(totalBlock);
+
+        BigDecimal sumaAbonos = BigDecimal.ZERO;
+        BigDecimal sumaTotal = BigDecimal.ZERO;
+        for (InformeAbonoReport dato : abonos)
+        {
+            table.withNewRow();
+            table.withNewCell(dato.getNombre());
+            table.withNewCell(blockAlignRight(Integer.toString(dato.getAbonados())));
+            table.withNewCell(blockAlignRight(ReportUtils.formatEuros(dato.getTotal())));
+
+            sumaAbonos = sumaAbonos.add(new BigDecimal(dato.getAbonados()));
+            sumaTotal = sumaTotal.add(dato.getTotal());
+        }
+
+        Block block = withNewBlock();
+        block.setMarginTop("1cm");
+        block.getContent().add(table);
+
+        creaTotalesAbonos(sumaAbonos, sumaTotal);
+    }
+
     private BigDecimal calculaBase(InformeModelReport dato)
     {
         BigDecimal divisor = new BigDecimal(1).add(dato.getIva().divide(new BigDecimal(100)));
@@ -227,6 +260,37 @@ public class InformeEfectivoReport extends Report implements InformeInterface
         Block ivaBlock = createBoldBlock(ReportUtils.formatEuros(sumaIva));
         ivaBlock.setTextAlign(TextAlignType.RIGHT);
         cell = table.withNewCell(ivaBlock);
+        setBorders(cell);
+
+        Block totalBlock = createBoldBlock(ReportUtils.formatEuros(sumaTotal));
+        totalBlock.setTextAlign(TextAlignType.RIGHT);
+        cell = table.withNewCell(totalBlock);
+        setBorders(cell);
+
+        block.getContent().add(table);
+    }
+
+    private void creaTotalesAbonos(BigDecimal sumaAbonos, BigDecimal sumaTotal)
+    {
+        Block block = withNewBlock();
+        block.setMarginTop("0.5cm");
+
+        BaseTable table = new BaseTable(style, 5, "3.6cm", "6.8cm", "1cm", "3cm", "3cm");
+
+        table.withNewRow();
+
+        table.withNewCell("");
+
+        TableCell cell = table.withNewCell(createBoldBlock(ResourceProperties.getProperty(locale,
+                "informeEfectivo.totales")));
+        setBorders(cell);
+
+        cell = table.withNewCell("");
+        setBorders(cell);
+
+        Block entradasBlock = createBoldBlock(sumaAbonos.toString());
+        entradasBlock.setTextAlign(TextAlignType.RIGHT);
+        cell = table.withNewCell(entradasBlock);
         setBorders(cell);
 
         Block totalBlock = createBoldBlock(ReportUtils.formatEuros(sumaTotal));
@@ -299,10 +363,6 @@ public class InformeEfectivoReport extends Report implements InformeInterface
 		
 	}
 
-	public void genera(String inicio, String fin, List<InformeModelReport> compras, List<InformeAbonoReport> abonos, String cargoInformeEfectivo, String firmanteInformeEfectivo) throws SinIvaException {
-
-	}
-
 	public void genera(String inicio, String fin,
 			List<InformeModelReport> compras) throws SinIvaException {
 		
@@ -312,6 +372,7 @@ public class InformeEfectivoReport extends Report implements InformeInterface
 
 	}
 
+	@Override
 	public void genera(String fechaInicio, String fechaFin) {
 
 	}
