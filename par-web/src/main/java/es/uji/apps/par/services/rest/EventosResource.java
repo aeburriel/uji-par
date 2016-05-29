@@ -236,7 +236,8 @@ public class EventosResource extends BaseResource {
                     }
                 }
             }
-            datos.put("disponibles", " " + ResourceProperties.getProperty(getLocale(), "venta.disponibles", disponibles));
+            datos.put("disponibles", disponibles);
+            datos.put("textoDisponibles", ResourceProperties.getProperty(getLocale(), "venta.disponibles", disponibles));
 
             datos.put("texto", getFechaSesion(sesion));
 
