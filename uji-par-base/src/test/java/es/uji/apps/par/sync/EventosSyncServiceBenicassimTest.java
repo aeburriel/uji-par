@@ -55,9 +55,9 @@ public class EventosSyncServiceBenicassimTest extends SyncBaseTest
     public void setup()
     {
         syncService.setTipo("benicassim");
+        insertaSala();
         insertaPlantillaPrecios();
         insertaTiposEventos();
-        insertaSala();
     }
 
     private void insertaSala()
@@ -69,6 +69,7 @@ public class EventosSyncServiceBenicassimTest extends SyncBaseTest
     private void insertaPlantillaPrecios()
     {
         plantilla = new Plantilla("test");
+        plantilla.setSala(salasDAO.getSalas().get(0));
         plantillasDao.add(plantilla);
     }
 
