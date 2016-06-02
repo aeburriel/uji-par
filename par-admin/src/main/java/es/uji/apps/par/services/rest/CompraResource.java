@@ -286,14 +286,17 @@ public class CompraResource extends BaseResource {
 
 		Response response = Response.ok(bos.toByteArray())
 				.header("Cache-Control", "no-cache, no-store, must-revalidate")
-				.header("Pragma", "no-cache").header("Expires", "0").build();
+				.header("Pragma", "no-cache")
+				.header("Expires", "0")
+				.header("Content-Disposition", "attachment; filename=\"entrada " + uuidCompra + ".pdf\"")
+				.build();
 
 		return response;
 	}
 
 	@GET
 	@Path("{id}/pdftaquilla")
-	@Produces("application/pdf")
+	@Produces("application/x-pdf")
 	public Response generaEntradaTaquilla(@PathParam("id") String uuidCompra)
 			throws Exception {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -302,7 +305,10 @@ public class CompraResource extends BaseResource {
 
 		Response response = Response.ok(bos.toByteArray())
 				.header("Cache-Control", "no-cache, no-store, must-revalidate")
-				.header("Pragma", "no-cache").header("Expires", "0").build();
+				.header("Pragma", "no-cache")
+				.header("Expires", "0")
+				.header("Content-Disposition", "attachment; filename=\"ticket " + uuidCompra + ".pdf\"")
+				.build();
 
 		return response;
 	}
