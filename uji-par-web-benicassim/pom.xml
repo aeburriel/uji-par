@@ -45,7 +45,7 @@
 		<dependency>
             <groupId>es.uji.commons</groupId>
             <artifactId>uji-commons-web-template-model</artifactId>
-            <version>0.0.6</version>
+            <version>0.4.1-SNAPSHOT</version>
         </dependency>
 
 		<dependency>
