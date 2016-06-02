@@ -37,6 +37,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
     private String urlPublicidad;
     private String urlPortada;
     private String barcode;
+    private int totalButacas;
 
 	public EntradaReport() throws ReportSerializerInitException {
     	super(reportSerializer, new EntradaReportStyle());
@@ -423,6 +424,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
     {
         try
         {
+            initStatics();
             EntradaReportStyle estilo = new EntradaReportStyle();
             estilo.setSimplePageMasterMarginBottom("0cm");
             estilo.setSimplePageMasterRegionBodyMarginBottom("0cm");
@@ -494,10 +496,13 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         this.barcode = barcode;
     }
 
+    @Override
     public boolean esAgrupada() {
         return false;
     }
 
+    @Override
     public void setTotalButacas(int totalButacas) {
+        this.totalButacas = totalButacas;
     }
 }
