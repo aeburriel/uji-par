@@ -112,8 +112,11 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
         style.setSimplePageMasterRegionBodyMarginTop("0");
 
         BaseTable entradaTable = new BaseTable(style, 1, EntradaTaquillaReport.sixeZonaImpresion);
-        entradaTable.withNewRow();
-        entradaTable.withNewCell(createLogo());
+        if (Configuration.isTicketLogo())
+        {
+            entradaTable.withNewRow();
+            entradaTable.withNewCell(createLogo());
+        }
         entradaTable.withNewRow();
         entradaTable.withNewCell(createEntradaIzquierdaCentro(urlPublic));
         entradaTable.withNewRow();

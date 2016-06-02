@@ -101,6 +101,8 @@ public class Configuration
     private static final String MENU_CLIENTES = "uji.par.menuClientes";
     private static final String MENU_ICAA = "uji.par.menuICAA";
 
+    private static final String TICKET_LOGO = "uji.reports.ticketlogo";
+
 	private static final Logger log = LoggerFactory.getLogger(Configuration.class);
 	private static final String SHOW_SESIONES_SIN_VENTA_INTERNET = "uji.par.showSesionesSinVentaInternet";
     public static final String JSON_LOCALIZACIONES_PATH = "/etc/uji/par/butacas/";
@@ -654,5 +656,13 @@ public class Configuration
             return false;
         else
             return true;
+    }
+
+    public static boolean isTicketLogo() {
+        String generarTicketLogo = getNoObligatoryProperty(TICKET_LOGO);
+        if (generarTicketLogo == null || generarTicketLogo.equalsIgnoreCase("true"))
+            return true;
+        else
+            return false;
     }
 }
