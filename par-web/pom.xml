@@ -70,13 +70,6 @@
             <scope>test</scope>
         </dependency>
 
-	<!-- http://mvnrepository.com/artifact/ognl/ognl -->
-	<dependency>
-		<groupId>ognl</groupId>
-		<artifactId>ognl</artifactId>
-		<version>3.0</version>
-	</dependency>
-
 	</dependencies>
 
 	<build>
