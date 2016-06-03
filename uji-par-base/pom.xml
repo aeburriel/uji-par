@@ -333,7 +333,7 @@
         <dependency>
             <groupId>es.uji.apps</groupId>
             <artifactId>uji-fopreports</artifactId>
-            <version>0.0.4</version>
+            <version>0.0.5-SNAPSHOT</version>
         </dependency>
 
         <!-- Quartz framework -->
