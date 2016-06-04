@@ -1,6 +1,7 @@
 package es.uji.apps.par.services.dao;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.uji.apps.par.dao.EventosDAO;
 import es.uji.apps.par.dao.TiposEventosDAO;
+import es.uji.apps.par.dao.TpvsDAO;
 import es.uji.apps.par.model.Evento;
 import es.uji.apps.par.model.TipoEvento;
 
@@ -29,6 +31,15 @@ public class EventosDAOTest
     
     @Autowired
     TiposEventosDAO tiposEventosDAO;
+
+    @Autowired
+    TpvsDAO tpvsDAO;
+
+    @Before
+    public void setup()
+    {
+        tpvsDAO.addTpvDefault();
+    }
 
     @Test
 	//TODO dice que usuario no tiene privilegios

@@ -77,8 +77,8 @@ public class FicherosServiceRegistrosTest extends FicherosServiceBaseTest
     @Transactional
     public void testGeneraRegistroBuzonConEspectadoresVariasComprasEnVariasSesiones() throws Exception
     {
-        Sesion sesion1 = creaSesion(sala, evento);
-        Sesion sesion2 = creaSesion(sala, evento);
+        Sesion sesion1 = creaSesion(sala, evento, "19:00");
+        Sesion sesion2 = creaSesion(sala, evento, "22:00");
         Butaca butaca1 = creaButaca("1", "1");
         Butaca butaca2 = creaButaca("1", "2");
         registraCompra(sesion1, butaca1, butaca2);

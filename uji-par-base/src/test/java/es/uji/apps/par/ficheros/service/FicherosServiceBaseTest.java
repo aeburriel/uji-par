@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import es.uji.apps.par.dao.*;
 import es.uji.apps.par.db.TarifaDTO;
+import es.uji.apps.par.db.TpvsDTO;
 import es.uji.apps.par.exceptions.*;
 import es.uji.apps.par.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,9 @@ public class FicherosServiceBaseTest
 	private TarifasDAO tarifasDAO;
 
     @Autowired
+    private TpvsDAO tpvsDAO;
+
+    @Autowired
     private ComprasService comprasService;
 
     protected Cine cine;
@@ -54,8 +58,8 @@ public class FicherosServiceBaseTest
     protected Evento evento;
 	protected Tarifa tarifa;
 
-
     protected void setup() throws PrecioRepetidoException {
+        tpvsDAO.addTpvDefault();
         cine = creaCine();
         localizacion = creaLocalizacion("Platea");
         sala = creaSala("567", "Sala 1");
@@ -98,6 +102,11 @@ public class FicherosServiceBaseTest
 
         sesionesDAO.addSesion(sesion);
         return sesion;
+    }
+
+    protected Sesion creaSesion(Sala sala, Evento evento, String hora) throws ParseException
+    {
+        return creaSesion(sala, evento, "11/12/2013", hora);
     }
 
     protected Sesion creaSesion(Sala sala, Evento evento) throws ParseException
