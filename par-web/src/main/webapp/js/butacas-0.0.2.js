@@ -265,8 +265,6 @@ Butacas = (function() {
 	}
 	
 	function ocupadasSuccess(ocupadas) {
-		
-		 console.log("ocupadas:", ocupadas);
 		if (ocupadas.length > 0) {
 			
 			 for (var i=0; i<ocupadas.length; i++)

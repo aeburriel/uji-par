@@ -65,7 +65,8 @@ Butacas = (function() {
 	
 	
 	function ocultaButacasSeleccionadas() {
-		$('.butaca-seleccionada').remove();
+		$('.mapaSeleccionada').addClass('mapaLibre');
+		$('.mapaSeleccionada').removeClass('mapaSeleccionada');
 	}
 	
 	function iguales(butaca1, butaca2) {
@@ -82,29 +83,16 @@ Butacas = (function() {
 		return false;
 	}
 	
-	function imagenButaca(butaca)
-	{
-		if (esDiscapacitado(butaca.localizacion))
-			return "seleccionadaDiscapacitado.png";
-		else
-			return "seleccionada.png";
+	function getIdButaca(butaca) {
+		return butaca.localizacion + '-' + butaca.fila + '-' + butaca.numero;
 	}
-	
+
 	function muestraButacaSeleccionada(butaca) {
-		var butacaSeleccionada = $('<img src="' + baseUrl + '/img/' + imagenButaca(butaca) + '" class="butaca-seleccionada"/>');
-		butacaSeleccionada.css("left", butaca.x + "px");
-		butacaSeleccionada.css("top", butaca.y + "px");
-		
-		//console.log(butacaSeleccionada);
-		
-		var idDiv = idDivLocalizacion(butaca.localizacion);
-		$('.localizacion_' + idDiv).append(butacaSeleccionada);
-	
-		butacaSeleccionada.click(function() {
-			selecciona(butaca.localizacion, butaca.texto, butaca.fila, butaca.numero,
-					butaca.x, butaca.y);
-		});
-		butacaSeleccionada.show();
+		var id = getIdButaca(butaca);
+		if (!$('#' + id).hasClass('mapaSeleccionada')) {
+			$('#' + id).removeClass('mapaLibre');
+			$('#' + id).addClass('mapaSeleccionada');
+		}
 	}
 	
 	function muestraButacasSeleccionadas() {
@@ -123,25 +111,16 @@ Butacas = (function() {
 	}
 	
 	function eliminaButacaSeleccionada(butaca) {
+		if ($('#' + getIdButaca(butaca)).hasClass('mapaSeleccionada')) {
+		    $('#' + getIdButaca(butaca)).removeClass('mapaSeleccionada');
+		    $('#' + getIdButaca(butaca)).addClass('mapaLibre');
+		}	    
 		for ( var i = 0; i < butacasSeleccionadas.length; i++) {
 			if (iguales(butaca, butacasSeleccionadas[i])) {
 				butacasSeleccionadas.splice(i, 1);
 				return;
 			}
 		}
-	}
-	
-	function refrescaImagen(localizacion)
-	{
-		var imagen = $(".imagen_" + idDivLocalizacion(localizacion));
-		var url = imagen.attr("src");
-		
-		if (url.indexOf("?") == -1)
-			url += "?";
-		
-		url = url.replace(/\&rnd=.*/, "");
-		
-		imagen.attr("src", url + "&rnd=" + (new Date()).getTime());
 	}
 	
 	function muestraDetallesSeleccionadas() {
@@ -224,13 +203,7 @@ Butacas = (function() {
 		}
 	}
 	
-	function selecciona(localizacion, texto, fila, numero, x, y) {
-		if (precios[localizacion] == undefined || precios[localizacion][tarifaDefecto] == undefined) {
-			var msg = UI.i18n.error.preuNoIntroduit;
-			alert(msg);
-			return;
-		}
-		
+	function selecciona(localizacion, texto, fila, numero, x, y) {	
 		var butaca = {
 			localizacion : localizacion,
 			fila : fila,
@@ -238,10 +211,18 @@ Butacas = (function() {
 			x : x,
 			y : y,
 			tipo : tarifaDefecto,
-			precio: precios[localizacion][tarifaDefecto],
 			texto: texto
 		};
 	
+		if (precios[localizacion] == undefined || precios[localizacion][tarifaDefecto] == undefined) {
+			var msg = UI.i18n.error.preuNoIntroduit;
+			alert(msg);
+			eliminaButacaSeleccionada(butaca);
+			return;
+		}
+		
+		butaca.precio = precios[localizacion][tarifaDefecto];
+
 		if (estaSeleccionada(butaca))
 			eliminaButacaSeleccionada(butaca);
 		else {
@@ -250,23 +231,6 @@ Butacas = (function() {
 		}
 	
 		refrescaEstadoButacas();
-	}
-	
-	function esDiscapacitado(localizacion)
-	{
-		return localizacion.indexOf('discapacitados') == 0;
-	}
-	
-	function idDivLocalizacion(localizacion)
-	{
-		if (localizacion == 'discapacitados1')
-			return 'platea1';
-		else if (localizacion == 'discapacitados2')
-			return 'platea2';
-		else if (localizacion == 'discapacitados3')
-			return 'anfiteatro';
-		else 
-			return localizacion;
 	}
 	
 	function refrescaEstadoButacas()
@@ -300,19 +264,15 @@ Butacas = (function() {
 	}
 	
 	function ocupadasSuccess(ocupadas) {
-		
-		// console.log("ocupadas:", ocupadas);
 		if (ocupadas.length > 0) {
 			
 			for (var i=0; i<ocupadas.length; i++)
 			{
 				eliminaButacaSeleccionada(ocupadas[i]);
-				refrescaImagen(ocupadas[i].localizacion);
 			}
 			
 			refrescaEstadoButacas();
 			
-			/* [[#{butacasOcupadas}]] */
 			var msj = UI.i18n.butacas.ocupadas; 
 			alert(msj);
 		}
@@ -334,8 +294,6 @@ Butacas = (function() {
 	function muestraPrecios() {
 		var value = $('input[name=tipo]:checked').val();
 	
-		// console.log('Precio:', value);
-	
 		if (value == 'normal') {
 			$('.precio-normal').show();
 			$('.precio-descuento').hide();
@@ -345,20 +303,16 @@ Butacas = (function() {
 		}
 	}
 	
-	function muestraLocalizacion() {
-		var localizacion = $('#localizacion').val();
+	function muestraLocalizacion(localizacion) {
+		$('div[id^=localizacion_]').hide();
+		$('div[class=miniarea]').hide();
+		$('div[id^=' + localizacion + ']').show();
+	}
 		
+	function muestraMinimapa() {
 		$('div[id^=localizacion_]').hide();
 		
-		if (localizacion == 'platea')
-		{
-			$('#localizacion_platea1').show();
-			$('#localizacion_platea2').show();
-		}
-		else
-		{
-			$('#localizacion_anfiteatro').show();
-		}
+		$('div[class=miniarea]').show();
 	}
 	
 	$(document).ready(function() {
@@ -366,19 +320,13 @@ Butacas = (function() {
 			muestraPrecios();
 		});
 		
-		$('#localizacion').change(function() {
-			muestraLocalizacion();
-		});
-		
 		$('#limpiarSeleccion').click(function(){
 			limpiaSeleccion();
 		});
 
 		muestraPrecios();
-		//muestraLocalizacion();
 	});
 	
-	// Desde fuera del iframe nos han pedido que le pasemos las butacas seleccionadas 
 	pm.bind("butacas", function(data){
 		 return butacasSeleccionadas;
 	});
@@ -388,7 +336,10 @@ Butacas = (function() {
 		init:init,
 		cargaPrecios:cargaPrecios,
 		cambiaTipoButaca: cambiaTipoButaca,
-		cambiaTipoTodasButacas: cambiaTipoTodasButacas
+		cambiaTipoTodasButacas: cambiaTipoTodasButacas,
+		compruebaEstadoButacas: compruebaEstadoButacas,
+		muestraLocalizacion: muestraLocalizacion,
+		muestraMinimapa: muestraMinimapa
 	};
 	
 }());
