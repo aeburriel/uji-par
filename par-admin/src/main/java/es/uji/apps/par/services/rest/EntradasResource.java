@@ -5,6 +5,7 @@ import es.uji.apps.par.butacas.EstadoButacasRequest;
 import es.uji.apps.par.exceptions.Constantes;
 import es.uji.apps.par.model.Abono;
 import es.uji.apps.par.model.Butaca;
+import es.uji.apps.par.model.Sesion;
 import es.uji.apps.par.model.SesionAbono;
 import es.uji.apps.par.services.AbonosService;
 import es.uji.apps.par.services.ButacasService;
@@ -64,9 +65,18 @@ public class EntradasResource extends BaseResource {
                                          @QueryParam("if") String isAdmin) throws Exception {
         Locale locale = getLocale();
         String language = locale.getLanguage();
-        HTMLTemplate template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "butacasAbonoFragment", locale, APP);
 
         Abono abono = abonosService.getAbono(abonoId);
+
+        HTMLTemplate template;
+        List<SesionAbono> sesiones = abono.getSesiones();
+        if (sesiones != null && sesiones.size() > 0) {
+            Sesion sesion = sesiones.get(0).getSesion();
+            template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + sesion.getSala().getHtmlTemplateName() + "Abono", locale, APP);
+        }
+        else {
+            template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "butacasFragmentAbono", locale, APP);
+        }
 
         template.put("baseUrl", getBaseUrlPublic());
         template.put("idioma", language);
@@ -82,7 +92,7 @@ public class EntradasResource extends BaseResource {
         template.put("millis", cal.getTime().getTime());
 
         List<String> titulos = new ArrayList<>();
-        for (SesionAbono sesion:abono.getSesiones())
+        for (SesionAbono sesion: sesiones)
         {
             if (language.equals("ca")) {
                 titulos.add(sesion.getSesion().getEvento().getTituloVa());

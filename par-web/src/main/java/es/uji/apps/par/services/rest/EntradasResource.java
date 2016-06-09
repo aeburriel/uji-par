@@ -125,6 +125,7 @@ public class EntradasResource extends BaseResource
         template.put("hora", sesion.getHoraCelebracion());
         template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(urlBase, url, language.toString()));
         template.put("tipoEventoEs", sesion.getEvento().getParTiposEvento().getNombreEs());
+        template.put("butacasFragment", Constantes.PLANTILLAS_DIR + sesion.getSala().getHtmlTemplateName());
         //template.put("tarifas", sesionesService)
 
         template.put("estilosOcupadas", butacasService.estilosButacasOcupadas(sesionId, localizacionesService.getLocalizacionesSesion(sesionId), false));
