@@ -47,10 +47,12 @@ Ext.define('Paranimf.controller.TiposEventos', {
    },
 
    preparaTipoEvento: function(comp, opts) {
-      if (null == icaa || !icaa) {
+       var icaaNotDefined = (typeof icaa === 'undefined');
+      if (icaaNotDefined) {
          this.getComboIcaa().select(false);
-      }
-      else {
+      } else if (null == icaa || !icaa) {
+          this.getComboIcaa().select(false);
+      } else {
          this.getComboIcaa().show();
          this.getComboIcaa().allowBlank = false;
          this.getComboIcaa().setFieldLabel(UI.i18n.field.exportarICAA + ' <span class="req" style="color:red">*</span>');

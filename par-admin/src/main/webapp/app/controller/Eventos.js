@@ -382,10 +382,12 @@ Ext.define('Paranimf.controller.Eventos', {
    },
 
    preparaEvento: function(comp, opts) {
-      if (multipleTpv) {
-         this.getComboTpv().show();
-         this.getComboTpv().allowBlank = false;
-         this.getComboTpv().setFieldLabel(UI.i18n.field.tpv + ' <span class="req" style="color:red">*</span>');
+      if (typeof multipleTpv !== "undefined") {
+         if (null != multipleTpv && multipleTpv) {
+            this.getComboTpv().show();
+            this.getComboTpv().allowBlank = false;
+            this.getComboTpv().setFieldLabel(UI.i18n.field.tpv + ' <span class="req" style="color:red">*</span>');
+         }
       }
    },
 

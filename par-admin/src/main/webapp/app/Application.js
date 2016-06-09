@@ -97,13 +97,15 @@ Ext.application({
          }]
       });
 
-      if (langsAllowed && langsAllowed.length > 1)
-      {
-        var langsHtml = "";
-        for (var i = 0; i < langsAllowed.length; i++) {
-          langsHtml += '<label class="idioma" style="margin-right:1em;"><a alt="' + langsAllowed[i].alias + '" title="' + langsAllowed[i].alias + '" href="javascript:cambiaIdioma(\'' + langsAllowed[i].locale + '\');">' + langsAllowed[i].alias.substring(0, 3) + '</a></label>'
-        }
-        Ext.getCmp('langs').update(langsHtml);
+      if (typeof langsAllowed !== "undefined") {
+         if (langsAllowed && langsAllowed.length > 1)
+         {
+           var langsHtml = "";
+           for (var i = 0; i < langsAllowed.length; i++) {
+             langsHtml += '<label class="idioma" style="margin-right:1em;"><a alt="' + langsAllowed[i].alias + '" title="' + langsAllowed[i].alias + '" href="javascript:cambiaIdioma(\'' + langsAllowed[i].locale + '\');">' + langsAllowed[i].alias.substring(0, 3) + '</a></label>'
+           }
+           Ext.getCmp('langs').update(langsHtml);
+         }
       }
 
       Ext.History.init(this.initDispatch, this);
