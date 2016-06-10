@@ -1,5 +1,14 @@
 package es.uji.apps.par.utils;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import es.uji.apps.par.model.Evento;
+import es.uji.apps.par.model.OrdreGrid;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.core.Response.ResponseBuilder;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
@@ -8,22 +17,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.ws.rs.core.Response.ResponseBuilder;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import es.uji.apps.par.model.Evento;
-import es.uji.apps.par.model.OrdreGrid;
-
 public class Utils
 {
-	public static final String HMAC_SHA256_V1 = "HMAC_SHA256_V1";
-
 	private static final Logger log = LoggerFactory.getLogger(Utils.class);
 
 	public static String stripAccents(String texto) {

@@ -4,7 +4,6 @@ import com.mysema.commons.lang.Pair;
 import com.sun.jersey.api.core.InjectParam;
 import es.uji.apps.par.builders.PublicPageBuilderInterface;
 import es.uji.apps.par.butacas.EstadoButacasRequest;
-import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.db.CompraDTO;
 import es.uji.apps.par.db.TpvsDTO;
 import es.uji.apps.par.exceptions.*;
@@ -39,11 +38,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Path("entrada")
-public class EntradasResource extends BaseResource
-{
-	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+public class EntradasResource extends BaseResource {
+    private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
-	private static final Logger log = LoggerFactory.getLogger(EntradasResource.class);
+    private static final Logger log = LoggerFactory.getLogger(EntradasResource.class);
 
     @InjectParam
     private SesionesService sesionesService;
@@ -62,12 +60,12 @@ public class EntradasResource extends BaseResource
 
     @Context
     HttpServletRequest currentRequest;
-    
+
     @Context
     private HttpServletRequest request;
 
-	@InjectParam
-	private TpvInterface tpvInterface;
+    @InjectParam
+    private TpvInterface tpvInterface;
 
     @InjectParam
     private HmacSha256TPVInterface hmacSha256TPVInterface;
@@ -78,33 +76,28 @@ public class EntradasResource extends BaseResource
     @InjectParam
     private IdTPVInterface idTPVInterface;
 
-	@InjectParam
-	private PublicPageBuilderInterface publicPageBuilderInterface;
+    @InjectParam
+    private PublicPageBuilderInterface publicPageBuilderInterface;
 
     @GET
     @Path("{id}")
     @Produces(MediaType.TEXT_HTML)
-    public Response datosEntrada(@PathParam("id") Long sesionId) throws Exception
-    {
+    public Response datosEntrada(@PathParam("id") Long sesionId) throws Exception {
         Sesion sesion = sesionesService.getSesion(sesionId);
-		if (sesion.getCanalInternet() && (sesion.getAnulada() == null || sesion.getAnulada() == false)) {
-			currentRequest.getSession().setAttribute(EntradasService.ID_SESION, sesionId);
+        if (sesion.getCanalInternet() && (sesion.getAnulada() == null || sesion.getAnulada() == false)) {
+            currentRequest.getSession().setAttribute(EntradasService.ID_SESION, sesionId);
 
-			if (Utils.isAsientosNumerados(sesion.getEvento()))
-			{
-				return paginaSeleccionEntradasNumeradas(sesionId, null, null, null);
-			}
-			else
-			{
-				return paginaSeleccionEntradasNoNumeradas(sesionId, null);
-			}
-		} else
-			return paginaFueraDePlazo();
+            if (Utils.isAsientosNumerados(sesion.getEvento())) {
+                return paginaSeleccionEntradasNumeradas(sesionId, null, null, null);
+            } else {
+                return paginaSeleccionEntradasNoNumeradas(sesionId, null);
+            }
+        } else
+            return paginaFueraDePlazo();
     }
 
     private Response paginaSeleccionEntradasNumeradas(long sesionId, List<Butaca> butacasSeleccionadas,
-    		List<Butaca> butacasOcupadas, String error) throws Exception
-    {
+                                                      List<Butaca> butacasOcupadas, String error) throws Exception {
         Sesion sesion = sesionesService.getSesion(sesionId);
         String urlBase = getBaseUrlPublic();
         String url = request.getRequestURL().toString();
@@ -130,34 +123,26 @@ public class EntradasResource extends BaseResource
 
         template.put("estilosOcupadas", butacasService.estilosButacasOcupadas(sesionId, localizacionesService.getLocalizacionesSesion(sesionId), false));
 
-        if (error != null && !error.equals(""))
-        {
+        if (error != null && !error.equals("")) {
             template.put("error", error);
         }
 
         String butacasSesion = (String) currentRequest.getSession().getAttribute(EntradasService.BUTACAS_COMPRA);
-        if (butacasSesion == null)
-        {
+        if (butacasSesion == null) {
             template.put("butacasSesion", "[]");
-        }
-        else
-        {
+        } else {
             template.put("butacasSesion", butacasSesion);
         }
 
         String uuidCompra = (String) currentRequest.getSession().getAttribute(EntradasService.UUID_COMPRA);
-        if (uuidCompra != null)
-        {
+        if (uuidCompra != null) {
             template.put("uuidCompra", uuidCompra);
         }
 
-        if (language.equals("ca"))
-        {
+        if (language.equals("ca")) {
             template.put("titulo", evento.getTituloVa());
             template.put("tipoEvento", evento.getParTiposEvento().getNombreVa());
-        }
-        else
-        {
+        } else {
             template.put("titulo", evento.getTituloEs());
             template.put("tipoEvento", evento.getParTiposEvento().getNombreEs());
         }
@@ -167,22 +152,20 @@ public class EntradasResource extends BaseResource
 
         List<PreciosSesion> precios = sesionesService.getPreciosSesion(sesion.getId());
 
-        for (PreciosSesion precio : precios)
-        {
+        for (PreciosSesion precio : precios) {
             template.put("precioNormal_" + precio.getLocalizacion().getCodigo(), precio.getPrecio());
             template.put("precioDescuento_" + precio.getLocalizacion().getCodigo(), precio.getDescuento());
         }
 
         template.put("gastosGestion", Float.parseFloat(configuration.getGastosGestion()));
         template.put("lang", language);
-        
+
         ResponseBuilder builder = Response.ok(template);
 
         return Utils.noCache(builder).build();
     }
 
-    private Response paginaSeleccionEntradasNoNumeradas(long sesionId, String error) throws Exception
-    {
+    private Response paginaSeleccionEntradasNoNumeradas(long sesionId, String error) throws Exception {
         Sesion sesion = sesionesService.getSesion(sesionId);
         String urlBase = getBaseUrlPublic();
 
@@ -204,56 +187,50 @@ public class EntradasResource extends BaseResource
         Calendar cal = Calendar.getInstance();
         template.put("millis", cal.getTime().getTime());
         List<Tarifa> tarifas = new ArrayList<Tarifa>();
-        
+
         if (sesion.getPlantillaPrecios() != null && sesion.getPlantillaPrecios().getId() != -1)
-        	tarifas = sesionesService.getTarifasPublicasConPrecioConPlantilla(sesionId);
+            tarifas = sesionesService.getTarifasPublicasConPrecioConPlantilla(sesionId);
         else
-        	tarifas = sesionesService.getTarifasPublicasConPrecioSinPlantilla(sesionId);
+            tarifas = sesionesService.getTarifasPublicasConPrecioSinPlantilla(sesionId);
         //List<PreciosSesion> preciosSesion = sesionesService.getPreciosSesion(sesionId);
-        	
+
         template.put("tarifas", tarifas);
         //template.put("preciosSesion", preciosSesion);
 
-        if (error != null && !error.equals(""))
-        {
+        if (error != null && !error.equals("")) {
             template.put("error", error);
         }
 
         String uuidCompra = (String) currentRequest.getSession().getAttribute(EntradasService.UUID_COMPRA);
-        if (uuidCompra != null)
-        {
+        if (uuidCompra != null) {
             template.put("uuidCompra", uuidCompra);
         }
 
-        if (language.equals("ca"))
-        {
+        if (language.equals("ca")) {
             template.put("titulo", evento.getTituloVa());
-        }
-        else
-        {
+        } else {
             template.put("titulo", evento.getTituloEs());
         }
 
         List<PreciosSesion> preciosSesion = sesionesService.getPreciosSesionPublicos(sesion.getId());
         template.put("preciosSesion", preciosSesion);
 
-        for (PreciosSesion precio : preciosSesion)
-        {
+        for (PreciosSesion precio : preciosSesion) {
             String codigoLocalizacion = precio.getLocalizacion().getCodigo();
-            
+
             //template.put("precioNormal_" + codigoLocalizacion, precio.getPrecio());
             //template.put("precioDescuento_" + codigoLocalizacion, precio.getDescuento());
-            
+
             // Hay algunos casos en los que no se permite descuento
             template.put("descuentoNoDisponible_" + codigoLocalizacion, comprasService.esButacaDescuentoNoDisponible("descuento", evento, precio));
         }
-        
+
         Map<String, Map<Long, PreciosSesion>> preciosSesionLocalizacion = sesionesService.getPreciosSesionPublicosPorLocalizacion(sesion.getId());
         template.put("preciosSesionLocalizacion", preciosSesionLocalizacion);
 
         template.put("gastosGestion", Float.parseFloat(configuration.getGastosGestion()));
         template.put("lang", language);
-        
+
         ResponseBuilder builder = Response.ok(template);
 
         return Utils.noCache(builder).build();
@@ -264,31 +241,25 @@ public class EntradasResource extends BaseResource
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_HTML)
     public Response compraEntradaHtml(@PathParam("id") Long sesionId,
-            @FormParam("butacasSeleccionadas") String butacasSeleccionadasJSON,
-            @FormParam("platea1Normal") String platea1Normal, @FormParam("platea1Descuento") String platea1Descuento,
-            @FormParam("platea2Normal") String platea2Normal, @FormParam("platea2Descuento") String platea2Descuento,
-            @FormParam("uuidCompra") String uuidCompra, @FormParam("b_t") String strButacas) throws Exception
-    {
+                                      @FormParam("butacasSeleccionadas") String butacasSeleccionadasJSON,
+                                      @FormParam("platea1Normal") String platea1Normal, @FormParam("platea1Descuento") String platea1Descuento,
+                                      @FormParam("platea2Normal") String platea2Normal, @FormParam("platea2Descuento") String platea2Descuento,
+                                      @FormParam("uuidCompra") String uuidCompra, @FormParam("b_t") String strButacas) throws Exception {
         Sesion sesion = sesionesService.getSesion(sesionId);
 
-        if (Utils.isAsientosNumerados(sesion.getEvento()))
-        {
+        if (Utils.isAsientosNumerados(sesion.getEvento())) {
             return compraEntradaNumeradaHtml(sesionId, butacasSeleccionadasJSON, uuidCompra);
-        }
-        else
-        {
+        } else {
             return compraEntradaNoNumeradaHtml(sesionId, strButacas, uuidCompra);
         }
     }
 
     private Response compraEntradaNumeradaHtml(Long sesionId, String butacasSeleccionadasJSON, String uuidCompra)
-            throws Exception
-    {
+            throws Exception {
         ResultadoCompra resultadoCompra;
         List<Butaca> butacasSeleccionadas = Butaca.parseaJSON(butacasSeleccionadasJSON);
 
-        try
-        {
+        try {
             Map<String, List<Butaca>> butacasExistentes = new HashMap<String, List<Butaca>>();
             for (Butaca butacaSeleccionada : butacasSeleccionadas) {
                 String localizacion = butacaSeleccionada.getLocalizacion();
@@ -303,48 +274,33 @@ public class EntradasResource extends BaseResource
             }
 
             resultadoCompra = comprasService.realizaCompraInternet(sesionId, butacasSeleccionadas, uuidCompra);
-        }
-        catch (FueraDePlazoVentaInternetException e)
-        {
+        } catch (FueraDePlazoVentaInternetException e) {
             log.error("Fuera de plazo", e);
             return paginaFueraDePlazo();
-        }
-        catch (ButacaOcupadaException e)
-        {
+        } catch (ButacaOcupadaException e) {
             String error = ResourceProperties.getProperty(getLocale(), "error.seleccionEntradas.ocupadas");
             return paginaSeleccionEntradasNumeradas(sesionId, butacasSeleccionadas, null, error);
-        }
-        catch (CompraSinButacasException e)
-        {
+        } catch (CompraSinButacasException e) {
             String error = ResourceProperties.getProperty(getLocale(), "error.seleccionEntradas.noSeleccionadas");
             return paginaSeleccionEntradasNumeradas(sesionId, butacasSeleccionadas, null, error);
-        }
-        catch (CompraInvitacionPorInternetException e)
-        {
+        } catch (CompraInvitacionPorInternetException e) {
             String error = ResourceProperties.getProperty(getLocale(), "error.seleccionEntradas.invitacionPorInternet");
             return paginaSeleccionEntradasNumeradas(sesionId, butacasSeleccionadas, null, error);
-        }
-        catch (CompraButacaDescuentoNoDisponible e)
-        {
+        } catch (CompraButacaDescuentoNoDisponible e) {
             String error = ResourceProperties.getProperty(getLocale(), "error.seleccionEntradas.compraDescuentoNoDisponible");
             return paginaSeleccionEntradasNumeradas(sesionId, butacasSeleccionadas, null, error);
-        }
-        catch (CompraButacaNoExistente e)
-        {
+        } catch (CompraButacaNoExistente e) {
             String error = ResourceProperties.getProperty(getLocale(), "error.seleccionEntradas.compraButacaNoExistente");
             return paginaSeleccionEntradasNumeradas(sesionId, butacasSeleccionadas, null, error);
         }
 
-        if (resultadoCompra.getCorrecta())
-        {
+        if (resultadoCompra.getCorrecta()) {
             currentRequest.getSession().setAttribute(EntradasService.BUTACAS_COMPRA, butacasSeleccionadasJSON);
             currentRequest.getSession().setAttribute(EntradasService.UUID_COMPRA, resultadoCompra.getUuid());
 
             currentResponse.sendRedirect(getBaseUrlPublicLimpio() + "/rest/entrada/" + resultadoCompra.getUuid() + "/datosComprador");
             return null;
-        }
-        else
-        {
+        } else {
             return paginaSeleccionEntradasNumeradas(sesionId, butacasSeleccionadas,
                     resultadoCompra.getButacasOcupadas(), null);
         }
@@ -353,68 +309,52 @@ public class EntradasResource extends BaseResource
 
     private boolean existeButaca(List<Butaca> butacas, Butaca butacaSeleccionada) {
         for (Butaca butaca : butacas) {
-            if (butacaSeleccionada.getFila().equals(butaca.getFila()) && butacaSeleccionada.getNumero().equals(butaca.getNumero()))
-            {
+            if (butacaSeleccionada.getFila().equals(butaca.getFila()) && butacaSeleccionada.getNumero().equals(butaca.getNumero())) {
                 return true;
             }
         }
         return false;
     }
 
-    private Response compraEntradaNoNumeradaHtml(Long sesionId, String butacasSeleccionadasJSON, String uuidCompra) throws Exception
-    {
+    private Response compraEntradaNoNumeradaHtml(Long sesionId, String butacasSeleccionadasJSON, String uuidCompra) throws Exception {
         ResultadoCompra resultadoCompra;
         List<Butaca> butacasSeleccionadas = Butaca.parseaJSON("[" + butacasSeleccionadasJSON + "]");
-        
-        try
-        {
+
+        try {
             resultadoCompra = comprasService.realizaCompraInternet(sesionId, butacasSeleccionadas, uuidCompra);
-        }
-        catch (FueraDePlazoVentaInternetException e)
-        {
+        } catch (FueraDePlazoVentaInternetException e) {
             log.error("Fuera de plazo", e);
             return paginaFueraDePlazo();
-        }
-        catch (ButacaOcupadaException e)
-        {
+        } catch (ButacaOcupadaException e) {
             String error = ResourceProperties.getProperty(getLocale(), "error.seleccionEntradas.ocupadas");
             return paginaSeleccionEntradasNoNumeradas(sesionId, error);
-        }
-        catch (CompraSinButacasException e)
-        {
+        } catch (CompraSinButacasException e) {
             String error = ResourceProperties.getProperty(getLocale(), "error.seleccionEntradas.noSeleccionadas");
             return paginaSeleccionEntradasNoNumeradas(sesionId, error);
-        }
-        catch (CompraButacaDescuentoNoDisponible e)
-        {
+        } catch (CompraButacaDescuentoNoDisponible e) {
             String error = ResourceProperties.getProperty(getLocale(), "error.seleccionEntradas.compraDescuentoNoDisponible");
             return paginaSeleccionEntradasNoNumeradas(sesionId, error);
-        }
-        catch (NoHayButacasLibresException e) {
-        	String error = "";
-        	try {
-        		error = ResourceProperties.getProperty(getLocale(), "error.noHayButacasParaLocalizacion") + " " + 
-        				ResourceProperties.getProperty(getLocale(), "localizacion." + e.getLocalizacion());
-        	} catch (Exception ex) {
-        		error = ResourceProperties.getProperty(getLocale(), "error.noHayButacasParaLocalizacion");
-        	}
-        	
-        	return paginaSeleccionEntradasNoNumeradas(sesionId, error);
-        }
-        catch (Exception e) {
-        	String error = ResourceProperties.getProperty(getLocale(), "error.errorGeneral");
-        	return paginaSeleccionEntradasNoNumeradas(sesionId, error);
+        } catch (NoHayButacasLibresException e) {
+            String error = "";
+            try {
+                error = ResourceProperties.getProperty(getLocale(), "error.noHayButacasParaLocalizacion") + " " +
+                        ResourceProperties.getProperty(getLocale(), "localizacion." + e.getLocalizacion());
+            } catch (Exception ex) {
+                error = ResourceProperties.getProperty(getLocale(), "error.noHayButacasParaLocalizacion");
+            }
+
+            return paginaSeleccionEntradasNoNumeradas(sesionId, error);
+        } catch (Exception e) {
+            String error = ResourceProperties.getProperty(getLocale(), "error.errorGeneral");
+            return paginaSeleccionEntradasNoNumeradas(sesionId, error);
         }
 
-        if (resultadoCompra.getCorrecta())
-        {
+        if (resultadoCompra.getCorrecta()) {
             currentRequest.getSession().setAttribute(EntradasService.UUID_COMPRA, resultadoCompra.getUuid());
 
             currentResponse.sendRedirect(getBaseUrlPublicLimpio() + "/rest/entrada/" + resultadoCompra.getUuid() + "/datosComprador");
             return null;
-        }
-        else
-        {
+        } else {
             return paginaSeleccionEntradasNoNumeradas(sesionId, "");
         }
     }
@@ -423,9 +363,8 @@ public class EntradasResource extends BaseResource
     @Path("{uuidCompra}/datosComprador")
     @Produces(MediaType.TEXT_HTML)
     public Response rellenaDatosComprador(@PathParam("uuidCompra") String uuidCompra, String nombre, String apellidos,
-            String direccion, String poblacion, String cp, String provincia, String telefono, String email,
-            String infoPeriodica, String condicionesPrivacidad, String error) throws Exception
-    {
+                                          String direccion, String poblacion, String cp, String provincia, String telefono, String email,
+                                          String infoPeriodica, String condicionesPrivacidad, String error) throws Exception {
         Locale locale = getLocale();
         String language = locale.getLanguage();
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "datosComprador", locale, APP);
@@ -433,7 +372,7 @@ public class EntradasResource extends BaseResource
         String url = request.getRequestURL().toString();
         template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(urlBase, url, language.toString()));
         template.put("baseUrl", getBaseUrlPublic());
-        
+
         template.put("idioma", language);
         template.put("lang", language);
 
@@ -449,24 +388,24 @@ public class EntradasResource extends BaseResource
         template.put("email", email);
         template.put("condicionesPrivacidad", condicionesPrivacidad);
         template.put("urlCondicionesPrivacidad", configuration.getUrlCondicionesPrivacidad());
-        
-        CompraDTO compra = comprasService.getCompraByUuid(uuidCompra);
-        
-        if (compra != null) {
-	        if (language.equals("ca"))
-	        	template.put("tipoEvento", compra.getParSesion().getParEvento().getParTiposEvento().getNombreVa());
-	        else
-	        	template.put("tipoEvento", compra.getParSesion().getParEvento().getParTiposEvento().getNombreEs());
-	        
-	        if (infoPeriodica == null || infoPeriodica.equals(""))
-	            infoPeriodica = "no";
-	
-	        template.put("infoPeriodica", infoPeriodica);
-        } else
-        	error = ResourceProperties.getProperty(locale, "error.compraCaducada");;
 
-        if (error != null && !error.equals(""))
-        {
+        CompraDTO compra = comprasService.getCompraByUuid(uuidCompra);
+
+        if (compra != null) {
+            if (language.equals("ca"))
+                template.put("tipoEvento", compra.getParSesion().getParEvento().getParTiposEvento().getNombreVa());
+            else
+                template.put("tipoEvento", compra.getParSesion().getParEvento().getParTiposEvento().getNombreEs());
+
+            if (infoPeriodica == null || infoPeriodica.equals(""))
+                infoPeriodica = "no";
+
+            template.put("infoPeriodica", infoPeriodica);
+        } else
+            error = ResourceProperties.getProperty(locale, "error.compraCaducada");
+        ;
+
+        if (error != null && !error.equals("")) {
             template.put("error", error);
         }
 
@@ -478,22 +417,19 @@ public class EntradasResource extends BaseResource
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_HTML)
     public Response guardaDatosComprador(@PathParam("uuidCompra") String uuidCompra,
-            @FormParam("nombre") String nombre, @FormParam("apellidos") String apellidos,
-            @FormParam("direccion") String direccion, @FormParam("poblacion") String poblacion,
-            @FormParam("cp") String cp, @FormParam("provincia") String provincia,
-            @FormParam("telefono") String telefono, @FormParam("email") String email,
-            @FormParam("infoPeriodica") String infoPeriodica,
-            @FormParam("condicionesPrivacidad") String condicionesPrivacidad) throws Exception
-    {
-        if (nombre == null || nombre.equals(""))
-        {
+                                         @FormParam("nombre") String nombre, @FormParam("apellidos") String apellidos,
+                                         @FormParam("direccion") String direccion, @FormParam("poblacion") String poblacion,
+                                         @FormParam("cp") String cp, @FormParam("provincia") String provincia,
+                                         @FormParam("telefono") String telefono, @FormParam("email") String email,
+                                         @FormParam("infoPeriodica") String infoPeriodica,
+                                         @FormParam("condicionesPrivacidad") String condicionesPrivacidad) throws Exception {
+        if (nombre == null || nombre.equals("")) {
             return rellenaDatosComprador(uuidCompra, nombre, apellidos, direccion, poblacion, cp, provincia, telefono,
                     email, infoPeriodica, condicionesPrivacidad,
                     ResourceProperties.getProperty(getLocale(), "error.datosComprador.nombre"));
         }
-        
-        if (apellidos == null || apellidos.equals(""))
-        {
+
+        if (apellidos == null || apellidos.equals("")) {
             return rellenaDatosComprador(uuidCompra, nombre, apellidos, direccion, poblacion, cp, provincia, telefono,
                     email, infoPeriodica, condicionesPrivacidad,
                     ResourceProperties.getProperty(getLocale(), "error.datosComprador.apellidos"));
@@ -506,28 +442,25 @@ public class EntradasResource extends BaseResource
                     ResourceProperties.getProperty(getLocale(), "error.datosComprador.telefono"));
         }
 
-        if (email == null || email.equals(""))
-        {
+        if (email == null || email.equals("")) {
             return rellenaDatosComprador(uuidCompra, nombre, apellidos, direccion, poblacion, cp, provincia, telefono,
                     email, infoPeriodica, condicionesPrivacidad,
                     ResourceProperties.getProperty(getLocale(), "error.datosComprador.email"));
         } else {
-        	Pattern pattern = Pattern.compile(EMAIL_PATTERN);
-    		Matcher matcher = pattern.matcher(email);
-    		if (!matcher.matches()) {
-    			return rellenaDatosComprador(uuidCompra, nombre, apellidos, direccion, poblacion, cp, provincia, telefono,
+            Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+            Matcher matcher = pattern.matcher(email);
+            if (!matcher.matches()) {
+                return rellenaDatosComprador(uuidCompra, nombre, apellidos, direccion, poblacion, cp, provincia, telefono,
                         email, infoPeriodica, condicionesPrivacidad,
                         ResourceProperties.getProperty(getLocale(), "error.datosComprador.emailIncorrecto"));
-    		}
+            }
         }
 
-        if (infoPeriodica == null || infoPeriodica.equals(""))
-        {
+        if (infoPeriodica == null || infoPeriodica.equals("")) {
             infoPeriodica = "no";
         }
 
-        if (condicionesPrivacidad == null || condicionesPrivacidad.equals(""))
-        {
+        if (condicionesPrivacidad == null || condicionesPrivacidad.equals("")) {
             return rellenaDatosComprador(uuidCompra, nombre, apellidos, direccion, poblacion, cp, provincia, telefono,
                     email, infoPeriodica, condicionesPrivacidad,
                     ResourceProperties.getProperty(getLocale(), "error.datosComprador.condicionesPrivacidad"));
@@ -537,9 +470,8 @@ public class EntradasResource extends BaseResource
                 telefono, email, infoPeriodica);
 
         CompraDTO compra = comprasService.getCompraByUuid(uuidCompra);
-        
-        if (compra.getCaducada())
-        {
+
+        if (compra.getCaducada()) {
             return rellenaDatosComprador(uuidCompra, nombre, apellidos, direccion, poblacion, cp, provincia, telefono,
                     email, infoPeriodica, condicionesPrivacidad,
                     ResourceProperties.getProperty(getLocale(), "error.datosComprador.compraCaducada"));
@@ -548,20 +480,20 @@ public class EntradasResource extends BaseResource
         Locale locale = getLocale();
         String language = locale.getLanguage();
 
-		if (configuration.isDebug())
-			return tpvInterface.testTPV(compra.getId());
+        if (configuration.isDebug())
+            return tpvInterface.testTPV(compra.getId());
         else if (compra.getImporte().equals(BigDecimal.ZERO)) {
             return tpvInterface.compraGratuita(compra.getId());
-        }
-		else {
+        } else {
             Template template;
             TpvsDTO parTpv = compra.getParSesion().getParEvento().getParTpv();
 
             String tpvSignatureMethod = parTpv.getSignatureMethod();
-            if (tpvSignatureMethod != null && tpvSignatureMethod.equals(Utils.HMAC_SHA256_V1)) {
+            if (tpvSignatureMethod != null && tpvSignatureMethod.equals(SignatureTPV.HMAC_SHA256_V1.toString())) {
                 template = getSha2Template(locale, parTpv, compra, email, language);
-            }
-            else {
+            } else if (tpvSignatureMethod != null && tpvSignatureMethod.equals(SignatureTPV.CECA_SHA1.toString())) {
+                template = getCecaSha1Template(locale, parTpv, compra, email, language);
+            } else {
                 template = getSha1Template(locale, parTpv, compra, email, language);
             }
 
@@ -569,8 +501,8 @@ public class EntradasResource extends BaseResource
             if (urlPago != null)
                 template.put("urlPago", urlPago);
 
-			return Response.ok(template).build();
-		}
+            return Response.ok(template).build();
+        }
     }
 
     private Template getSha2Template(Locale locale, TpvsDTO parTpv, CompraDTO compra, String email, String language) throws Exception {
@@ -599,6 +531,55 @@ public class EntradasResource extends BaseResource
 
         template.put("params", parametrosYFirma.getFirst());
         template.put("signature", parametrosYFirma.getSecond());
+        return template;
+    }
+
+    private Template getCecaSha1Template(Locale locale, TpvsDTO parTpv, CompraDTO compra, String email, String language) {
+        String Clave_encriptacion = parTpv.getSecret();
+
+        String compraId = idTPVInterface.getFormattedId(compra.getId());
+
+        String AcquirerBIN = parTpv.getOrderPrefix();
+        String MerchantID = parTpv.getCode();
+        String TerminalID = parTpv.getTerminal();
+
+        String Sign_Param = Utils.sha1(Clave_encriptacion + compraId + AcquirerBIN + MerchantID + TerminalID);
+        String params = "?order=" + compraId + "&uuid=" + Sign_Param;
+        String URL_OK = getBaseUrlPublic() + "/rest/tpv/ceca/ok" + params;
+        String URL_NOK = getBaseUrlPublic() + "/rest/tpv/ceca/ko" + params;
+
+        String Cifrado = "SHA1";
+        String Num_operacion = compraId;
+        String Importe = Utils.monedaToCents(compra.getImporte());
+        String TipoMoneda = parTpv.getCurrency();
+        String Exponente = parTpv.getTransactionCode();
+        String Pago_soportado = "SSL";
+        String Idioma = language.equals("ca") ? parTpv.getLangCaCode() : parTpv.getLangEsCode();
+        String Descripcion = StringUtils.stripAccents(compra.getParSesion().getParEvento().getTituloVa().toUpperCase());
+
+        String url = parTpv.getWsdlUrl();
+
+        String Firma = Utils.sha1(Clave_encriptacion + MerchantID + AcquirerBIN + TerminalID + Num_operacion + Importe + TipoMoneda + Exponente + Cifrado + URL_OK + URL_NOK);
+        log.info("Sha1 para envio generado " + Firma);
+
+        Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "tpv_ceca", locale, APP);
+        template.put("AcquirerBIN", AcquirerBIN);
+        template.put("MerchantID", MerchantID);
+        template.put("TerminalID", TerminalID);
+        template.put("URL_OK", URL_OK);
+        template.put("URL_NOK", URL_NOK);
+        template.put("Firma", Firma);
+        template.put("Cifrado", Cifrado);
+        template.put("Num_operacion", Num_operacion);
+        template.put("Importe", Importe);
+        template.put("TipoMoneda", TipoMoneda);
+        template.put("Exponente", Exponente);
+        template.put("Pago_soportado", Pago_soportado);
+        template.put("Idioma", Idioma);
+        template.put("Descripcion", Descripcion);
+
+        template.put("urlPago", url);
+
         return template;
     }
 
@@ -654,20 +635,19 @@ public class EntradasResource extends BaseResource
         return template;
     }
 
-    private Response paginaFueraDePlazo() throws Exception
-    {
-    	Locale locale = getLocale();
+    private Response paginaFueraDePlazo() throws Exception {
+        Locale locale = getLocale();
         String language = locale.getLanguage();
-        
-    	Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "compraFinalizada", locale, APP);
-    	String urlBase = getBaseUrlPublic();
+
+        Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "compraFinalizada", locale, APP);
+        String urlBase = getBaseUrlPublic();
         String url = request.getRequestURL().toString();
         template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(urlBase, url, language.toString()));
         template.put("baseUrl", getBaseUrlPublic());
-        
+
         template.put("idioma", language);
         template.put("lang", language);
-    	
+
         return Response.ok(template).build();
     }
 
@@ -675,27 +655,24 @@ public class EntradasResource extends BaseResource
     @Path("{id}/ocupadas")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Butaca> estadoButaca(@PathParam("id") Integer idSesion, EstadoButacasRequest params) throws Exception
-    {
+    public List<Butaca> estadoButaca(@PathParam("id") Integer idSesion, EstadoButacasRequest params) throws Exception {
         return butacasService.estanOcupadas(idSesion, params.getButacas(), params.getUuidCompra());
     }
 
     @GET
     @Path("{id}/precios")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPreciosSesion(@PathParam("id") Long sesionId)
-    {
-        return Response.ok().entity(new RestResponse(true, sesionesService.getPreciosSesion(sesionId), 
-        		sesionesService.getTotalPreciosSesion(sesionId))).build();
+    public Response getPreciosSesion(@PathParam("id") Long sesionId) {
+        return Response.ok().entity(new RestResponse(true, sesionesService.getPreciosSesion(sesionId),
+                sesionesService.getTotalPreciosSesion(sesionId))).build();
     }
 
     @GET
     @Path("butacasFragment/{id}")
     @Produces(MediaType.TEXT_HTML)
-    public Response butacasFragment(@PathParam("id") long sesionId, @QueryParam("reserva") String reserva, 
-    		@QueryParam("if") String isAdmin) throws Exception
-    {
-    	Locale locale = getLocale();
+    public Response butacasFragment(@PathParam("id") long sesionId, @QueryParam("reserva") String reserva,
+                                    @QueryParam("if") String isAdmin) throws Exception {
+        Locale locale = getLocale();
         String language = locale.getLanguage();
 
         Sesion sesion = sesionesService.getSesion(sesionId);
@@ -709,7 +686,7 @@ public class EntradasResource extends BaseResource
         template.put("hora", sesion.getHoraCelebracion());
         template.put("ocultaComprar", "true");
         template.put("gastosGestion", 0.0);
-        template.put("modoReserva", reserva!=null && reserva.equals("true"));
+        template.put("modoReserva", reserva != null && reserva.equals("true"));
         template.put("estilopublico", "false");
         template.put("muestraReservadas", true);
         template.put("modoAdmin", true);
@@ -719,20 +696,17 @@ public class EntradasResource extends BaseResource
         List<Tarifa> tarifas = new ArrayList<Tarifa>();
 
         template.put("estilosOcupadas", butacasService.estilosButacasOcupadas(sesionId, localizacionesService.getLocalizacionesSesion(sesionId), isAdmin.equals("true")));
-        
+
         if (sesion.getPlantillaPrecios() != null && sesion.getPlantillaPrecios().getId() != -1)
-        	tarifas = sesionesService.getTarifasConPrecioConPlantilla(sesionId);
+            tarifas = sesionesService.getTarifasConPrecioConPlantilla(sesionId);
         else
-        	tarifas = sesionesService.getTarifasConPrecioSinPlantilla(sesionId);
-        	
+            tarifas = sesionesService.getTarifasConPrecioSinPlantilla(sesionId);
+
         template.put("tarifas", tarifas);
 
-        if (language.equals("ca"))
-        {
+        if (language.equals("ca")) {
             template.put("titulo", sesion.getEvento().getTituloVa());
-        }
-        else
-        {
+        } else {
             template.put("titulo", sesion.getEvento().getTituloEs());
         }
 
