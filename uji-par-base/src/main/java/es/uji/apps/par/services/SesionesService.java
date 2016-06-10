@@ -438,11 +438,11 @@ public class SesionesService
 		return listaSesiones;
 	}
 
-	public List<Sesion> getSesionesCinePorFechas(String fechaInicio, String fechaFin, String sort) {
+	public List<Sesion> getSesionesCinePorFechas(String fechaInicio, String fechaFin, String sort, String userUID) {
 		Date dtInicio = DateUtils.spanishStringToDate(fechaInicio);
 		Date dtFin = DateUtils.spanishStringToDate(fechaFin);
 		dtFin = DateUtils.addTimeToDate(dtFin, "23:59");
-		List<SesionDTO> sesionesDTO = sesionDAO.getSesionesCinePorFechas(dtInicio, dtFin, sort);
+		List<SesionDTO> sesionesDTO = sesionDAO.getSesionesCinePorFechas(dtInicio, dtFin, sort, userUID);
 		return getSesionesPorFechas(sesionesDTO, false);
 	}
 	

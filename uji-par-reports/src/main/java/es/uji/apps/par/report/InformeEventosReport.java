@@ -534,7 +534,7 @@ public class InformeEventosReport extends Report implements InformeInterface
 
     }
 
-	public void genera(String fechaInicio, String fechaFin) {
+	public void genera(String fechaInicio, String fechaFin, String userUID) {
 
 	}
 }

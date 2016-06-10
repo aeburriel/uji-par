@@ -20,7 +20,7 @@ public class HSQLDBHelper implements DatabaseHelper {
 
 	@Override
 	public BigDecimal castBigDecimal(Object value) {
-		return null;
+		return (value.toString().equals("true")) ? new BigDecimal(1) : new BigDecimal(value.toString());
 	}
 
 	@Override
@@ -50,6 +50,6 @@ public class HSQLDBHelper implements DatabaseHelper {
 
 	@Override
 	public String toInteger(String columna) {
-		return null;
+		return columna;
 	}
 }

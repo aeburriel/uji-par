@@ -1,16 +1,12 @@
 package es.uji.apps.par.services.reports;
 
 import es.uji.apps.fopreports.serialization.ReportSerializationException;
-import es.uji.apps.par.dao.CinesDAO;
-import es.uji.apps.par.dao.SalasDAO;
-import es.uji.apps.par.dao.UsuariosDAO;
-import es.uji.apps.par.db.ReportDTO;
-import es.uji.apps.par.model.Cine;
-import es.uji.apps.par.model.Sala;
-import es.uji.apps.par.model.Sesion;
-import es.uji.apps.par.model.Usuario;
+import es.uji.apps.par.dao.*;
+import es.uji.apps.par.db.*;
+import es.uji.apps.par.model.*;
 import es.uji.apps.par.report.EntradaReportFactory;
 import es.uji.apps.par.report.InformeInterface;
+import es.uji.apps.par.services.ExcelService;
 import es.uji.apps.par.services.ReportService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,9 +17,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Locale;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @TransactionConfiguration(transactionManager = "transactionManager")
@@ -42,11 +40,35 @@ public class ReportTest {
 	@Autowired
 	UsuariosDAO usuariosDAO;
 
+	@Autowired
+	SesionesDAO sesionesDAO;
+
+	@Autowired
+	EventosDAO eventosDAO;
+
+	@Autowired
+	TpvsDAO tpvsDAO;
+
+	@Autowired
+	PlantillasDAO plantillasDAO;
+
+	@Autowired
+	TarifasDAO tarifasDAO;
+
+	@Autowired
+	LocalizacionesDAO localizacionesDAO;
+
+	@Autowired
+	ComprasDAO comprasDAO;
+
+	@Autowired
+	ButacasDAO butacasDAO;
+
 	private Cine cine;
-
-	private Usuario usuario;
-
-	private Sala sala;
+	private Evento evento;
+	private Tpv tpv;
+	private Tarifa tarifa;
+	private Localizacion localizacion;
 
 	@Transactional
 	private void altaCine() {
@@ -56,41 +78,130 @@ public class ReportTest {
 	}
 
 	@Transactional
-	private void altaSala() {
-		sala = new Sala();
-		sala.setNombre("Sala 1");
+	private Sala altaSala(String nombre) {
+		Sala sala = new Sala();
+		sala.setNombre(nombre);
 		sala.setCine(cine);
 		salasDAO.addSala(sala);
+		return sala;
 	}
 
 	@Transactional
-	private void altaUsuario() {
-		usuario = new Usuario();
-		usuario.setNombre("Nombre");
-		usuario.setMail("Mail");
-		usuario.setUsuario("login");
+	private Usuario altaUsuario(String nombre, String mail, String login) {
+		Usuario usuario = new Usuario();
+		usuario.setNombre(nombre);
+		usuario.setMail(mail);
+		usuario.setUsuario(login);
 		usuariosDAO.addUser(usuario);
+		return usuario;
 	}
 
 	@Transactional
-	private void altaRelacionSalaUsuario() {
+	private void altaTpv() {
+		tpv = new Tpv();
+		tpv.setNombre("TPV Prueba");
+		TpvsDTO tpvDefecto = tpvsDAO.getTpvDefault();
+		if (tpvDefecto == null)
+			tpvsDAO.addTpv(tpv, true);
+
+		TpvsDTO tpvDefectoInsertado = tpvsDAO.getTpvDefault();
+		tpv.setId(tpvDefectoInsertado.getId());
+	}
+
+	@Transactional
+	private void altaEvento() {
+		evento = new Evento();
+		evento.setTituloEs("Nombre Evento Castellano");
+		evento.setTituloVa("Nombre Evento Valenciano");
+		evento.setParTpv(tpv);
+		eventosDAO.addEvento(evento);
+	}
+
+	@Transactional
+	private Plantilla altaPlantilla(Sala sala) {
+		Plantilla plantilla = new Plantilla();
+		plantilla.setSala(sala);
+		plantilla.setNombre("Sin plantilla");
+		Plantilla plantillaInsertada = plantillasDAO.add(plantilla);
+		plantilla.setId(plantillaInsertada.getId());
+		return plantilla;
+	}
+
+	@Transactional
+	private void altaTarifa() {
+		tarifa = new Tarifa();
+		tarifa.setNombre("Tarifa");
+		tarifa.setDefecto("on");
+		tarifa.setIsPublico("on");
+		TarifaDTO tarifaInsertada = tarifasDAO.add(Tarifa.toDTO(tarifa));
+		tarifa.setId(tarifaInsertada.getId());
+	}
+
+	@Transactional
+	private void altaLocalizacion() {
+		localizacion = new Localizacion();
+		localizacion.setNombreEs("Localizacion");
+		localizacion.setNombreVa("Localitzacio");
+		localizacion.setCodigo("codi");
+		localizacion.setTotalEntradas(100);
+		localizacionesDAO.add(localizacion);
+	}
+
+	@Transactional
+	private Sesion altaSesion(Sala sala, Plantilla plantilla, String hora) {
+		Sesion sesion = new Sesion();
+		sesion.setEvento(evento);
+		sesion.setFechaCelebracionWithDate(Calendar.getInstance().getTime());
+		sesion.setHoraCelebracion(hora);
+		sesion.setSala(sala);
+		sesion.setPlantillaPrecios(plantilla);
+		List<PreciosSesion> preciosSesion = new ArrayList<PreciosSesion>();
+		PreciosSesion precioSesion = new PreciosSesion();
+		precioSesion.setSesion(sesion);
+		precioSesion.setPrecio(new BigDecimal(1));
+		precioSesion.setLocalizacion(localizacion);
+		precioSesion.setTarifa(tarifa);
+		preciosSesion.add(precioSesion);
+		sesion.setPreciosSesion(preciosSesion);
+		Sesion sesionInsertada = sesionesDAO.addSesion(sesion);
+		sesion.setId(sesionInsertada.getId());
+		return sesion;
+	}
+
+	@Transactional
+	private void altaRelacionSalaUsuario(Sala sala, Usuario usuario) {
 		usuariosDAO.addSalaUsuario(sala, usuario);
 	}
 
 	@Transactional
-	private void altaReports(String reportClass, String tipo) {
+	private void altaReports(String reportClass, String tipo, Sala sala) {
 		ReportDTO reportDTO = new ReportDTO(sala.getId(), tipo, reportClass);
 		salasDAO.addReport(reportDTO);
+	}
+
+	@Transactional
+	private Compra altaCompra(Sesion sesion, String fila, String asiento, boolean taquilla) {
+		BigDecimal importe = new BigDecimal(1);
+		CompraDTO compraDTO = comprasDAO.insertaCompra(sesion.getId(), Calendar.getInstance().getTime(), taquilla, importe);
+		compraDTO.setPagada(true);
+		Butaca butaca = new Butaca();
+		butaca.setFila(fila);
+		butaca.setNumero(asiento);
+		butaca.setLocalizacion(localizacion.getCodigo());
+		butaca.setTipo(String.valueOf(tarifa.getId()));
+		butacasDAO.reservaButacas(sesion.getId(), compraDTO, Arrays.asList(butaca));
+		Compra compra = Compra.compraDTOtoCompra(compraDTO);
+		return compra;
 	}
 
 	@Test
 	@Transactional
 	public void testNombreClaseInformePDFTaquilla() throws ReportSerializationException, ParseException {
 		altaCine();
-		altaSala();
-		altaUsuario();
-		altaRelacionSalaUsuario();
-		altaReports("es.uji.apps.par.report.InformeTaquillaReport", EntradaReportFactory.TIPO_INFORME_PDF_TAQUILLA);
+		Sala sala = altaSala("Sala 1");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		altaRelacionSalaUsuario(sala, usuario);
+		altaReports("es.uji.apps.par.report.InformeTaquillaReport", EntradaReportFactory.TIPO_INFORME_PDF_TAQUILLA, sala);
 		InformeInterface informe = reportService.generaYRellenaInformePDFTaquilla("2016-01-01", "2016-02-01", new Locale("es"),
 				usuario.getUsuario());
 		Assert.assertNotNull(informe);
@@ -101,10 +212,11 @@ public class ReportTest {
 	@Transactional
 	public void testNombreClaseInformePDFTaquillaCuandoReportClassNoExiste() throws ReportSerializationException, ParseException {
 		altaCine();
-		altaSala();
-		altaUsuario();
-		altaRelacionSalaUsuario();
-		altaReports("es.uji.apps.par.report.InformeTaquillaReportPersonalizado", EntradaReportFactory.TIPO_INFORME_PDF_TAQUILLA);
+		Sala sala = altaSala("Sala 1");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		altaRelacionSalaUsuario(sala, usuario);
+		altaReports("es.uji.apps.par.report.InformeTaquillaReportPersonalizado", EntradaReportFactory.TIPO_INFORME_PDF_TAQUILLA,
+				sala);
 		reportService.generaYRellenaInformePDFTaquilla("2016-01-01", "2016-02-01", new Locale("es"),
 				usuario.getUsuario());
 	}
@@ -113,10 +225,10 @@ public class ReportTest {
 	@Transactional
 	public void testNombreClaseInformePDFTaquillaWhenUserNotExists() throws ReportSerializationException, ParseException {
 		altaCine();
-		altaSala();
-		altaUsuario();
-		altaRelacionSalaUsuario();
-		altaReports("es.uji.apps.par.report.InformeTaquillaReport", EntradaReportFactory.TIPO_INFORME_PDF_TAQUILLA);
+		Sala sala = altaSala("Sala 1");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		altaRelacionSalaUsuario(sala, usuario);
+		altaReports("es.uji.apps.par.report.InformeTaquillaReport", EntradaReportFactory.TIPO_INFORME_PDF_TAQUILLA, sala);
 		reportService.generaYRellenaInformePDFTaquilla("2016-01-01", "2016-02-01", new Locale("es"),
 				"NOTEXISTS");
 	}
@@ -125,10 +237,10 @@ public class ReportTest {
 	@Transactional
 	public void testNombreClaseInformePDFEfectivo() throws ReportSerializationException, ParseException {
 		altaCine();
-		altaSala();
-		altaUsuario();
-		altaRelacionSalaUsuario();
-		altaReports("es.uji.apps.par.report.InformeEfectivoReport", EntradaReportFactory.TIPO_INFORME_PDF_EFECTIVO);
+		Sala sala = altaSala("Sala 1");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		altaRelacionSalaUsuario(sala, usuario);
+		altaReports("es.uji.apps.par.report.InformeEfectivoReport", EntradaReportFactory.TIPO_INFORME_PDF_EFECTIVO, sala);
 		InformeInterface informe = reportService.generaYRellenaInformePDFEfectivo("2016-01-01", "2016-02-01", new Locale("es"),
 				usuario.getUsuario());
 		Assert.assertNotNull(informe);
@@ -139,10 +251,11 @@ public class ReportTest {
 	@Transactional
 	public void testNombreClaseInformePDFEfectivoCuandoReportClassNoExiste() throws ReportSerializationException, ParseException {
 		altaCine();
-		altaSala();
-		altaUsuario();
-		altaRelacionSalaUsuario();
-		altaReports("es.uji.apps.par.report.InformeEfectivoReportPersonalizado", EntradaReportFactory.TIPO_INFORME_PDF_EFECTIVO);
+		Sala sala = altaSala("Sala 1");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		altaRelacionSalaUsuario(sala, usuario);
+		altaReports("es.uji.apps.par.report.InformeEfectivoReportPersonalizado", EntradaReportFactory.TIPO_INFORME_PDF_EFECTIVO,
+				sala);
 		reportService.generaYRellenaInformePDFEfectivo("2016-01-01", "2016-02-01", new Locale("es"),
 				usuario.getUsuario());
 	}
@@ -151,10 +264,10 @@ public class ReportTest {
 	@Transactional
 	public void testNombreClaseInformePDFEfectivoWhenUserNotExists() throws ReportSerializationException, ParseException {
 		altaCine();
-		altaSala();
-		altaUsuario();
-		altaRelacionSalaUsuario();
-		altaReports("es.uji.apps.par.report.InformeEfectivoReport", EntradaReportFactory.TIPO_INFORME_PDF_EFECTIVO);
+		Sala sala = altaSala("Sala 1");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		altaRelacionSalaUsuario(sala, usuario);
+		altaReports("es.uji.apps.par.report.InformeEfectivoReport", EntradaReportFactory.TIPO_INFORME_PDF_EFECTIVO, sala);
 		reportService.generaYRellenaInformePDFEfectivo("2016-01-01", "2016-02-01", new Locale("es"),
 				"NOTEXISTS");
 	}
@@ -163,11 +276,11 @@ public class ReportTest {
 	@Transactional
 	public void testNombreClaseInformePDFTaquillaTpvSubtotales() throws ReportSerializationException, ParseException {
 		altaCine();
-		altaSala();
-		altaUsuario();
-		altaRelacionSalaUsuario();
+		Sala sala = altaSala("Sala 1");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		altaRelacionSalaUsuario(sala, usuario);
 		altaReports("es.uji.apps.par.report.InformeTaquillaTpvSubtotalesReport", EntradaReportFactory
-				.TIPO_INFORME_PDF_TAQUILLA_TPV_SUBTOTALES);
+				.TIPO_INFORME_PDF_TAQUILLA_TPV_SUBTOTALES, sala);
 		InformeInterface informe = reportService.generaYRellenaInformePDFTaquillaTPVSubtotales("2016-01-01", "2016-02-01", new
 				Locale("es"), usuario.getUsuario());
 		Assert.assertNotNull(informe);
@@ -179,11 +292,11 @@ public class ReportTest {
 	public void testNombreClaseInformePDFTaquillaTpvSubtotalesCuandoReportClassNoExiste() throws ReportSerializationException,
 			ParseException {
 		altaCine();
-		altaSala();
-		altaUsuario();
-		altaRelacionSalaUsuario();
+		Sala sala = altaSala("Sala 1");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		altaRelacionSalaUsuario(sala, usuario);
 		altaReports("es.uji.apps.par.report.InformeTaquillaTpvSubtotalesReportPersonalizado", EntradaReportFactory
-				 .TIPO_INFORME_PDF_TAQUILLA_TPV_SUBTOTALES);
+				 .TIPO_INFORME_PDF_TAQUILLA_TPV_SUBTOTALES, sala);
 		reportService.generaYRellenaInformePDFTaquillaTPVSubtotales("2016-01-01", "2016-02-01", new Locale("es"), usuario
 				 .getUsuario());
 	}
@@ -193,11 +306,11 @@ public class ReportTest {
 	public void testNombreClaseInformePDFTaquillaTpvSubtotalesWhenUserNotExists() throws ReportSerializationException,
 			ParseException {
 		altaCine();
-		altaSala();
-		altaUsuario();
-		altaRelacionSalaUsuario();
+		Sala sala = altaSala("Sala 1");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		altaRelacionSalaUsuario(sala, usuario);
 		altaReports("es.uji.apps.par.report.InformeTaquillaTpvSubtotalesReport", EntradaReportFactory
-				 .TIPO_INFORME_PDF_TAQUILLA_TPV_SUBTOTALES);
+				 .TIPO_INFORME_PDF_TAQUILLA_TPV_SUBTOTALES, sala);
 		reportService.generaYRellenaInformePDFTaquillaTPVSubtotales("2016-01-01", "2016-02-01", new Locale("es"), "NOTEXISTS");
 	}
 
@@ -205,10 +318,10 @@ public class ReportTest {
 	@Transactional
 	public void testNombreClaseInformePDFEventos() throws ReportSerializationException, ParseException {
 		altaCine();
-		altaSala();
-		altaUsuario();
-		altaRelacionSalaUsuario();
-		altaReports("es.uji.apps.par.report.InformeEventosReport", EntradaReportFactory.TIPO_INFORME_PDF_EVENTOS);
+		Sala sala = altaSala("Sala 1");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		altaRelacionSalaUsuario(sala, usuario);
+		altaReports("es.uji.apps.par.report.InformeEventosReport", EntradaReportFactory.TIPO_INFORME_PDF_EVENTOS, sala);
 		InformeInterface informe = reportService.generaYRellenaInformePDFEventos("2016-01-01", "2016-02-01", new Locale("es"),
 				usuario.getUsuario());
 		Assert.assertNotNull(informe);
@@ -219,10 +332,11 @@ public class ReportTest {
 	@Transactional
 	public void testNombreClaseInformePDFEventosCuandoReportClassNoExiste() throws ReportSerializationException, ParseException {
 		altaCine();
-		altaSala();
-		altaUsuario();
-		altaRelacionSalaUsuario();
-		altaReports("es.uji.apps.par.report.InformeEventosReportPersonalizado", EntradaReportFactory.TIPO_INFORME_PDF_EVENTOS);
+		Sala sala = altaSala("Sala 1");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		altaRelacionSalaUsuario(sala, usuario);
+		altaReports("es.uji.apps.par.report.InformeEventosReportPersonalizado", EntradaReportFactory.TIPO_INFORME_PDF_EVENTOS,
+				sala);
 		reportService.generaYRellenaInformePDFEventos("2016-01-01", "2016-02-01", new Locale("es"), usuario.getUsuario());
 	}
 
@@ -230,10 +344,10 @@ public class ReportTest {
 	@Transactional
 	public void testNombreClaseInformePDFEventosWhenUserNotExists() throws ReportSerializationException, ParseException {
 		altaCine();
-		altaSala();
-		altaUsuario();
-		altaRelacionSalaUsuario();
-		altaReports("es.uji.apps.par.report.InformeEventosReport", EntradaReportFactory.TIPO_INFORME_PDF_EVENTOS);
+		Sala sala = altaSala("Sala 1");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		altaRelacionSalaUsuario(sala, usuario);
+		altaReports("es.uji.apps.par.report.InformeEventosReport", EntradaReportFactory.TIPO_INFORME_PDF_EVENTOS, sala);
 		reportService.generaYRellenaInformePDFEventos("2016-01-01", "2016-02-01", new Locale("es"), "NOTEXISTS");
 	}
 
@@ -241,12 +355,18 @@ public class ReportTest {
 	@Transactional
 	public void testNombreClaseInformePDFSesiones() throws ReportSerializationException, ParseException {
 		altaCine();
-		altaSala();
-		altaUsuario();
-		altaRelacionSalaUsuario();
-		Sesion s = new Sesion(1);
-		altaReports("es.uji.apps.par.report.InformeSesionReport", EntradaReportFactory.TIPO_INFORME_PDF_SESIONES);
-		InformeInterface informe = reportService.generaYRellenaPDFSesiones(Arrays.asList(s), new Locale("es"), usuario.getUsuario
+		Sala sala = altaSala("Sala 1");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		altaRelacionSalaUsuario(sala, usuario);
+		altaTpv();
+		Plantilla plantilla = altaPlantilla(sala);
+		altaLocalizacion();
+		altaTarifa();
+		altaEvento();
+		Sesion sesion = altaSesion(sala, plantilla, "12:00");
+		altaReports("es.uji.apps.par.report.InformeSesionReport", EntradaReportFactory.TIPO_INFORME_PDF_SESIONES, sala);
+		InformeInterface informe = reportService.generaYRellenaPDFSesiones(Arrays.asList(sesion), new Locale("es"), usuario
+				.getUsuario
 				());
 		Assert.assertNotNull(informe);
 		Assert.assertEquals("es.uji.apps.par.report.InformeSesionReport", informe.getClass().getName());
@@ -256,11 +376,12 @@ public class ReportTest {
 	@Transactional
 	public void testNombreClaseInformePDFSesionesCuandoReportClassNoExiste() throws ReportSerializationException, ParseException {
 		altaCine();
-		altaSala();
-		altaUsuario();
-		altaRelacionSalaUsuario();
+		Sala sala = altaSala("Sala 1");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		altaRelacionSalaUsuario(sala, usuario);
 		Sesion s = new Sesion(1);
-		altaReports("es.uji.apps.par.report.InformeSesionReportPersonalizado", EntradaReportFactory.TIPO_INFORME_PDF_SESIONES);
+		altaReports("es.uji.apps.par.report.InformeSesionReportPersonalizado", EntradaReportFactory.TIPO_INFORME_PDF_SESIONES,
+				sala);
 		reportService.generaYRellenaPDFSesiones(Arrays.asList(s), new Locale("es"), usuario.getUsuario());
 	}
 
@@ -268,11 +389,318 @@ public class ReportTest {
 	@Transactional
 	public void testNombreClaseInformePDFSesionesWhenUserNotExists() throws ReportSerializationException, ParseException {
 		altaCine();
-		altaSala();
-		altaUsuario();
-		altaRelacionSalaUsuario();
+		Sala sala = altaSala("Sala 1");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		altaRelacionSalaUsuario(sala, usuario);
 		Sesion s = new Sesion(1);
-		altaReports("es.uji.apps.par.report.InformeSesionReport", EntradaReportFactory.TIPO_INFORME_PDF_SESIONES);
+		altaReports("es.uji.apps.par.report.InformeSesionReport", EntradaReportFactory.TIPO_INFORME_PDF_SESIONES, sala);
 		reportService.generaYRellenaPDFSesiones(Arrays.asList(s), new Locale("es"), "NOTEXISTS");
+	}
+
+	@Test
+	@Transactional
+	public void testInformeExcelTaquillaSoloMuestraDatosDeLasSalasDelUsuario() throws IOException {
+		altaCine();
+		Sala sala = altaSala("Sala 1");
+		Sala salaDondeUsuario1NoTienePermiso = altaSala("Sala 2");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		Usuario usuario2 = altaUsuario("Nombre", "Mail", "login2");
+		altaRelacionSalaUsuario(sala, usuario);
+		altaRelacionSalaUsuario(salaDondeUsuario1NoTienePermiso, usuario2);
+		altaTpv();
+		Plantilla plantilla = altaPlantilla(sala);
+		Plantilla plantilla2 = altaPlantilla(salaDondeUsuario1NoTienePermiso);
+		altaLocalizacion();
+		altaTarifa();
+		altaEvento();
+		Sesion sesion = altaSesion(sala, plantilla, "12:00");
+		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00");
+		Compra compra = altaCompra(sesion, "1", "1", true);
+		altaCompra(sesion, "1", "2", true);
+		altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(compra.getFecha());
+		cal.add(Calendar.DAY_OF_MONTH, -1);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+		ExcelService excelServiceConDosCompras = reportService.getExcelServiceTaquilla(sdf.format(cal.getTime()), sdf.format(compra.getFecha()),
+				new Locale("es"), usuario.getUsuario());
+		Assert.assertEquals(2, excelServiceConDosCompras.getTotalFilas());
+		Object fechaSesionConDosCompras = excelServiceConDosCompras.getCellValue("B2");
+		Assert.assertEquals("10/06/2016 12:00", fechaSesionConDosCompras);
+		Object cantidadDeComprasDeSesionConDosCompras = excelServiceConDosCompras.getCellValue("E2");
+		Assert.assertEquals(2.0, cantidadDeComprasDeSesionConDosCompras);
+		
+		ExcelService excelServiceConUnaCompra = reportService.getExcelServiceTaquilla(sdf.format(cal.getTime()), sdf.format(compra.getFecha()),
+				new Locale("es"), usuario2.getUsuario());
+		Assert.assertEquals(2, excelServiceConUnaCompra.getTotalFilas());
+		Object fechaSesionConUnaCompra = excelServiceConUnaCompra.getCellValue("B2");
+		Assert.assertEquals("10/06/2016 13:00", fechaSesionConUnaCompra);
+		Object cantidadDeComprasDeSesionConUnaCompra = excelServiceConUnaCompra.getCellValue("E2");
+		Assert.assertEquals(1.0, cantidadDeComprasDeSesionConUnaCompra);
+	}
+
+	@Test
+	@Transactional
+	public void testInformeExcelEventosSoloMuestraDatosDeLasSalasDelUsuario() throws IOException {
+		altaCine();
+		Sala sala = altaSala("Sala 1");
+		Sala salaDondeUsuario1NoTienePermiso = altaSala("Sala 2");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		Usuario usuario2 = altaUsuario("Nombre", "Mail", "login2");
+		altaRelacionSalaUsuario(sala, usuario);
+		altaRelacionSalaUsuario(salaDondeUsuario1NoTienePermiso, usuario2);
+		altaTpv();
+		Plantilla plantilla = altaPlantilla(sala);
+		Plantilla plantilla2 = altaPlantilla(salaDondeUsuario1NoTienePermiso);
+		altaLocalizacion();
+		altaTarifa();
+		altaEvento();
+		Sesion sesion = altaSesion(sala, plantilla, "12:00");
+		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00");
+		Compra compra = altaCompra(sesion, "1", "1", true);
+		altaCompra(sesion, "1", "2", true);
+		altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(compra.getFecha());
+		cal.add(Calendar.DAY_OF_MONTH, -1);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		ExcelService excelServiceConDosCompras = reportService.getExcelServiceEventos(sdf.format(cal.getTime()), sdf.format(compra.getFecha()),
+				new Locale("es"), usuario.getUsuario());
+		Assert.assertEquals(2, excelServiceConDosCompras.getTotalFilas());
+		Object fechaSesionConDosCompras = excelServiceConDosCompras.getCellValue("B2");
+		Object cantidadDeComprasDeSesionConDosCompras = excelServiceConDosCompras.getCellValue("D2");
+		Assert.assertEquals(2.0, cantidadDeComprasDeSesionConDosCompras);
+
+		ExcelService excelServiceConUnaCompra = reportService.getExcelServiceEventos(sdf.format(cal.getTime()), sdf.format(compra.getFecha()),
+				new Locale("es"), usuario2.getUsuario());
+		Assert.assertEquals(2, excelServiceConUnaCompra.getTotalFilas());
+		Object fechaSesionConUnaCompra = excelServiceConUnaCompra.getCellValue("B2");
+		Object cantidadDeComprasDeSesionConUnaCompra = excelServiceConUnaCompra.getCellValue("D2");
+		Assert.assertEquals(1.0, cantidadDeComprasDeSesionConUnaCompra);
+	}
+
+	@Test
+	@Transactional
+	public void testInformePDFTaquillaDondeTotalTaquillaTPVSoloMuestranDatosDeLasSalasDelUsuario() throws IOException {
+		altaCine();
+		Sala sala = altaSala("Sala 1");
+		Sala salaDondeUsuario1NoTienePermiso = altaSala("Sala 2");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		Usuario usuario2 = altaUsuario("Nombre", "Mail", "login2");
+		altaRelacionSalaUsuario(sala, usuario);
+		altaRelacionSalaUsuario(salaDondeUsuario1NoTienePermiso, usuario2);
+		altaTpv();
+		Plantilla plantilla = altaPlantilla(sala);
+		Plantilla plantilla2 = altaPlantilla(salaDondeUsuario1NoTienePermiso);
+		altaLocalizacion();
+		altaTarifa();
+		altaEvento();
+		Sesion sesion = altaSesion(sala, plantilla, "12:00");
+		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00");
+		Compra compra = altaCompra(sesion, "1", "1", true);
+		comprasDAO.guardarCodigoPagoTarjeta(compra.getId(), "123");
+		Compra compra2 = altaCompra(sesion, "1", "2", true);
+		comprasDAO.guardarCodigoPagoTarjeta(compra2.getId(), "1234");
+		Compra compra3 = altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true);
+		comprasDAO.guardarCodigoPagoTarjeta(compra3.getId(), "12345");
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(compra.getFecha());
+		cal.add(Calendar.DAY_OF_MONTH, -1);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String fechaInicio = sdf.format(cal.getTime());
+		String fechaFin = sdf.format(compra.getFecha());
+
+		Object[] totalTaquillaTPVUsuario1 = comprasDAO.getTotalTaquillaTpv(fechaInicio, fechaFin, usuario.getUsuario());
+		Assert.assertEquals("2.00", totalTaquillaTPVUsuario1[0].toString());
+		Assert.assertEquals("2", totalTaquillaTPVUsuario1[1].toString());
+		Object[] totalTaquillaTPVUsuario2 = comprasDAO.getTotalTaquillaTpv(fechaInicio, fechaFin, usuario2.getUsuario());
+		Assert.assertEquals("1.00", totalTaquillaTPVUsuario2[0].toString());
+		Assert.assertEquals("1", totalTaquillaTPVUsuario2[1].toString());
+	}
+
+	@Test
+	@Transactional
+	public void testInformePDFTaquillaDondeTotalTaquillaEfectivoSoloMuestranDatosDeLasSalasDelUsuario() throws IOException {
+		altaCine();
+		Sala sala = altaSala("Sala 1");
+		Sala salaDondeUsuario1NoTienePermiso = altaSala("Sala 2");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		Usuario usuario2 = altaUsuario("Nombre", "Mail", "login2");
+		altaRelacionSalaUsuario(sala, usuario);
+		altaRelacionSalaUsuario(salaDondeUsuario1NoTienePermiso, usuario2);
+		altaTpv();
+		Plantilla plantilla = altaPlantilla(sala);
+		Plantilla plantilla2 = altaPlantilla(salaDondeUsuario1NoTienePermiso);
+		altaLocalizacion();
+		altaTarifa();
+		altaEvento();
+		Sesion sesion = altaSesion(sala, plantilla, "12:00");
+		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00");
+		Compra compra = altaCompra(sesion, "1", "1", true);
+		altaCompra(sesion, "1", "2", true);
+		altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(compra.getFecha());
+		cal.add(Calendar.DAY_OF_MONTH, -1);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String fechaInicio = sdf.format(cal.getTime());
+		String fechaFin = sdf.format(compra.getFecha());
+
+		Object[] totalTaquillaTPVUsuario1 = comprasDAO.getTotalTaquillaEfectivo(fechaInicio, fechaFin, usuario.getUsuario());
+		Assert.assertEquals("2.00", totalTaquillaTPVUsuario1[0].toString());
+		Assert.assertEquals("2", totalTaquillaTPVUsuario1[1].toString());
+		Object[] totalTaquillaTPVUsuario2 = comprasDAO.getTotalTaquillaEfectivo(fechaInicio, fechaFin, usuario2.getUsuario());
+		Assert.assertEquals("1.00", totalTaquillaTPVUsuario2[0].toString());
+		Assert.assertEquals("1", totalTaquillaTPVUsuario2[1].toString());
+	}
+
+	@Test
+	@Transactional
+	public void testInformePDFTaquillaDondeTotalOnlineSoloMuestranDatosDeLasSalasDelUsuario() throws IOException {
+		altaCine();
+		Sala sala = altaSala("Sala 1");
+		Sala salaDondeUsuario1NoTienePermiso = altaSala("Sala 2");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		Usuario usuario2 = altaUsuario("Nombre", "Mail", "login2");
+		altaRelacionSalaUsuario(sala, usuario);
+		altaRelacionSalaUsuario(salaDondeUsuario1NoTienePermiso, usuario2);
+		altaTpv();
+		Plantilla plantilla = altaPlantilla(sala);
+		Plantilla plantilla2 = altaPlantilla(salaDondeUsuario1NoTienePermiso);
+		altaLocalizacion();
+		altaTarifa();
+		altaEvento();
+		Sesion sesion = altaSesion(sala, plantilla, "12:00");
+		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00");
+		Compra compra = altaCompra(sesion, "1", "1", false);
+		altaCompra(sesion, "1", "2", false);
+		altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", false);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(compra.getFecha());
+		cal.add(Calendar.DAY_OF_MONTH, -1);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String fechaInicio = sdf.format(cal.getTime());
+		String fechaFin = sdf.format(compra.getFecha());
+
+		Object[] totalTaquillaTPVUsuario1 = comprasDAO.getTotalOnline(fechaInicio, fechaFin, usuario.getUsuario());
+		Assert.assertEquals("2.00", totalTaquillaTPVUsuario1[0].toString());
+		Assert.assertEquals("2", totalTaquillaTPVUsuario1[1].toString());
+		Object[] totalTaquillaTPVUsuario2 = comprasDAO.getTotalOnline(fechaInicio, fechaFin, usuario2.getUsuario());
+		Assert.assertEquals("1.00", totalTaquillaTPVUsuario2[0].toString());
+		Assert.assertEquals("1", totalTaquillaTPVUsuario2[1].toString());
+	}
+
+	@Test
+	@Transactional
+	public void testInformePDFEfectivoDondeComprasSoloMuestranDatosDeLasSalasDelUsuario() throws IOException {
+		altaCine();
+		Sala sala = altaSala("Sala 1");
+		Sala salaDondeUsuario1NoTienePermiso = altaSala("Sala 2");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		Usuario usuario2 = altaUsuario("Nombre", "Mail", "login2");
+		altaRelacionSalaUsuario(sala, usuario);
+		altaRelacionSalaUsuario(salaDondeUsuario1NoTienePermiso, usuario2);
+		altaTpv();
+		Plantilla plantilla = altaPlantilla(sala);
+		Plantilla plantilla2 = altaPlantilla(salaDondeUsuario1NoTienePermiso);
+		altaLocalizacion();
+		altaTarifa();
+		altaEvento();
+		Sesion sesion = altaSesion(sala, plantilla, "12:00");
+		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00");
+		Compra compra = altaCompra(sesion, "1", "1", true);
+		altaCompra(sesion, "1", "2", true);
+		altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(compra.getFecha());
+		cal.add(Calendar.DAY_OF_MONTH, -1);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String fechaInicio = sdf.format(cal.getTime());
+		String fechaFin = sdf.format(compra.getFecha());
+
+		List<Object[]> comprasEfectivo = comprasDAO.getComprasEfectivo(fechaInicio, fechaFin, usuario.getUsuario());
+		String totalButacas = comprasEfectivo.get(0)[3].toString();
+		Assert.assertEquals("2", totalButacas);
+		List<Object[]> comprasEfectivo2 = comprasDAO.getComprasEfectivo(fechaInicio, fechaFin, usuario2.getUsuario());
+		String totalButacasSesion2 = comprasEfectivo2.get(0)[3].toString();
+		Assert.assertEquals("1", totalButacasSesion2);
+	}
+
+	@Test
+	@Transactional
+	public void testInformePdfTpvSubtotalesDondeComprasSoloMuestranDatosDeLasSalasDelUsuario() throws IOException {
+		altaCine();
+		Sala sala = altaSala("Sala 1");
+		Sala salaDondeUsuario1NoTienePermiso = altaSala("Sala 2");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		Usuario usuario2 = altaUsuario("Nombre", "Mail", "login2");
+		altaRelacionSalaUsuario(sala, usuario);
+		altaRelacionSalaUsuario(salaDondeUsuario1NoTienePermiso, usuario2);
+		altaTpv();
+		Plantilla plantilla = altaPlantilla(sala);
+		Plantilla plantilla2 = altaPlantilla(salaDondeUsuario1NoTienePermiso);
+		altaLocalizacion();
+		altaTarifa();
+		altaEvento();
+		Sesion sesion = altaSesion(sala, plantilla, "12:00");
+		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00");
+		Compra compra = altaCompra(sesion, "1", "1", true);
+		comprasDAO.guardarCodigoPagoTarjeta(compra.getId(), "123");
+		Compra compra2 = altaCompra(sesion, "1", "2", true);
+		comprasDAO.guardarCodigoPagoTarjeta(compra2.getId(), "1234");
+		Compra compra3 = altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true);
+		comprasDAO.guardarCodigoPagoTarjeta(compra3.getId(), "12345");
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(compra.getFecha());
+		cal.add(Calendar.DAY_OF_MONTH, -1);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String fechaInicio = sdf.format(cal.getTime());
+		String fechaFin = sdf.format(compra.getFecha());
+
+		List<Object[]> comprasTpv = comprasDAO.getComprasTpv(fechaInicio, fechaFin, usuario.getUsuario());
+		Assert.assertEquals(2, comprasTpv.size());
+		List<Object[]> comprasTpv1 = comprasDAO.getComprasTpv(fechaInicio, fechaFin, usuario2.getUsuario());
+		Assert.assertEquals(1, comprasTpv1.size());
+	}
+
+	@Test
+	@Transactional
+	public void testFiltraSalasParaInforme() throws IOException {
+		altaCine();
+		Sala sala = altaSala("Sala 1");
+		Sala salaDondeUsuario1NoTienePermiso = altaSala("Sala 2");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		Usuario usuario2 = altaUsuario("Nombre", "Mail", "login2");
+		altaRelacionSalaUsuario(sala, usuario);
+		altaRelacionSalaUsuario(salaDondeUsuario1NoTienePermiso, usuario2);
+		altaTpv();
+		Plantilla plantilla = altaPlantilla(sala);
+		Plantilla plantilla2 = altaPlantilla(salaDondeUsuario1NoTienePermiso);
+		altaLocalizacion();
+		altaTarifa();
+		altaEvento();
+		Sesion sesion = altaSesion(sala, plantilla, "12:00");
+		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00");
+		Compra compra = altaCompra(sesion, "1", "1", true);
+		comprasDAO.guardarCodigoPagoTarjeta(compra.getId(), "123");
+		Compra compra2 = altaCompra(sesion, "1", "2", true);
+		comprasDAO.guardarCodigoPagoTarjeta(compra2.getId(), "1234");
+		Compra compra3 = altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true);
+		comprasDAO.guardarCodigoPagoTarjeta(compra3.getId(), "12345");
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(compra.getFecha());
+		cal.add(Calendar.DAY_OF_MONTH, -1);
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+
+		/*org.hsqldb.util.DatabaseManager.main(new String[] {
+				"--url",  "jdbc:hsqldb:mem:paranimf-example-db;", "--user", "sa"
+		});*/
+		List<SesionDTO> sesiones1 = sesionesDAO.getSesionesCinePorFechas(null, null, null, usuario.getUsuario());
+		Assert.assertEquals(1, sesiones1.size());
+		Assert.assertEquals("12:00", sdf.format(sesiones1.get(0).getFechaCelebracion()));
+		List<SesionDTO> sesiones2 = sesionesDAO.getSesionesCinePorFechas(null, null, null, usuario2.getUsuario());
+		Assert.assertEquals(1, sesiones2.size());
+		Assert.assertEquals("13:00", sdf.format(sesiones2.get(0).getFechaCelebracion()));
 	}
 }

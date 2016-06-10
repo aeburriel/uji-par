@@ -578,12 +578,15 @@ public class SesionesDAO extends BaseDAO {
     }
 
     @Transactional
-    public List<SesionDTO> getSesionesCinePorFechas(Date dtInicio, Date dtFin, String sort) {
+    public List<SesionDTO> getSesionesCinePorFechas(Date dtInicio, Date dtFin, String sort, String userUID) {
         QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
         QEventoDTO qEventoDTO = QEventoDTO.eventoDTO;
+		QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
+		QUsuarioDTO qUsuarioDTO = QUsuarioDTO.usuarioDTO;
 
         JPAQuery query = new JPAQuery(entityManager);
-        query.from(qSesionDTO).join(qSesionDTO.parEvento, qEventoDTO).leftJoin(qSesionDTO.parSala, qSalaDTO).fetch();
+        query.from(qSesionDTO).join(qSesionDTO.parEvento, qEventoDTO).join(qSesionDTO.parSala, qSalaDTO).fetch().join(qSalaDTO
+				.parSalasUsuario, qSalasUsuarioDTO).join(qSalasUsuarioDTO.parUsuario, qUsuarioDTO);
 
         if (dtInicio != null || dtFin != null) {
             BooleanBuilder condicion = new BooleanBuilder();
@@ -594,8 +597,9 @@ public class SesionesDAO extends BaseDAO {
             if (dtFin != null)
                 condicion = condicion.and(qSesionDTO.fechaCelebracion.loe(new Timestamp(dtFin.getTime())));
 
-            query.where(condicion);
-        }
+            query.where(condicion.and(qUsuarioDTO.usuario.eq(userUID)));
+        } else
+			query.where(qUsuarioDTO.usuario.eq(userUID));
 
         return query.orderBy(getSort(qSesionDTO, sort)).distinct().list(qSesionDTO);
     }

@@ -64,10 +64,10 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
 		this.configuration = configuration;
     }
 
-    private List<InformeSesion> getInformeSesiones(String fechaInicio, String fechaFin) throws ParseException {
+    private List<InformeSesion> getInformeSesiones(String fechaInicio, String fechaFin, String userUID) throws ParseException {
         List<SesionDTO> sesionesDTO = sesionesDAO.getSesionesCinePorFechas(DateUtils.databaseWithSecondsToDate(fechaInicio + " " +
 				"00:00:00"),
-				DateUtils.databaseWithSecondsToDate(fechaFin + " 23:59:59"), "fechaCelebracion");
+				DateUtils.databaseWithSecondsToDate(fechaFin + " 23:59:59"), "fechaCelebracion", userUID);
 		List<InformeSesion> listaInformesSesion = new ArrayList<InformeSesion>();
 
 		for (SesionDTO sesionDTO: sesionesDTO) {
@@ -147,10 +147,10 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
 				ResourceProperties.getProperty(locale, "informeIncidencias.periodo", inicioTexto, finTexto));
 	}
 
-    public void genera(String fechaInicio, String fechaFin) throws ParseException {
+    public void genera(String fechaInicio, String fechaFin, String userUID) throws ParseException {
 		creaCabecera();
 		creaTituloYPeriodo(fechaInicio, fechaFin);
-		creaTabla(fechaInicio, fechaFin);
+		creaTabla(fechaInicio, fechaFin, userUID);
 		creaFirma(configuration.getCargoInformeEfectivo(), configuration.getFirmanteInformeEfectivo());
     }
 
@@ -192,7 +192,7 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
         return block;
     }
 
-    private void creaTabla(String fechaInicio, String fechaFin) throws SinIvaException, ParseException {
+    private void creaTabla(String fechaInicio, String fechaFin, String userUID) throws SinIvaException, ParseException {
 		BaseTable tableDetalle = new BaseTable(style, 3, "7.2cm", "3.4cm", "6.8cm");
 		tableDetalle.withNewRow();
 		tableDetalle.withNewCell(createBoldBlock(ResourceProperties.getProperty(locale,
@@ -202,7 +202,7 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
 		tableDetalle.withNewCell(createBoldBlock(ResourceProperties.getProperty(locale,
 				"informeIncidencias.incidenciaTitulo").toUpperCase()));
 
-		for (InformeSesion informeSesion : getInformeSesiones(fechaInicio, fechaFin)) {
+		for (InformeSesion informeSesion : getInformeSesiones(fechaInicio, fechaFin, userUID)) {
 			tableDetalle.withNewRow();
 			tableDetalle.withNewCell(informeSesion.getEvento().getTituloEs());
 			tableDetalle.withNewCell(DateUtils.dateToSpanishString(informeSesion.getSesion().getFechaCelebracion()));

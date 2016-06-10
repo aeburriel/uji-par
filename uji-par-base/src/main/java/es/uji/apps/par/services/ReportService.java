@@ -59,9 +59,14 @@ public class ReportService {
 		dbHelper = DatabaseHelperFactory.newInstance(configuration);
 	}
 
-	public ByteArrayOutputStream getExcelTaquilla(String fechaInicio,
-			String fechaFin, Locale locale) throws IOException {
-		List<Object[]> files = comprasDAO.getComprasInFechas(fechaInicio, fechaFin);
+	public ByteArrayOutputStream getExcelTaquilla(String fechaInicio, String fechaFin, Locale locale, String userUID) throws
+			IOException {
+		ExcelService excelService = getExcelServiceTaquilla(fechaInicio, fechaFin, locale, userUID);
+		return excelService.getExcel();
+	}
+
+	public ExcelService getExcelServiceTaquilla(String fechaInicio, String fechaFin, Locale locale, String userUID) {
+		List<Object[]> files = comprasDAO.getComprasInFechas(fechaInicio, fechaFin, userUID);
 		ExcelService excelService = new ExcelService();
 		int rownum = 0;
 
@@ -70,15 +75,18 @@ public class ReportService {
 					+ fechaFin);
 
 			excelService.generaCeldes(excelService.getEstilNegreta(), 0,
-                    ResourceProperties.getProperty(locale, "excelTaquilla.evento"), ResourceProperties.getProperty(locale, "excelTaquilla.sesion"), ResourceProperties.getProperty(locale, "excelTaquilla.tipoEntrada"), ResourceProperties.getProperty(locale, "excelTaquilla.localizacion"),
-                    ResourceProperties.getProperty(locale, "excelTaquilla.numeroEntradas"), ResourceProperties.getProperty(locale, "excelTaquilla.total"));
+                    ResourceProperties.getProperty(locale, "excelTaquilla.evento"), ResourceProperties.getProperty(locale,
+							"excelTaquilla.sesion"), ResourceProperties.getProperty(locale, "excelTaquilla.tipoEntrada"),
+					ResourceProperties.getProperty(locale, "excelTaquilla.localizacion"),
+                    ResourceProperties.getProperty(locale, "excelTaquilla.numeroEntradas"), ResourceProperties.getProperty
+							(locale, "excelTaquilla.total"));
 
 			for (Object[] fila : files) {
 				rownum++;
 				addDadesTaquilla(rownum, objectToInforme(fila), excelService);
 			}
 		}
-		return excelService.getExcel();
+		return excelService;
 	}
 
 	private Informe objectToInforme(Object[] fila) {
@@ -192,9 +200,14 @@ public class ReportService {
 		excelService.addCell(4, fila.getTotal().floatValue(), row);
 	}
 
-	public ByteArrayOutputStream getExcelEventos(String fechaInicio,
-			String fechaFin, Locale locale) throws IOException {
-		List<Object[]> files = comprasDAO.getComprasPorEventoInFechas(fechaInicio, fechaFin);
+	public ByteArrayOutputStream getExcelEventos(String fechaInicio, String fechaFin, Locale locale, String userUID) throws
+			IOException {
+		ExcelService excelService = getExcelServiceEventos(fechaInicio, fechaFin, locale, userUID);
+		return excelService.getExcel();
+	}
+
+	public ExcelService getExcelServiceEventos(String fechaInicio, String fechaFin, Locale locale, String userUID) {
+		List<Object[]> files = comprasDAO.getComprasPorEventoInFechas(fechaInicio, fechaFin, userUID);
 		ExcelService excelService = new ExcelService();
 		int rownum = 0;
 
@@ -202,8 +215,10 @@ public class ReportService {
 			excelService.addFulla(ResourceProperties.getProperty(locale, "excelEventos.titulo") + " " + fechaInicio + " - "
 					+ fechaFin);
 			excelService.generaCeldes(excelService.getEstilNegreta(), 0,
-                    ResourceProperties.getProperty(locale, "excelEventos.evento"), ResourceProperties.getProperty(locale, "excelEventos.tipoEntrada"), ResourceProperties.getProperty(locale, "excelEventos.tipo"),
-                    ResourceProperties.getProperty(locale, "excelEventos.numeroEntradas"), ResourceProperties.getProperty(locale, "excelEventos.total"));
+                    ResourceProperties.getProperty(locale, "excelEventos.evento"), ResourceProperties.getProperty(locale,
+							"excelEventos.tipoEntrada"), ResourceProperties.getProperty(locale, "excelEventos.tipo"),
+                    ResourceProperties.getProperty(locale, "excelEventos.numeroEntradas"), ResourceProperties.getProperty(locale,
+							"excelEventos.total"));
 
 			for (Object[] fila : files) {
 				rownum++;
@@ -211,26 +226,26 @@ public class ReportService {
 						excelService);
 			}
 		}
-		return excelService.getExcel();
+		return excelService;
 	}
 
-	public void getPdfTaquilla(String fechaInicio, String fechaFin, OutputStream bos, Locale locale, String login) throws
+	public void getPdfTaquilla(String fechaInicio, String fechaFin, OutputStream bos, Locale locale, String userUID) throws
 			ReportSerializationException, ParseException {
-		InformeInterface informe = generaYRellenaInformePDFTaquilla(fechaInicio, fechaFin, locale, login);
+		InformeInterface informe = generaYRellenaInformePDFTaquilla(fechaInicio, fechaFin, locale, userUID);
 		informe.serialize(bos);
 	}
 
-	public InformeInterface generaYRellenaInformePDFTaquilla(String fechaInicio, String fechaFin, Locale locale, String login)
+	public InformeInterface generaYRellenaInformePDFTaquilla(String fechaInicio, String fechaFin, Locale locale, String userUID)
 			throws ParseException {
-		String className = usuariosDAO.getReportClassNameForUserAndType(login, EntradaReportFactory.TIPO_INFORME_PDF_TAQUILLA);
+		String className = usuariosDAO.getReportClassNameForUserAndType(userUID, EntradaReportFactory.TIPO_INFORME_PDF_TAQUILLA);
 		InformeInterface informeTaquillaReport = EntradaReportFactory.newInstanceInformeTaquilla(className);
 		InformeInterface informe = informeTaquillaReport.create(locale, configuration);
 
-		List<InformeModelReport> compras = objectsToInformes(comprasDAO.getComprasPorEventoInFechas(fechaInicio, fechaFin));
+		List<InformeModelReport> compras = objectsToInformes(comprasDAO.getComprasPorEventoInFechas(fechaInicio, fechaFin, userUID));
 
-		Object[] taquillaTpv = comprasDAO.getTotalTaquillaTpv(fechaInicio, fechaFin);
-		Object[] taquillaEfectivo = comprasDAO.getTotalTaquillaEfectivo(fechaInicio, fechaFin);
-		Object[] online = comprasDAO.getTotalOnline(fechaInicio, fechaFin);
+		Object[] taquillaTpv = comprasDAO.getTotalTaquillaTpv(fechaInicio, fechaFin, userUID);
+		Object[] taquillaEfectivo = comprasDAO.getTotalTaquillaEfectivo(fechaInicio, fechaFin, userUID);
+		Object[] online = comprasDAO.getTotalOnline(fechaInicio, fechaFin, userUID);
 
 		BigDecimal totalTaquillaTpv = new BigDecimal(0);
 		BigDecimal countTaquillaTpv = new BigDecimal(0);
@@ -282,22 +297,23 @@ public class ReportService {
 		return DateUtils.dateToSpanishString(dt);
 	}
 
-	public void getPdfEfectivo(String fechaInicio, String fechaFin,	OutputStream bos, Locale locale, String login) throws
+	public void getPdfEfectivo(String fechaInicio, String fechaFin,	OutputStream bos, Locale locale, String userUID) throws
 			ReportSerializationException, ParseException, SinIvaException {
-		InformeInterface informe = generaYRellenaInformePDFEfectivo(fechaInicio, fechaFin, locale, login);
+		InformeInterface informe = generaYRellenaInformePDFEfectivo(fechaInicio, fechaFin, locale, userUID);
 		informe.serialize(bos);
 	}
 
-	public InformeInterface generaYRellenaInformePDFEfectivo(String fechaInicio, String fechaFin, Locale locale, String login)
+	public InformeInterface generaYRellenaInformePDFEfectivo(String fechaInicio, String fechaFin, Locale locale, String userUID)
 			throws ParseException {
-		String className = usuariosDAO.getReportClassNameForUserAndType(login, EntradaReportFactory.TIPO_INFORME_PDF_EFECTIVO);
+		String className = usuariosDAO.getReportClassNameForUserAndType(userUID, EntradaReportFactory.TIPO_INFORME_PDF_EFECTIVO);
 		InformeInterface informeEfectivoReport = EntradaReportFactory.newInstanceInformeEfectivo(className);
 		InformeInterface informe = informeEfectivoReport.create(locale, configuration);
-		List<InformeModelReport> compras = objectsSesionesToInformesIva(comprasDAO.getComprasEfectivo(fechaInicio, fechaFin));
+		List<InformeModelReport> compras = objectsSesionesToInformesIva(comprasDAO.getComprasEfectivo(fechaInicio, fechaFin,
+				userUID));
 		List<InformeAbonoReport> abonos = new ArrayList<InformeAbonoReport>();
 
 		if (configuration.isMenuAbono()) {
-			abonos = objectsAbonosToInformesIva(comprasDAO.getAbonosEfectivo(fechaInicio, fechaFin));
+			abonos = objectsAbonosToInformesIva(comprasDAO.getAbonosEfectivo(fechaInicio, fechaFin, userUID));
 		}
 
 		informe.genera(getSpanishStringDateFromBBDDString(fechaInicio), getSpanishStringDateFromBBDDString(fechaFin), compras,
@@ -305,39 +321,40 @@ public class ReportService {
 		return informe;
 	}
 
-	public void getPdfTpvSubtotales(String fechaInicio, String fechaFin, OutputStream bos, Locale locale, String login) throws
+	public void getPdfTpvSubtotales(String fechaInicio, String fechaFin, OutputStream bos, Locale locale, String userUID) throws
 			ReportSerializationException, ParseException, SinIvaException {
-		InformeInterface informe = generaYRellenaInformePDFTaquillaTPVSubtotales(fechaInicio, fechaFin, locale, login);
+		InformeInterface informe = generaYRellenaInformePDFTaquillaTPVSubtotales(fechaInicio, fechaFin, locale, userUID);
 		informe.serialize(bos);
 	}
 
 	public InformeInterface generaYRellenaInformePDFTaquillaTPVSubtotales(String fechaInicio, String fechaFin, Locale locale,
-			String login) throws ParseException {
-		String className = usuariosDAO.getReportClassNameForUserAndType(login, EntradaReportFactory
+			String userUID) throws ParseException {
+		String className = usuariosDAO.getReportClassNameForUserAndType(userUID, EntradaReportFactory
 				.TIPO_INFORME_PDF_TAQUILLA_TPV_SUBTOTALES);
 		InformeInterface informeTaquillaTpvSubtotalesReport = EntradaReportFactory.newInstanceInformeTaquillaTpvSubtotalesReport
 				(className);
 		InformeInterface informe = informeTaquillaTpvSubtotalesReport.create(locale, configuration);
-		List<InformeModelReport> compras = objectsSesionesToInformesTpv(comprasDAO.getComprasTpv(fechaInicio, fechaFin));
+		List<InformeModelReport> compras = objectsSesionesToInformesTpv(comprasDAO.getComprasTpv(fechaInicio, fechaFin, userUID));
 
 		informe.genera(getSpanishStringDateFromBBDDString(fechaInicio), getSpanishStringDateFromBBDDString(fechaFin),
 				compras, null, configuration.getCargoInformeEfectivo(), configuration.getFirmanteInformeEfectivo());
 		return informe;
 	}
 
-	public void getPdfEventos(String fechaInicio, String fechaFin, OutputStream bos, Locale locale, String login) throws
+	public void getPdfEventos(String fechaInicio, String fechaFin, OutputStream bos, Locale locale, String userUID) throws
 			ReportSerializationException, ParseException, SinIvaException {
-		InformeInterface informe = generaYRellenaInformePDFEventos(fechaInicio, fechaFin, locale, login);
+		InformeInterface informe = generaYRellenaInformePDFEventos(fechaInicio, fechaFin, locale, userUID);
 		informe.serialize(bos);
 	}
 
-	public InformeInterface generaYRellenaInformePDFEventos(String fechaInicio, String fechaFin, Locale locale, String login)
+	public InformeInterface generaYRellenaInformePDFEventos(String fechaInicio, String fechaFin, Locale locale, String userUID)
 			throws ParseException {
-		String className = usuariosDAO.getReportClassNameForUserAndType(login, EntradaReportFactory.TIPO_INFORME_PDF_EVENTOS);
+		String className = usuariosDAO.getReportClassNameForUserAndType(userUID, EntradaReportFactory.TIPO_INFORME_PDF_EVENTOS);
 		InformeInterface informeEventosReport = EntradaReportFactory.newInstanceInformeEventosReport(className);
 		InformeInterface informe = informeEventosReport.create(locale, configuration);
 
-		List<InformeModelReport> compras = objectsSesionesToInformesEventos(comprasDAO.getComprasEventos(fechaInicio, fechaFin));
+		List<InformeModelReport> compras = objectsSesionesToInformesEventos(comprasDAO.getComprasEventos(fechaInicio, fechaFin,
+				userUID));
 
 		informe.genera(getSpanishStringDateFromBBDDString(fechaInicio),
 				getSpanishStringDateFromBBDDString(fechaFin), compras);
@@ -398,21 +415,21 @@ public class ReportService {
 		//informeSesionReport = EntradaReportFactory.newInstanceInformeSesionReport(configuration);
 	}
 
-	public void getPdfSesion(long sesionId, ByteArrayOutputStream bos, Locale locale, String login) throws SinIvaException,
+	public void getPdfSesion(long sesionId, ByteArrayOutputStream bos, Locale locale, String userUID) throws SinIvaException,
 			ReportSerializationException, IOException {
 		Sesion sesion = new Sesion(new Long(sesionId).intValue());
-		InformeInterface informe = generaYRellenaPDFSesiones(Arrays.asList(sesion), locale, login);
+		InformeInterface informe = generaYRellenaPDFSesiones(Arrays.asList(sesion), locale, userUID);
 		informe.serialize(bos);
 	}
 
-	public void getPdfSesiones(List<Sesion> sesiones, ByteArrayOutputStream bos, Locale locale, String login) throws
+	public void getPdfSesiones(List<Sesion> sesiones, ByteArrayOutputStream bos, Locale locale, String userUID) throws
 			SinIvaException, ReportSerializationException, IOException {
-		InformeInterface informe = generaYRellenaPDFSesiones(sesiones, locale, login);
+		InformeInterface informe = generaYRellenaPDFSesiones(sesiones, locale, userUID);
 		informe.serialize(bos);
 	}
 
-	public InformeInterface generaYRellenaPDFSesiones(List<Sesion> sesiones, Locale locale, String login) {
-		String className = usuariosDAO.getReportClassNameForUserAndType(login, EntradaReportFactory.TIPO_INFORME_PDF_SESIONES);
+	public InformeInterface generaYRellenaPDFSesiones(List<Sesion> sesiones, Locale locale, String userUID) {
+		String className = usuariosDAO.getReportClassNameForUserAndType(userUID, EntradaReportFactory.TIPO_INFORME_PDF_SESIONES);
 		InformeInterface informeSesionReport = EntradaReportFactory.newInstanceInformeSesionReport(className);
 		InformeInterface informe = informeSesionReport.create(locale, configuration);
 		List<InformeSesion> informesSesion = new ArrayList<InformeSesion>();
@@ -430,7 +447,8 @@ public class ReportService {
 		return informe;
 	}
 
-	public void getPdf(long sesionId, ByteArrayOutputStream bos, String tipo, Locale locale) throws SinIvaException, ReportSerializationException, IOException {
+	public void getPdf(long sesionId, ByteArrayOutputStream bos, String tipo, Locale locale) throws SinIvaException,
+			ReportSerializationException, IOException {
         informeReport = EntradaReportFactory.newInstanceInformeReport(tipo, configuration);
         InformeInterface informe = informeReport.create(locale, configuration);
         informe.genera(sesionId);
@@ -467,10 +485,11 @@ public class ReportService {
 		return informeSesion;
 	}
 
-	public void getPdfPorFechas(String fechaInicio, String fechaFin, String tipo, ByteArrayOutputStream ostream, Locale locale) throws ReportSerializationException, ParseException {
+	public void getPdfPorFechas(String fechaInicio, String fechaFin, String tipo, ByteArrayOutputStream ostream, Locale locale,
+			String userUID) throws ReportSerializationException, ParseException {
 		informeReport = EntradaReportFactory.newInstanceInformeReport(tipo, configuration);
 		InformeInterface informe = informeReport.create(locale, configuration);
-		informe.genera(fechaInicio, fechaFin);
+		informe.genera(fechaInicio, fechaFin, userUID);
 		informe.serialize(ostream);
 	}
 }

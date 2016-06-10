@@ -51,7 +51,8 @@ public class ReportResource extends BaseResource {
     @Produces("application/vnd.ms-excel")
     public Response generateExcelTaquilla(@PathParam("fechaInicio") String fechaInicio, @PathParam("fechaFin") String fechaFin)
 			throws TranscoderException, IOException {
-        ByteArrayOutputStream ostream = reportService.getExcelTaquilla(fechaInicio, fechaFin, getLocale());
+		String userUID = AuthChecker.getUserUID(currentRequest);
+        ByteArrayOutputStream ostream = reportService.getExcelTaquilla(fechaInicio, fechaFin, getLocale(), userUID);
         return Response.ok(ostream.toByteArray())
                 .header("Content-Disposition", "attachment; filename =\"informeTaquilla " + fechaInicio + "-" + fechaFin + ".xls\"")
                 .build();
@@ -62,7 +63,8 @@ public class ReportResource extends BaseResource {
     @Produces("application/vnd.ms-excel")
     public Response generateExcelEventos(@PathParam("fechaInicio") String fechaInicio, @PathParam("fechaFin") String fechaFin)
 			throws TranscoderException, IOException {
-        ByteArrayOutputStream ostream = reportService.getExcelEventos(fechaInicio, fechaFin, getLocale());
+		String userUID = AuthChecker.getUserUID(currentRequest);
+        ByteArrayOutputStream ostream = reportService.getExcelEventos(fechaInicio, fechaFin, getLocale(), userUID);
         return Response.ok(ostream.toByteArray())
                 .header("Content-Disposition", "attachment; filename =\"informeEvents " + fechaInicio + "-" + fechaFin + ".xls\"")
                 .build();
@@ -74,10 +76,10 @@ public class ReportResource extends BaseResource {
     public Response generatePdfTaquilla(@PathParam("fechaInicio") String fechaInicio, @PathParam("fechaFin") String fechaFin)
 			throws TranscoderException, IOException, ReportSerializationException, ParseException {
 
-		String login = AuthChecker.getUserUID(currentRequest);
+		String userUID = AuthChecker.getUserUID(currentRequest);
         ByteArrayOutputStream ostream = new ByteArrayOutputStream();
 
-        reportService.getPdfTaquilla(fechaInicio, fechaFin, ostream, getLocale(), login);
+        reportService.getPdfTaquilla(fechaInicio, fechaFin, ostream, getLocale(), userUID);
 
         return Response.ok(ostream.toByteArray())
                 .header("Content-Disposition", "attachment; filename =\"informeTaquilla " + fechaInicio + "-" + fechaFin + ".pdf\"")
@@ -89,12 +91,12 @@ public class ReportResource extends BaseResource {
     @Produces("application/pdf")
     public Response generatePdfSesion(@PathParam("idSesion") long idSesion) throws TranscoderException, IOException,
             ReportSerializationException, ParseException, SinIvaException {
-		String login = AuthChecker.getUserUID(currentRequest);
+		String userUID = AuthChecker.getUserUID(currentRequest);
         ByteArrayOutputStream ostream = new ByteArrayOutputStream();
         Sesion sesion = sesionesService.getSesion(idSesion);
         String fileName = "informeSesion " + DateUtils.dateToSpanishStringWithHour(sesion.getFechaCelebracion()) + ".pdf";
 
-        reportService.getPdfSesion(idSesion, ostream, getLocale(), login);
+        reportService.getPdfSesion(idSesion, ostream, getLocale(), userUID);
 
         return Response.ok(ostream.toByteArray())
                 .header("Content-Disposition", "attachment; filename =\"" + fileName + "\"")
@@ -106,7 +108,7 @@ public class ReportResource extends BaseResource {
     @Produces("application/pdf")
     public Response generatePdfEvento(@PathParam("idEvento") long idEvento) throws TranscoderException, IOException,
             ReportSerializationException, ParseException, SinIvaException {
-		String login = AuthChecker.getUserUID(currentRequest);
+		String userUID = AuthChecker.getUserUID(currentRequest);
         ByteArrayOutputStream ostream = new ByteArrayOutputStream();
 
         List<Sesion> sesiones = sesionesService.getSesiones(idEvento);
@@ -118,7 +120,7 @@ public class ReportResource extends BaseResource {
         });
         String fileName = "informeEvento-" + idEvento + ".pdf";
 
-        reportService.getPdfSesiones(sesiones, ostream, getLocale(), login);
+        reportService.getPdfSesiones(sesiones, ostream, getLocale(), userUID);
 
         return Response.ok(ostream.toByteArray())
                 .header("Content-Disposition", "attachment; filename =\"" + fileName + "\"")
@@ -128,7 +130,8 @@ public class ReportResource extends BaseResource {
     @POST
     @Path("evento/{idEvento}/sesion/{idSesion}/pdf/{tipo}")
     @Produces("application/pdf")
-    public Response generatePdf(@PathParam("idEvento") long idEvento, @PathParam("idSesion") long idSesion, @PathParam("tipo") String tipo) throws TranscoderException, IOException,
+    public Response generatePdf(@PathParam("idEvento") long idEvento, @PathParam("idSesion") long idSesion, @PathParam("tipo")
+			String tipo) throws TranscoderException, IOException,
             ReportSerializationException, ParseException, SinIvaException {
         ByteArrayOutputStream ostream = new ByteArrayOutputStream();
 
@@ -150,7 +153,8 @@ public class ReportResource extends BaseResource {
 			ReportSerializationException, ParseException, SinIvaException {
 		ByteArrayOutputStream ostream = new ByteArrayOutputStream();
 		String fileName = tipo + "_" + fechaInicio + "-" + fechaFin + ".pdf";
-		reportService.getPdfPorFechas(fechaInicio, fechaFin, tipo, ostream, getLocale());
+		String userUID = AuthChecker.getUserUID(currentRequest);
+		reportService.getPdfPorFechas(fechaInicio, fechaFin, tipo, ostream, getLocale(), userUID);
 
 		return Response.ok(ostream.toByteArray())
 				.header("Content-Disposition", "attachment; filename =\"" + fileName + "\"").type("application/pdf").build();
@@ -164,8 +168,8 @@ public class ReportResource extends BaseResource {
         ByteArrayOutputStream ostream = new ByteArrayOutputStream();
 
         try {
-			String login = AuthChecker.getUserUID(currentRequest);
-            reportService.getPdfEfectivo(fechaInicio, fechaFin, ostream, getLocale(), login);
+			String userUID = AuthChecker.getUserUID(currentRequest);
+            reportService.getPdfEfectivo(fechaInicio, fechaFin, ostream, getLocale(), userUID);
         } catch (SinIvaException e) {
             log.error("Error", e);
             String errorMsj = String.format("ERROR: Cal introduir l'IVA de l'event \"%s\"", e.getEvento());
@@ -185,8 +189,8 @@ public class ReportResource extends BaseResource {
         ByteArrayOutputStream ostream = new ByteArrayOutputStream();
 
         try {
-			String login = AuthChecker.getUserUID(currentRequest);
-            reportService.getPdfTpvSubtotales(fechaInicio, fechaFin, ostream, getLocale(), login);
+			String userUID = AuthChecker.getUserUID(currentRequest);
+            reportService.getPdfTpvSubtotales(fechaInicio, fechaFin, ostream, getLocale(), userUID);
         } catch (SinIvaException e) {
             log.error("Error", e);
 
@@ -207,8 +211,8 @@ public class ReportResource extends BaseResource {
         ByteArrayOutputStream ostream = new ByteArrayOutputStream();
 
         try {
-			String login = AuthChecker.getUserUID(currentRequest);
-            reportService.getPdfEventos(fechaInicio, fechaFin, ostream, getLocale(), login);
+			String userUID = AuthChecker.getUserUID(currentRequest);
+            reportService.getPdfEventos(fechaInicio, fechaFin, ostream, getLocale(), userUID);
         } catch (SinIvaException e) {
             log.error("Error", e);
 
@@ -227,8 +231,8 @@ public class ReportResource extends BaseResource {
     public Response filtraSesiones(@QueryParam("fechaInicio") String fechaInicio, @QueryParam("fechaFin") String fechaFin,
                                    @QueryParam("sort") @DefaultValue("[{\"property\":\"nombre\",\"direction\":\"ASC\"}]") String sort,
                                    @QueryParam("start") int start, @QueryParam("limit") @DefaultValue("1000") int limit) {
-
-        List<Sesion> sesiones = sesionesService.getSesionesCinePorFechas(fechaInicio, fechaFin, sort);
+		String userUID = AuthChecker.getUserUID(currentRequest);
+        List<Sesion> sesiones = sesionesService.getSesionesCinePorFechas(fechaInicio, fechaFin, sort, userUID);
         return Response.ok().entity(new RestResponse(true, sesiones, sesiones.size())).build();
     }
 }

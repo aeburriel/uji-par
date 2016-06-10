@@ -22,5 +22,5 @@ public interface InformeInterface {
 	public void genera(String cargo, String firmante, List<InformeSesion> informesSesion, Cine cine, boolean printSesion) throws SinIvaException;
 	public void genera(String inicio, String fin, List<InformeModelReport> compras) throws SinIvaException;
     public void genera(long sesionId) throws SinIvaException;
-	public void genera(String fechaInicio, String fechaFin) throws ParseException;
+	public void genera(String fechaInicio, String fechaFin, String userUID) throws ParseException;
 }

@@ -46,10 +46,8 @@ public class ComprasDAO extends BaseDAO {
 	}
 
 	@Transactional
-	public CompraDTO insertaCompra(Long sesionId, Date fecha, boolean taquilla,
-			BigDecimal importe) {
+	public CompraDTO insertaCompra(Long sesionId, Date fecha, boolean taquilla, BigDecimal importe) {
 		SesionDTO sesion = sesionDAO.getSesion(sesionId);
-
 		CompraDTO compraDTO = new CompraDTO(sesion, new Timestamp(
 				fecha.getTime()), taquilla, importe, UUID.randomUUID()
 				.toString());
@@ -534,11 +532,13 @@ public class ComprasDAO extends BaseDAO {
 
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<Object[]> getComprasInFechas(String fechaInicio, String fechaFin) {
+	public List<Object[]> getComprasInFechas(String fechaInicio, String fechaFin, String userUID) {
 		String sql = "select e.titulo_va, s.fecha_celebracion, b.tipo, l.codigo, count(b.id) as cantidad, sum(b.precio) as total, c.sesion_id, "
 				+ "l.nombre_va, f.nombre "
-				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, par_localizaciones l, par_tarifas f "
+				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, par_localizaciones l, par_tarifas f, "
+				+ "par_salas sala, par_salas_usuarios su, par_usuarios user "
 				+ "where b.compra_id = c.id and s.id = c.sesion_id and e.id = s.evento_id and l.id=b.localizacion_id "
+				+ "and sala.id = s.sala_id and user.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = user.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
 				+ "and c.taquilla = " + dbHelper.trueString() + " "
 				+ "and c.codigo_pago_tarjeta is null "
@@ -551,12 +551,13 @@ public class ComprasDAO extends BaseDAO {
 
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<Object[]> getComprasPorEventoInFechas(String fechaInicio,
-			String fechaFin) {
+	public List<Object[]> getComprasPorEventoInFechas(String fechaInicio, String fechaFin, String userUID) {
 		String sql = "select e.id, e.titulo_va, b.tipo, count(b.id) as cantidad, sum(b.precio) as total, c.taquilla, "
 				+ "f.nombre "
-				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, par_tarifas f "
+				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, par_tarifas f, "
+				+ "par_salas sala, par_salas_usuarios su, par_usuarios user "
 				+ "where b.compra_id = c.id and s.id = c.sesion_id and e.id = s.evento_id "
+				+ "and sala.id = s.sala_id and user.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = user.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
 				+ "and f.id = "	+ dbHelper.toInteger("b.tipo") + " "
 				+ "group by e.id, e.titulo_va, b.tipo, c.taquilla, f.nombre "
@@ -567,12 +568,14 @@ public class ComprasDAO extends BaseDAO {
 
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<Object[]> getComprasEfectivo(String fechaInicio, String fechaFin) {
+	public List<Object[]> getComprasEfectivo(String fechaInicio, String fechaFin, String userUID) {
 		String sql = "select e.titulo_va, s.fecha_celebracion, b.tipo, count(b.id) as cantidad, sum(b.precio) as total, "
 				+ "c.sesion_id, e.porcentaje_iva, "
 				+ "f.nombre "
-				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, par_tarifas f "
+				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, par_tarifas f, "
+				+ "par_salas sala, par_salas_usuarios su, par_usuarios user "
 				+ "where b.compra_id = c.id and s.id = c.sesion_id and e.id = s.evento_id "
+				+ "and sala.id = s.sala_id and user.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = user.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
 				+ "and c.taquilla = " + dbHelper.trueString() + " "
 				+ "and (c.codigo_pago_tarjeta is null and c.referencia_pago is null) "
@@ -586,10 +589,12 @@ public class ComprasDAO extends BaseDAO {
 
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<Object[]> getAbonosEfectivo(String fechaInicio, String fechaFin) {
+	public List<Object[]> getAbonosEfectivo(String fechaInicio, String fechaFin, String userUID) {
 		String sql = "select a.nombre, count(a.id)/count(distinct(c.sesion_id)) as abonos, sum(b.precio)/count(distinct(c.sesion_id)) as total "
-				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, par_tarifas f, par_abonados abdos, par_abonos a "
+				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, par_tarifas f, par_abonados abdos, par_abonos a, "
+				+ "par_salas sala, par_salas_usuarios su, par_usuarios user "
 				+ "where b.compra_id = c.id and s.id = c.sesion_id and e.id = s.evento_id and c.abonado_id = abdos.id and abdos.abono_id = a.id "
+				+ "and sala.id = s.sala_id and user.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = user.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
 				+ "and c.taquilla = " + dbHelper.trueString() + " "
 				+ "and (c.codigo_pago_tarjeta is null and c.referencia_pago is null) "
@@ -603,18 +608,16 @@ public class ComprasDAO extends BaseDAO {
 
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<Object[]> getComprasTpv(String fechaInicio, String fechaFin) {
+	public List<Object[]> getComprasTpv(String fechaInicio, String fechaFin, String userUID) {
 		String formato = "DD";
 		String sql = "select e.titulo_va, s.fecha_celebracion, b.tipo, count(b.id) as cantidad, sum(b.precio) as total, c.sesion_id, "
 				+ "e.porcentaje_iva, "
-				/*+ dbHelper.caseString("b.tipo", new String[] { "'normal'", "1",
-						"'descuento'", "2", "'aulaTeatro'", "3",
-						"'invitacion'", "4" })
-				+ " as tipoOrden, "*/
 				+ dbHelper.trunc("c.fecha", formato)
 				+ ", f.nombre "
-				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, par_tarifas f "
+				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, par_tarifas f, "
+				+ "par_salas sala, par_salas_usuarios su, par_usuarios user "
 				+ "where b.compra_id = c.id and s.id = c.sesion_id and e.id = s.evento_id "
+				+ "and sala.id = s.sala_id and user.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = user.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
 				+ "and (c.caducada is null or c.caducada = " + dbHelper.falseString() + ") "
 				+ "and (c.codigo_pago_tarjeta is not null or c.codigo_pago_pasarela is not null or c.referencia_pago is not null or c.taquilla = " + dbHelper.falseString() + ") "
@@ -628,15 +631,17 @@ public class ComprasDAO extends BaseDAO {
 
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<Object[]> getComprasEventos(String fechaInicio, String fechaFin) {
+	public List<Object[]> getComprasEventos(String fechaInicio, String fechaFin, String userUID) {
 		String sql = "select e.titulo_va, s.fecha_celebracion, b.tipo, count(b.id) as cantidad, sum(b.precio) as total, "
 				+ "e.porcentaje_iva, "
 				+ dbHelper.caseString("b.tipo", new String[] { "'normal'", "1",
 						"'descuento'", "2", "'aulaTeatro'", "3",
 						"'invitacion'", "4" })
 				+ " as tipoOrden, e.id as eventoId, s.id as sesionId, f.nombre "
-				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, par_tarifas f "
+				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, par_tarifas f, "
+				+ "par_salas sala, par_salas_usuarios su, par_usuarios user "
 				+ "where b.compra_id = c.id and s.id = c.sesion_id and e.id = s.evento_id "
+				+ "and sala.id = s.sala_id and user.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = user.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
 				+ "and f.id = "	+ dbHelper.toInteger("b.tipo") + " "
 				+ "group by e.id, s.id, e.titulo_va, b.tipo, s.fecha_celebracion, e.porcentaje_iva, f.nombre "
@@ -646,10 +651,12 @@ public class ComprasDAO extends BaseDAO {
 	}
 
 	@Transactional
-	public Object[] getTotalTaquillaTpv(String fechaInicio, String fechaFin) {
+	public Object[] getTotalTaquillaTpv(String fechaInicio, String fechaFin, String userUID) {
 		String sql = "select sum(b.precio), count(b.precio) "
-				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e "
+				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, "
+				+ "par_salas sala, par_salas_usuarios su, par_usuarios user "
 				+ "where b.compra_id = c.id and s.id = c.sesion_id and e.id = s.evento_id "
+				+ "and sala.id = s.sala_id and user.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = user.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
 				+ "and c.taquilla = " + dbHelper.trueString() + " "
 				+ "and (c.codigo_pago_tarjeta is not null or c.referencia_pago is not null)";
@@ -663,10 +670,12 @@ public class ComprasDAO extends BaseDAO {
 	}
 
 	@Transactional
-	public Object[] getTotalTaquillaEfectivo(String fechaInicio, String fechaFin) {
+	public Object[] getTotalTaquillaEfectivo(String fechaInicio, String fechaFin, String userUID) {
 		String sql = "select sum(b.precio), count(b.precio) "
-				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e "
+				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, "
+				+ "par_salas sala, par_salas_usuarios su, par_usuarios user "
 				+ "where b.compra_id = c.id and s.id = c.sesion_id and e.id = s.evento_id "
+				+ "and sala.id = s.sala_id and user.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = user.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
 				+ "and c.taquilla = " + dbHelper.trueString() + " "
 				+ "and (c.codigo_pago_tarjeta is null and c.referencia_pago is null)";
@@ -680,10 +689,12 @@ public class ComprasDAO extends BaseDAO {
 	}
 
 	@Transactional
-	public Object[] getTotalOnline(String fechaInicio, String fechaFin) {
+	public Object[] getTotalOnline(String fechaInicio, String fechaFin, String userUID) {
 		String sql = "select sum(b.precio), count(b.precio) "
-				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e "
+				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, "
+				+ "par_salas sala, par_salas_usuarios su, par_usuarios user "
 				+ "where b.compra_id = c.id and s.id = c.sesion_id and e.id = s.evento_id "
+				+ "and sala.id = s.sala_id and user.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = user.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
 				+ "and c.taquilla = " + dbHelper.falseString() + " ";
 

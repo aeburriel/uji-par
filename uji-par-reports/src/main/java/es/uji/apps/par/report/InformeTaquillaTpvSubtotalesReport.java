@@ -427,7 +427,7 @@ public class InformeTaquillaTpvSubtotalesReport extends Report implements Inform
 
     }
 
-	public void genera(String fechaInicio, String fechaFin) {
+	public void genera(String fechaInicio, String fechaFin, String userUID) {
 
 	}
 
