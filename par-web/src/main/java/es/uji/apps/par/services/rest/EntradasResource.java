@@ -109,7 +109,7 @@ public class EntradasResource extends BaseResource {
 
         Locale locale = getLocale();
         String language = locale.getLanguage();
-        Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "seleccionEntrada", locale, APP);
+        Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + sesion.getSala().getCine().getCodigo() + "/seleccionEntrada", locale, APP);
         template.put("evento", evento);
         template.put("sesion", sesion);
         template.put("idioma", language);
@@ -118,7 +118,7 @@ public class EntradasResource extends BaseResource {
         template.put("hora", sesion.getHoraCelebracion());
         template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(urlBase, url, language.toString()));
         template.put("tipoEventoEs", sesion.getEvento().getParTiposEvento().getNombreEs());
-        template.put("butacasFragment", Constantes.PLANTILLAS_DIR + sesion.getSala().getHtmlTemplateName());
+        template.put("butacasFragment", Constantes.PLANTILLAS_DIR + sesion.getSala().getCine().getCodigo() + "/" + sesion.getSala().getHtmlTemplateName());
         //template.put("tarifas", sesionesService)
 
         template.put("estilosOcupadas", butacasService.estilosButacasOcupadas(sesionId, localizacionesService.getLocalizacionesSesion(sesionId), false));
@@ -176,7 +176,7 @@ public class EntradasResource extends BaseResource {
 
         Locale locale = getLocale();
         String language = locale.getLanguage();
-        Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "seleccionEntradaNoNumerada", locale, APP);
+        Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + sesion.getSala().getCine().getCodigo() + "/seleccionEntradaNoNumerada", locale, APP);
         template.put("evento", evento);
         template.put("sesion", sesion);
         template.put("idioma", language);
@@ -365,9 +365,11 @@ public class EntradasResource extends BaseResource {
     public Response rellenaDatosComprador(@PathParam("uuidCompra") String uuidCompra, String nombre, String apellidos,
                                           String direccion, String poblacion, String cp, String provincia, String telefono, String email,
                                           String infoPeriodica, String condicionesPrivacidad, String error) throws Exception {
+        CompraDTO compra = comprasService.getCompraByUuid(uuidCompra);
+
         Locale locale = getLocale();
         String language = locale.getLanguage();
-        Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "datosComprador", locale, APP);
+        Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + compra.getParSesion().getParSala().getParCine().getCodigo() + "/datosComprador", locale, APP);
         String urlBase = getBaseUrlPublic();
         String url = request.getRequestURL().toString();
         template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(urlBase, url, language.toString()));
@@ -388,8 +390,6 @@ public class EntradasResource extends BaseResource {
         template.put("email", email);
         template.put("condicionesPrivacidad", condicionesPrivacidad);
         template.put("urlCondicionesPrivacidad", configuration.getUrlCondicionesPrivacidad());
-
-        CompraDTO compra = comprasService.getCompraByUuid(uuidCompra);
 
         if (compra != null) {
             if (language.equals("ca"))
@@ -676,7 +676,7 @@ public class EntradasResource extends BaseResource {
         String language = locale.getLanguage();
 
         Sesion sesion = sesionesService.getSesion(sesionId);
-        HTMLTemplate template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + sesion.getSala().getHtmlTemplateName(), locale, APP);
+        HTMLTemplate template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + sesion.getSala().getCine().getCodigo() + "/" + sesion.getSala().getHtmlTemplateName(), locale, APP);
 
         template.put("baseUrl", getBaseUrlPublic());
         template.put("idioma", language);

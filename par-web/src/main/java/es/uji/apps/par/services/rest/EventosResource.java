@@ -2,7 +2,6 @@ package es.uji.apps.par.services.rest;
 
 import com.sun.jersey.api.core.InjectParam;
 import es.uji.apps.par.builders.PublicPageBuilderInterface;
-import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.database.DatabaseHelper;
 import es.uji.apps.par.database.DatabaseHelperFactory;
 import es.uji.apps.par.exceptions.Constantes;
@@ -103,6 +102,7 @@ public class EventosResource extends BaseResource {
     public Template getEvento(@PathParam("contenidoId") Long contenidoId, @QueryParam("lang") String lang) throws Exception {
         try {
             Evento evento = eventosService.getEventoByRssId(contenidoId);
+            evento.setSesiones(sesionesService.getSesiones(evento.getId()));
 
             return getTemplateEvento(evento, lang);
         } catch (EventoNoEncontradoException e) {
@@ -116,6 +116,7 @@ public class EventosResource extends BaseResource {
     public Template getEventoById(@PathParam("id") Long id, @QueryParam("lang") String lang) throws Exception {
         try {
             Evento evento = eventosService.getEvento(id);
+            evento.setSesiones(sesionesService.getSesiones(evento.getId()));
 
             return getTemplateEvento(evento, lang);
         } catch (EventoNoEncontradoException e) {
@@ -158,7 +159,7 @@ public class EventosResource extends BaseResource {
         List<Sesion> sesiones = sesionesService.getSesiones(evento.getId());
         borrarEntradasSeleccionadasConAnterioridad();
 
-        Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "eventoDetalle", getLocale(), APP);
+        Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + evento.getSesiones().get(0).getSala().getCine().getCodigo() + "/eventoDetalle", getLocale(), APP);
 
         String tipoEvento, titulo, companyia, duracion, caracteristicas, premios, descripcion;
 
