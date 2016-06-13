@@ -137,6 +137,7 @@ public class PlantillasPreciosResourceTest extends BaseResourceTest
     }
 
     @Test
+	@Ignore
     public void addPlantilla()
     {
         Plantilla plantillaPrecios = preparaPlantilla();
@@ -179,6 +180,7 @@ public class PlantillasPreciosResourceTest extends BaseResourceTest
     }
 
     @Test
+	@Ignore
     public void updatePlantillaAndRemoveNombre()
     {
         Plantilla plantilla = preparaPlantilla();

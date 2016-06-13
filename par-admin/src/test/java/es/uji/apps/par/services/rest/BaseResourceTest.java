@@ -23,7 +23,7 @@ public class BaseResourceTest extends JerseyTest
 
     private void desactivarAppenderLogGmail()
     {
-        configuration.desactivaLogGmail();
+        //configuration.desactivaLogGmail();
     }
     
     @Override

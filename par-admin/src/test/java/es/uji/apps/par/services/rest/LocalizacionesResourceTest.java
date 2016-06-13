@@ -11,12 +11,14 @@ import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
 import com.sun.jersey.test.framework.WebAppDescriptor;
 import com.sun.jersey.test.framework.spi.container.TestContainerFactory;
 import com.sun.jersey.test.framework.spi.container.grizzly.web.GrizzlyWebTestContainerFactory;
+import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.exceptions.CampoRequeridoException;
 import es.uji.apps.par.model.Localizacion;
 import es.uji.apps.par.model.ResultatOperacio;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.request.RequestContextListener;
 
@@ -31,7 +33,7 @@ public class LocalizacionesResourceTest extends BaseResourceTest
     {
         super(
                 new WebAppDescriptor.Builder(
-                        "es.uji.apps.par.services.rest;com.fasterxml.jackson.jaxrs.json;es.uji.apps.par")
+                        "es.uji.apps.par;com.fasterxml.jackson.jaxrs.json;es.uji.apps.par")
                         .contextParam("contextConfigLocation",
                                 "classpath:applicationContext-db-test.xml")
                         .contextParam("webAppRootKey", "paranimf-fw-uji.root")

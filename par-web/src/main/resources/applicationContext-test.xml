@@ -19,6 +19,6 @@
     </property>
   </bean>
 
-  <tx:annotation-driven mode="aspectj" transaction-manager="transactionManager" />
+    <bean id="ConfigurationInterface" class="es.uji.apps.par.config.ConfigurationInResource" />
 
 </beans>

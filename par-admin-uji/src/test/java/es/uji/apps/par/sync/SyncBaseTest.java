@@ -9,12 +9,9 @@ import java.io.InputStream;
 @Ignore
 public class SyncBaseTest
 {
-	@Autowired
-	Configuration configuration;
-
-    public SyncBaseTest()
+	public SyncBaseTest()
     {
-        configuration.desactivaLogGmail();
+
     }
     
     protected InputStream loadFromClasspath(String filePath)

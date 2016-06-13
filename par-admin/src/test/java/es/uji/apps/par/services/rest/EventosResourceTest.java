@@ -175,41 +175,6 @@ public class EventosResourceTest extends BaseResourceTest
         Assert.assertNotNull(evento.getParTpv());
     }
 
-    @Test
-    @Transactional
-    public void updateEventoSinRest() {
-        if (tpvsDAO.getTpvDefault() == null) {
-            addTpvDefault();
-        }
-
-        TipoEvento parTipoEvento = addTipoEvento();
-
-        Evento evento = new Evento();
-        evento.setTituloEs("Nombre ES");
-        evento.setTituloVa("Nombre CA");
-        evento.setTipoEvento(parTipoEvento.getId());
-
-        evento = eventosDAO.addEvento(evento);
-        Assert.assertNotNull(evento.getId());
-        Assert.assertNotNull(evento.getParTpv());
-
-        evento.setParTipoEvento(parTipoEvento);
-        evento.setParTiposEvento(parTipoEvento);
-        evento.setTipoEvento(parTipoEvento.getId());
-        evento.setParTpv(null);
-
-        boolean campoRequerido = false;
-        try {
-            eventosDAO.updateEvento(evento);
-        }
-        catch (NullPointerException e)
-        {
-            campoRequerido = true;
-        }
-
-        Assert.assertTrue(campoRequerido);
-    }
-
     private Tpv addTpvDefault() {
         tpvsDAO.addTpvDefault();
         TpvsDTO tpvDto = tpvsDAO.getTpvDefault();

@@ -64,9 +64,6 @@ public class EntradasReportsTest {
 	@Autowired
 	TiposEventosDAO tiposEventosDAO;
 
-	@Autowired
-	Configuration configuration;
-
 	private Cine cine;
 	private Tpv tpv;
 	private Evento evento;

@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Ignore
 public class BaseResourceTest extends JerseyTest
 {
-	@Autowired
-	Configuration configuration;
-
-    public BaseResourceTest(WebAppDescriptor build)
+	public BaseResourceTest(WebAppDescriptor build)
     {
         super(build);
 
@@ -19,6 +16,6 @@ public class BaseResourceTest extends JerseyTest
 
     private void desactivarAppenderLogGmail()
     {
-        configuration.desactivaLogGmail();
+
     }
 }

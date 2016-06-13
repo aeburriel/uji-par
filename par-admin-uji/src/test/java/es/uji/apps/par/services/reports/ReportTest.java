@@ -427,7 +427,7 @@ public class ReportTest {
 				new Locale("es"), usuario.getUsuario());
 		Assert.assertEquals(2, excelServiceConDosCompras.getTotalFilas());
 		Object fechaSesionConDosCompras = excelServiceConDosCompras.getCellValue("B2");
-		Assert.assertEquals("10/06/2016 12:00", fechaSesionConDosCompras);
+		Assert.assertEquals("12:00", fechaSesionConDosCompras.toString().split(" ")[1]);
 		Object cantidadDeComprasDeSesionConDosCompras = excelServiceConDosCompras.getCellValue("E2");
 		Assert.assertEquals(2.0, cantidadDeComprasDeSesionConDosCompras);
 		
@@ -435,7 +435,7 @@ public class ReportTest {
 				new Locale("es"), usuario2.getUsuario());
 		Assert.assertEquals(2, excelServiceConUnaCompra.getTotalFilas());
 		Object fechaSesionConUnaCompra = excelServiceConUnaCompra.getCellValue("B2");
-		Assert.assertEquals("10/06/2016 13:00", fechaSesionConUnaCompra);
+		Assert.assertEquals("13:00", fechaSesionConUnaCompra.toString().split(" ")[1]);
 		Object cantidadDeComprasDeSesionConUnaCompra = excelServiceConUnaCompra.getCellValue("E2");
 		Assert.assertEquals(1.0, cantidadDeComprasDeSesionConUnaCompra);
 	}
