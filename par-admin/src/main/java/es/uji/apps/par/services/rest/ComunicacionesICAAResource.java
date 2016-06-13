@@ -40,7 +40,8 @@ public class ComunicacionesICAAResource extends BaseResource
     		throws GeneralPARException, NoSuchProviderException, IOException, InterruptedException
     {
         AuthChecker.canWrite(currentRequest);
-        byte[] arr = comunicacionesICAAService.generaFicheroICAA(ids, fechaEnvioHabitualAnterior, tipoEnvio);
+		String userUID = AuthChecker.getUserUID(currentRequest);
+        byte[] arr = comunicacionesICAAService.generaFicheroICAA(ids, fechaEnvioHabitualAnterior, tipoEnvio, userUID);
         String fileName = configuration.getCodigoBuzon() + tipoEnvio + DateUtils.getNumeroSemana() + ".pgp";
 		return Response.ok(arr, 
 				MediaType.TEXT_PLAIN).
@@ -65,7 +66,8 @@ public class ComunicacionesICAAResource extends BaseResource
     public Response checkEventosBeforeGenerateICAAFile(@FormParam("ids") List<Integer> ids, @FormParam("tipoEnvio") String tipoEnvio)
     		throws GeneralPARException {
         AuthChecker.canWrite(currentRequest);
-        comunicacionesICAAService.checkEventosBeforeGenerateICAAFile(ids, tipoEnvio);
+		String userUID = AuthChecker.getUserUID(currentRequest);
+        comunicacionesICAAService.checkEventosBeforeGenerateICAAFile(ids, tipoEnvio, userUID);
 		return Response.ok().build();
     }
 }

@@ -52,12 +52,12 @@ public class FicherosService
 	@Autowired
 	Configuration configuration;
 
-    public FicheroRegistros generaFicheroRegistros(Date fechaEnvioAnterior, String tipo, List<Sesion> sesiones) 
+    public FicheroRegistros generaFicheroRegistros(Date fechaEnvioAnterior, String tipo, List<Sesion> sesiones, String userUID)
     		throws IncidenciaNotFoundException, UnsupportedEncodingException, SesionSinFormatoIdiomaIcaaException
     {
         FicheroRegistros ficheroRegistros = new FicheroRegistros();
 
-        ficheroRegistros.setRegistroBuzon(generaRegistroBuzon(fechaEnvioAnterior, tipo, sesiones));
+        ficheroRegistros.setRegistroBuzon(generaRegistroBuzon(fechaEnvioAnterior, tipo, sesiones, userUID));
         ficheroRegistros.setRegistrosSalas(generaRegistrosSala(sesiones));
         ficheroRegistros.setRegistrosSesiones(generaRegistrosSesion(sesiones));
         ficheroRegistros.setRegistrosSesionesPeliculas(generaRegistrosSesionPelicula(sesiones));
@@ -73,8 +73,9 @@ public class FicherosService
         return ficheroRegistros;
     }
 
-    private RegistroBuzon generaRegistroBuzon(Date fechaEnvioAnterior, String tipo, List<Sesion> sesiones) throws IncidenciaNotFoundException {
-        List<CineDTO> cines = cinesDao.getCines();
+    private RegistroBuzon generaRegistroBuzon(Date fechaEnvioAnterior, String tipo, List<Sesion> sesiones, String userUID) throws
+			IncidenciaNotFoundException {
+        List<CineDTO> cines = cinesDao.getCines(userUID);
         CineDTO cine = cines.get(0);
 
         RegistroBuzon registroBuzon = new RegistroBuzon();

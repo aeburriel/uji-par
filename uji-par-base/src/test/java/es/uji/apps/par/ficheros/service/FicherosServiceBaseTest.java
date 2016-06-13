@@ -49,6 +49,9 @@ public class FicherosServiceBaseTest
     @Autowired
     private ComprasService comprasService;
 
+	@Autowired
+	private UsuariosDAO usuariosDAO;
+
     protected Cine cine;
     protected Localizacion localizacion;
     protected Plantilla plantilla;
@@ -58,12 +61,14 @@ public class FicherosServiceBaseTest
     protected Evento evento;
 	protected Tarifa tarifa;
 	protected Tpv tpv;
+	protected Usuario usuario;
 
     protected void setup() throws PrecioRepetidoException {
-        tpvsDAO.addTpvDefault();
+		usuario = creaUsuario();
         cine = creaCine();
         localizacion = creaLocalizacion("Platea");
         sala = creaSala("567", "Sala 1");
+		usuariosDAO.addSalaUsuario(sala, usuario);
         tipoEvento = creaTipoEvento();
         plantilla = creaPlantilla();
 		tarifa = creaTarifa();
@@ -71,6 +76,15 @@ public class FicherosServiceBaseTest
         precioSesion = creaPrecioSesion(precioPlantilla);
         evento = creaEvento(tipoEvento);
     }
+
+	private Usuario creaUsuario() {
+		Usuario us = new Usuario();
+		us.setUsuario("login");
+		us.setMail("mail");
+		us.setNombre("nombre");
+		usuariosDAO.addUser(us);
+		return us;
+	}
 
 	private Tpv creaTpv() {
 		tpv = new Tpv();

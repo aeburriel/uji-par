@@ -439,7 +439,7 @@ public class InformeSesionReport extends Report implements InformeInterface
 		
 	}
 
-    public void genera(long sesionId) throws SinIvaException {
+    public void genera(long sesionId, String userUID) throws SinIvaException {
         // TODO Auto-generated method stub
 
     }

@@ -36,7 +36,7 @@ public class FicherosServiceCompletoTest extends FicherosServiceBaseTest
     public void testGeneraRegistroBuzonSinEspectadores() throws Exception
     {
         Sesion sesion = creaSesion(sala, evento);
-        String fichero = service.generaFicheroRegistros(generaFechaEnvio().getTime(), "FL", Arrays.asList(sesion)).serializa();
+        String fichero = service.generaFicheroRegistros(generaFechaEnvio().getTime(), "FL", Arrays.asList(sesion), usuario.getUsuario()).serializa();
         String idInternoPelicula = String.format("%05d", evento.getId());
         String expected = String.format("0123FL%03d%03d00000000006000000000010000000000000000000.00\n" +
                           "1567         Sala 1                        \n" +
@@ -66,7 +66,7 @@ public class FicherosServiceCompletoTest extends FicherosServiceBaseTest
         Butaca butaca1 = creaButaca("1", "1");
         Butaca butaca2 = creaButaca("1", "2");
         registraCompra(sesion, butaca1, butaca2);
-        String fichero = service.generaFicheroRegistros(generaFechaEnvio().getTime(), "FL", Arrays.asList(sesion)).serializa();
+        String fichero = service.generaFicheroRegistros(generaFechaEnvio().getTime(), "FL", Arrays.asList(sesion), usuario.getUsuario()).serializa();
         String idInternoPelicula = String.format("%05d", evento.getId());
         String expected = String.format("0123FL%03d%03d00000000006000000000010000000000200000002.20\n" +
                           "1567         Sala 1                        \n" +
@@ -98,7 +98,7 @@ public class FicherosServiceCompletoTest extends FicherosServiceBaseTest
 	    registraCompra(sesion3, butaca5, butaca6);
 
         String fichero = service.generaFicheroRegistros(generaFechaEnvio().getTime(), "FL", Arrays.asList(sesion1, sesion2,
-				sesion3)).serializa();
+				sesion3), usuario.getUsuario()).serializa();
         
         String idInternoPelicula1 = String.format("%05d", evento.getId());
         String idInternoPelicula2 = String.format("%05d", evento2.getId());

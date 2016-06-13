@@ -134,11 +134,12 @@ public class ReportResource extends BaseResource {
 			String tipo) throws TranscoderException, IOException,
             ReportSerializationException, ParseException, SinIvaException {
         ByteArrayOutputStream ostream = new ByteArrayOutputStream();
+		String userUID = AuthChecker.getUserUID(currentRequest);
 
         Sesion sesion = sesionesService.getSesion(idSesion);
         String fileName = tipo + "_" + DateUtils.dateToSpanishStringWithHour(sesion.getFechaCelebracion()) + ".pdf";
 
-        reportService.getPdf(idSesion, ostream, tipo, getLocale());
+        reportService.getPdf(idSesion, ostream, tipo, getLocale(), userUID);
 
         return Response.ok(ostream.toByteArray())
                 .header("Content-Disposition", "attachment; filename =\"" + fileName + "\"")

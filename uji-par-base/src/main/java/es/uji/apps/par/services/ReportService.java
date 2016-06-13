@@ -433,7 +433,7 @@ public class ReportService {
 		InformeInterface informeSesionReport = EntradaReportFactory.newInstanceInformeSesionReport(className);
 		InformeInterface informe = informeSesionReport.create(locale, configuration);
 		List<InformeSesion> informesSesion = new ArrayList<InformeSesion>();
-		Cine cine = Cine.cineDTOToCine(cinesDAO.getCines().get(0));
+		Cine cine = Cine.cineDTOToCine(cinesDAO.getCines(userUID).get(0));
 
 		for (Sesion sesion: sesiones)
 		{
@@ -447,11 +447,11 @@ public class ReportService {
 		return informe;
 	}
 
-	public void getPdf(long sesionId, ByteArrayOutputStream bos, String tipo, Locale locale) throws SinIvaException,
+	public void getPdf(long sesionId, ByteArrayOutputStream bos, String tipo, Locale locale, String userUID) throws SinIvaException,
 			ReportSerializationException, IOException {
         informeReport = EntradaReportFactory.newInstanceInformeReport(tipo, configuration);
         InformeInterface informe = informeReport.create(locale, configuration);
-        informe.genera(sesionId);
+        informe.genera(sesionId, userUID);
 
         informe.serialize(bos);
     }

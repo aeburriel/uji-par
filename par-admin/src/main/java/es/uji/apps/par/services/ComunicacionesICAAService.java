@@ -54,7 +54,7 @@ public class ComunicacionesICAAService {
 	@Autowired
 	Configuration configuration;
 
-	public byte[] generaFicheroICAA(List<Integer> ids, String fechaEnvioHabitualAnterior, String tipoEnvio) 
+	public byte[] generaFicheroICAA(List<Integer> ids, String fechaEnvioHabitualAnterior, String tipoEnvio, String userUID)
 			throws RegistroSerializaException, 
 			IncidenciaNotFoundException, NoSuchProviderException, IOException, InterruptedException, GeneralPARException {
 		Sesion.checkTipoEnvio(tipoEnvio);
@@ -62,7 +62,7 @@ public class ComunicacionesICAAService {
 		
 		Date fechaEnvioAnterior = getDateEnvio(fechaEnvioHabitualAnterior);
 		List<Sesion> sesiones = getSesionesFromIDs(ids);
-		FicheroRegistros ficheroRegistros = ficherosService.generaFicheroRegistros(fechaEnvioAnterior, tipoEnvio, sesiones);
+		FicheroRegistros ficheroRegistros = ficherosService.generaFicheroRegistros(fechaEnvioAnterior, tipoEnvio, sesiones, userUID);
 		byte[] contenido = ficheroRegistros.toByteArray();
 		byte[] contenidoCifrado = ficherosService.encryptData(contenido);
 		
@@ -99,14 +99,14 @@ public class ComunicacionesICAAService {
 		comunicacionesICAADAO.marcaEnviosComoEnviados(ids, fechaEnvio);
 	}
 	
-	private void checkDatosCine() throws RegistroSerializaException {
-		List<CineDTO> cines = cinesDAO.getCines();
+	private void checkDatosCine(String userUID) throws RegistroSerializaException {
+		List<CineDTO> cines = cinesDAO.getCines(userUID);
         CineDTO cine = cines.get(0);
         Cine.checkValidity(cine.getCodigo());
 	}
 
-	public void checkEventosBeforeGenerateICAAFile(List<Integer> ids, String tipoEnvio) throws GeneralPARException {
-		checkDatosCine();
+	public void checkEventosBeforeGenerateICAAFile(List<Integer> ids, String tipoEnvio, String userUID) throws GeneralPARException {
+		checkDatosCine(userUID);
 		Sesion.checkTipoEnvio(tipoEnvio);
 		
 		List<SesionDTO> sesiones = sesionesDAO.getSesiones(Utils.listIntegerToListLong(ids));
