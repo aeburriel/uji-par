@@ -13,13 +13,13 @@ import javax.ws.rs.core.Response;
 
 import com.sun.jersey.api.core.InjectParam;
 
-import es.uji.apps.par.drawer.MapaDrawer;
+import es.uji.apps.par.drawer.MapaDrawerInterface;
 
 @Path("imagenes")
 public class ImagenesResource extends BaseResource
 {
     @InjectParam
-    private MapaDrawer mapaDrawer;
+    private MapaDrawerInterface mapaDrawer;
 
     @Context
     ServletContext context;

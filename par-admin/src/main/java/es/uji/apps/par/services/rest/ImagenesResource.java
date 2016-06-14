@@ -1,7 +1,7 @@
 package es.uji.apps.par.services.rest;
 
 import com.sun.jersey.api.core.InjectParam;
-import es.uji.apps.par.drawer.MapaDrawer;
+import es.uji.apps.par.drawer.MapaDrawerInterface;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.*;
@@ -13,7 +13,7 @@ import java.io.ByteArrayOutputStream;
 public class ImagenesResource extends BaseResource
 {
     @InjectParam
-    private MapaDrawer mapaDrawer;
+    private MapaDrawerInterface mapaDrawer;
 
     @Context
     ServletContext context;

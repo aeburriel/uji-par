@@ -11,7 +11,6 @@ import es.uji.apps.par.model.SesionAbono;
 import es.uji.apps.par.services.AbonosService;
 import es.uji.apps.par.services.ButacasService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -23,8 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service
-public class MapaDrawer
+public class MapaDrawer implements MapaDrawerInterface
 {
     private static final String IMAGES_PATH = "/etc/uji/par/imagenes/";
     private static final String BUTACAS_PATH = "/etc/uji/par/butacas/";
