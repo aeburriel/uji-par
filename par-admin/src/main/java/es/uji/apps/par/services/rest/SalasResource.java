@@ -1,17 +1,18 @@
 package es.uji.apps.par.services.rest;
 
-import java.util.List;
+import com.sun.jersey.api.core.InjectParam;
+import es.uji.apps.par.auth.AuthChecker;
+import es.uji.apps.par.model.Sala;
+import es.uji.apps.par.services.SalasService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import com.sun.jersey.api.core.InjectParam;
-
-import es.uji.apps.par.model.Sala;
-import es.uji.apps.par.services.SalasService;
+import java.util.List;
 
 @Path("sala")
 public class SalasResource
@@ -19,11 +20,15 @@ public class SalasResource
     @InjectParam
     private SalasService salasService;
 
+    @Context
+    HttpServletRequest currentRequest;
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll()
     {
-        List<Sala> salas = salasService.getSalas();
+        String userUID = AuthChecker.getUserUID(currentRequest);
+        List<Sala> salas = salasService.getSalas(userUID);
                 
         return Response.ok().entity(new RestResponse(true, salas, salas.size())).build();
     }

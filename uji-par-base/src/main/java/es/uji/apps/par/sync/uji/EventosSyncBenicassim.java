@@ -98,11 +98,11 @@ public class EventosSyncBenicassim implements EventosSync
         {
             evento = eventosDAO.updateEventoDTO(evento);
 
-            insertaSesiones(item, evento);
+            insertaSesiones(item, evento, userUID);
         }
     }
 
-    private void insertaSesiones(Item item, EventoDTO evento) throws ParseException
+    private void insertaSesiones(Item item, EventoDTO evento, String userUID) throws ParseException
     {
         for (Sesion sesionRss : item.getSesiones().getSesiones())
         {
@@ -118,7 +118,7 @@ public class EventosSyncBenicassim implements EventosSync
 					sesion.setRssId(sesionRss.getId());
 
 					// TODO - Por ahora los metemos en la primera sala que exista (CAMBIAR)
-					sesion.setSala(salasDAO.getSalas().get(0));
+					sesion.setSala(salasDAO.getSalas(userUID).get(0));
 					sesion.setCanalInternet("true");
 
 					// Inicio venta online sumando X horas (según config) a las 00:00 del día en el que se crea la sesión

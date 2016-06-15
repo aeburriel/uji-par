@@ -1,12 +1,11 @@
 package es.uji.apps.par.services;
 
-import java.util.List;
-
+import es.uji.apps.par.dao.SalasDAO;
+import es.uji.apps.par.model.Sala;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import es.uji.apps.par.dao.SalasDAO;
-import es.uji.apps.par.model.Sala;
+import java.util.List;
 
 @Service
 public class SalasService
@@ -14,8 +13,8 @@ public class SalasService
     @Autowired
     private SalasDAO salasDAO;
 
-    public List<Sala> getSalas()
+    public List<Sala> getSalas(String userUID)
     {
-        return salasDAO.getSalas();
+        return salasDAO.getSalas(userUID);
     }
 }
