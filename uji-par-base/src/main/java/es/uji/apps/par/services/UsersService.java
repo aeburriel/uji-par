@@ -4,6 +4,7 @@ import es.uji.apps.par.dao.UsuariosDAO;
 import es.uji.apps.par.exceptions.CampoRequeridoException;
 import es.uji.apps.par.exceptions.GeneralPARException;
 import es.uji.apps.par.exceptions.UsuarioYaExisteException;
+import es.uji.apps.par.model.Cine;
 import es.uji.apps.par.model.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,5 +60,10 @@ public class UsersService
     public Usuario getUserByDomainUrl(String domainUrl)
     {
         return usuariosDAO.getUserByDomainUrl(domainUrl);
+    }
+
+    public Cine getUserCineByDomainUrl(String domainUrl)
+    {
+        return usuariosDAO.getUserCineByDomainUrl(domainUrl);
     }
 }

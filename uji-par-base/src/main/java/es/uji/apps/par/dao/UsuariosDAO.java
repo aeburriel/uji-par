@@ -4,6 +4,7 @@ import com.mysema.query.jpa.impl.JPADeleteClause;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.jpa.impl.JPAUpdateClause;
 import es.uji.apps.par.db.*;
+import es.uji.apps.par.model.Cine;
 import es.uji.apps.par.model.Sala;
 import es.uji.apps.par.model.Usuario;
 import org.springframework.stereotype.Repository;
@@ -128,5 +129,18 @@ public class UsuariosDAO extends BaseDAO
 
 			return usuario;
 		}
+	}
+
+	public Cine getUserCineByDomainUrl(String domainUrl)
+	{
+		JPAQuery query = new JPAQuery(entityManager);
+		QUsuarioDTO qUsuarioDTO = QUsuarioDTO.usuarioDTO;
+		QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
+		QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+		QCineDTO qCineDTO = QCineDTO.cineDTO;
+
+		List<CineDTO> cines = query.from(qUsuarioDTO).join(qUsuarioDTO.parSalasUsuario, qSalasUsuarioDTO).join(qSalasUsuarioDTO.parSala, qSalaDTO).join(qSalaDTO.parCine, qCineDTO).where(qUserDTO.url.eq(domainUrl)).list(qCineDTO);
+
+		return Cine.cineDTOToCine(cines.get(0));
 	}
 }

@@ -131,9 +131,11 @@ public class EventosResource extends BaseResource {
     }
 
     private Template getTemplateEventoNoEncontrado() throws MalformedURLException, ParseException {
+        Cine cine = usersService.getUserCineByDomainUrl(uri.getBaseUri().toString());
+
         Locale locale = getLocale();
         String language = locale.getLanguage();
-        HTMLTemplate template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "eventoNoEncontrado", locale, APP);
+        HTMLTemplate template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + cine.getCodigo() + "/eventoNoEncontrado", locale, APP);
 
         String url = request.getRequestURL().toString();
 
