@@ -1,40 +1,29 @@
 package es.uji.apps.par.services.rest;
 
-import java.math.BigDecimal;
-import java.net.URI;
-import java.text.ParseException;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import com.sun.jersey.api.core.InjectParam;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataParam;
-
+import es.uji.apps.par.auth.AuthChecker;
 import es.uji.apps.par.exceptions.EventoNoEncontradoException;
 import es.uji.apps.par.exceptions.GeneralPARException;
-import es.uji.apps.par.auth.AuthChecker;
 import es.uji.apps.par.model.Evento;
 import es.uji.apps.par.model.Sesion;
 import es.uji.apps.par.services.EventosService;
 import es.uji.apps.par.services.LocalizacionesService;
 import es.uji.apps.par.services.SesionesService;
 import es.uji.apps.par.utils.DateUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.List;
 
 @Path("evento")
 public class EventosResource
@@ -57,15 +46,16 @@ public class EventosResource
     		@QueryParam("sort") @DefaultValue("[{\"property\":\"tituloVa\",\"direction\":\"ASC\"}]") String sort, 
     		@QueryParam("start") int start, @QueryParam("limit") @DefaultValue("1000") int limit)
     {
+        String userUID = AuthChecker.getUserUID(currentRequest);
         List<Evento> eventos;
         int total = 0;
         
         if (activos) {
-            eventos = eventosService.getEventosActivos(sort, start, limit);
+            eventos = eventosService.getEventosActivos(sort, start, limit, userUID);
             total = eventosService.getTotalEventosActivos();
         }
         else {
-            eventos = eventosService.getEventos(sort, start, limit);
+            eventos = eventosService.getEventos(sort, start, limit, userUID);
             total = eventosService.getTotalEventos();
         }
                 
@@ -78,7 +68,8 @@ public class EventosResource
     {
         try
         {
-            Evento evento = eventosService.getEvento(eventoId);
+            String userUID = AuthChecker.getUserUID(currentRequest);
+            Evento evento = eventosService.getEvento(eventoId, userUID);
 
             return Response.ok(evento.getImagen()).type(evento.getImagenContentType()).build();
         }
@@ -224,7 +215,8 @@ public class EventosResource
     @Produces(MediaType.APPLICATION_JSON)
     public Response addSesion(@PathParam("id") Integer eventoId, Sesion sesion) throws GeneralPARException
     {
-        Sesion newSesion = sesionesService.addSesion(eventoId, sesion);
+        String userUID = AuthChecker.getUserUID(currentRequest);
+        Sesion newSesion = sesionesService.addSesion(eventoId, sesion, userUID);
         //TODO -> crear URL
         return Response.created(URI.create("")).entity(new RestResponse(true, Arrays.asList(newSesion), 1))
                 .build();
@@ -272,6 +264,7 @@ public class EventosResource
             @FormDataParam("formato") String formato) throws GeneralPARException
     {
         AuthChecker.canWrite(currentRequest);
+        String userUID = AuthChecker.getUserUID(currentRequest);
         
         String nombreArchivo = (dataBinaryDetail != null) ? dataBinaryDetail.getFileName() : "";
         String mediaType = (imagenBodyPart != null) ? imagenBodyPart.getMediaType().toString() : "";
@@ -286,7 +279,7 @@ public class EventosResource
 			evento.setEventosMultisesion(jsonEventosMultisesion);
 
         evento.setId(id);
-        eventosService.updateEvento(evento);
+        eventosService.updateEvento(evento, userUID);
 
         // no devolvemos el evento porque al enviar la imagen colgaba el navegador durante un tiempo
         return Response.ok()

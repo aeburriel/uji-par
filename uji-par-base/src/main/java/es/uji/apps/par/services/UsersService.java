@@ -1,15 +1,14 @@
 package es.uji.apps.par.services;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import es.uji.apps.par.dao.UsuariosDAO;
 import es.uji.apps.par.exceptions.CampoRequeridoException;
 import es.uji.apps.par.exceptions.GeneralPARException;
 import es.uji.apps.par.exceptions.UsuarioYaExisteException;
-import es.uji.apps.par.dao.UsuariosDAO;
 import es.uji.apps.par.model.Usuario;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UsersService
@@ -56,4 +55,9 @@ public class UsersService
 	public int getTotalUsuarios() {
 		return usuariosDAO.getTotalUsuarios();
 	}
+
+    public Usuario getUserByDomainUrl(String domainUrl)
+    {
+        return usuariosDAO.getUserByDomainUrl(domainUrl);
+    }
 }

@@ -43,23 +43,23 @@ public class EventosSyncUji implements EventosSync {
         rssParser = new RssParser();
     }
 
-    public void sync(InputStream rssInputStream) throws JAXBException, IOException, InstantiationException, IllegalAccessException {
+    public void sync(InputStream rssInputStream, String userUID) throws JAXBException, IOException, InstantiationException, IllegalAccessException {
         Rss rss = rssParser.parse(rssInputStream);
 
         for (Item item : rss.getChannel().getItems()) {
             try {
                 if (item.getTipo() != null && appContext.getBean(item.getTipo()) != null)
-                    syncEventoTipo(item);
+                    syncEventoTipo(item, userUID);
             } catch (BeansException e) {
                 if (item.getEsquema() != null && item.getEsquema().equals("paranimf")) {
-                    syncEvento(item);
+                    syncEvento(item, userUID);
                 }
             }
         }
     }
 
-    private void syncEvento(Item item) throws IOException {
-        EventoDTO evento = eventosDAO.getEventoByRssId(item.getContenidoId());
+    private void syncEvento(Item item, String userUID) throws IOException {
+        EventoDTO evento = eventosDAO.getEventoByRssId(item.getContenidoId(), userUID);
 
         if (evento == null) {
             log.info(String.format("RSS insertando nuevo evento: %s - \"%s\"", item.getContenidoId(), item.getTitle()));
@@ -79,9 +79,9 @@ public class EventosSyncUji implements EventosSync {
         }
     }
 
-    private void syncEventoTipo(Item item) throws IOException, IllegalAccessException, InstantiationException {
+    private void syncEventoTipo(Item item, String userUID) throws IOException, IllegalAccessException, InstantiationException {
         EventosTipoSync eventosTipoSync = (EventosTipoSync)appContext.getBean(item.getTipo());
-        EventoDTO evento = eventosDAO.getEventoByRssId(item.getContenidoId());
+        EventoDTO evento = eventosDAO.getEventoByRssId(item.getContenidoId(), userUID);
 
         if (evento == null) {
             eventosTipoSync.createNewTipoEvento(item);

@@ -1,13 +1,11 @@
 package es.uji.apps.par.sync.uji;
 
+import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.text.ParseException;
-
-import javax.xml.bind.JAXBException;
 
 public interface EventosSync
 {
-    public void sync(InputStream rssInputStream) throws JAXBException, IOException, ParseException, InstantiationException, IllegalAccessException;
+    public void sync(InputStream rssInputStream, String userUID) throws JAXBException, IOException, ParseException, InstantiationException, IllegalAccessException;
 }

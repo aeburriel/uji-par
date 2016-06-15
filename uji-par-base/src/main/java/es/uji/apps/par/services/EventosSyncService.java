@@ -40,11 +40,11 @@ public class EventosSyncService
     }
 
     @Transactional
-    public void sync(InputStream rssInputStream) throws JAXBException, IOException, ParseException, IllegalAccessException, InstantiationException {
+    public void sync(InputStream rssInputStream, String userUID) throws JAXBException, IOException, ParseException, IllegalAccessException, InstantiationException {
         if (tipo.equals("uji"))
-            syncUji.sync(rssInputStream);
+            syncUji.sync(rssInputStream, userUID);
         else if (tipo.equals("benicassim"))
-            syncBenicassim.sync(rssInputStream);
+            syncBenicassim.sync(rssInputStream, userUID);
         else
             throw new RuntimeException(
                     "No se ha encontrado sincronizador para el tipo definido en la config uji.sync.lugar="

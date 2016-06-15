@@ -1,11 +1,15 @@
 package es.uji.apps.par.services.dao;
 
+import es.uji.apps.par.builders.*;
+import es.uji.apps.par.dao.EventosDAO;
+import es.uji.apps.par.dao.TiposEventosDAO;
 import es.uji.apps.par.dao.TpvsDAO;
-import es.uji.apps.par.db.TpvsDTO;
+import es.uji.apps.par.db.*;
+import es.uji.apps.par.model.Evento;
+import es.uji.apps.par.model.TipoEvento;
 import es.uji.apps.par.model.Tpv;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,15 +18,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.uji.apps.par.dao.EventosDAO;
-import es.uji.apps.par.dao.TiposEventosDAO;
-import es.uji.apps.par.dao.TpvsDAO;
-import es.uji.apps.par.model.Evento;
-import es.uji.apps.par.model.TipoEvento;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@TransactionConfiguration(transactionManager = "transactionManager")
 @ContextConfiguration(locations = { "/applicationContext-db-test.xml" })
+@TransactionConfiguration(transactionManager = "transactionManager")
+@Transactional
 public class EventosDAOTest
 {
 	private static final String SORT = "[{\"property\":\"tituloVa\", \"direction\":\"ASC\"}]";
@@ -30,10 +33,10 @@ public class EventosDAOTest
 	private static final int LIMIT = 100;
 
     @Autowired
-    EventosDAO eventosDAO;
-    
+	EventosDAO eventosDAO;
+
     @Autowired
-    TiposEventosDAO tiposEventosDAO;
+	TiposEventosDAO tiposEventosDAO;
 
     @Autowired
     TpvsDAO tpvsDAO;
@@ -44,37 +47,85 @@ public class EventosDAOTest
         tpvsDAO.addTpvDefault();
     }
 
-    @Test
-	//TODO dice que usuario no tiene privilegios
-	@Ignore
-    @Transactional
-    public void getEventos()
-    {
-        Assert.assertNotNull(eventosDAO.getEventos(EventosDAOTest.SORT, EventosDAOTest.START, EventosDAOTest.LIMIT));
-    }
+	@PersistenceContext
+	protected EntityManager entityManager;
 
-    @Test
-    @Transactional
-    public void addEvento()
-    {
-        Evento parEvento = preparaEvento();
-        parEvento = eventosDAO.addEvento(parEvento);
+	UsuarioDTO usuarioConEventos;
+	UsuarioDTO usuarioSinEventos;
+	EventoDTO evento1;
+	final String RSS_ID = "100";
 
-        Assert.assertNotNull(parEvento.getId());
-    }
+	@Before
+	public void setUp()
+	{
+		//Usuario1 -> Cine1 -> Evento1 -> Sesion1 (Sala1)
+		//   "          "   ->    "    -> Sesion2 (Sala1)
+		//   "          "   -> Evento2
 
-    @Test
-    @Transactional
-    public void deleteEvento()
-    {
-    	Evento parEvento = preparaEvento();
-    	parEvento = eventosDAO.addEvento(parEvento);
-        Assert.assertEquals(1, eventosDAO.removeEvento(parEvento.getId()));
-    }
+		//   -     -> Cine2 -> Evento3 -> Sesion3 (Sala2)
+		//   -     ->   "   ->    "    -> Sesion4 (Sala2)
+		//   -     ->   "   ->    "    -> Sesion5 (Sala2)
 
-    private Evento preparaEvento()
-    {
-    	TipoEvento tipoEvento = tiposEventosDAO.addTipoEvento(new TipoEvento("Tipo evento"));
+		//   -     ->  null -> Evento4 -> Sesion6 (Sala2)
+
+		//Usuario2
+
+		TipoEventoDTO tipoEvento = new TipoEventoBuilder("tipo", "tipo", false)
+				.build(entityManager);
+
+
+		CineDTO cine1 = new CineBuilder("Cine 1")
+				.build(entityManager);
+
+		SalaDTO sala1 = new SalaBuilder("Sala 1", cine1)
+				.build(entityManager);
+
+		evento1 = new EventoBuilder("Evento 1", "Esdeveniment 1", cine1, tipoEvento)
+				.withRssId(RSS_ID)
+				.withSesion("Sesión 1", sala1)
+				.withSesion("Sesión 2", sala1)
+				.build(entityManager);
+
+		new EventoBuilder("Evento 2", "Esdeveniment 2", cine1, tipoEvento)
+				.build(entityManager);
+
+		usuarioConEventos = new UsuarioBuilder("User 1", "user1@test.com", "user1")
+				.withSala(sala1)
+				.build(entityManager);
+
+
+
+		CineDTO cine2 = new CineBuilder("Cine 2")
+				.build(entityManager);
+
+		SalaDTO sala2 = new SalaBuilder("Sala 2", cine2)
+				.build(entityManager);
+
+		new EventoBuilder("Evento 3", "Esdeveniment 3", cine2, tipoEvento)
+				.withSesion("Sesión 3", sala2)
+				.withSesion("Sesión 4", sala2)
+				.withSesion("Sesión 5", sala2)
+				.build(entityManager);
+
+
+
+
+		usuarioSinEventos = new UsuarioBuilder("User 2", "user2@test.com", "user2")
+				.build(entityManager);
+
+		new EventoBuilder("Evento 4", "Esdeveniment 4", null, tipoEvento)
+				.withSesion("Sesión 6", sala2)
+				.build(entityManager);
+
+
+
+		entityManager.flush();
+		entityManager.clear();
+	}
+
+	private Evento getEvento()
+	{
+		TipoEvento tipoEvento = tiposEventosDAO.addTipoEvento(new TipoEvento("Tipo evento"));
 		Tpv tpv = new Tpv();
 		tpv.setNombre("Test TPV");
 		if (tpvsDAO.getTpvDefault() == null)
@@ -85,25 +136,40 @@ public class EventosDAOTest
 		Evento evento = new Evento("Nombre", tipoEvento);
 		evento.setParTpv(tpv);
 		return evento;
+	}
+
+    @Test
+    public void addEvento()
+    {
+        Evento parEvento = getEvento();
+        parEvento = eventosDAO.addEvento(parEvento);
+
+        Assert.assertNotNull(parEvento.getId());
     }
 
     @Test
-    @Transactional
+    public void deleteEvento()
+    {
+    	Evento parEvento = getEvento();
+    	parEvento = eventosDAO.addEvento(parEvento);
+        Assert.assertEquals(1, eventosDAO.removeEvento(parEvento.getId()));
+    }
+
+    @Test
     public void updateEvento()
     {
-    	Evento parEvento = preparaEvento();
+    	Evento parEvento = getEvento();
     	parEvento = eventosDAO.addEvento(parEvento);
 
         parEvento.setTituloEs("Prueba2");
-        Evento eventoActualizado = eventosDAO.updateEvento(parEvento);
+        Evento eventoActualizado = eventosDAO.updateEvento(parEvento, usuarioConEventos.getUsuario());
         Assert.assertEquals(parEvento.getId(), eventoActualizado.getId());
     }
 
     @Test
-    @Transactional
     public void addEventoConIdiomas()
     {
-        Evento parEvento = preparaEvento();
+        Evento parEvento = getEvento();
         parEvento.setCaracteristicasVa("valencia");
         parEvento.setComentariosEs("comentarios");
         parEvento = eventosDAO.addEvento(parEvento);
@@ -112,10 +178,9 @@ public class EventosDAOTest
     }
 
     @Test
-    @Transactional
     public void deleteImagen()
     {
-        Evento parEvento = preparaEvento();
+        Evento parEvento = getEvento();
         parEvento.setCaracteristicasVa("valencia");
         parEvento.setComentariosEs("comentarios");
         parEvento.setImagen("hola".getBytes());
@@ -125,11 +190,96 @@ public class EventosDAOTest
 
         Assert.assertNotNull(parEvento.getId());
         eventosDAO.deleteImagen(parEvento.getId());
-
-        /*
-         * ParEventoDTO eventoDespuesDeBorrarLaImagen =
-         * eventosDAO.getEventoDTO(parEvento.getId()).get(0);
-         * Assert.assertNull(eventoDespuesDeBorrarLaImagen.getImagen());
-         */
     }
+
+	@Test
+	public void getEventosUsuarioConEventos()
+	{
+		List<Evento> eventos = eventosDAO.getEventos(EventosDAOTest.SORT, EventosDAOTest.START, EventosDAOTest.LIMIT, usuarioConEventos.getUsuario());
+
+		Assert.assertNotNull(eventos);
+		Assert.assertTrue(eventos.size() == 3);
+	}
+
+	@Test
+	public void getEventosUsuarioSinEventos()
+	{
+		List<Evento> eventos = eventosDAO.getEventos(EventosDAOTest.SORT, EventosDAOTest.START, EventosDAOTest.LIMIT, usuarioSinEventos.getUsuario());
+
+		Assert.assertNotNull(eventos);
+		Assert.assertTrue(eventos.size() == 1);
+	}
+
+	@Test
+	public void getEventosActivosUsuarioConEventos()
+	{
+		List<Evento> eventos = eventosDAO.getEventosActivos(EventosDAOTest.SORT, EventosDAOTest.START, EventosDAOTest.LIMIT, usuarioConEventos.getUsuario());
+
+		Assert.assertNotNull(eventos);
+		Assert.assertTrue(eventos.size() == 2);
+	}
+
+	@Test
+	public void getEventosActivosUsuarioSinEventos()
+	{
+		List<Evento> eventos = eventosDAO.getEventosActivos(EventosDAOTest.SORT, EventosDAOTest.START, EventosDAOTest.LIMIT, usuarioSinEventos.getUsuario());
+
+		Assert.assertNotNull(eventos);
+		Assert.assertTrue(eventos.size() == 1);
+	}
+
+	@Test
+	public void getEventosConSesionesUsuarioConEventos()
+	{
+		List<Evento> eventos = eventosDAO.getEventosConSesiones(usuarioConEventos.getUsuario());
+
+		Assert.assertNotNull(eventos);
+		Assert.assertTrue(eventos.size() == 1);
+	}
+
+	@Test
+	public void getEventosConSesionesUsuarioSinEventos()
+	{
+		List<Evento> eventos = eventosDAO.getEventosConSesiones(usuarioSinEventos.getUsuario());
+
+		Assert.assertNotNull(eventos);
+		Assert.assertTrue(eventos.size() == 0);
+	}
+
+	@Test
+	public void getEventoByIdUsuarioConEventos()
+	{
+		EventoDTO evento = eventosDAO.getEventoById(evento1.getId(), usuarioConEventos.getUsuario());
+
+		Assert.assertNotNull(evento);
+		Assert.assertEquals(evento1.getId(), evento.getId());
+		Assert.assertEquals(evento1.getTituloEs(), evento.getTituloEs());
+	}
+
+	@Test
+	public void getEventoByIdUsuarioSinEventos()
+	{
+		EventoDTO evento = eventosDAO.getEventoById(evento1.getId(), usuarioSinEventos.getUsuario());
+
+		Assert.assertNull(evento);
+	}
+
+	@Test
+	public void getEventosByRssIdUsuarioConEventos()
+	{
+		EventoDTO evento = eventosDAO.getEventoByRssId(evento1.getRssId(), usuarioConEventos.getUsuario());
+
+		Assert.assertNotNull(evento);
+		Assert.assertTrue(evento.getRssId().equals(RSS_ID));
+		Assert.assertEquals(evento1.getId(), evento.getId());
+		Assert.assertEquals(evento1.getTituloEs(), evento.getTituloEs());
+	}
+
+	@Test
+	public void getEventosByRssIdUsuarioSinEventos()
+	{
+		EventoDTO evento = eventosDAO.getEventoByRssId(evento1.getRssId(), usuarioSinEventos.getUsuario());
+
+		Assert.assertNull(evento);
+	}
 }

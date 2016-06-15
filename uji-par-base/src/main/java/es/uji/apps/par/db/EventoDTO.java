@@ -1,10 +1,9 @@
 package es.uji.apps.par.db;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
-
-import javax.persistence.*;
 
 
 /**
@@ -95,6 +94,10 @@ public class EventoDTO implements Serializable {
 
     @Column(name="FORMATO")
     private String formato;
+
+	@ManyToOne
+	@JoinColumn(name="CINE_ID")
+	private CineDTO parCine;
 	
 	//bi-directional many-to-one association to TipoEventoDTO
 	@ManyToOne
@@ -467,4 +470,14 @@ public class EventoDTO implements Serializable {
     public void setParTpv(TpvsDTO parTpv) {
         this.parTpv = parTpv;
     }
+
+	public CineDTO getParCine()
+	{
+		return parCine;
+	}
+
+	public void setParCine(CineDTO parCine)
+	{
+		this.parCine = parCine;
+	}
 }

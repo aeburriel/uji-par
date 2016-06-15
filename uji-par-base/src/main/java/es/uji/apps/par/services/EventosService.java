@@ -1,25 +1,24 @@
 package es.uji.apps.par.services;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.mysema.query.Tuple;
-import es.uji.apps.par.model.EventoMultisesion;
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import es.uji.apps.par.exceptions.CampoRequeridoException;
-import es.uji.apps.par.exceptions.EventoConCompras;
-import es.uji.apps.par.exceptions.EventoNoEncontradoException;
 import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.dao.ComprasDAO;
 import es.uji.apps.par.dao.EventosDAO;
 import es.uji.apps.par.db.EventoDTO;
+import es.uji.apps.par.exceptions.CampoRequeridoException;
+import es.uji.apps.par.exceptions.EventoConCompras;
+import es.uji.apps.par.exceptions.EventoNoEncontradoException;
 import es.uji.apps.par.model.Evento;
+import es.uji.apps.par.model.EventoMultisesion;
 import es.uji.apps.par.model.EventoParaSync;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class EventosService
@@ -33,27 +32,27 @@ public class EventosService
 	@Autowired
 	Configuration configuration;
 
-    public List<Evento> getEventosConSesiones()
+    public List<Evento> getEventosConSesiones(String userUID)
     {
-       return eventosDAO.getEventosConSesiones();
+       return eventosDAO.getEventosConSesiones(userUID);
     }
     
-    public List<Evento> getEventos(String sort, int start, int limit)
+    public List<Evento> getEventos(String sort, int start, int limit, String userUID)
     {
-       return getEventos(false, sort, start, limit);
+       return getEventos(false, sort, start, limit, userUID);
     }
     
-    public List<Evento> getEventosActivos(String sort, int start, int limit)
+    public List<Evento> getEventosActivos(String sort, int start, int limit, String userUID)
     {
-       return getEventos(true, sort, start, limit);
+       return getEventos(true, sort, start, limit, userUID);
     }
     
-    private List<Evento> getEventos(boolean activos, String sort, int start, int limit)
+    private List<Evento> getEventos(boolean activos, String sort, int start, int limit, String userUID)
     {
         if (activos)
-            return eventosDAO.getEventosActivos(sort, start, limit);
+            return eventosDAO.getEventosActivos(sort, start, limit, userUID);
         else
-            return eventosDAO.getEventos(sort, start, limit);
+            return eventosDAO.getEventos(sort, start, limit, userUID);
     }
 
     public void removeEvento(Integer id)
@@ -75,18 +74,18 @@ public class EventosService
             throw new CampoRequeridoException("Tipo de evento");
     }
 
-    public void updateEvento(Evento evento) throws CampoRequeridoException, EventoConCompras
+    public void updateEvento(Evento evento, String userUID) throws CampoRequeridoException, EventoConCompras
     {
         checkRequiredFields(evento);
 
-        if (hasEventoCompras(evento) && modificanAsientosNumerados(evento))
+        if (hasEventoCompras(evento) && modificanAsientosNumerados(evento, userUID))
         	throw new EventoConCompras(evento.getId());
         else
-        	eventosDAO.updateEvento(evento);
+        	eventosDAO.updateEvento(evento, userUID);
     }
 
-	private boolean modificanAsientosNumerados(Evento evento) {
-		EventoDTO eventoDTO = eventosDAO.getEventoById(evento.getId());
+	private boolean modificanAsientosNumerados(Evento evento, String userUID) {
+		EventoDTO eventoDTO = eventosDAO.getEventoById(evento.getId(), userUID);
 		return eventoDTO.getAsientosNumerados() != evento.getAsientosNumerados();
 	}
 
@@ -94,18 +93,18 @@ public class EventosService
 		return comprasDAO.getComprasOfEvento(evento.getId()).size() > 0;
 	}
 
-    public Evento getEvento(Long eventoId) throws EventoNoEncontradoException
+    public Evento getEvento(Long eventoId, String userUID) throws EventoNoEncontradoException
     {
-        EventoDTO eventoDTO = eventosDAO.getEventoById(eventoId.longValue());
+        EventoDTO eventoDTO = eventosDAO.getEventoById(eventoId.longValue(), userUID);
 		if (eventoDTO != null)
         	return new Evento(eventoDTO, true);
 
         throw new EventoNoEncontradoException(eventoId);
     }
     
-    public Evento getEventoByRssId(Long contenidoId) throws EventoNoEncontradoException
+    public Evento getEventoByRssId(Long contenidoId, String userUID) throws EventoNoEncontradoException
     {
-        EventoDTO eventoDTO = eventosDAO.getEventoByRssId(contenidoId.toString());
+        EventoDTO eventoDTO = eventosDAO.getEventoByRssId(contenidoId.toString(), userUID);
 
         if (eventoDTO == null)
             throw new EventoNoEncontradoException(contenidoId);

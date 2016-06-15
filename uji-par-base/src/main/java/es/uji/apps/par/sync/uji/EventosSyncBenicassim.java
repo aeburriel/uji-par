@@ -1,25 +1,8 @@
 package es.uji.apps.par.sync.uji;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.net.MalformedURLException;
-import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import javax.xml.bind.JAXBException;
-
+import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.dao.*;
 import es.uji.apps.par.db.CompraDTO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.db.EventoDTO;
 import es.uji.apps.par.db.PlantillaDTO;
 import es.uji.apps.par.db.TipoEventoDTO;
@@ -32,6 +15,21 @@ import es.uji.apps.par.sync.rss.jaxb.Sesion;
 import es.uji.apps.par.sync.utils.SyncUtils;
 import es.uji.apps.par.utils.DateUtils;
 import es.uji.apps.par.utils.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.xml.bind.JAXBException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Service("syncBenicassim")
 public class EventosSyncBenicassim implements EventosSync
@@ -65,20 +63,20 @@ public class EventosSyncBenicassim implements EventosSync
 	@Autowired
 	Configuration configuration;
 
-    public void sync(InputStream rssInputStream) throws JAXBException, MalformedURLException, IOException, ParseException
+    public void sync(InputStream rssInputStream, String userUID) throws JAXBException, MalformedURLException, IOException, ParseException
     {
         Rss rss = rssParser.parse(rssInputStream);
 
         for (Item item : rss.getChannel().getItems())
         {
-            syncEvento(item);
+            syncEvento(item, userUID);
         }
     }
 
     @Transactional
-    private void syncEvento(Item item) throws MalformedURLException, IOException, ParseException
+    private void syncEvento(Item item, String userUID) throws MalformedURLException, IOException, ParseException
     {
-        EventoDTO evento = eventosDAO.getEventoByRssId(item.getContenidoId());
+        EventoDTO evento = eventosDAO.getEventoByRssId(item.getContenidoId(), userUID);
 
         if (evento == null)
         {

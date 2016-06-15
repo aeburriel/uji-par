@@ -1,13 +1,17 @@
 package es.uji.apps.par.services.dao;
 
+import es.uji.apps.par.builders.*;
 import es.uji.apps.par.dao.*;
 import es.uji.apps.par.db.*;
 import es.uji.apps.par.model.Evento;
 import es.uji.apps.par.model.Localizacion;
 import es.uji.apps.par.model.TipoEvento;
 import es.uji.apps.par.model.Tpv;
+import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Arrays;
@@ -31,6 +35,21 @@ public class BaseDAOTest
 
     @Autowired
     TiposEventosDAO tiposEventosDAO;
+
+    @PersistenceContext
+    protected EntityManager entityManager;
+
+    UsuarioDTO usuario1;
+
+    @Before
+    public void setUp()
+    {
+        usuario1 = new UsuarioBuilder("User 1", "user1@test.com", "user1")
+                .build(entityManager);
+
+        entityManager.flush();
+        entityManager.clear();
+    }
 
     protected SesionDTO preparaSesion(LocalizacionDTO localizacion)
     {
@@ -88,7 +107,7 @@ public class BaseDAOTest
         EventoDTO evento = sesion.getParEvento();
         evento.setAsientosNumerados(false);
         
-        eventosDao.updateEvento(Evento.eventoDTOtoEvento(evento));        
+        eventosDao.updateEvento(Evento.eventoDTOtoEvento(evento), usuario1.getUsuario());
     }
 
     protected ButacaDTO preparaButaca(SesionDTO sesion, LocalizacionDTO localizacion, String fila, String numero,

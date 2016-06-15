@@ -211,12 +211,11 @@ public class SesionesService
         sesionAbonoDAO.removeSesionAbono(id);
     }
 
-    @Transactional(rollbackForClassName={"CampoRequeridoException","FechasInvalidasException",
-            "IncidenciaNotFoundException"})
-    public Sesion addSesion(long eventoId, Sesion sesion) throws CampoRequeridoException, FechasInvalidasException, IncidenciaNotFoundException {
+    @Transactional(rollbackForClassName={"CampoRequeridoException","FechasInvalidasException", "IncidenciaNotFoundException"})
+    public Sesion addSesion(long eventoId, Sesion sesion, String userUID) throws CampoRequeridoException, FechasInvalidasException, IncidenciaNotFoundException {
     	checkSesionAndDates(sesion);
 
-    	sesion.setEvento(Evento.eventoDTOtoEvento(eventosDAO.getEventoById(eventoId)));
+    	sesion.setEvento(Evento.eventoDTOtoEvento(eventosDAO.getEventoById(eventoId, userUID)));
     	List<PreciosSesion> listaPreciosSesion = new ArrayList<PreciosSesion>();
     	if (sesion.getPreciosSesion() !=  null) {
         	for (PreciosSesion preciosSesion: sesion.getPreciosSesion()) {

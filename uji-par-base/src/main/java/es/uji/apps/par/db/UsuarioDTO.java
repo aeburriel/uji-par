@@ -1,9 +1,8 @@
 package es.uji.apps.par.db;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
-
-import javax.persistence.*;
 
 
 /**
@@ -25,6 +24,8 @@ public class UsuarioDTO implements Serializable {
 	private String nombre;
 
 	private String usuario;
+
+	private String url;
 
 	@OneToMany(mappedBy = "parUsuario", fetch = FetchType.LAZY)
 	private List<SalasUsuarioDTO> parSalasUsuario;
@@ -66,6 +67,16 @@ public class UsuarioDTO implements Serializable {
 
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
+	}
+
+	public String getUrl()
+	{
+		return url;
+	}
+
+	public void setUrl(String url)
+	{
+		this.url = url;
 	}
 
 	public List<SalasUsuarioDTO> getParSalasUsuario() {

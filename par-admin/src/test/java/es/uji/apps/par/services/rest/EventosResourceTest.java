@@ -1,19 +1,22 @@
 package es.uji.apps.par.services.rest;
 
-import java.io.ByteArrayInputStream;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response.Status;
-
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
-import com.sun.jersey.multipart.FormDataBodyPart;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.multipart.FormDataMultiPart;
+import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
+import com.sun.jersey.test.framework.WebAppDescriptor;
+import com.sun.jersey.test.framework.spi.container.TestContainerFactory;
+import com.sun.jersey.test.framework.spi.container.grizzly.web.GrizzlyWebTestContainerFactory;
+import es.uji.apps.par.dao.EventosDAO;
 import es.uji.apps.par.dao.TpvsDAO;
 import es.uji.apps.par.db.TpvsDTO;
-import es.uji.apps.par.exceptions.CampoRequeridoException;
+import es.uji.apps.par.model.Evento;
+import es.uji.apps.par.model.TipoEvento;
 import es.uji.apps.par.model.Tpv;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -27,22 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.request.RequestContextListener;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.client.filter.LoggingFilter;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
-import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
-import com.sun.jersey.test.framework.WebAppDescriptor;
-import com.sun.jersey.test.framework.spi.container.TestContainerFactory;
-import com.sun.jersey.test.framework.spi.container.grizzly.web.GrizzlyWebTestContainerFactory;
-
-import es.uji.apps.par.dao.EventosDAO;
-import es.uji.apps.par.db.EventoDTO;
-import es.uji.apps.par.model.Evento;
-import es.uji.apps.par.model.TipoEvento;
+import javax.ws.rs.core.Response.Status;
+import java.util.HashMap;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
@@ -181,7 +170,7 @@ public class EventosResourceTest extends BaseResourceTest
         return new Tpv(tpvDto);
     }
 
-    @Test
+    /*@Test
     @Transactional
     @Ignore
     public void updateEvento()
@@ -214,5 +203,5 @@ public class EventosResourceTest extends BaseResourceTest
         RestResponse restResponse = resource.path("evento").get(RestResponse.class);
         
         Assert.assertEquals(parEvento.getField("porcentajeIVA"), eventoBD.getPorcentajeIva());
-    }
+    }*/
 }

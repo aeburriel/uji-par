@@ -1,25 +1,25 @@
 package es.uji.apps.par.services.rest;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.text.ParseException;
+import com.sun.jersey.api.core.InjectParam;
+import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.model.Usuario;
+import es.uji.apps.par.services.EventosSyncService;
+import es.uji.apps.par.services.UsersService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBException;
-
-import com.sun.jersey.api.core.InjectParam;
-
-import es.uji.apps.par.config.Configuration;
-import es.uji.apps.par.services.EventosSyncService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.text.ParseException;
 
 @Path("sync")
 public class SyncResource extends BaseResource {
@@ -28,8 +28,14 @@ public class SyncResource extends BaseResource {
     @InjectParam
     EventosSyncService eventosSyncService;
 
+    @InjectParam
+    private UsersService usersService;
+
 	@InjectParam
 	Configuration configuration;
+
+    @Context
+    UriInfo uri;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -47,7 +53,8 @@ public class SyncResource extends BaseResource {
                 if (syncUrlsHeaderToken != null && syncUrlsToken != null)
                     urlConnection.setRequestProperty(syncUrlsHeaderToken, syncUrlsToken);
 
-                eventosSyncService.sync(urlConnection.getInputStream());
+                Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
+                eventosSyncService.sync(urlConnection.getInputStream(), user.getUsuario());
             } catch (Exception e) {
                 if (urlRssException != null)
                     log.error(String.format("Error sincronizando eventos desde %s: %s", urlRssException, e.getMessage()));
