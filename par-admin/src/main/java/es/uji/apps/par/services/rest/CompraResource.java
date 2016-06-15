@@ -282,7 +282,8 @@ public class CompraResource extends BaseResource {
 			throws Exception {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-		entradasService.generaEntrada(uuidCompra, bos);
+		String userUID = AuthChecker.getUserUID(currentRequest);
+		entradasService.generaEntrada(uuidCompra, bos, userUID);
 
 		Response response = Response.ok(bos.toByteArray())
 				.header("Cache-Control", "no-cache, no-store, must-revalidate")
@@ -301,7 +302,8 @@ public class CompraResource extends BaseResource {
 			throws Exception {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-		entradasService.generaEntradaTaquilla(uuidCompra, bos);
+		String userUID = AuthChecker.getUserUID(currentRequest);
+		entradasService.generaEntradaTaquilla(uuidCompra, bos, userUID);
 
 		Response response = Response.ok(bos.toByteArray())
 				.header("Cache-Control", "no-cache, no-store, must-revalidate")

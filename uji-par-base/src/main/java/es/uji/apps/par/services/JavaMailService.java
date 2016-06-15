@@ -102,14 +102,14 @@ public class JavaMailService implements MailInterface
             
             
     private void enviaMailMultipart(String de, String para, String titulo, String texto, String uuid, 
-    		EntradasService entradasService) throws MessagingException {
+    		EntradasService entradasService, String userUID) throws MessagingException {
     	try {
 			if (uuid == null) {
 				log.error("UUID nulo en el método enviaMailMultipart");
 				throw new NullPointerException();
 			}
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			entradasService.generaEntrada(uuid, baos);
+			entradasService.generaEntrada(uuid, baos, userUID);
 			Message message = createMailMessage(de, para, titulo);
 			Multipart multipart = new MimeMultipart();
 			BodyPart messageBodyPart = new MimeBodyPart();
@@ -154,7 +154,7 @@ public class JavaMailService implements MailInterface
     }
 
     //al llamarse desde el job de quartz, no se inyecta el mailDAO, ni el service y lo enviamos desde la interfaz
-    public synchronized void enviaPendientes(MailDAO mailDAO, EntradasService entradasService) throws MessagingException {
+    public synchronized void enviaPendientes(MailDAO mailDAO, EntradasService entradasService, String userUID) throws MessagingException {
     	if (configuration.getEnviarMailsEntradas() == null || configuration.getEnviarMailsEntradas().equals("true")) {
 	        log.info("** - Enviando mails pendientes desde JavaMailService...");
 	
@@ -162,7 +162,7 @@ public class JavaMailService implements MailInterface
 	
 	        for (MailDTO mail : mails)
 	        {
-	        	enviaMailMultipart(mail.getDe(), mail.getPara(), mail.getTitulo(), mail.getTexto(), mail.getUuid(), entradasService);
+	        	enviaMailMultipart(mail.getDe(), mail.getPara(), mail.getTitulo(), mail.getTexto(), mail.getUuid(), entradasService, userUID);
 	            mailDAO.marcaEnviado(mail.getId());
 	        }
     	}
@@ -172,6 +172,6 @@ public class JavaMailService implements MailInterface
     {
     	JavaMailService mail = new JavaMailService();
 
-        mail.enviaMailMultipart("no_reply@wifi.benicassim.es", "debug@wifi.benicassim.es", "Esto es el cuerpo", "Hola que tal!", "uuid", null);
+        mail.enviaMailMultipart("no_reply@wifi.benicassim.es", "debug@wifi.benicassim.es", "Esto es el cuerpo", "Hola que tal!", "uuid", null, "");
     }
 }

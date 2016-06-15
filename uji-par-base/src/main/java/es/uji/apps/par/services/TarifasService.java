@@ -1,14 +1,13 @@
 package es.uji.apps.par.services;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import es.uji.apps.par.dao.TarifasDAO;
 import es.uji.apps.par.db.TarifaDTO;
 import es.uji.apps.par.model.Tarifa;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class TarifasService
@@ -16,8 +15,8 @@ public class TarifasService
     @Autowired
     private TarifasDAO tarifasDAO;
 
-	public List<Tarifa> getAll(String sort, int start, int limit) {
-		List<TarifaDTO> tarifasDTO = tarifasDAO.getAll(sort, start, limit);
+	public List<Tarifa> getAll(String sort, int start, int limit, String userUID) {
+		List<TarifaDTO> tarifasDTO = tarifasDAO.getAll(sort, start, limit, userUID);
 		List<Tarifa> listaTarifas = new ArrayList<Tarifa>();
 		
 		for (TarifaDTO tarifaDTO: tarifasDTO) {

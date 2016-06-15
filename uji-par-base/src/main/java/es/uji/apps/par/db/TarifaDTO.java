@@ -3,13 +3,7 @@ package es.uji.apps.par.db;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 
 /**
@@ -31,6 +25,10 @@ public class TarifaDTO implements Serializable {
 	
 	@OneToMany(mappedBy = "parTarifa")
 	private List<TarifasCineDTO> parTarifasCine;
+
+	@ManyToOne
+	@JoinColumn(name="CINE_ID")
+	private CineDTO parCine;
 
 	public TarifaDTO() {
 	}
@@ -73,5 +71,15 @@ public class TarifaDTO implements Serializable {
 
 	public void setDefecto(Boolean defecto) {
 		this.defecto = defecto;
+	}
+
+	public CineDTO getParCine()
+	{
+		return parCine;
+	}
+
+	public void setParCine(CineDTO parCine)
+	{
+		this.parCine = parCine;
 	}
 }

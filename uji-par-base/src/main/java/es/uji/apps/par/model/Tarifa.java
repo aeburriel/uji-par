@@ -1,8 +1,9 @@
 package es.uji.apps.par.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
+import es.uji.apps.par.db.CineDTO;
 import es.uji.apps.par.db.TarifaDTO;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class Tarifa
@@ -11,6 +12,7 @@ public class Tarifa
     private String nombre;
     private String isPublico;
     private String defecto;
+	private Cine cine;
 
     public Tarifa()
     {
@@ -67,6 +69,10 @@ public class Tarifa
 		tarifaDTO.setNombre(tarifa.getNombre());
 		tarifaDTO.setIsPublica(stringToBoolean(tarifa.getIsPublico()));
 		tarifaDTO.setDefecto(stringToBoolean(tarifa.getDefecto()));
+
+		if (tarifa.getCine() != null)
+			tarifaDTO.setParCine(new CineDTO(tarifa.getCine().getId()));
+
 		return tarifaDTO;
 	}
 
@@ -107,5 +113,15 @@ public class Tarifa
 
 	public void setDefecto(String defecto) {
 		this.defecto = defecto;
+	}
+
+	public void setCine(Cine cine)
+	{
+		this.cine = cine;
+	}
+
+	public Cine getCine()
+	{
+		return cine;
 	}
 }

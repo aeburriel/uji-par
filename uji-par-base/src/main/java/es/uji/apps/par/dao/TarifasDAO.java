@@ -6,8 +6,7 @@ import com.mysema.query.jpa.impl.JPAUpdateClause;
 import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.database.DatabaseHelper;
 import es.uji.apps.par.database.DatabaseHelperFactory;
-import es.uji.apps.par.db.QTarifaDTO;
-import es.uji.apps.par.db.TarifaDTO;
+import es.uji.apps.par.db.*;
 import es.uji.apps.par.model.Tarifa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -37,10 +36,22 @@ public class TarifasDAO extends BaseDAO
     }
 
     @Transactional
-    public List<TarifaDTO> getAll(String sortParameter, int start, int limit)
+    public List<TarifaDTO> getAll(String sortParameter, int start, int limit, String userUID)
     {
+		QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
+		QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+		QCineDTO qCineDTO = QCineDTO.cineDTO;
+		QUsuarioDTO qUsuarioDTO = QUsuarioDTO.usuarioDTO;
+
         JPAQuery query = new JPAQuery(entityManager);
-        return query.from(qTarifaDTO).orderBy(getSort(qTarifaDTO, sortParameter)).offset(start).limit(limit).list(qTarifaDTO);
+        return query.from(qTarifaDTO)
+				.leftJoin(qTarifaDTO.parCine, qCineDTO)
+				.leftJoin(qCineDTO.parSalas, qSalaDTO)
+				.leftJoin(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+				.leftJoin(qSalasUsuarioDTO.parUsuario, qUsuarioDTO)
+				.where((qUsuarioDTO.usuario.eq(userUID).or(qCineDTO.isNull())))
+				.orderBy(getSort(qTarifaDTO, sortParameter))
+				.offset(start).limit(limit).list(qTarifaDTO);
     }
 
     @Transactional
@@ -64,9 +75,20 @@ public class TarifasDAO extends BaseDAO
 	}
     
     @Transactional
-	public TarifaDTO get(int idTarifa) {
+	public TarifaDTO get(int idTarifa, String userUID) {
+		QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
+		QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+		QCineDTO qCineDTO = QCineDTO.cineDTO;
+		QUsuarioDTO qUsuarioDTO = QUsuarioDTO.usuarioDTO;
+
 		JPAQuery query = new JPAQuery(entityManager);
-		List<TarifaDTO> tarifaDTO = query.from(qTarifaDTO).where(qTarifaDTO.id.eq(new Long(idTarifa))).list(qTarifaDTO);
+		List<TarifaDTO> tarifaDTO = query.from(qTarifaDTO)
+				.leftJoin(qTarifaDTO.parCine, qCineDTO)
+				.leftJoin(qCineDTO.parSalas, qSalaDTO)
+				.leftJoin(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+				.leftJoin(qSalasUsuarioDTO.parUsuario, qUsuarioDTO)
+				.where((qUsuarioDTO.usuario.eq(userUID).or(qCineDTO.isNull())).and(qTarifaDTO.id.eq(new Long(idTarifa))))
+				.list(qTarifaDTO);
 		if (tarifaDTO.size() == 1)
 			return tarifaDTO.get(0);
 		else
