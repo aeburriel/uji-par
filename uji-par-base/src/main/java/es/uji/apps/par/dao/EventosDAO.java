@@ -385,6 +385,9 @@ public class EventosDAO extends BaseDAO
         if (evento.getId() != 0)
             eventoDTO.setId(evento.getId());
 
+        if (evento.getCine() != null)
+            eventoDTO.setParCine(new CineDTO(evento.getCine().getId()));
+
         return eventoDTO;
     }
 

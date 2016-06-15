@@ -66,4 +66,9 @@ public class UsersService
     {
         return usuariosDAO.getUserCineByDomainUrl(domainUrl);
     }
+
+    public Cine getUserCineByUserUID(String userUID)
+    {
+        return usuariosDAO.getUserCineByUserUID(userUID);
+    }
 }

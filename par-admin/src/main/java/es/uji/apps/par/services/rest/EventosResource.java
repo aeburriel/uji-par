@@ -7,11 +7,13 @@ import com.sun.jersey.multipart.FormDataParam;
 import es.uji.apps.par.auth.AuthChecker;
 import es.uji.apps.par.exceptions.EventoNoEncontradoException;
 import es.uji.apps.par.exceptions.GeneralPARException;
+import es.uji.apps.par.model.Cine;
 import es.uji.apps.par.model.Evento;
 import es.uji.apps.par.model.Sesion;
 import es.uji.apps.par.services.EventosService;
 import es.uji.apps.par.services.LocalizacionesService;
 import es.uji.apps.par.services.SesionesService;
+import es.uji.apps.par.services.UsersService;
 import es.uji.apps.par.utils.DateUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +35,9 @@ public class EventosResource
 
     @InjectParam
     private SesionesService sesionesService;
+
+    @InjectParam
+    private UsersService usersService;
     
     @InjectParam
     private LocalizacionesService localizacionesService;
@@ -193,11 +198,14 @@ public class EventosResource
         String nombreArchivo = (dataBinaryDetail != null) ? dataBinaryDetail.getFileName() : "";
         String mediaType = (imagenBodyPart != null) ? imagenBodyPart.getMediaType().toString() : "";
 
+        String userUID = AuthChecker.getUserUID(currentRequest);
+        Cine cine = usersService.getUserCineByUserUID(userUID);
+
         Evento evento = new Evento(rssId, tituloEs, descripcionEs, companyiaEs, interpretesEs, duracionEs,
                 premiosEs, caracteristicasEs, comentariosEs, tituloVa, descripcionVa, companyiaVa,
                 interpretesVa, duracionVa, premiosVa, caracteristicasVa, comentariosVa, dataBinary,
                 nombreArchivo, mediaType, tipoEventoId, tpvId, porcentajeIVA, retencionSGAE, ivaSGAE, asientosNumerados,
-                expediente, codigoDistribuidora, nombreDistribuidora, nacionalidad, vo, metraje, subtitulos, formato);
+                expediente, codigoDistribuidora, nombreDistribuidora, nacionalidad, vo, metraje, subtitulos, formato, cine);
 
 		if (checkMultisesion != null && checkMultisesion.equalsIgnoreCase("on"))
 			evento.setEventosMultisesion(jsonEventosMultisesion);
@@ -269,11 +277,13 @@ public class EventosResource
         String nombreArchivo = (dataBinaryDetail != null) ? dataBinaryDetail.getFileName() : "";
         String mediaType = (imagenBodyPart != null) ? imagenBodyPart.getMediaType().toString() : "";
 
+        Cine cine = usersService.getUserCineByUserUID(userUID);
+
         Evento evento = new Evento(rssId, tituloEs, descripcionEs, companyiaEs, interpretesEs, duracionEs,
                 premiosEs, caracteristicasEs, comentariosEs, tituloVa, descripcionVa, companyiaVa,
                 interpretesVa, duracionVa, premiosVa, caracteristicasVa, comentariosVa, dataBinary,
                 nombreArchivo, mediaType, tipoEventoId, tpvId, porcentajeIVA, retencionSGAE, ivaSGAE, asientosNumerados,
-                expediente, codigoDistribuidora, nombreDistribuidora, nacionalidad, vo, metraje, subtitulos, formato);
+                expediente, codigoDistribuidora, nombreDistribuidora, nacionalidad, vo, metraje, subtitulos, formato, cine);
 
 		if (checkMultisesion != null && checkMultisesion.equalsIgnoreCase("on"))
 			evento.setEventosMultisesion(jsonEventosMultisesion);

@@ -1,21 +1,19 @@
 package es.uji.apps.par.model;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import es.uji.apps.par.db.EventoDTO;
+import es.uji.apps.par.exceptions.GeneralPARException;
+import es.uji.apps.par.exceptions.RegistroSerializaException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import es.uji.apps.par.exceptions.GeneralPARException;
-import es.uji.apps.par.exceptions.RegistroSerializaException;
-import es.uji.apps.par.db.EventoDTO;
 
 @XmlRootElement
 public class Evento
@@ -63,6 +61,7 @@ public class Evento
     private String subtitulos;
 	private String multisesion; //representa al checkbox
 	private List<EventoMultisesion> eventosMultisesion;
+    private Cine cine;
 
     public Evento()
     {
@@ -262,7 +261,7 @@ public class Evento
             String duracionVa, String premiosVa, String caracteristicasVa, String comentariosVa,
             byte[] dataBinary, String nombreArchivo, String mediaType, Integer tipoEventoId, Integer tpvId,
             BigDecimal porcentajeIVA, BigDecimal retencionSGAE, BigDecimal ivaSGAE, Boolean asientosNumerados, 
-            String expediente, String codigoDistribuidora, String nombreDistribuidora, String nacionalidad, String vo, String metraje, String subtitulos, String formato)
+            String expediente, String codigoDistribuidora, String nombreDistribuidora, String nacionalidad, String vo, String metraje, String subtitulos, String formato, Cine cine)
     {
         this.sesiones = new ArrayList<Sesion>();
         this.rssId = rssId;
@@ -314,6 +313,7 @@ public class Evento
         this.vo = vo;
         this.metraje = metraje;
         this.subtitulos = subtitulos;
+        this.cine = cine;
     }
 
     public long getId()
@@ -687,6 +687,16 @@ public class Evento
 
     public void setFormato(String formato) {
         this.formato = formato;
+    }
+
+    public Cine getCine()
+    {
+        return cine;
+    }
+
+    public void setCine(Cine cine)
+    {
+        this.cine = cine;
     }
 
     public static void checkValidity(int codigoPelicula, String codigoExpediente, String titulo, String codigoDistribuidora2,

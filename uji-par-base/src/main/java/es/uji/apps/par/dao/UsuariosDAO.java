@@ -143,4 +143,17 @@ public class UsuariosDAO extends BaseDAO
 
 		return Cine.cineDTOToCine(cines.get(0));
 	}
+
+	public Cine getUserCineByUserUID(String userUID)
+	{
+		JPAQuery query = new JPAQuery(entityManager);
+		QUsuarioDTO qUsuarioDTO = QUsuarioDTO.usuarioDTO;
+		QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
+		QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+		QCineDTO qCineDTO = QCineDTO.cineDTO;
+
+		List<CineDTO> cines = query.from(qUsuarioDTO).join(qUsuarioDTO.parSalasUsuario, qSalasUsuarioDTO).join(qSalasUsuarioDTO.parSala, qSalaDTO).join(qSalaDTO.parCine, qCineDTO).where(qUserDTO.usuario.eq(userUID)).list(qCineDTO);
+
+		return Cine.cineDTOToCine(cines.get(0));
+	}
 }
