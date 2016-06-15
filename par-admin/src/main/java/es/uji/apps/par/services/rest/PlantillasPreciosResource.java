@@ -1,30 +1,19 @@
 package es.uji.apps.par.services.rest;
 
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import com.sun.jersey.api.core.InjectParam;
-
-import es.uji.apps.par.exceptions.GeneralPARException;
 import es.uji.apps.par.auth.AuthChecker;
+import es.uji.apps.par.exceptions.GeneralPARException;
 import es.uji.apps.par.model.Plantilla;
 import es.uji.apps.par.model.PreciosPlantilla;
 import es.uji.apps.par.services.PlantillasService;
 import es.uji.apps.par.services.PreciosPlantillaService;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 
 @Path("plantillaprecios")
 public class PlantillasPreciosResource extends BaseResource{
@@ -39,8 +28,10 @@ public class PlantillasPreciosResource extends BaseResource{
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@QueryParam("sort") String sort, @QueryParam("start") int start, @QueryParam("limit") @DefaultValue("1000") int limit)
     {
-        return Response.ok().entity(new RestResponse(true, plantillaPreciosService.getAll(sort, start, limit), 
-        		plantillaPreciosService.getTotalPlantillaPrecios())).build();
+        String userUID = AuthChecker.getUserUID(currentRequest);
+
+        return Response.ok().entity(new RestResponse(true, plantillaPreciosService.getAll(sort, start, limit, userUID),
+        		plantillaPreciosService.getTotalPlantillaPrecios(userUID))).build();
     }
 
     @GET
@@ -48,7 +39,9 @@ public class PlantillasPreciosResource extends BaseResource{
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllPlatnillasAbonos(@QueryParam("sort") String sort)
     {
-        List<Plantilla> plantillasPrecio = plantillaPreciosService.getAll(sort, 0, 10000);
+        String userUID = AuthChecker.getUserUID(currentRequest);
+
+        List<Plantilla> plantillasPrecio = plantillaPreciosService.getAll(sort, 0, 10000, userUID);
         for (int i = plantillasPrecio.size() - 1; i >= 0; i--) {
             if (plantillasPrecio.get(i).getId() == -1) {
                 plantillasPrecio.remove(i);
@@ -113,9 +106,11 @@ public class PlantillasPreciosResource extends BaseResource{
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPlantillasEditables(@QueryParam("sort") String sort, @QueryParam("start") int start, @QueryParam("limit") @DefaultValue("1000") int limit)
     {
+        String userUID = AuthChecker.getUserUID(currentRequest);
+
         return Response.ok().entity(new RestResponse(true, 
-        		plantillaPreciosService.getEditables(sort, start, limit), 
-        		plantillaPreciosService.getTotalPlantillasEditables())).build();
+        		plantillaPreciosService.getEditables(sort, start, limit, userUID),
+        		plantillaPreciosService.getTotalPlantillasEditables(userUID))).build();
     }
     
     @DELETE

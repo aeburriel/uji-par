@@ -1,20 +1,15 @@
 package es.uji.apps.par.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.mysema.query.jpa.impl.JPADeleteClause;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.jpa.impl.JPAUpdateClause;
-
-import es.uji.apps.par.db.PlantillaDTO;
-import es.uji.apps.par.db.QPlantillaDTO;
-import es.uji.apps.par.db.QSalaDTO;
-import es.uji.apps.par.db.SalaDTO;
+import es.uji.apps.par.db.*;
 import es.uji.apps.par.model.Plantilla;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class PlantillasDAO extends BaseDAO {
@@ -22,15 +17,15 @@ public class PlantillasDAO extends BaseDAO {
 	private QPlantillaDTO qPlantillaDTO = QPlantillaDTO.plantillaDTO;
 	
 	@Transactional
-	public List<PlantillaDTO> get(boolean filtrarEditables, String sortParameter, int start, int limit) {
+	public List<PlantillaDTO> get(boolean filtrarEditables, String sortParameter, int start, int limit, String userUID) {
         List<PlantillaDTO> plantillaPrecios = new ArrayList<PlantillaDTO>();
         List<PlantillaDTO> listaPlantillaPreciosDTO = new ArrayList<PlantillaDTO>();
         
         if (filtrarEditables)
-        	listaPlantillaPreciosDTO = getQueryPlantillasEditables().orderBy(getSort(qPlantillaDTO, sortParameter)).
+        	listaPlantillaPreciosDTO = getQueryPlantillasEditables(userUID).orderBy(getSort(qPlantillaDTO, sortParameter)).
         		offset(start).limit(limit).list(qPlantillaDTO);
         else
-        	listaPlantillaPreciosDTO = getQueryPlantillas().orderBy(getSort(qPlantillaDTO, sortParameter)).
+        	listaPlantillaPreciosDTO = getQueryPlantillas(userUID).orderBy(getSort(qPlantillaDTO, sortParameter)).
         		offset(start).limit(limit).list(qPlantillaDTO);
 
         for (PlantillaDTO plantillaPreciosDB : listaPlantillaPreciosDTO)
@@ -42,17 +37,27 @@ public class PlantillasDAO extends BaseDAO {
 	}
 
 	@Transactional
-	private JPAQuery getQueryPlantillasEditables() {
+	private JPAQuery getQueryPlantillasEditables(String userUID) {
 		QSalaDTO qSalaDTO = new QSalaDTO("qSalaDTO");
+		QSalasUsuarioDTO qSalasUsuarioDTO = new QSalasUsuarioDTO("qSalasUsuarioDTO");
+
 		JPAQuery query = new JPAQuery(entityManager);
-		return query.from(qPlantillaDTO).leftJoin(qPlantillaDTO.sala, qSalaDTO).fetch().where(qPlantillaDTO.id.ne(Long.valueOf("-1")));
+		return query.from(qPlantillaDTO)
+				.leftJoin(qPlantillaDTO.sala, qSalaDTO).fetch()
+				.join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+				.where(qPlantillaDTO.id.ne(Long.valueOf("-1")).and(qSalasUsuarioDTO.parUsuario.usuario.eq(userUID)));
 	}
 	
 	@Transactional
-	private JPAQuery getQueryPlantillas() {
+	private JPAQuery getQueryPlantillas(String userUID) {
 		QSalaDTO qSalaDTO = new QSalaDTO("qSalaDTO");
+		QSalasUsuarioDTO qSalasUsuarioDTO = new QSalasUsuarioDTO("qSalasUsuarioDTO");
+
 		JPAQuery query = new JPAQuery(entityManager);
-		return query.from(qPlantillaDTO).leftJoin(qPlantillaDTO.sala, qSalaDTO).fetch();
+		return query.from(qPlantillaDTO)
+				.leftJoin(qPlantillaDTO.sala, qSalaDTO).fetch()
+				.join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+				.where(qSalasUsuarioDTO.parUsuario.usuario.eq(userUID));
 	}
 	
 	@Transactional
@@ -84,17 +89,12 @@ public class PlantillasDAO extends BaseDAO {
 	}
 
 	@Transactional
-	public PlantillaDTO getPlantillaById(long id) {
-		return entityManager.find(PlantillaDTO.class, id); 
+	public int getTotalPlantillaPrecios(String userUID) {
+		return (int) getQueryPlantillas(userUID).count();
 	}
 
 	@Transactional
-	public int getTotalPlantillaPrecios() {
-		return (int) getQueryPlantillas().count();
-	}
-
-	@Transactional
-	public int getTotalPlantillasEditables() {
-		return (int) getQueryPlantillasEditables().count();
+	public int getTotalPlantillasEditables(String userUID) {
+		return (int) getQueryPlantillasEditables(userUID).count();
 	}
 }

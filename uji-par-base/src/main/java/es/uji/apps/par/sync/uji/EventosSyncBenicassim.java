@@ -114,7 +114,7 @@ public class EventosSyncBenicassim implements EventosSync
 					sesion = new es.uji.apps.par.model.Sesion();
 					sesion.setEvento(Evento.eventoDTOtoEvento(evento));
 
-					sesion.setPlantillaPrecios(getPlantillaParaItem(item));
+					sesion.setPlantillaPrecios(getPlantillaParaItem(item, userUID));
 					sesion.setRssId(sesionRss.getId());
 
 					// TODO - Por ahora los metemos en la primera sala que exista (CAMBIAR)
@@ -157,9 +157,9 @@ public class EventosSyncBenicassim implements EventosSync
         }
     }
 
-    private Plantilla getPlantillaParaItem(Item item)
+    private Plantilla getPlantillaParaItem(Item item, String userUID)
     {
-        List<PlantillaDTO> plantillas = plantillasDAO.get(false, "", 0, 100);
+        List<PlantillaDTO> plantillas = plantillasDAO.get(false, "", 0, 100, userUID);
         
         return Plantilla.plantillaPreciosDTOtoPlantillaPrecios(plantillas.get(0));
     }
