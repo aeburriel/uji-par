@@ -40,7 +40,7 @@ public class ResourceProperties
             {
             	String path = "/etc/uji/par/i18n/properties_" + lenguaje + ".properties";
             	InputStream inputStream = new FileInputStream(path);
-                properties.put(lenguaje, new PropertyResourceBundle(new InputStreamReader(inputStream)));
+                properties.put(lenguaje, new PropertyResourceBundle(new InputStreamReader(inputStream, "UTF-8")));
             }
             catch (IOException e)
             {
