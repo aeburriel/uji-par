@@ -5,6 +5,8 @@ import es.uji.apps.par.dao.TiposEventosDAO;
 import es.uji.apps.par.dao.TpvsDAO;
 import es.uji.apps.par.db.EventoDTO;
 import es.uji.apps.par.db.TipoEventoDTO;
+import es.uji.apps.par.model.Cine;
+import es.uji.apps.par.services.UsersService;
 import es.uji.apps.par.sync.parse.RssParser;
 import es.uji.apps.par.sync.rss.jaxb.Item;
 import es.uji.apps.par.sync.rss.jaxb.Rss;
@@ -37,6 +39,9 @@ public class EventosSyncUji implements EventosSync {
     @Autowired
     private TpvsDAO tpvsDAO;
 
+    @Autowired
+    UsersService usersService;
+
     RssParser rssParser;
 
     public EventosSyncUji() {
@@ -64,9 +69,12 @@ public class EventosSyncUji implements EventosSync {
         if (evento == null) {
             log.info(String.format("RSS insertando nuevo evento: %s - \"%s\"", item.getContenidoId(), item.getTitle()));
 
+            Cine cine = usersService.getUserCineByUserUID(userUID);
+
             evento = new EventoDTO();
             evento.setParTpv(tpvsDAO.getTpvDefault());
             evento.setRssId(item.getContenidoId());
+            evento.setParCine(Cine.cineToCineDTO(cine));
         } else {
             log.info(String.format("RSS actualizando evento existente: %s - \"%s\"", evento.getRssId(),
                     evento.getTituloVa()));
@@ -84,7 +92,8 @@ public class EventosSyncUji implements EventosSync {
         EventoDTO evento = eventosDAO.getEventoByRssId(item.getContenidoId(), userUID);
 
         if (evento == null) {
-            eventosTipoSync.createNewTipoEvento(item);
+            Cine cine = usersService.getUserCineByUserUID(userUID);
+            eventosTipoSync.createNewTipoEvento(item, Cine.cineToCineDTO(cine));
         } else {
             eventosTipoSync.updateTipoEvento(evento, item);
         }

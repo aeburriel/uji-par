@@ -71,6 +71,7 @@ public class EventoBuilder
 			sesion.setParEvento(evento);
 			entityManager.persist(sesion);
 		}
+		evento.setParSesiones(sesiones);
 
 		return evento;
 	}

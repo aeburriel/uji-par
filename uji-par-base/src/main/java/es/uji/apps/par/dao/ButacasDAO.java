@@ -1,34 +1,23 @@
 package es.uji.apps.par.dao;
 
-import java.util.List;
-
+import com.mysema.query.Tuple;
+import com.mysema.query.jpa.impl.JPADeleteClause;
+import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.jpa.impl.JPAUpdateClause;
 import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.db.*;
+import es.uji.apps.par.exceptions.ButacaOcupadaException;
 import es.uji.apps.par.exceptions.IncidenciaNotFoundException;
+import es.uji.apps.par.exceptions.NoHayButacasLibresException;
 import es.uji.apps.par.exceptions.SesionSinFormatoIdiomaIcaaException;
 import es.uji.apps.par.ficheros.registros.TipoIncidencia;
+import es.uji.apps.par.model.Butaca;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.mysema.query.Tuple;
-import com.mysema.query.jpa.impl.JPADeleteClause;
-import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.jpa.impl.JPAUpdateClause;
-
-import es.uji.apps.par.exceptions.ButacaOcupadaException;
-import es.uji.apps.par.exceptions.NoHayButacasLibresException;
-import es.uji.apps.par.db.ButacaDTO;
-import es.uji.apps.par.db.CompraDTO;
-import es.uji.apps.par.db.LocalizacionDTO;
-import es.uji.apps.par.db.PreciosSesionDTO;
-import es.uji.apps.par.db.QButacaDTO;
-import es.uji.apps.par.db.QCompraDTO;
-import es.uji.apps.par.db.QLocalizacionDTO;
-import es.uji.apps.par.db.QSesionDTO;
-import es.uji.apps.par.db.QTarifaDTO;
-import es.uji.apps.par.db.SesionDTO;
-import es.uji.apps.par.model.Butaca;
+import java.util.List;
 
 @Repository
 public class ButacasDAO extends BaseDAO
@@ -186,14 +175,14 @@ public class ButacasDAO extends BaseDAO
     }
 
     @Transactional(rollbackForClassName={"NoHayButacasLibresException","ButacaOcupadaException"})
-    public void reservaButacas(Long sesionId, CompraDTO compraDTO, List<Butaca> butacas) throws
+    public void reservaButacas(Long sesionId, CompraDTO compraDTO, List<Butaca> butacas, String userUID) throws
             ButacaOcupadaException, NoHayButacasLibresException {
         Butaca butacaActual = null;
         
         try {
             deleteButacas(compraDTO);
             
-            SesionDTO sesionDTO = sesionesDAO.getSesion(sesionId);
+            SesionDTO sesionDTO = sesionesDAO.getSesion(sesionId, userUID);
             List<PreciosSesionDTO> parPreciosSesions = sesionDTO.getParPreciosSesions();
             
             for (Butaca butaca : butacas) {
@@ -219,6 +208,7 @@ public class ButacasDAO extends BaseDAO
                 
                 entityManager.persist(butacaDTO);
                 entityManager.flush();
+				entityManager.clear();
             }
         }
         catch (Exception e)

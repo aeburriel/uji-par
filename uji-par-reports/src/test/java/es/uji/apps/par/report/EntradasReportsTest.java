@@ -1,7 +1,6 @@
 package es.uji.apps.par.report;
 
 import es.uji.apps.fopreports.serialization.ReportSerializationException;
-import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.dao.*;
 import es.uji.apps.par.db.CompraDTO;
 import es.uji.apps.par.db.ReportDTO;
@@ -22,11 +21,15 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @TransactionConfiguration(transactionManager = "transactionManager")
 @ContextConfiguration(locations = { "/applicationContext-db-test.xml" })
+@Transactional
 public class EntradasReportsTest {
 	@Autowired
 	CinesDAO cinesDAO;
@@ -64,6 +67,9 @@ public class EntradasReportsTest {
 	@Autowired
 	TiposEventosDAO tiposEventosDAO;
 
+	@Autowired
+	private UsuariosDAO usuariosDAO;
+
 	private Cine cine;
 	private Tpv tpv;
 	private Evento evento;
@@ -73,18 +79,29 @@ public class EntradasReportsTest {
 	private Plantilla plantilla;
 	private Sesion sesion;
 	private Compra compra;
+	protected Usuario usuario;
 
 	@Before
 	public void altaElementos() {
+		altaUsuario();
 		altaCine();
 		altaLocalizacion();
 		altaSala();
+		usuariosDAO.addSalaUsuario(sala, usuario);
 		altaTpv();
 		altaPlantilla();
 		altaTarifa();
 		altaEvento();
 		altaSesion();
 		altaCompra();
+	}
+
+	private void altaUsuario() {
+		usuario = new Usuario();
+		usuario.setUsuario("login");
+		usuario.setMail("mail");
+		usuario.setNombre("nombre");
+		usuariosDAO.addUser(usuario);
 	}
 
 	private void altaPlantilla() {
@@ -161,25 +178,23 @@ public class EntradasReportsTest {
 		precioSesion.setTarifa(tarifa);
 		preciosSesion.add(precioSesion);
 		sesion.setPreciosSesion(preciosSesion);
-		Sesion sesionInsertada = sesionesDAO.addSesion(sesion);
+		Sesion sesionInsertada = sesionesDAO.addSesion(sesion, usuario.getUsuario());
 		sesion.setId(sesionInsertada.getId());
 	}
 
-	@Transactional
 	private void altaCompra() {
 		boolean taquilla = true;
 		BigDecimal importe = new BigDecimal(1);
-		CompraDTO compraDTO = comprasDAO.insertaCompra(sesion.getId(), Calendar.getInstance().getTime(), taquilla, importe);
+		CompraDTO compraDTO = comprasDAO.insertaCompra(sesion.getId(), Calendar.getInstance().getTime(), taquilla, importe, usuario.getUsuario());
 		Butaca butaca = new Butaca();
 		butaca.setFila("1");
 		butaca.setNumero("1");
 		butaca.setLocalizacion(localizacion.getCodigo());
 		butaca.setTipo(String.valueOf(tarifa.getId()));
-		butacasDAO.reservaButacas(sesion.getId(), compraDTO, Arrays.asList(butaca));
+		butacasDAO.reservaButacas(sesion.getId(), compraDTO, Arrays.asList(butaca), usuario.getUsuario());
 		compra = Compra.compraDTOtoCompra(compraDTO);
 	}
 
-	@Transactional
 	private void altaReports(String reportClass, String tipo) {
 		ReportDTO reportDTO = new ReportDTO(sala.getId(), tipo, reportClass);
 		salasDAO.addReport(reportDTO);
@@ -188,7 +203,7 @@ public class EntradasReportsTest {
 	@Test
 	public void testNombreClaseEntradaTaquilla() throws ReportSerializationException, SAXException, IOException {
 		altaReports("es.uji.apps.par.report.EntradaTaquillaReport", EntradaReportFactory.TIPO_ENTRADA_TAQUILLA);
-		EntradaReportTaquillaInterface entrada = entradasService.generaEntradaTaquillaYRellena(compra.getUuid());
+		EntradaReportTaquillaInterface entrada = entradasService.generaEntradaTaquillaYRellena(compra.getUuid(), usuario.getUsuario());
 		Assert.assertNotNull(entrada);
 		Assert.assertEquals("es.uji.apps.par.report.EntradaTaquillaReport", entrada.getClass().getName());
 	}
@@ -196,7 +211,7 @@ public class EntradasReportsTest {
 	@Test
 	public void testNombreClaseEntradaOnline() throws ReportSerializationException, SAXException, IOException {
 		altaReports("es.uji.apps.par.report.EntradaReport", EntradaReportFactory.TIPO_ENTRADA_ONLINE);
-		EntradaReportOnlineInterface entrada = entradasService.generaEntradaOnlineYRellena(compra.getUuid());
+		EntradaReportOnlineInterface entrada = entradasService.generaEntradaOnlineYRellena(compra.getUuid(), usuario.getUsuario());
 		Assert.assertNotNull(entrada);
 		Assert.assertEquals("es.uji.apps.par.report.EntradaReport", entrada.getClass().getName());
 	}
@@ -227,21 +242,21 @@ public class EntradasReportsTest {
 		precioSesion.setTarifa(tarifa);
 		preciosSesion.add(precioSesion);
 		sesionActoGraduacion.setPreciosSesion(preciosSesion);
-		Sesion sesionInsertada = sesionesDAO.addSesion(sesionActoGraduacion);
+		Sesion sesionInsertada = sesionesDAO.addSesion(sesionActoGraduacion, usuario.getUsuario());
 		sesionActoGraduacion.setId(sesionInsertada.getId());
 
 		boolean taquilla = true;
 		BigDecimal importe = new BigDecimal(1);
-		CompraDTO compraDTO = comprasDAO.insertaCompra(sesionActoGraduacion.getId(), Calendar.getInstance().getTime(), taquilla, importe);
+		CompraDTO compraDTO = comprasDAO.insertaCompra(sesionActoGraduacion.getId(), Calendar.getInstance().getTime(), taquilla, importe, usuario.getUsuario());
 		Butaca butaca = new Butaca();
 		butaca.setFila("1");
 		butaca.setNumero("1");
 		butaca.setLocalizacion(localizacion.getCodigo());
 		butaca.setTipo(String.valueOf(tarifa.getId()));
-		butacasDAO.reservaButacas(sesionActoGraduacion.getId(), compraDTO, Arrays.asList(butaca));
+		butacasDAO.reservaButacas(sesionActoGraduacion.getId(), compraDTO, Arrays.asList(butaca), usuario.getUsuario());
 		Compra compraActoGraduacion = Compra.compraDTOtoCompra(compraDTO);
 
-		EntradaReportOnlineInterface entrada = entradasService.generaEntradaOnlineYRellena(compraActoGraduacion.getUuid());
+		EntradaReportOnlineInterface entrada = entradasService.generaEntradaOnlineYRellena(compraActoGraduacion.getUuid(), usuario.getUsuario());
 		Assert.assertNotNull(entrada);
 		Assert.assertEquals("es.uji.apps.par.report.EntradaActoGraduacionReport", entrada.getClass().getName());
 	}

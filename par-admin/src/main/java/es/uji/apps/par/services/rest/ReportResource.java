@@ -1,37 +1,28 @@
 package es.uji.apps.par.services.rest;
 
+import com.sun.jersey.api.core.InjectParam;
+import es.uji.apps.fopreports.serialization.ReportSerializationException;
+import es.uji.apps.par.auth.AuthChecker;
+import es.uji.apps.par.exceptions.SinIvaException;
+import es.uji.apps.par.model.Sesion;
+import es.uji.apps.par.services.ReportService;
+import es.uji.apps.par.services.SesionesService;
+import es.uji.apps.par.utils.DateUtils;
+import org.apache.batik.transcoder.TranscoderException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import es.uji.apps.par.auth.AuthChecker;
-import org.apache.batik.transcoder.TranscoderException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.sun.jersey.api.core.InjectParam;
-
-import es.uji.apps.fopreports.serialization.ReportSerializationException;
-import es.uji.apps.par.exceptions.SinIvaException;
-import es.uji.apps.par.model.Sesion;
-import es.uji.apps.par.services.ReportService;
-import es.uji.apps.par.services.SesionesService;
-import es.uji.apps.par.utils.DateUtils;
 
 @Path("report")
 public class ReportResource extends BaseResource {
@@ -93,7 +84,7 @@ public class ReportResource extends BaseResource {
             ReportSerializationException, ParseException, SinIvaException {
 		String userUID = AuthChecker.getUserUID(currentRequest);
         ByteArrayOutputStream ostream = new ByteArrayOutputStream();
-        Sesion sesion = sesionesService.getSesion(idSesion);
+        Sesion sesion = sesionesService.getSesion(idSesion, userUID);
         String fileName = "informeSesion " + DateUtils.dateToSpanishStringWithHour(sesion.getFechaCelebracion()) + ".pdf";
 
         reportService.getPdfSesion(idSesion, ostream, getLocale(), userUID);
@@ -111,7 +102,7 @@ public class ReportResource extends BaseResource {
 		String userUID = AuthChecker.getUserUID(currentRequest);
         ByteArrayOutputStream ostream = new ByteArrayOutputStream();
 
-        List<Sesion> sesiones = sesionesService.getSesiones(idEvento);
+        List<Sesion> sesiones = sesionesService.getSesiones(idEvento, userUID);
         Collections.sort(sesiones, new Comparator<Sesion>() {
             @Override
             public int compare(Sesion o1, Sesion o2) {
@@ -136,7 +127,7 @@ public class ReportResource extends BaseResource {
         ByteArrayOutputStream ostream = new ByteArrayOutputStream();
 		String userUID = AuthChecker.getUserUID(currentRequest);
 
-        Sesion sesion = sesionesService.getSesion(idSesion);
+        Sesion sesion = sesionesService.getSesion(idSesion, userUID);
         String fileName = tipo + "_" + DateUtils.dateToSpanishStringWithHour(sesion.getFechaCelebracion()) + ".pdf";
 
         reportService.getPdf(idSesion, ostream, tipo, getLocale(), userUID);

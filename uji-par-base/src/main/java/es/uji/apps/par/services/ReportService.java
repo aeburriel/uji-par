@@ -438,7 +438,7 @@ public class ReportService {
 		for (Sesion sesion: sesiones)
 		{
 			long sesionId = sesion.getId();
-			informesSesion.add(getInformeSesion(sesionId));
+			informesSesion.add(getInformeSesion(sesionId, userUID));
 		}
 
 		boolean printSesion = (sesiones.size() == 1) ? true : false;
@@ -456,8 +456,8 @@ public class ReportService {
         informe.serialize(bos);
     }
 
-	private InformeSesion getInformeSesion(long sesionId) {
-		SesionDTO sesionDTO = sesionesDAO.getSesion(sesionId);
+	private InformeSesion getInformeSesion(long sesionId, String userUID) {
+		SesionDTO sesionDTO = sesionesDAO.getSesion(sesionId, userUID);
 		Sesion sesion = Sesion.SesionDTOToSesion(sesionDTO);
 		Sala sala = Sala.salaDTOtoSala(sesionDTO.getParSala());
 		Evento evento = Evento.eventoDTOtoEvento(sesionDTO.getParEvento());

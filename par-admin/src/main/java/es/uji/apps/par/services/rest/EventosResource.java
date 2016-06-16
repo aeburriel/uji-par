@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -57,11 +58,11 @@ public class EventosResource
         
         if (activos) {
             eventos = eventosService.getEventosActivos(sort, start, limit, userUID);
-            total = eventosService.getTotalEventosActivos();
+            total = eventosService.getTotalEventosActivos(userUID);
         }
         else {
             eventos = eventosService.getEventos(sort, start, limit, userUID);
-            total = eventosService.getTotalEventos();
+            total = eventosService.getTotalEventos(userUID);
         }
                 
         return Response.ok().entity(new RestResponse(true, eventos, total)).build();
@@ -90,16 +91,22 @@ public class EventosResource
     public Response getSesiones(@PathParam("id") Long eventoId, @QueryParam("activos") boolean activos,
     		@QueryParam("sort") String sort, @QueryParam("start") int start, @QueryParam("limit") @DefaultValue("1000") int limit)
     {
-        List<Sesion> sesiones;
-        int total;
-        
-        if (activos) {
-            sesiones = sesionesService.getSesionesActivasConVendidasDateEnSegundos(eventoId, sort, start, limit);
-            total = sesionesService.getTotalSesionesActivas(eventoId);
-        }
-        else {
-            sesiones = sesionesService.getSesionesConVendidasDateEnSegundos(eventoId, sort, start, limit);
-            total = sesionesService.getTotalSesiones(eventoId);
+        String userUID = AuthChecker.getUserUID(currentRequest);
+        List<Sesion> sesiones = new ArrayList<>();
+        int total = 0;
+
+        if (userUID != null)
+        {
+            if (activos)
+            {
+                sesiones = sesionesService.getSesionesActivasConVendidasDateEnSegundos(eventoId, sort, start, limit, userUID);
+                total = sesionesService.getTotalSesionesActivas(eventoId, userUID);
+            }
+            else
+            {
+                sesiones = sesionesService.getSesionesConVendidasDateEnSegundos(eventoId, sort, start, limit, userUID);
+                total = sesionesService.getTotalSesiones(eventoId, userUID);
+            }
         }
 
         return Response.ok().entity(new RestResponse(true, sesiones, total)).build();
@@ -111,7 +118,9 @@ public class EventosResource
     public Response getSesionesPorSala(@PathParam("id") Long eventoId, @PathParam("idSala") Long salaId,
                                 @QueryParam("sort") String sort, @QueryParam("start") int start, @QueryParam("limit") @DefaultValue("1000") int limit)
     {
-        return Response.ok().entity(sesionesService.getSesionesPorSala(eventoId, salaId, sort)).build();
+        String userUID = AuthChecker.getUserUID(currentRequest);
+
+        return Response.ok().entity(sesionesService.getSesionesPorSala(eventoId, salaId, sort, userUID)).build();
     }
     
     @GET
@@ -120,7 +129,9 @@ public class EventosResource
     public Response getSesionesCinePorFechas(@QueryParam("fechaInicio") String fechaInicio, @QueryParam("fechaFin") String fechaFin,
     		@QueryParam("sort") String sort, @QueryParam("start") int start, @QueryParam("limit") @DefaultValue("1000") int limit)
     {
-    	List<Sesion> sesiones = sesionesService.getSesionesICAAPorFechas(fechaInicio, fechaFin, sort);
+        String userUID = AuthChecker.getUserUID(currentRequest);
+
+    	List<Sesion> sesiones = sesionesService.getSesionesICAAPorFechas(fechaInicio, fechaFin, sort, userUID);
         return Response.ok().entity(new RestResponse(true, sesiones, sesiones.size())).build();
     }
     
@@ -130,7 +141,9 @@ public class EventosResource
     public Response getSesionesPorFechas(@QueryParam("fechaInicio") String fechaInicio, @QueryParam("fechaFin") String fechaFin,
     		@QueryParam("sort") String sort, @QueryParam("start") int start, @QueryParam("limit") @DefaultValue("1000") int limit)
     {
-    	List<Sesion> sesiones = sesionesService.getSesionesPorFechas(fechaInicio, fechaFin, sort);
+        String userUID = AuthChecker.getUserUID(currentRequest);
+
+    	List<Sesion> sesiones = sesionesService.getSesionesPorFechas(fechaInicio, fechaFin, sort, userUID);
         return Response.ok().entity(new RestResponse(true, sesiones, sesiones.size())).build();
     }
     
@@ -149,8 +162,10 @@ public class EventosResource
     public Response getPreciosSesion(@PathParam("eventoId") Integer eventoId, @PathParam("sesionId") Long sesionId, 
     		@QueryParam("sort") String sort, @QueryParam("start") int start, @QueryParam("limit") @DefaultValue("1000") int limit)
     {
+        String userUID = AuthChecker.getUserUID(currentRequest);
+
         return Response.ok().entity(new RestResponse(true, 
-        		sesionesService.getPreciosSesion(sesionId, sort, start, limit, true), 
+        		sesionesService.getPreciosSesion(sesionId, sort, start, limit, true, userUID),
         		sesionesService.getTotalPreciosSesion(sesionId)))
                 .build();
     }
@@ -304,9 +319,10 @@ public class EventosResource
             @PathParam("sesionId") Integer sesionId, Sesion sesion) throws GeneralPARException
     {
         AuthChecker.canWrite(currentRequest);
-        
+        String userUID = AuthChecker.getUserUID(currentRequest);
+
         sesion.setId(sesionId);
-        sesionesService.updateSesion(eventoId, sesion);
+        sesionesService.updateSesion(eventoId, sesion, userUID);
         return Response.ok().entity(new RestResponse(true, Arrays.asList(sesion), 1)).build();
     }
     
@@ -375,7 +391,9 @@ public class EventosResource
     @Produces(MediaType.APPLICATION_JSON)
     public Response getNumeroSesionesMismaHoraYSala(@QueryParam("sesionid") Long sesionId,
           @QueryParam("sala") long salaId, @QueryParam("fecha") String fechaCelebracion) throws ParseException {
+        String userUID = AuthChecker.getUserUID(currentRequest);
+
         return Response.ok().entity(sesionesService.getNumeroSesionesMismaHoraYSala(sesionId, salaId,
-                DateUtils.spanishStringWithHourstoDate(fechaCelebracion))).build();
+                DateUtils.spanishStringWithHourstoDate(fechaCelebracion), userUID)).build();
     }
 }

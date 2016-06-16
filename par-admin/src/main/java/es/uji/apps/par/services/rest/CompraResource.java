@@ -113,9 +113,10 @@ public class CompraResource extends BaseResource {
 			@PathParam("idSesion") Long sesionId,
 			@PathParam("idCompraReserva") Long idCompraReserva) {
 		AuthChecker.canWrite(currentRequest);
+		String userUID = AuthChecker.getUserUID(currentRequest);
 
 		try {
-			comprasService.desanularCompraReserva(idCompraReserva);
+			comprasService.desanularCompraReserva(idCompraReserva, userUID);
 			return Response.ok().build();
 		} catch (ButacaOcupadaAlActivarException e) {
 			return errorResponse("error.butacaOcupadaAlActivar",
@@ -165,10 +166,11 @@ public class CompraResource extends BaseResource {
 			List<Butaca> butacasSeleccionadas)
             throws IncidenciaNotFoundException {
 		AuthChecker.canWrite(currentRequest);
+		String userUID = AuthChecker.getUserUID(currentRequest);
 
 		try {
 			ResultadoCompra resultadoCompra = comprasService
-					.registraCompraTaquilla(sesionId, butacasSeleccionadas);
+					.registraCompraTaquilla(sesionId, butacasSeleccionadas, userUID);
 			return Response.ok(resultadoCompra).build();
 		} catch (NoHayButacasLibresException e) {
 			return errorResponse("error.noHayButacas",
@@ -190,10 +192,11 @@ public class CompraResource extends BaseResource {
                                   CompraAbonado compraAbonado)
             throws IncidenciaNotFoundException {
         AuthChecker.canWrite(currentRequest);
+		String userUID = AuthChecker.getUserUID(currentRequest);
 
         try {
             ResultadoCompra resultadoCompra = comprasService
-                    .registraCompraAbonoTaquilla(abonoId, compraAbonado);
+                    .registraCompraAbonoTaquilla(abonoId, compraAbonado, userUID);
             return Response.ok(resultadoCompra).build();
         } catch (NoHayButacasLibresException e) {
             return errorResponse("error.noHayButacas",
@@ -213,10 +216,12 @@ public class CompraResource extends BaseResource {
 	public Response getPreciosSesion(@PathParam("id") Long sesionId,
 			@QueryParam("sort") String sort, @QueryParam("start") int start,
 			@QueryParam("limit") @DefaultValue("1000") int limit) {
+		String userUID = AuthChecker.getUserUID(currentRequest);
+
 		return Response
 				.ok()
 				.entity(new RestResponse(true, sesionesService
-						.getPreciosSesion(sesionId, sort, start, limit, true),
+						.getPreciosSesion(sesionId, sort, start, limit, true, userUID),
 						sesionesService.getTotalPreciosSesion(sesionId)))
 				.build();
 	}
@@ -242,9 +247,10 @@ public class CompraResource extends BaseResource {
 	public Response getImportesButacas(@PathParam("id") Long sesionId,
 			List<Butaca> butacasSeleccionadas) {
 		AuthChecker.canWrite(currentRequest);
+		String userUID = AuthChecker.getUserUID(currentRequest);
 
 		BigDecimal importe = comprasService.calculaImporteButacas(sesionId,
-				butacasSeleccionadas, true);
+				butacasSeleccionadas, true, userUID);
 
 		return Response.ok().entity(importe.setScale(2, BigDecimal.ROUND_HALF_UP).toString()).build();
 	}

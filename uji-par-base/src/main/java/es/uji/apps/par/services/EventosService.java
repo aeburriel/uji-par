@@ -117,12 +117,12 @@ public class EventosService
         eventosDAO.deleteImagen(eventoId);
     }
 
-	public int getTotalEventosActivos() {
-		return eventosDAO.getTotalEventosActivos();
+	public int getTotalEventosActivos(String userUID) {
+		return eventosDAO.getTotalEventosActivos(userUID);
 	}
 
-	public int getTotalEventos() {
-		return eventosDAO.getTotalEventos();
+	public int getTotalEventos(String userUID) {
+		return eventosDAO.getTotalEventos(userUID);
 	}
 
 	//url: "http://www.example.com/test/23173?idioma=##IDIOMA##"

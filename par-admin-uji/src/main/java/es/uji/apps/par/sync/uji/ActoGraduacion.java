@@ -1,6 +1,6 @@
 package es.uji.apps.par.sync.uji;
 
-import com.sun.jersey.api.core.InjectParam;
+import es.uji.apps.par.auth.AuthChecker;
 import es.uji.apps.par.dao.*;
 import es.uji.apps.par.db.*;
 import es.uji.apps.par.model.*;
@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -47,20 +49,26 @@ public class ActoGraduacion implements EventosTipoSync {
     @Autowired
     private PlantillasDAO plantillasDAO;
 
+    @Context
+    HttpServletRequest currentRequest;
+
     @Override
-    public void createNewTipoEvento(Item item) throws MalformedURLException {
+    public void createNewTipoEvento(Item item, CineDTO cineDTO) throws MalformedURLException {
         log.info(String.format("RSS insertando nuevo evento: %s - \"%s\"", item.getContenidoId(), item.getTitle()));
 
         EventoDTO evento = new EventoDTO();
         evento.setParTpv(tpvsDAO.getTpvDefault());
         evento.setAsientosNumerados(false);
         evento.setRssId(item.getContenidoId());
+        evento.setParCine(cineDTO);
 
         updateTipoEvento(evento, item);
     }
 
     @Override
     public void updateTipoEvento(EventoDTO evento, Item item) throws MalformedURLException {
+        String userUID = AuthChecker.getUserUID(currentRequest);
+
         log.info(String.format("RSS actualizando evento de tipo %s existente: %s - \"%s\"", item.getTipo(), evento.getRssId(),
                 evento.getTituloVa()));
 
@@ -98,13 +106,13 @@ public class ActoGraduacion implements EventosTipoSync {
         }
 
         if (evento.getParTiposEvento() != null) {
-            List<Sala> salas = salasDAO.getSalas();
-            List<TarifaDTO> tarifas = tarifasDAO.getAll(null, 0, Integer.MAX_VALUE);
+            List<Sala> salas = salasDAO.getSalas(userUID);
+            List<TarifaDTO> tarifas = tarifasDAO.getAll(null, 0, Integer.MAX_VALUE, userUID);
 
             if (salas.size() > 0 && tarifas.size() > 0)
             {
                 evento = eventosDAO.updateEventoDTO(evento);
-                List<SesionDTO> parSesiones = sesionesDAO.getSesiones(evento.getId(), true, null, 0, Integer.MAX_VALUE);
+                List<SesionDTO> parSesiones = sesionesDAO.getSesionesActivas(evento.getId(), null, 0, Integer.MAX_VALUE, userUID);
                 Sesion sesion = null;
                 if (parSesiones != null && parSesiones.size() > 0)
                 {
@@ -114,7 +122,7 @@ public class ActoGraduacion implements EventosTipoSync {
                     sesion.setHoraApertura(item.getApertura());
 
                     List<CompraDTO> comprasOfSesion = comprasDAO.getComprasOfSesion(sesion.getId());
-                    sesionesDAO.updateSesion(sesion, comprasOfSesion.size() > 0);
+                    sesionesDAO.updateSesion(sesion, comprasOfSesion.size() > 0, userUID);
                 }
                 else {
                     sesion = new Sesion();
@@ -138,11 +146,11 @@ public class ActoGraduacion implements EventosTipoSync {
                     }
 
                     sesion.setPreciosSesion(preciosSesion);
-                    List<PlantillaDTO> plantillas = plantillasDAO.get(false, "", 0, 100);
+                    List<PlantillaDTO> plantillas = plantillasDAO.get(false, "", 0, 100, userUID);
                     Plantilla plantilla = Plantilla.plantillaPreciosDTOtoPlantillaPrecios(plantillas.get(0));
                     sesion.setPlantillaPrecios(plantilla);
 
-                    sesionesDAO.addSesion(sesion);
+                    sesionesDAO.addSesion(sesion, userUID);
                 }
             }
         }

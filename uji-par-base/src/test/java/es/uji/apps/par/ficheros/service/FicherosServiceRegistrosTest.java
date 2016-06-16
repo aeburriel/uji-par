@@ -1,11 +1,12 @@
 package es.uji.apps.par.ficheros.service;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import es.uji.apps.par.exceptions.PrecioRepetidoException;
+import es.uji.apps.par.ficheros.registros.*;
+import es.uji.apps.par.model.Butaca;
+import es.uji.apps.par.model.Evento;
+import es.uji.apps.par.model.Sala;
+import es.uji.apps.par.model.Sesion;
+import es.uji.apps.par.utils.DateUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,17 +16,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.uji.apps.par.ficheros.registros.RegistroBuzon;
-import es.uji.apps.par.ficheros.registros.RegistroPelicula;
-import es.uji.apps.par.ficheros.registros.RegistroSala;
-import es.uji.apps.par.ficheros.registros.RegistroSesion;
-import es.uji.apps.par.ficheros.registros.RegistroSesionPelicula;
-import es.uji.apps.par.ficheros.registros.RegistroSesionProgramada;
-import es.uji.apps.par.model.Butaca;
-import es.uji.apps.par.model.Evento;
-import es.uji.apps.par.model.Sala;
-import es.uji.apps.par.model.Sesion;
-import es.uji.apps.par.utils.DateUtils;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/applicationContext-db-test.xml" })
@@ -43,7 +37,7 @@ public class FicherosServiceRegistrosTest extends FicherosServiceBaseTest
     @Transactional
     public void testGeneraRegistroBuzonSinEspectadores() throws Exception
     {
-        Sesion sesion = creaSesion(sala, evento);
+        Sesion sesion = creaSesion(sala, evento, usuario.getUsuario());
         Date fechaEnvioHabitualAnterior = Calendar.getInstance().getTime();
         RegistroBuzon registro = service.generaFicheroRegistros(fechaEnvioHabitualAnterior, "FL", Arrays.asList(sesion), usuario
 				.getUsuario()).getRegistroBuzon();
@@ -61,10 +55,10 @@ public class FicherosServiceRegistrosTest extends FicherosServiceBaseTest
     @Transactional
     public void testGeneraRegistroBuzonConEspectadores() throws Exception
     {
-        Sesion sesion = creaSesion(sala, evento);
+        Sesion sesion = creaSesion(sala, evento, usuario.getUsuario());
         Butaca butaca1 = creaButaca("1", "1");
         Butaca butaca2 = creaButaca("1", "2");
-        registraCompra(sesion, butaca1, butaca2);
+        registraCompra(sesion, usuario.getUsuario(), butaca1, butaca2);
         RegistroBuzon registro = service.generaFicheroRegistros(new Date(), "FL", Arrays.asList(sesion), usuario.getUsuario())
                 .getRegistroBuzon();
 
@@ -78,13 +72,13 @@ public class FicherosServiceRegistrosTest extends FicherosServiceBaseTest
     @Transactional
     public void testGeneraRegistroBuzonConEspectadoresVariasComprasEnVariasSesiones() throws Exception
     {
-        Sesion sesion1 = creaSesion(sala, evento, "22:00");
-        Sesion sesion2 = creaSesion(sala, evento, "21:00");
+        Sesion sesion1 = creaSesion(sala, evento, "22:00", usuario.getUsuario());
+        Sesion sesion2 = creaSesion(sala, evento, "21:00", usuario.getUsuario());
         Butaca butaca1 = creaButaca("1", "1");
         Butaca butaca2 = creaButaca("1", "2");
-        registraCompra(sesion1, butaca1, butaca2);
+        registraCompra(sesion1, usuario.getUsuario(), butaca1, butaca2);
         Butaca butaca3 = creaButaca("1", "4");
-        registraCompra(sesion2, butaca3);
+        registraCompra(sesion2, usuario.getUsuario(), butaca3);
         RegistroBuzon registro = service.generaFicheroRegistros(new Date(), "FL", Arrays.asList(sesion1, sesion2), usuario.getUsuario())
                 .getRegistroBuzon();
 
@@ -98,7 +92,7 @@ public class FicherosServiceRegistrosTest extends FicherosServiceBaseTest
     @Transactional
     public void testGeneraRegistroSalasUnaSala() throws Exception
     {
-        Sesion sesion = creaSesion(sala, evento);
+        Sesion sesion = creaSesion(sala, evento, usuario.getUsuario());
 
         List<RegistroSala> registros = service.generaFicheroRegistros(new Date(), "", Arrays.asList(sesion), usuario.getUsuario())
                 .getRegistrosSalas();
@@ -113,8 +107,8 @@ public class FicherosServiceRegistrosTest extends FicherosServiceBaseTest
     public void testGeneraRegistroSalasVariasSalas() throws Exception
     {
         Sala sala2 = creaSala("678", "Sala 2");
-        Sesion sesion1 = creaSesion(sala, evento);
-        Sesion sesion2 = creaSesion(sala2, evento);
+        Sesion sesion1 = creaSesion(sala, evento, usuario.getUsuario());
+        Sesion sesion2 = creaSesion(sala2, evento, usuario.getUsuario());
 
         List<RegistroSala> registros = service.generaFicheroRegistros(new Date(), "", Arrays.asList(sesion1, sesion2), usuario.getUsuario())
                 .getRegistrosSalas();
@@ -130,7 +124,7 @@ public class FicherosServiceRegistrosTest extends FicherosServiceBaseTest
     @Transactional
     public void testGeneraRegistroSesion() throws Exception
     {
-        Sesion sesion1 = creaSesion(sala, evento);
+        Sesion sesion1 = creaSesion(sala, evento, usuario.getUsuario());
 
         List<RegistroSesion> registros = service.generaFicheroRegistros(new Date(), "", Arrays.asList(sesion1), usuario.getUsuario())
                 .getRegistrosSesiones();
@@ -147,18 +141,18 @@ public class FicherosServiceRegistrosTest extends FicherosServiceBaseTest
     @Transactional
     public void testGeneraRegistroSesionVariasSesiones() throws Exception
     {
-        Sesion sesion1 = creaSesion(sala, evento, "1/2/2013", "16:00");
+        Sesion sesion1 = creaSesion(sala, evento, "1/2/2013", "16:00", usuario.getUsuario());
         Butaca butaca1 = creaButaca("1", "1");
         Butaca butaca2 = creaButaca("1", "2");
 
-        registraCompra(sesion1, butaca1, butaca2);
+        registraCompra(sesion1, usuario.getUsuario(), butaca1, butaca2);
 
-        Sesion sesion2 = creaSesion(sala, evento, "3/4/2013", "20:30");
+        Sesion sesion2 = creaSesion(sala, evento, "3/4/2013", "20:30", usuario.getUsuario());
         Butaca butaca3 = creaButaca("1", "3");
         Butaca butaca4 = creaButaca("1", "4");
         Butaca butaca5 = creaButaca("2", "5");
 
-        registraCompra(sesion2, butaca3, butaca4, butaca5);
+        registraCompra(sesion2, usuario.getUsuario(), butaca3, butaca4, butaca5);
 
         List<RegistroSesion> registros = service
                 .generaFicheroRegistros(new Date(), "", Arrays.asList(sesion1, sesion2), usuario.getUsuario()).getRegistrosSesiones();
@@ -184,7 +178,7 @@ public class FicherosServiceRegistrosTest extends FicherosServiceBaseTest
     @Transactional
     public void testGeneraRegistroSesionPelicula() throws Exception
     {
-        Sesion sesion1 = creaSesion(sala, evento, "2/3/2013", "11:05");
+        Sesion sesion1 = creaSesion(sala, evento, "2/3/2013", "11:05", usuario.getUsuario());
 
         List<RegistroSesionPelicula> registros = service.generaFicheroRegistros(new Date(), "", Arrays.asList(sesion1), usuario.getUsuario())
                 .getRegistrosSesionesPeliculas();
@@ -199,11 +193,11 @@ public class FicherosServiceRegistrosTest extends FicherosServiceBaseTest
     @Transactional
     public void testGeneraRegistroPeliculaVariasSesiones() throws Exception
     {
-        Sesion sesion1 = creaSesion(sala, evento, "1/2/2013", "16:00");
+        Sesion sesion1 = creaSesion(sala, evento, "1/2/2013", "16:00", usuario.getUsuario());
 
         Evento evento2 = creaEvento(tipoEvento);
-        Sesion sesion2 = creaSesion(sala, evento2, "3/4/2013", "20:30");
-        Sesion sesion3 = creaSesion(sala, evento2, "3/4/2013", "22:30");
+        Sesion sesion2 = creaSesion(sala, evento2, "3/4/2013", "20:30", usuario.getUsuario());
+        Sesion sesion3 = creaSesion(sala, evento2, "3/4/2013", "22:30", usuario.getUsuario());
 
         List<RegistroSesionPelicula> registros = service.generaFicheroRegistros(new Date(), "",
                 Arrays.asList(sesion1, sesion2, sesion3), usuario.getUsuario()).getRegistrosSesionesPeliculas();
@@ -233,7 +227,7 @@ public class FicherosServiceRegistrosTest extends FicherosServiceBaseTest
     @Transactional
     public void testGeneraRegistroPelicula() throws Exception
     {
-        Sesion sesion1 = creaSesion(sala, evento, "2/3/2013", "11:05");
+        Sesion sesion1 = creaSesion(sala, evento, "2/3/2013", "11:05", usuario.getUsuario());
 
         List<RegistroPelicula> registros = service.generaFicheroRegistros(new Date(), "", Arrays.asList(sesion1), usuario.getUsuario())
                 .getRegistrosPeliculas();
@@ -255,10 +249,10 @@ public class FicherosServiceRegistrosTest extends FicherosServiceBaseTest
     @Transactional
     public void testGeneraRegistroPeliculaVariasSesionesYEventos() throws Exception
     {
-        Sesion sesion1 = creaSesion(sala, evento);
+        Sesion sesion1 = creaSesion(sala, evento, usuario.getUsuario());
 
         Evento evento2 = creaEvento(tipoEvento, "a", "s", "d", "f", "g", "h");
-        Sesion sesion2 = creaSesion(sala, evento2);
+        Sesion sesion2 = creaSesion(sala, evento2, usuario.getUsuario());
 
         List<RegistroPelicula> registros = service.generaFicheroRegistros(new Date(), "",
                 Arrays.asList(sesion1, sesion2), usuario.getUsuario()).getRegistrosPeliculas();
@@ -294,7 +288,7 @@ public class FicherosServiceRegistrosTest extends FicherosServiceBaseTest
     @Transactional
     public void testGeneraRegistroSesionProgramada() throws Exception
     {
-        Sesion sesion1 = creaSesion(sala, evento, "2/3/2013", "11:05");
+        Sesion sesion1 = creaSesion(sala, evento, "2/3/2013", "11:05", usuario.getUsuario());
 
         List<RegistroSesionProgramada> registros = service.generaFicheroRegistros(new Date(), "",
                 Arrays.asList(sesion1), usuario.getUsuario()).getRegistrosSesionesProgramadas();
@@ -309,8 +303,8 @@ public class FicherosServiceRegistrosTest extends FicherosServiceBaseTest
     @Transactional
     public void testGeneraRegistroSesionProgramadaVariasSesionesMismoDia() throws Exception
     {
-        Sesion sesion1 = creaSesion(sala, evento, "2/3/2013", "11:05");
-        Sesion sesion2 = creaSesion(sala, evento, "2/3/2013", "12:05");
+        Sesion sesion1 = creaSesion(sala, evento, "2/3/2013", "11:05", usuario.getUsuario());
+        Sesion sesion2 = creaSesion(sala, evento, "2/3/2013", "12:05", usuario.getUsuario());
 
         List<RegistroSesionProgramada> registros = service.generaFicheroRegistros(new Date(), "",
                 Arrays.asList(sesion1, sesion2), usuario.getUsuario()).getRegistrosSesionesProgramadas();
@@ -325,9 +319,9 @@ public class FicherosServiceRegistrosTest extends FicherosServiceBaseTest
     @Transactional
     public void testGeneraRegistroSesionProgramadaVariasSesionesVariosDias() throws Exception
     {
-        Sesion sesion1 = creaSesion(sala, evento, "2/3/2013", "11:05");
-        Sesion sesion2 = creaSesion(sala, evento, "2/3/2013", "12:05");
-        Sesion sesion3 = creaSesion(sala, evento, "4/3/2013", "22:00");
+        Sesion sesion1 = creaSesion(sala, evento, "2/3/2013", "11:05", usuario.getUsuario());
+        Sesion sesion2 = creaSesion(sala, evento, "2/3/2013", "12:05", usuario.getUsuario());
+        Sesion sesion3 = creaSesion(sala, evento, "4/3/2013", "22:00", usuario.getUsuario());
 
         List<RegistroSesionProgramada> registros = service.generaFicheroRegistros(new Date(), "",
                 Arrays.asList(sesion1, sesion2, sesion3), usuario.getUsuario()).getRegistrosSesionesProgramadas();
@@ -350,16 +344,17 @@ public class FicherosServiceRegistrosTest extends FicherosServiceBaseTest
     public void testGeneraRegistroSesionProgramadaVariasSesionesVariosDiasVariasSalas() throws Exception
     {
         Sala sala2 = creaSala("sala2", "Sala 2");
+        addSalaUsuario(sala2, usuario);
 
-        Sesion sesion1 = creaSesion(sala, evento, "2/3/2013", "11:05");
-        Sesion sesion2 = creaSesion(sala, evento, "2/3/2013", "12:05");
+        Sesion sesion1 = creaSesion(sala, evento, "2/3/2013", "11:05", usuario.getUsuario());
+        Sesion sesion2 = creaSesion(sala, evento, "2/3/2013", "12:05", usuario.getUsuario());
 
-        Sesion sesion3 = creaSesion(sala, evento, "4/3/2013", "22:00");
+        Sesion sesion3 = creaSesion(sala, evento, "4/3/2013", "22:00", usuario.getUsuario());
 
-        Sesion sesion4 = creaSesion(sala2, evento, "4/3/2013", "22:00");
+        Sesion sesion4 = creaSesion(sala2, evento, "4/3/2013", "22:00", usuario.getUsuario());
 
-        Sesion sesion5 = creaSesion(sala2, evento, "5/3/2013", "23:00");
-        Sesion sesion6 = creaSesion(sala2, evento, "5/3/2013", "22:00");
+        Sesion sesion5 = creaSesion(sala2, evento, "5/3/2013", "23:00", usuario.getUsuario());
+        Sesion sesion6 = creaSesion(sala2, evento, "5/3/2013", "22:00", usuario.getUsuario());
 
         List<RegistroSesionProgramada> registros = service.generaFicheroRegistros(new Date(), "",
                 Arrays.asList(sesion1, sesion2, sesion3, sesion4, sesion5, sesion6), usuario.getUsuario()).getRegistrosSesionesProgramadas();

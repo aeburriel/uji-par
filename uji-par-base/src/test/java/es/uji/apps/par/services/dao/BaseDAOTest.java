@@ -3,10 +3,7 @@ package es.uji.apps.par.services.dao;
 import es.uji.apps.par.builders.*;
 import es.uji.apps.par.dao.*;
 import es.uji.apps.par.db.*;
-import es.uji.apps.par.model.Evento;
-import es.uji.apps.par.model.Localizacion;
-import es.uji.apps.par.model.TipoEvento;
-import es.uji.apps.par.model.Tpv;
+import es.uji.apps.par.model.*;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,10 +28,16 @@ public class BaseDAOTest
     TarifasDAO tarifasDAO;
 
     @Autowired
+    private SalasDAO salasDao;
+
+    @Autowired
     TpvsDAO tpvsDAO;
 
     @Autowired
     TiposEventosDAO tiposEventosDAO;
+
+    @Autowired
+    private UsuariosDAO usuariosDAO;
 
     @PersistenceContext
     protected EntityManager entityManager;
@@ -70,12 +73,19 @@ public class BaseDAOTest
         evento.setParTipoEvento(tipoEvento);
         evento.setParTpv(Tpv.tpvDTOToTpv(tpvDefault));
         evento = eventosDao.addEvento(evento);
+
+        Sala sala = new Sala();
+        sala.setCodigo("567");
+        sala.setNombre("Sala 1");
+        salasDao.addSala(sala);
+        usuariosDAO.addSalaUsuario(sala, new Usuario(usuario1));
         
         SesionDTO sesionDTO = new SesionDTO();
         sesionDTO.setParEvento(Evento.eventoToEventoDTO(evento));
         sesionDTO.setFechaCelebracion(new Timestamp(100));
         sesionDTO.setFechaInicioVentaOnline(new Timestamp(0));
         sesionDTO.setFechaFinVentaOnline(new Timestamp(1));
+        sesionDTO.setParSala(Sala.salaToSalaDTO(sala));
         
         SesionDTO sesion = sesionesDao.persistSesion(sesionDTO);
 

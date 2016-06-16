@@ -1,22 +1,15 @@
 package es.uji.apps.par.services.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 import com.mysema.query.Tuple;
-import com.sun.jersey.api.core.InjectParam;
 import es.uji.apps.par.dao.ButacasDAO;
 import es.uji.apps.par.dao.ClientesDAO;
+import es.uji.apps.par.dao.ComprasDAO;
 import es.uji.apps.par.db.ButacaDTO;
-import es.uji.apps.par.model.Cliente;
+import es.uji.apps.par.db.CompraDTO;
+import es.uji.apps.par.db.SesionDTO;
 import es.uji.apps.par.model.Compra;
+import es.uji.apps.par.model.Localizacion;
+import es.uji.apps.par.model.Sesion;
 import es.uji.apps.par.services.ComprasService;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,11 +20,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.uji.apps.par.dao.ComprasDAO;
-import es.uji.apps.par.db.CompraDTO;
-import es.uji.apps.par.db.SesionDTO;
-import es.uji.apps.par.model.Localizacion;
-import es.uji.apps.par.model.Sesion;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @TransactionConfiguration(transactionManager = "transactionManager")
@@ -65,7 +60,7 @@ public class ComprasDAOTest extends BaseDAOTest {
     @Test
     @Transactional
     public void guardaCompraOk() {
-        CompraDTO compraDTO = comprasDAO.insertaCompra(sesion.getId(), new Date(), true, BigDecimal.ONE);
+        CompraDTO compraDTO = comprasDAO.insertaCompra(sesion.getId(), new Date(), true, BigDecimal.ONE, "");
 
         assertNotNull(compraDTO.getId());
     }
@@ -82,14 +77,14 @@ public class ComprasDAOTest extends BaseDAOTest {
     @Transactional
     public void testGetRecaudacion() {
         Sesion sesion1 = preparaSesion();
-        CompraDTO compra1 = comprasDAO.insertaCompra(sesion1.getId(), new Date(), true, new BigDecimal(2));
+        CompraDTO compra1 = comprasDAO.insertaCompra(sesion1.getId(), new Date(), true, new BigDecimal(2), usuario1.getUsuario());
         ButacaDTO butaca1 = preparaButaca(Sesion.SesionToSesionDTO(sesion1),
                 Localizacion.localizacionToLocalizacionDTO(localizacion),
                 "1", "2",
                 new BigDecimal(2));
         butaca1.setParCompra(compra1);
         butacasDAO.addButaca(butaca1);
-        CompraDTO compra2 = comprasDAO.insertaCompra(sesion1.getId(), new Date(), true, new BigDecimal(3));
+        CompraDTO compra2 = comprasDAO.insertaCompra(sesion1.getId(), new Date(), true, new BigDecimal(3), usuario1.getUsuario());
         ButacaDTO butaca2 = preparaButaca(Sesion.SesionToSesionDTO(sesion1),
                 Localizacion.localizacionToLocalizacionDTO(localizacion),
                 "3", "4",
@@ -104,15 +99,15 @@ public class ComprasDAOTest extends BaseDAOTest {
     @Transactional
     public void testGetRecaudacionVariasSesiones() {
         Sesion sesion1 = preparaSesion();
-        CompraDTO compra1 = comprasDAO.insertaCompra(sesion1.getId(), new Date(), true, new BigDecimal(2));
+        CompraDTO compra1 = comprasDAO.insertaCompra(sesion1.getId(), new Date(), true, new BigDecimal(2), usuario1.getUsuario());
 
-        ButacaDTO butaca1 = preparaButaca(sesion, Localizacion.localizacionToLocalizacionDTO(localizacion), "1", "2",
+        ButacaDTO butaca1 = preparaButaca(Sesion.SesionToSesionDTO(sesion1), Localizacion.localizacionToLocalizacionDTO(localizacion), "1", "2",
                 new BigDecimal(2));
         butaca1.setParCompra(compra1);
         butacasDAO.addButaca(butaca1);
 
         Sesion sesion2 = preparaSesion();
-        CompraDTO compra2 = comprasDAO.insertaCompra(sesion2.getId(), new Date(), true, new BigDecimal(1));
+        CompraDTO compra2 = comprasDAO.insertaCompra(sesion2.getId(), new Date(), true, new BigDecimal(1), usuario1.getUsuario());
         ButacaDTO butaca2 = preparaButaca(Sesion.SesionToSesionDTO(sesion2),
                 Localizacion.localizacionToLocalizacionDTO(localizacion),
                 "1", "2",
@@ -120,7 +115,7 @@ public class ComprasDAOTest extends BaseDAOTest {
         butaca2.setParCompra(compra2);
         butacasDAO.addButaca(butaca2);
 
-        CompraDTO compra3 = comprasDAO.insertaCompra(sesion2.getId(), new Date(), true, new BigDecimal(5));
+        CompraDTO compra3 = comprasDAO.insertaCompra(sesion2.getId(), new Date(), true, new BigDecimal(5), usuario1.getUsuario());
         ButacaDTO butaca3 = preparaButaca(Sesion.SesionToSesionDTO(sesion2),
                 Localizacion.localizacionToLocalizacionDTO(localizacion),
                 "3", "4",
@@ -135,7 +130,7 @@ public class ComprasDAOTest extends BaseDAOTest {
     @Transactional
     public void testGetQueryComprasBySesion() {
         Sesion sesion1 = preparaSesion();
-        CompraDTO compraDTO = comprasDAO.insertaCompra(sesion1.getId(), new Date(), true, new BigDecimal(2));
+        CompraDTO compraDTO = comprasDAO.insertaCompra(sesion1.getId(), new Date(), true, new BigDecimal(2), usuario1.getUsuario());
         ButacaDTO butaca1 = preparaButaca(Sesion.SesionToSesionDTO(sesion1),
                 Localizacion.localizacionToLocalizacionDTO(localizacion),
                 "1", "2",
@@ -191,7 +186,7 @@ public class ComprasDAOTest extends BaseDAOTest {
         final String MAIL = "test@test.com";
 
         Sesion sesion1 = preparaSesion();
-        CompraDTO compraDTO = comprasDAO.insertaCompra(sesion1.getId(), new Date(), true, new BigDecimal(2));
+        CompraDTO compraDTO = comprasDAO.insertaCompra(sesion1.getId(), new Date(), true, new BigDecimal(2), "");
         ButacaDTO butaca1 = preparaButaca(Sesion.SesionToSesionDTO(sesion1),
                 Localizacion.localizacionToLocalizacionDTO(localizacion),
                 "1", "2",

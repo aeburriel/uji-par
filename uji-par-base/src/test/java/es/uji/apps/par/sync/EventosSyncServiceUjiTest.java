@@ -1,11 +1,14 @@
 package es.uji.apps.par.sync;
 
+import es.uji.apps.par.builders.CineBuilder;
+import es.uji.apps.par.builders.SalaBuilder;
 import es.uji.apps.par.builders.UsuarioBuilder;
 import es.uji.apps.par.dao.EventosDAO;
 import es.uji.apps.par.dao.TiposEventosDAO;
+import es.uji.apps.par.db.CineDTO;
 import es.uji.apps.par.db.EventoDTO;
+import es.uji.apps.par.db.SalaDTO;
 import es.uji.apps.par.db.UsuarioDTO;
-import es.uji.apps.par.model.Evento;
 import es.uji.apps.par.model.TipoEvento;
 import es.uji.apps.par.services.EventosSyncService;
 import org.junit.Before;
@@ -19,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -49,9 +51,18 @@ public class EventosSyncServiceUjiTest extends SyncBaseTest
     public void setup()
     {
         syncService.setTipo("uji");
-        insertaTiposEventos();
 
-        user = new UsuarioBuilder("user", "user@test.com", "user").build(entityManager);
+        CineDTO cine1 = new CineBuilder("Cine 1")
+                .build(entityManager);
+
+        SalaDTO salaDTO = new SalaBuilder("Sala 1", cine1)
+                .build(entityManager);
+
+        user = new UsuarioBuilder("user", "user@test.com", "user")
+                .withSala(salaDTO)
+                .build(entityManager);
+
+        insertaTiposEventos();
     }
 
     private void insertaTiposEventos()
@@ -73,20 +84,20 @@ public class EventosSyncServiceUjiTest extends SyncBaseTest
     @Transactional
     public void testSyncNuevosItems() throws Exception
     {
-        syncService.sync(loadFromClasspath(RSS_CA), "");
+        syncService.sync(loadFromClasspath(RSS_CA), user.getUsuario());
 
-        List<Evento> eventos = eventosDAO.getEventosConSesiones(user.getUsuario());
+        int totalEventos = eventosDAO.getTotalEventos(user.getUsuario());
 
-        assertEquals("Número de eventos nuevos", 2, eventos.size());
+        assertEquals("Número de eventos nuevos", 2, totalEventos);
     }
 
     @Test
     @Transactional
     public void testSyncNuevoItemDatos() throws Exception
     {
-        syncService.sync(loadFromClasspath(RSS_CA), "");
+        syncService.sync(loadFromClasspath(RSS_CA), user.getUsuario());
 
-        EventoDTO evento = eventosDAO.getEventoByRssId("1", "");
+        EventoDTO evento = eventosDAO.getEventoByRssId("1", user.getUsuario());
 
         assertNotNull("Evento nuevo insertado", evento);
 
@@ -115,9 +126,9 @@ public class EventosSyncServiceUjiTest extends SyncBaseTest
     @Transactional
     public void testSyncNuevoItemDatosIdiomaCa() throws Exception
     {
-        syncService.sync(loadFromClasspath(RSS_CA), "");
+        syncService.sync(loadFromClasspath(RSS_CA), user.getUsuario());
 
-        EventoDTO evento = eventosDAO.getEventoByRssId("1", "");
+        EventoDTO evento = eventosDAO.getEventoByRssId("1", user.getUsuario());
 
         assertEquals("Título VA del evento", "Madre Coraje", evento.getTituloVa());
         assertTrue(
@@ -137,9 +148,9 @@ public class EventosSyncServiceUjiTest extends SyncBaseTest
     @Transactional
     public void testSyncNuevoItemDatosIdiomaEs() throws Exception
     {
-        syncService.sync(loadFromClasspath(RSS_ES), "");
+        syncService.sync(loadFromClasspath(RSS_ES), user.getUsuario());
 
-        EventoDTO evento = eventosDAO.getEventoByRssId("1", "");
+        EventoDTO evento = eventosDAO.getEventoByRssId("1", user.getUsuario());
 
         assertEquals("Título ES del evento", "Madre Coraje (ES)", evento.getTituloEs());
         assertTrue(
@@ -158,9 +169,9 @@ public class EventosSyncServiceUjiTest extends SyncBaseTest
     // Comprobar que al ir a guardar el campo título del otro idioma no es null ni cadena vacía (petaría la constraint de Oracle)
     public void testSyncNuevoItemOtroIdiomaOk() throws Exception
     {
-        syncService.sync(loadFromClasspath(RSS_CA), "");
+        syncService.sync(loadFromClasspath(RSS_CA), user.getUsuario());
 
-        EventoDTO evento = eventosDAO.getEventoByRssId("1", "");
+        EventoDTO evento = eventosDAO.getEventoByRssId("1", user.getUsuario());
 
         assertNotNull("Título del otro idioma no nulo", evento.getTituloEs());
         assertTrue("Título del otro idioma distinto de \"\"", !evento.getTituloEs().equals(""));
@@ -174,9 +185,9 @@ public class EventosSyncServiceUjiTest extends SyncBaseTest
         eventoDTO.setRssId("1");
         eventosDAO.updateEventoDTO(eventoDTO);
 
-        syncService.sync(loadFromClasspath(RSS_CA), "");
+        syncService.sync(loadFromClasspath(RSS_CA), user.getUsuario());
 
-        EventoDTO evento = eventosDAO.getEventoByRssId("1", "");
+        EventoDTO evento = eventosDAO.getEventoByRssId("1", user.getUsuario());
 
         assertEquals("Título VA de item existente", "Madre Coraje", evento.getTituloVa());
         assertEquals("Tipo del evento", "Teatre", evento.getParTiposEvento().getNombreVa());
@@ -194,9 +205,9 @@ public class EventosSyncServiceUjiTest extends SyncBaseTest
         eventoDTO.setDuracionEs("Duración ES");
         eventosDAO.updateEventoDTO(eventoDTO);
 
-        syncService.sync(loadFromClasspath(RSS_CA), "");
+        syncService.sync(loadFromClasspath(RSS_CA), user.getUsuario());
 
-        EventoDTO evento = eventosDAO.getEventoByRssId("1", "");
+        EventoDTO evento = eventosDAO.getEventoByRssId("1", user.getUsuario());
 
         assertEquals("Título ES de item existente", "Título ES", evento.getTituloEs());
         assertEquals("Características ES de item existente", "Características ES", evento.getCaracteristicasEs());

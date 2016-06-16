@@ -6,8 +6,10 @@ import es.uji.apps.par.db.CompraDTO;
 import es.uji.apps.par.db.EventoDTO;
 import es.uji.apps.par.db.PlantillaDTO;
 import es.uji.apps.par.db.TipoEventoDTO;
+import es.uji.apps.par.model.Cine;
 import es.uji.apps.par.model.Evento;
 import es.uji.apps.par.model.Plantilla;
+import es.uji.apps.par.services.UsersService;
 import es.uji.apps.par.sync.parse.RssParser;
 import es.uji.apps.par.sync.rss.jaxb.Item;
 import es.uji.apps.par.sync.rss.jaxb.Rss;
@@ -54,6 +56,9 @@ public class EventosSyncBenicassim implements EventosSync
     @Autowired
     SalasDAO salasDAO;
 
+	@Autowired
+	UsersService usersService;
+
     @Autowired
     private TpvsDAO tpvsDAO;
 
@@ -82,9 +87,12 @@ public class EventosSyncBenicassim implements EventosSync
         {
             log.info(String.format("RSS insertando nuevo evento: %s - \"%s\"", item.getContenidoId(), item.getTitle()));
 
+			Cine cine = usersService.getUserCineByUserUID(userUID);
+
             evento = new EventoDTO();
             evento.setParTpv(tpvsDAO.getTpvDefault());
             evento.setRssId(item.getContenidoId());
+			evento.setParCine(Cine.cineToCineDTO(cine));
         }
         else
         {
@@ -107,7 +115,7 @@ public class EventosSyncBenicassim implements EventosSync
         for (Sesion sesionRss : item.getSesiones().getSesiones())
         {
 			try {
-				es.uji.apps.par.model.Sesion sesion = sesionesDAO.getSesionByRssId(sesionRss.getId());
+				es.uji.apps.par.model.Sesion sesion = sesionesDAO.getSesionByRssId(sesionRss.getId(), userUID);
 
 				if (sesion == null)
 				{
@@ -145,11 +153,11 @@ public class EventosSyncBenicassim implements EventosSync
 				sesion.setHoraFinVentaOnline(DateUtils.getHourAndMinutesWithLeadingZeros(finVentaOnline.getTime()));
 
 				if (sesion.getId() == 0)
-					sesionesDAO.addSesion(sesion);
+					sesionesDAO.addSesion(sesion, userUID);
 				else {
                     List<CompraDTO> comprasOfSesion = comprasDAO.getComprasOfSesion(sesion.getId());
                     boolean hasCompras = comprasOfSesion != null ? comprasOfSesion.size() > 0 : false;
-                    sesionesDAO.updateSesion(sesion, hasCompras);
+                    sesionesDAO.updateSesion(sesion, hasCompras, userUID);
                 }
 			} catch (Exception e) {
 				log.error("Error en la sincronizacion del evento o sus sesiones", e);

@@ -49,40 +49,59 @@ public class SesionesDAO extends BaseDAO {
     private EventosDAO eventosDAO;
 
     @Transactional
-    public List<SesionDTO> getSesiones(long eventoId, String sortParameter, int start, int limit) {
-        return getSesiones(eventoId, false, sortParameter, start, limit);
+    public List<SesionDTO> getSesiones(long eventoId, String sortParameter, int start, int limit, String userUID) {
+        return getSesiones(eventoId, false, sortParameter, start, limit, userUID);
     }
 
     @Transactional
-    public List<SesionDTO> getSesionesActivas(long eventoId, String sortParameter, int start, int limit) {
-        return getSesiones(eventoId, true, sortParameter, start, limit);
+    public List<SesionDTO> getSesionesActivas(long eventoId, String sortParameter, int start, int limit, String userUID) {
+        return getSesiones(eventoId, true, sortParameter, start, limit, userUID);
     }
 
     @Transactional
-    public List<SesionDTO> getSesiones(long eventoId, boolean activos, String sortParameter, int start, int limit) {
-        List<SesionDTO> sesion = new ArrayList<SesionDTO>();
+    private List<SesionDTO> getSesiones(long eventoId, boolean activos, String sortParameter, int start, int limit, String userUID) {
+        List<SesionDTO> sesion;
 
         if (activos)
-            sesion = getQuerySesionesActivas(eventoId).orderBy(getSort(qSesionDTO, sortParameter)).offset(start)
+            sesion = getQuerySesionesActivas(eventoId, userUID).orderBy(getSort(qSesionDTO, sortParameter)).offset(start)
                     .limit(limit).list(qSesionDTO);
         else
-            sesion = getQuerySesiones(eventoId).orderBy(getSort(qSesionDTO, sortParameter)).offset(start).limit(limit)
+            sesion = getQuerySesiones(eventoId, userUID).orderBy(getSort(qSesionDTO, sortParameter)).offset(start).limit(limit)
                     .list(qSesionDTO);
 
         return sesion;
     }
 
     @Transactional
-    public List<SesionDTO> getSesionesPorRssId(String rssId) {
+    public List<SesionDTO> getSesionesPorRssId(String rssId, String userUID) {
         QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+        QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
+
         JPAQuery query = new JPAQuery(entityManager);
-        return query.from(qSesionDTO).leftJoin(qSesionDTO.parSala, qSalaDTO).fetch().
-                where(qSesionDTO.parEvento.rssId.eq(rssId)).list(qSesionDTO);
+
+        return query.from(qSesionDTO)
+                .leftJoin(qSesionDTO.parSala, qSalaDTO).fetch()
+                .join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+                .where(qSalasUsuarioDTO.parUsuario.usuario.eq(userUID)
+                        .and(qSesionDTO.parEvento.rssId.eq(rssId)))
+                .list(qSesionDTO);
     }
 
     @Transactional
-    public List<Tuple> getSesionesConButacasVendidas(long eventoId, boolean activas, String sortParameter,
-                                                     int start, int limit) {
+    public List<Tuple> getSesionesConButacasVendidas(long eventoId, String sortParameter,
+            int start, int limit, String userUID) {
+        return getSesionesConButacasVendidas(eventoId, false, sortParameter, start, limit, userUID);
+    }
+
+    @Transactional
+    public List<Tuple> getSesionesActivasConButacasVendidas(long eventoId, String sortParameter,
+            int start, int limit, String userUID) {
+        return getSesionesConButacasVendidas(eventoId, true, sortParameter, start, limit, userUID);
+    }
+
+    @Transactional
+    private List<Tuple> getSesionesConButacasVendidas(long eventoId, boolean activas, String sortParameter,
+                                                     int start, int limit, String userUID) {
         QSesionDTO qSesionDTO = QSesionDTO.sesionDTO;
         QButacaDTO qButacaDTO = QButacaDTO.butacaDTO;
         QCompraDTO qCompraDTO = QCompraDTO.compraDTO;
@@ -91,9 +110,9 @@ public class SesionesDAO extends BaseDAO {
         JPAQuery query;
 
         if (activas)
-            query = getQuerySesionesActivas(eventoId);
+            query = getQuerySesionesActivas(eventoId, userUID);
         else
-            query = getQuerySesiones(eventoId);
+            query = getQuerySesiones(eventoId, userUID);
 
         JPASubQuery queryVendidas = new JPASubQuery();
         queryVendidas.from(qButacaDTO, qCompraDTO);
@@ -112,32 +131,48 @@ public class SesionesDAO extends BaseDAO {
     }
 
     @Transactional
-    private JPAQuery getQuerySesionesActivas(long eventoId) {
+    private JPAQuery getQuerySesionesActivas(long eventoId, String userUID) {
         QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+        QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
 
         JPAQuery query = new JPAQuery(entityManager);
 
         Timestamp now = new Timestamp(configuration.dateConMargenTrasVenta().getTime());
 
-        return query.from(qSesionDTO).leftJoin(qSesionDTO.parSala, qSalaDTO).fetch()
-                .where(qSesionDTO.parEvento.id.eq(eventoId).and(qSesionDTO.fechaCelebracion.after(now)).and(qSesionDTO.anulada
-                        .isNull().or(qSesionDTO.anulada.eq(false))));
+        return query.from(qSesionDTO)
+                .leftJoin(qSesionDTO.parSala, qSalaDTO).fetch()
+                .join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+                .where(qSalasUsuarioDTO.parUsuario.usuario.eq(userUID).and(qSesionDTO.parEvento.id.eq(eventoId).and(qSesionDTO.fechaCelebracion.after(now)).and(qSesionDTO.anulada
+                        .isNull().or(qSesionDTO.anulada.eq(false)))));
     }
 
     @Transactional
-    private JPAQuery getQuerySesiones(long eventoId) {
+    private JPAQuery getQuerySesiones(long eventoId, String userUID) {
         QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+        QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
+
         JPAQuery query = new JPAQuery(entityManager);
-        return query.from(qSesionDTO).leftJoin(qSesionDTO.parSala, qSalaDTO).fetch().
-                where(qSesionDTO.parEvento.id.eq(eventoId));
+
+        return query.from(qSesionDTO)
+                .leftJoin(qSesionDTO.parSala, qSalaDTO).fetch()
+                .join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+                .where(qSalasUsuarioDTO.parUsuario.usuario.eq(userUID).and(qSesionDTO.parEvento.id.eq(eventoId)));
     }
 
     @Transactional
-    public List<SesionDTO> getSesionesPorSala(long eventoId, long salaId, String sortParameter) {
+    public List<SesionDTO> getSesionesPorSala(long eventoId, long salaId, String sortParameter, String userUID) {
         QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+        QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
+
         JPAQuery query = new JPAQuery(entityManager);
-        List<SesionDTO> sesiones = query.from(qSesionDTO).leftJoin(qSesionDTO.parSala, qSalaDTO).fetch().
-                where(qSesionDTO.parEvento.id.eq(eventoId).and(qSalaDTO.id.eq(salaId))).orderBy(getSort(qSesionDTO, sortParameter)).list(qSesionDTO);
+
+        List<SesionDTO> sesiones = query.from(qSesionDTO)
+                .leftJoin(qSesionDTO.parSala, qSalaDTO).fetch()
+                .join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+                .where(qSalasUsuarioDTO.parUsuario.usuario.eq(userUID)
+                        .and(qSesionDTO.parEvento.id.eq(eventoId).and(qSalaDTO.id.eq(salaId))))
+                .orderBy(getSort(qSesionDTO, sortParameter))
+                .list(qSesionDTO);
 
         return sesiones;
     }
@@ -155,10 +190,10 @@ public class SesionesDAO extends BaseDAO {
     }
 
     @Transactional
-    public Sesion addSesion(Sesion sesion) {
+    public Sesion addSesion(Sesion sesion, String userUID) {
         SesionDTO sesionDTO = Sesion.SesionToSesionDTO(sesion);
         persistSesion(sesionDTO);
-        setIncidenciaSesion(sesionDTO.getFechaCelebracion(), sesionDTO.getParSala().getId());
+        setIncidenciaSesion(sesionDTO.getFechaCelebracion(), sesionDTO.getParSala().getId(), userUID);
         anulaSesionesConLaMismaHoraYSala(sesionDTO.getFechaCelebracion(), sesionDTO.getParSala().getId(), sesionDTO.getId());
         sesion.setId(sesionDTO.getId());
         //TODO -> Esta sesion.getVersionLingustica sera erronea cuando sea multisesion, mejor hacer un insert en la tabla hija
@@ -217,8 +252,8 @@ public class SesionesDAO extends BaseDAO {
     }
 
     @Transactional(rollbackForClassName = {"EdicionSesionAnuladaException"})
-    public void updateSesion(Sesion sesion, boolean hasCompras) {
-        SesionDTO sesionDTO = getSesion(sesion.getId());
+    public void updateSesion(Sesion sesion, boolean hasCompras, String userUID) {
+        SesionDTO sesionDTO = getSesion(sesion.getId(), userUID);
 
         if (isSesionAnulada(sesionDTO))
             throw new EdicionSesionAnuladaException();
@@ -256,12 +291,12 @@ public class SesionesDAO extends BaseDAO {
         // por cada pelicula de la multisesion (evento.getFormato, evento.getId, evento.getPeliculasMultisesion()
         // .getversionLingusitca())
         ////addSesionFormatoIdiomaIfNeeded(sesion.getEvento().getId(), sesion.getEvento().getFormato(),	sesion.getVersionLinguistica());
-        setIncidenciaSesion(fechaCelebracion, sesion.getSala().getId());
+        setIncidenciaSesion(fechaCelebracion, sesion.getSala().getId(), userUID);
         anulaSesionesConLaMismaHoraYSala(fechaCelebracion, sesion.getSala().getId(), sesion.getId());
     }
 
     @Transactional
-    private void setIncidenciaSesion(Timestamp fechaCelebracion, Long salaId) {
+    private void setIncidenciaSesion(Timestamp fechaCelebracion, Long salaId, String userUID) {
         List<SesionDTO> sesionesMismaHoraYSala = getSesionesMismaFechaYLocalizacion(fechaCelebracion, salaId);
 
         for (SesionDTO sesionMismaHoraYSalaIncluidaLaPropia : sesionesMismaHoraYSala) {
@@ -269,7 +304,7 @@ public class SesionesDAO extends BaseDAO {
             boolean hasVentasDegradadas = hasVentasDegradadas(sesionMismaHoraYSalaIncluidaLaPropia.getId(),
                     fechaCelebracion);
             boolean isSesionReprogramada = isSesionReprogramada(fechaCelebracion, sesionMismaHoraYSalaIncluidaLaPropia.getParSala().getId(),
-                    sesionMismaHoraYSalaIncluidaLaPropia.getId());
+                    sesionMismaHoraYSalaIncluidaLaPropia.getId(), userUID);
             int tipoIncidenciaId = getTipoIncidenciaSesion(totalAnuladas, hasVentasDegradadas, isSesionReprogramada);
             setIncidencia(sesionMismaHoraYSalaIncluidaLaPropia.getId(), tipoIncidenciaId);
         }
@@ -311,27 +346,29 @@ public class SesionesDAO extends BaseDAO {
     }
 
     @Transactional
-    public PreciosSesionDTO persistPreciosSesion(PreciosSesionDTO precioSesionDTO) {
-        entityManager.persist(precioSesionDTO);
-        return precioSesionDTO;
-    }
+    public SesionDTO getSesion(long sesionId, String userUID) {
+        QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+        QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
 
-    @Transactional
-    public SesionDTO getSesion(long sesionId) {
         JPAQuery query = new JPAQuery(entityManager);
+
         return query.from(qSesionDTO).
                 leftJoin(qSesionDTO.parPreciosSesions, qPreciosSesionDTO).fetch()
-                .where(qSesionDTO.id.eq(sesionId)).uniqueResult(qSesionDTO);
+				.leftJoin(qSesionDTO.parSala, qSalaDTO).fetch()
+				.join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+				.where(qSalasUsuarioDTO.parUsuario.usuario.eq(userUID)
+						.and(qSesionDTO.id.eq(sesionId)))
+				.uniqueResult(qSesionDTO);
     }
 
     @Transactional
-    public int getTotalSesionesActivas(Long eventoId) {
-        return (int) getQuerySesionesActivas(eventoId).count();
+    public int getTotalSesionesActivas(Long eventoId, String userUID) {
+        return (int) getQuerySesionesActivas(eventoId, userUID).count();
     }
 
     @Transactional
-    public int getTotalSesiones(Long eventoId) {
-        return (int) getQuerySesiones(eventoId).count();
+    public int getTotalSesiones(Long eventoId, String userUID) {
+        return (int) getQuerySesiones(eventoId, userUID).count();
     }
 
     @Transactional
@@ -424,7 +461,6 @@ public class SesionesDAO extends BaseDAO {
     public List<RegistroSesionPelicula> getRegistrosSesionesPeliculas(List<Sesion> sesiones) throws SesionSinFormatoIdiomaIcaaException, IncidenciaNotFoundException {
         QSesionDTO qSesionDTO = QSesionDTO.sesionDTO;
         QEventoDTO qEventoDTO = QEventoDTO.eventoDTO;
-        QEventoMultisesionDTO qEventoMultisesionDTO = new QEventoMultisesionDTO("qEventoMultisesionDTO");
 
         List<Long> idsSesiones = Sesion.getIdsSesiones(sesiones);
 
@@ -547,9 +583,10 @@ public class SesionesDAO extends BaseDAO {
     }
 
     @Transactional
-    public List<SesionDTO> getSesionesOrdenadas(List<Sesion> sesiones) {
-        QSesionDTO qSesionDTO = QSesionDTO.sesionDTO;
+    public List<SesionDTO> getSesionesOrdenadas(List<Sesion> sesiones, String userUID) {
         QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+        QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
+        QSesionDTO qSesionDTO = QSesionDTO.sesionDTO;
 
         List<Long> idsSesiones = Sesion.getIdsSesiones(sesiones);
 
@@ -558,7 +595,9 @@ public class SesionesDAO extends BaseDAO {
         List<SesionDTO> resultado = query
                 .from(qSesionDTO)
                 .join(qSesionDTO.parSala, qSalaDTO).fetch()
-                .where(qSesionDTO.id.in(idsSesiones))
+                .join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+                .where(qSalasUsuarioDTO.parUsuario.usuario.eq(userUID)
+                        .and(qSesionDTO.id.in(idsSesiones)))
                 .orderBy(qSalaDTO.id.asc(), qSesionDTO.fechaCelebracion.asc())
                 .list(qSesionDTO);
 
@@ -566,10 +605,17 @@ public class SesionesDAO extends BaseDAO {
     }
 
     @Transactional
-    public Sesion getSesionByRssId(String rssId) {
+    public Sesion getSesionByRssId(String rssId, String userUID) {
+        QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+        QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
+
         JPAQuery query = new JPAQuery(entityManager);
+
         SesionDTO uniqueResult = query.from(QSesionDTO.sesionDTO)
-                .where(QSesionDTO.sesionDTO.rssId.eq(rssId)).uniqueResult(QSesionDTO.sesionDTO);
+                .leftJoin(qSesionDTO.parSala, qSalaDTO)
+                .join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+                .where(qSalasUsuarioDTO.parUsuario.usuario.eq(userUID).and(QSesionDTO.sesionDTO.rssId.eq(rssId)))
+                .uniqueResult(QSesionDTO.sesionDTO);
 
         if (uniqueResult == null)
             return null;
@@ -605,26 +651,35 @@ public class SesionesDAO extends BaseDAO {
     }
 
     @Transactional
-    public List<SesionDTO> getSesiones(List<Long> ids) {
+    public List<SesionDTO> getSesiones(List<Long> ids, String userUID) {
         QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+        QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
         QEventoDTO qEventoDTO = QEventoDTO.eventoDTO;
 
         JPAQuery query = new JPAQuery(entityManager);
-        return query.from(qSesionDTO).join(qSesionDTO.parEvento, qEventoDTO).leftJoin(qSesionDTO.parSala, qSalaDTO).fetch()
-                .where(qSesionDTO.id.in(ids)).list(qSesionDTO);
+        return query.from(qSesionDTO).join(qSesionDTO.parEvento, qEventoDTO)
+                .leftJoin(qSesionDTO.parSala, qSalaDTO).fetch()
+                .join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+                .where(qSalasUsuarioDTO.parUsuario.usuario.eq(userUID).and(qSesionDTO.id.in(ids)))
+                .list(qSesionDTO);
     }
 
     @Transactional
-    public List<SesionDTO> getSesionesICAAPorFechas(Date dtInicio, Date dtFin, String sort) {
+    public List<SesionDTO> getSesionesICAAPorFechas(Date dtInicio, Date dtFin, String sort, String userUID) {
         QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+        QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
         QEventoDTO qEventoDTO = QEventoDTO.eventoDTO;
         QEnviosSesionDTO qEnviosSesion = QEnviosSesionDTO.enviosSesionDTO;
         QEnvioDTO qEnvioDTO = QEnvioDTO.envioDTO;
 
         JPAQuery query = new JPAQuery(entityManager);
-        query.from(qSesionDTO).join(qSesionDTO.parEvento, qEventoDTO).leftJoin(qSesionDTO.parSala, qSalaDTO).fetch().
-                leftJoin(qSesionDTO.parEnviosSesion, qEnviosSesion).fetch().leftJoin(qEnviosSesion.parEnvio, qEnvioDTO).fetch();
-        BooleanExpression condicion = qEventoDTO.parTiposEvento.exportarICAA.eq(true);
+        query.from(qSesionDTO)
+                .join(qSesionDTO.parEvento, qEventoDTO)
+                .leftJoin(qSesionDTO.parSala, qSalaDTO).fetch()
+                .join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+                .leftJoin(qSesionDTO.parEnviosSesion, qEnviosSesion).fetch()
+                .leftJoin(qEnviosSesion.parEnvio, qEnvioDTO).fetch();
+        BooleanExpression condicion = qSalasUsuarioDTO.parUsuario.usuario.eq(userUID).and(qEventoDTO.parTiposEvento.exportarICAA.eq(true));
 
         if (dtInicio != null)
             condicion = condicion.and(qSesionDTO.fechaCelebracion.goe(new Timestamp(dtInicio.getTime())));
@@ -638,14 +693,18 @@ public class SesionesDAO extends BaseDAO {
     }
 
     @Transactional
-    public List<SesionDTO> getSesionesPorFechas(Date dtInicio, Date dtFin, String sort) {
+    public List<SesionDTO> getSesionesPorFechas(Date dtInicio, Date dtFin, String sort, String userUID) {
         QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+        QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
         QEventoDTO qEventoDTO = QEventoDTO.eventoDTO;
 
         JPAQuery query = new JPAQuery(entityManager);
-        query.from(qSesionDTO).join(qSesionDTO.parEvento, qEventoDTO).leftJoin(qSesionDTO.parSala, qSalaDTO).fetch();
-        BooleanBuilder condicion = new BooleanBuilder();
+        query.from(qSesionDTO)
+                .join(qSesionDTO.parEvento, qEventoDTO)
+                .leftJoin(qSesionDTO.parSala, qSalaDTO).fetch()
+                .join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO);
 
+        BooleanBuilder condicion = new BooleanBuilder(qSalasUsuarioDTO.parUsuario.usuario.eq(userUID));
         if (dtInicio != null)
             condicion = condicion.and(qSesionDTO.fechaCelebracion.goe(new Timestamp(dtInicio.getTime())));
 
@@ -680,12 +739,6 @@ public class SesionesDAO extends BaseDAO {
     public void setIncidencia(long sesionId, int incidenciaId) {
         JPAUpdateClause jpaUpdate = new JPAUpdateClause(entityManager, qSesionDTO);
         jpaUpdate.set(qSesionDTO.incidenciaId, incidenciaId).where(qSesionDTO.id.eq(sesionId)).execute();
-    }
-
-    @Transactional
-    public void removeIncidencia(long sesionId) {
-        JPAUpdateClause jpaUpdate = new JPAUpdateClause(entityManager, qSesionDTO);
-        jpaUpdate.set(qSesionDTO.incidenciaId, 0).where(qSesionDTO.id.eq(sesionId)).execute();
     }
 
     @Transactional
@@ -724,7 +777,9 @@ public class SesionesDAO extends BaseDAO {
 
     @Transactional
     public Pair getCantidadSesionesMismaFechaYLocalizacion(Timestamp fechaCelebracion, long salaId,
-                                                           Long sesionId) {
+                                                           Long sesionId, String userUID) {
+        QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+        QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
         QCompraDTO qCompraDTO = QCompraDTO.compraDTO;
         QButacaDTO qButacaDTO = QButacaDTO.butacaDTO;
         JPAQuery query = new JPAQuery(entityManager);
@@ -732,17 +787,21 @@ public class SesionesDAO extends BaseDAO {
 
         Pair result;
         if (sesionId != null) {
-            result = new Pair(query.from(qSesionDTO).where(qSesionDTO.fechaCelebracion.eq(fechaCelebracion).and(qSesionDTO.parSala
-                    .id.eq(salaId)).and(qSesionDTO.id.ne(sesionId).and(qSesionDTO.anulada.ne(true)))).count(),
-                    queryCompras.from(qSesionDTO).join(qSesionDTO.parCompras, qCompraDTO).join(qCompraDTO.parButacas,
-                            qButacaDTO).on(qButacaDTO.anulada.ne(true)).where(qSesionDTO.id.eq(sesionId).and(qSesionDTO.anulada.ne(true).and(qSesionDTO.fechaCelebracion.eq(fechaCelebracion).and(qSesionDTO.parSala
-                            .id.eq(salaId)).and(qSesionDTO.id.ne(sesionId))))).count());
+            result = new Pair(query.from(qSesionDTO).leftJoin(qSesionDTO.parSala, qSalaDTO)
+                    .join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO).where(qSalasUsuarioDTO.parUsuario.usuario.eq(userUID).and(qSesionDTO.fechaCelebracion.eq(fechaCelebracion).and(qSesionDTO.parSala
+                    .id.eq(salaId)).and(qSesionDTO.id.ne(sesionId).and(qSesionDTO.anulada.ne(true))))).count(),
+                    queryCompras.from(qSesionDTO).leftJoin(qSesionDTO.parSala, qSalaDTO)
+                            .join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO).join(qSesionDTO.parCompras, qCompraDTO).join(qCompraDTO.parButacas,
+                            qButacaDTO).on(qButacaDTO.anulada.ne(true)).where(qSalasUsuarioDTO.parUsuario.usuario.eq(userUID).and(qSesionDTO.id.eq(sesionId).and(qSesionDTO.anulada.ne(true).and(qSesionDTO.fechaCelebracion.eq(fechaCelebracion).and(qSesionDTO.parSala
+                            .id.eq(salaId)).and(qSesionDTO.id.ne(sesionId)))))).count());
         } else {
-            result = new Pair(query.from(qSesionDTO).where(qSesionDTO.fechaCelebracion.eq(fechaCelebracion).and(qSesionDTO.parSala
-                    .id.eq(salaId).and(qSesionDTO.anulada.ne(true)))).count(),
-                    queryCompras.from(qSesionDTO).join(qSesionDTO.parCompras, qCompraDTO).join(qCompraDTO.parButacas,
-                            qButacaDTO).on(qButacaDTO.anulada.ne(true)).where(qSesionDTO.fechaCelebracion.eq(fechaCelebracion).and(qSesionDTO.parSala
-                            .id.eq(salaId).and(qSesionDTO.anulada.ne(true)))).count());
+            result = new Pair(query.from(qSesionDTO).leftJoin(qSesionDTO.parSala, qSalaDTO)
+                    .join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO).where(qSalasUsuarioDTO.parUsuario.usuario.eq(userUID).and(qSesionDTO.fechaCelebracion.eq(fechaCelebracion).and(qSesionDTO.parSala
+                    .id.eq(salaId).and(qSesionDTO.anulada.ne(true))))).count(),
+                    queryCompras.from(qSesionDTO).leftJoin(qSesionDTO.parSala, qSalaDTO)
+                            .join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO).join(qSesionDTO.parCompras, qCompraDTO).join(qCompraDTO.parButacas,
+                            qButacaDTO).on(qButacaDTO.anulada.ne(true)).where(qSalasUsuarioDTO.parUsuario.usuario.eq(userUID).and(qSesionDTO.fechaCelebracion.eq(fechaCelebracion).and(qSesionDTO.parSala
+                            .id.eq(salaId).and(qSesionDTO.anulada.ne(true))))).count());
         }
 
         return result;
@@ -750,11 +809,19 @@ public class SesionesDAO extends BaseDAO {
 
     @Transactional
     public boolean isSesionReprogramada(Timestamp fechaCelebracion, long salaId,
-                                                           Long sesionId) {
+                                                           Long sesionId, String userUID) {
+        QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+        QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
+
         JPAQuery query = new JPAQuery(entityManager);
 
-        return query.from(qSesionDTO).where(qSesionDTO.fechaCelebracion.eq(fechaCelebracion).and(qSesionDTO.parSala
-                .id.eq(salaId)).and(qSesionDTO.id.ne(sesionId))).count() > 0;
+        return query.from(qSesionDTO)
+                .leftJoin(qSesionDTO.parSala, qSalaDTO)
+                .join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+                .where(qSalasUsuarioDTO.parUsuario.usuario.eq(userUID).and(qSesionDTO.fechaCelebracion.eq(fechaCelebracion)
+                        .and(qSesionDTO.parSala.id.eq(salaId))
+                        .and(qSesionDTO.id.ne(sesionId))))
+                .count() > 0;
     }
 
     @Transactional
@@ -766,8 +833,8 @@ public class SesionesDAO extends BaseDAO {
     }
 
     @Transactional
-    public void removeAnulacionVentasFromSesion(long sesionId) {
-        SesionDTO sesionDTO = getSesion(sesionId);
+    public void removeAnulacionVentasFromSesion(long sesionId, String userUID) {
+        SesionDTO sesionDTO = getSesion(sesionId, userUID);
         sesionDTO.setIncidenciaId(TipoIncidencia.removeAnulacionVentasFromIncidenciaActual(sesionDTO.getIncidenciaId()));
         entityManager.merge(sesionDTO);
     }

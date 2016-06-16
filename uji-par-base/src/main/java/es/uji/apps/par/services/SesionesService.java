@@ -57,16 +57,24 @@ public class SesionesService
         return sesionesAbonos;
     }
     
-    public List<Sesion> getSesiones(Long eventoId, String sortParameter, int start, int limit)
+    public List<Sesion> getSesiones(Long eventoId, String sortParameter, int start, int limit, String userUID)
     {
-    	return getSesiones(eventoId, false, sortParameter, start, limit);
+    	return getSesiones(eventoId, false, sortParameter, start, limit, userUID);
     }
     
-    private List<Sesion> getSesionesConVendidas(Long eventoId, boolean activas, String sortParameter, int start, int limit)
+    private List<Sesion> getSesionesConVendidas(Long eventoId, boolean activas, String sortParameter, int start, int limit, String userUID)
     {
-        List<Sesion> listaSesiones = new ArrayList<Sesion>();
+        List<Sesion> listaSesiones = new ArrayList<>();
         
-        List<Tuple> sesiones = sesionDAO.getSesionesConButacasVendidas(eventoId, activas, sortParameter, start, limit);
+        List<Tuple> sesiones;
+		if (activas)
+		{
+			sesiones = sesionDAO.getSesionesActivasConButacasVendidas(eventoId, sortParameter, start, limit, userUID);
+		}
+		else
+		{
+			sesiones = sesionDAO.getSesionesConButacasVendidas(eventoId, sortParameter, start, limit, userUID);
+		}
         
         for (Tuple fila: sesiones) {
             
@@ -84,10 +92,10 @@ public class SesionesService
         return listaSesiones;
     }
 
-    public List<Sesion> getSesionesPorSala(Long eventoId, Long salaId, String sortParameter) {
+    public List<Sesion> getSesionesPorSala(Long eventoId, Long salaId, String sortParameter, String userUID) {
 
         List<Sesion> listaSesiones = new ArrayList<Sesion>();
-        List<SesionDTO> sesiones = sesionDAO.getSesionesPorSala(eventoId, salaId, sortParameter);
+        List<SesionDTO> sesiones = sesionDAO.getSesionesPorSala(eventoId, salaId, sortParameter, userUID);
 
         for (SesionDTO sesionDB: sesiones) {
             listaSesiones.add(new Sesion(sesionDB));
@@ -95,25 +103,25 @@ public class SesionesService
         return listaSesiones;
     }
     
-    public List<Sesion> getSesiones(Long eventoId) {
-		return getSesiones(eventoId, false, "", 0, 100);
+    public List<Sesion> getSesiones(Long eventoId, String userUID) {
+		return getSesiones(eventoId, false, "", 0, 100, userUID);
 	}
     
-    public List<Sesion> getSesionesActivas(Long eventoId, String sortParameter, int start, int limit)
+    public List<Sesion> getSesionesActivas(Long eventoId, String sortParameter, int start, int limit, String userUID)
     {
-        return getSesiones(eventoId, true, sortParameter, start, limit);
+        return getSesiones(eventoId, true, sortParameter, start, limit, userUID);
     }
     
-    private List<Sesion> getSesiones(Long eventoId, boolean activos, String sortParameter, int start, int limit)
+    private List<Sesion> getSesiones(Long eventoId, boolean activos, String sortParameter, int start, int limit, String userUID)
     {
         List<Sesion> listaSesiones = new ArrayList<Sesion>();
         
         List<SesionDTO> sesiones;
         
         if (activos)
-            sesiones = sesionDAO.getSesionesActivas(eventoId, sortParameter, start, limit);
+            sesiones = sesionDAO.getSesionesActivas(eventoId, sortParameter, start, limit, userUID);
         else
-            sesiones = sesionDAO.getSesiones(eventoId, sortParameter, start, limit);
+            sesiones = sesionDAO.getSesiones(eventoId, sortParameter, start, limit, userUID);
         
         for (SesionDTO sesionDB: sesiones) {
             listaSesiones.add(new Sesion(sesionDB));
@@ -121,10 +129,10 @@ public class SesionesService
         return listaSesiones;
     }
 
-    public List<Sesion> getSesionesPorRssId(String rssId)
+    public List<Sesion> getSesionesPorRssId(String rssId, String userUID)
     {
         List<Sesion> listaSesiones = new ArrayList<Sesion>();
-        List<SesionDTO> sesiones = sesionDAO.getSesionesPorRssId(rssId);
+        List<SesionDTO> sesiones = sesionDAO.getSesionesPorRssId(rssId, userUID);
 
         for (SesionDTO sesionDB: sesiones) {
             listaSesiones.add(new Sesion(sesionDB));
@@ -133,25 +141,25 @@ public class SesionesService
     }
     
     // Para el Ext que espera recibir segundos en vez de milisegundos
-    public List<Sesion> getSesionesDateEnSegundos(Long eventoId, String sortParameter, int start, int limit)
+    public List<Sesion> getSesionesDateEnSegundos(Long eventoId, String sortParameter, int start, int limit, String userUID)
     {
-      return getSesionesDateEnSegundos(eventoId, false, sortParameter, start, limit);
+      return getSesionesDateEnSegundos(eventoId, false, sortParameter, start, limit, userUID);
     }
     
     // Para el Ext que espera recibir segundos en vez de milisegundos
-    public List<Sesion> getSesionesActivasDateEnSegundos(Long eventoId, String sortParameter, int start, int limit)
+    public List<Sesion> getSesionesActivasDateEnSegundos(Long eventoId, String sortParameter, int start, int limit, String userUID)
     {
-    	return getSesionesDateEnSegundos(eventoId, true, sortParameter, start, limit);
+    	return getSesionesDateEnSegundos(eventoId, true, sortParameter, start, limit, userUID);
     }    
     
-    public List<Sesion> getSesionesDateEnSegundos(Long eventoId, boolean activos, String sortParameter, int start, int limit)
+    public List<Sesion> getSesionesDateEnSegundos(Long eventoId, boolean activos, String sortParameter, int start, int limit, String userUID)
     {
         List<Sesion> sesiones;
         
         if (activos)
-            sesiones = getSesionesActivas(eventoId, sortParameter, start, limit);
+            sesiones = getSesionesActivas(eventoId, sortParameter, start, limit, userUID);
         else
-            sesiones = getSesiones(eventoId, sortParameter, start, limit);
+            sesiones = getSesiones(eventoId, sortParameter, start, limit, userUID);
         
         for (Sesion sesion : sesiones)
         {
@@ -165,19 +173,19 @@ public class SesionesService
         return sesiones;
     }    
     
-    public List<Sesion> getSesionesConVendidasDateEnSegundos(Long eventoId, String sortParameter, int start, int limit)
+    public List<Sesion> getSesionesConVendidasDateEnSegundos(Long eventoId, String sortParameter, int start, int limit, String userUID)
     {
-        return getSesionesConVendidasDateEnSegundos(eventoId, false, sortParameter, start, limit);
+        return getSesionesConVendidasDateEnSegundos(eventoId, false, sortParameter, start, limit, userUID);
     } 
     
-    public List<Sesion> getSesionesActivasConVendidasDateEnSegundos(Long eventoId, String sortParameter, int start, int limit)
+    public List<Sesion> getSesionesActivasConVendidasDateEnSegundos(Long eventoId, String sortParameter, int start, int limit, String userUID)
     {
-        return getSesionesConVendidasDateEnSegundos(eventoId, true, sortParameter, start, limit);
+        return getSesionesConVendidasDateEnSegundos(eventoId, true, sortParameter, start, limit, userUID);
     }
     
-    public List<Sesion> getSesionesConVendidasDateEnSegundos(Long eventoId, boolean activas, String sortParameter, int start, int limit)
+    public List<Sesion> getSesionesConVendidasDateEnSegundos(Long eventoId, boolean activas, String sortParameter, int start, int limit, String userUID)
     {
-        List<Sesion> sesiones = getSesionesConVendidas(eventoId, activas, sortParameter, start, limit);
+        List<Sesion> sesiones = getSesionesConVendidas(eventoId, activas, sortParameter, start, limit, userUID);
         
         for (Sesion sesion : sesiones)
         {
@@ -226,7 +234,7 @@ public class SesionesService
         	sesion.setPreciosSesion(listaPreciosSesion);
         }
     	
-    	sesionDAO.addSesion(sesion);
+    	sesionDAO.addSesion(sesion, userUID);
         return sesion;
     }
 
@@ -263,14 +271,14 @@ public class SesionesService
     
 	@Transactional(rollbackForClassName={"CampoRequeridoException","FechasInvalidasException",
             "IncidenciaNotFoundException"})
-    public void updateSesion(long eventoId, Sesion sesion) throws CampoRequeridoException, FechasInvalidasException, IncidenciaNotFoundException {
+    public void updateSesion(long eventoId, Sesion sesion, String userUID) throws CampoRequeridoException, FechasInvalidasException, IncidenciaNotFoundException {
 		checkSesionAndDates(sesion);
 		sesion.setEvento(createParEventoWithId(eventoId));
 
         sesionDAO.deleteExistingPreciosSesion(sesion.getId());
         List<CompraDTO> comprasOfSesion = comprasDAO.getComprasOfSesion(sesion.getId());
         boolean hasCompras = comprasOfSesion != null ? comprasOfSesion.size() > 0 : false;
-        sesionDAO.updateSesion(sesion, hasCompras);
+        sesionDAO.updateSesion(sesion, hasCompras, userUID);
         addPreciosSesion(Sesion.SesionToSesionDTO(sesion));
     }
 
@@ -313,10 +321,10 @@ public class SesionesService
 			return true;
 	}
 
-	public List<PreciosSesion> getPreciosSesion(Long sesionId, String sortParameter, int start, int limit, boolean mostrarTarifasInternas) {
+	public List<PreciosSesion> getPreciosSesion(Long sesionId, String sortParameter, int start, int limit, boolean mostrarTarifasInternas, String userUID) {
 		List<PreciosSesion> listaPreciosSesion = new ArrayList<PreciosSesion>();
     	
-		Sesion sesion = getSesion(sesionId);
+		Sesion sesion = getSesion(sesionId, userUID);
 		
 		if (sesion.getPlantillaPrecios().getId() == -1)
 		{
@@ -340,21 +348,21 @@ public class SesionesService
         return listaPreciosSesion;
 	}
 	
-	public List<PreciosSesion> getPreciosSesion(Long sesionId) {
-		return getPreciosSesion(sesionId, "", 0, 100, true);
+	public List<PreciosSesion> getPreciosSesion(Long sesionId, String userUID) {
+		return getPreciosSesion(sesionId, "", 0, 100, true, userUID);
 	}
 	
-	public List<PreciosSesion> getPreciosSesionPublicos(Long sesionId) {
-		return getPreciosSesion(sesionId, "", 0, 100, false);
+	public List<PreciosSesion> getPreciosSesionPublicos(Long sesionId, String userUID) {
+		return getPreciosSesion(sesionId, "", 0, 100, false, userUID);
 	}
 	
 	
 	
-	private Map<String, Map<Long, PreciosSesion>> getPreciosSesionPorLocalizacion(Long sesionId, boolean mostrarTarifasInternas)
+	private Map<String, Map<Long, PreciosSesion>> getPreciosSesionPorLocalizacion(Long sesionId, boolean mostrarTarifasInternas, String userUID)
 	{
 	    Map<String, Map<Long, PreciosSesion>> resultado = new HashMap<String, Map<Long, PreciosSesion>>();
 	    
-	    List<PreciosSesion> preciosSesion = getPreciosSesion(sesionId);
+	    List<PreciosSesion> preciosSesion = getPreciosSesion(sesionId, userUID);
 	    for (Localizacion localizacion : localizacionesPorSesion(preciosSesion))
 	    {
 	    	Map<Long, PreciosSesion> tarifasPrecios = new HashMap<Long, PreciosSesion>();
@@ -372,12 +380,12 @@ public class SesionesService
         return resultado;
 	}
 	
-	public Map<String, Map<Long, PreciosSesion>> getPreciosSesionPublicosPorLocalizacion(long sesionId) {
-		return getPreciosSesionPorLocalizacion(sesionId, false);
+	public Map<String, Map<Long, PreciosSesion>> getPreciosSesionPublicosPorLocalizacion(long sesionId, String userUID) {
+		return getPreciosSesionPorLocalizacion(sesionId, false, userUID);
 	}
 	
-	public Map<String, Map<Long, PreciosSesion>> getPreciosSesionPorLocalizacion(long sesionId) {
-		return getPreciosSesionPorLocalizacion(sesionId, true);
+	public Map<String, Map<Long, PreciosSesion>> getPreciosSesionPorLocalizacion(long sesionId, String userUID) {
+		return getPreciosSesionPorLocalizacion(sesionId, true, userUID);
 	}
 	
 	private List<Localizacion> localizacionesPorSesion(List<PreciosSesion> preciosSesion) {
@@ -393,17 +401,17 @@ public class SesionesService
 		return localizaciones;
 	}
 
-	public Sesion getSesion(long id)
+	public Sesion getSesion(long id, String userUID)
 	{
-	    return new Sesion(sesionDAO.getSesion(id));
+	    return new Sesion(sesionDAO.getSesion(id, userUID));
 	}
 
-	public int getTotalSesionesActivas(Long eventoId) {
-		return sesionDAO.getTotalSesionesActivas(eventoId);
+	public int getTotalSesionesActivas(Long eventoId, String userUID) {
+		return sesionDAO.getTotalSesionesActivas(eventoId, userUID);
 	}
 
-	public int getTotalSesiones(Long eventoId) {
-		return sesionDAO.getTotalSesiones(eventoId);
+	public int getTotalSesiones(Long eventoId, String userUID) {
+		return sesionDAO.getTotalSesiones(eventoId, userUID);
 	}
 
 	public int getTotalPreciosSesion(Long sesionId) {
@@ -445,19 +453,19 @@ public class SesionesService
 		return getSesionesPorFechas(sesionesDTO, false);
 	}
 	
-	public List<Sesion> getSesionesICAAPorFechas(String fechaInicio, String fechaFin, String sort) {
+	public List<Sesion> getSesionesICAAPorFechas(String fechaInicio, String fechaFin, String sort, String userUID) {
 		Date dtInicio = DateUtils.spanishStringToDate(fechaInicio);
 		Date dtFin = DateUtils.spanishStringToDate(fechaFin);
 		dtFin = DateUtils.addTimeToDate(dtFin, "23:59");
-		List<SesionDTO> sesionesDTO = sesionDAO.getSesionesICAAPorFechas(dtInicio, dtFin, sort);
+		List<SesionDTO> sesionesDTO = sesionDAO.getSesionesICAAPorFechas(dtInicio, dtFin, sort, userUID);
 		return getSesionesPorFechas(sesionesDTO, true);
 	}
 	
-	public List<Sesion> getSesionesPorFechas(String fechaInicio, String fechaFin, String sort) {
+	public List<Sesion> getSesionesPorFechas(String fechaInicio, String fechaFin, String sort, String userUID) {
 		Date dtInicio = DateUtils.spanishStringToDate(fechaInicio);
 		Date dtFin = DateUtils.spanishStringToDate(fechaFin);
 		dtFin = DateUtils.addTimeToDate(dtFin, "23:59");
-		List<SesionDTO> sesionesDTO = sesionDAO.getSesionesPorFechas(dtInicio, dtFin, sort);
+		List<SesionDTO> sesionesDTO = sesionDAO.getSesionesPorFechas(dtInicio, dtFin, sort, userUID);
 		return getSesionesPorFechas(sesionesDTO, false);
 	}
 
@@ -509,9 +517,9 @@ public class SesionesService
 		return _getTarifasConPrecioSinPlantilla(sesionId, false);
 	}
 
-    public Pair getNumeroSesionesMismaHoraYSala(Long sesionId, long salaId, Date fechaCelebracion) {
+    public Pair getNumeroSesionesMismaHoraYSala(Long sesionId, long salaId, Date fechaCelebracion, String userUID) {
         return sesionDAO.getCantidadSesionesMismaFechaYLocalizacion(DateUtils.dateToTimestampSafe(fechaCelebracion),
-                salaId, sesionId);
+                salaId, sesionId, userUID);
     }
 
     public int getTotalSesionesAbono(Long abonoId) {

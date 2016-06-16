@@ -1,29 +1,18 @@
 package es.uji.apps.par.services;
 
-import java.io.IOException;
-import java.security.NoSuchProviderException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import com.mysema.query.Tuple;
 import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.dao.CinesDAO;
+import es.uji.apps.par.dao.ComunicacionesICAADAO;
 import es.uji.apps.par.dao.EventosDAO;
+import es.uji.apps.par.dao.SesionesDAO;
+import es.uji.apps.par.db.CineDTO;
 import es.uji.apps.par.db.EventoDTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import es.uji.apps.par.db.SesionDTO;
 import es.uji.apps.par.exceptions.CampoRequeridoException;
 import es.uji.apps.par.exceptions.GeneralPARException;
 import es.uji.apps.par.exceptions.IncidenciaNotFoundException;
 import es.uji.apps.par.exceptions.RegistroSerializaException;
-import es.uji.apps.par.exceptions.SesionSinFormatoIdiomaIcaaException;
-import es.uji.apps.par.dao.CinesDAO;
-import es.uji.apps.par.dao.ComunicacionesICAADAO;
-import es.uji.apps.par.dao.SesionesDAO;
-import es.uji.apps.par.db.CineDTO;
-import es.uji.apps.par.db.SesionDTO;
 import es.uji.apps.par.ficheros.registros.FicheroRegistros;
 import es.uji.apps.par.ficheros.service.FicherosService;
 import es.uji.apps.par.model.Cine;
@@ -32,6 +21,15 @@ import es.uji.apps.par.model.Sala;
 import es.uji.apps.par.model.Sesion;
 import es.uji.apps.par.utils.DateUtils;
 import es.uji.apps.par.utils.Utils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.security.NoSuchProviderException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class ComunicacionesICAAService {
@@ -109,7 +107,7 @@ public class ComunicacionesICAAService {
 		checkDatosCine(userUID);
 		Sesion.checkTipoEnvio(tipoEnvio);
 		
-		List<SesionDTO> sesiones = sesionesDAO.getSesiones(Utils.listIntegerToListLong(ids));
+		List<SesionDTO> sesiones = sesionesDAO.getSesiones(Utils.listIntegerToListLong(ids), userUID);
 		for (SesionDTO sesion: sesiones) {
 			Sala.checkValidity(sesion.getParSala().getNombre(), sesion.getParSala().getCodigo());
 			List<Tuple> peliculasMultisesion = eventosDAO.getPeliculasMultisesion(sesion.getParEvento().getId());

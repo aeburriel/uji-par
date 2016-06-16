@@ -1,20 +1,5 @@
 package es.uji.apps.par.ficheros.service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import es.uji.apps.par.exceptions.IncidenciaNotFoundException;
-import es.uji.apps.par.exceptions.SesionSinFormatoIdiomaIcaaException;
 import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.dao.CinesDAO;
 import es.uji.apps.par.dao.ComprasDAO;
@@ -22,17 +7,21 @@ import es.uji.apps.par.dao.SalasDAO;
 import es.uji.apps.par.dao.SesionesDAO;
 import es.uji.apps.par.db.CineDTO;
 import es.uji.apps.par.db.SesionDTO;
-import es.uji.apps.par.ficheros.registros.FicheroRegistros;
-import es.uji.apps.par.ficheros.registros.RegistroBuzon;
-import es.uji.apps.par.ficheros.registros.RegistroPelicula;
-import es.uji.apps.par.ficheros.registros.RegistroSala;
-import es.uji.apps.par.ficheros.registros.RegistroSesion;
-import es.uji.apps.par.ficheros.registros.RegistroSesionPelicula;
-import es.uji.apps.par.ficheros.registros.RegistroSesionProgramada;
+import es.uji.apps.par.exceptions.IncidenciaNotFoundException;
+import es.uji.apps.par.exceptions.SesionSinFormatoIdiomaIcaaException;
+import es.uji.apps.par.ficheros.registros.*;
 import es.uji.apps.par.model.Sala;
 import es.uji.apps.par.model.Sesion;
 import es.uji.apps.par.utils.DateUtils;
 import es.uji.apps.par.utils.Utils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class FicherosService
@@ -62,7 +51,7 @@ public class FicherosService
         ficheroRegistros.setRegistrosSesiones(generaRegistrosSesion(sesiones));
         ficheroRegistros.setRegistrosSesionesPeliculas(generaRegistrosSesionPelicula(sesiones));
         ficheroRegistros.setRegistrosPeliculas(generaRegistrosPelicula(sesiones));
-        ficheroRegistros.setRegistrosSesionesProgramadas(generaRegistrosSesionesProgramadas(sesiones));
+        ficheroRegistros.setRegistrosSesionesProgramadas(generaRegistrosSesionesProgramadas(sesiones, userUID));
 
         ficheroRegistros.getRegistroBuzon().setLineas(
                 1 + ficheroRegistros.getRegistrosSalas().size() + ficheroRegistros.getRegistrosSesiones().size()
@@ -124,10 +113,10 @@ public class FicherosService
         return sesionesDAO.getRegistrosPeliculas(sesiones);
     }
 
-    private List<RegistroSesionProgramada> generaRegistrosSesionesProgramadas(List<Sesion> sesiones) throws IncidenciaNotFoundException {
+    private List<RegistroSesionProgramada> generaRegistrosSesionesProgramadas(List<Sesion> sesiones, String userUID) throws IncidenciaNotFoundException {
         List<RegistroSesionProgramada> registros = new ArrayList<RegistroSesionProgramada>();
 
-        List<SesionDTO> sesionesDTO = sesionesDAO.getSesionesOrdenadas(sesiones);
+        List<SesionDTO> sesionesDTO = sesionesDAO.getSesionesOrdenadas(sesiones, userUID);
 
         String codigoSala = "";
         String ddmmaa = "";

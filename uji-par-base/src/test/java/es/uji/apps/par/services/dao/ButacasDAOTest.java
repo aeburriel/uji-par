@@ -100,7 +100,7 @@ public class ButacasDAOTest extends BaseDAOTest
         Butaca butaca = new Butaca(butacaDTO, false);
         butaca.setTipo(String.valueOf(sesion.getParPreciosSesions().get(0).getParTarifa().getId()));
 
-        butacasDao.reservaButacas(sesion.getId(), insertaCompra(), Arrays.asList(butaca));
+        butacasDao.reservaButacas(sesion.getId(), insertaCompra(), Arrays.asList(butaca), usuario1.getUsuario());
 
         List<ButacaDTO> butacas = butacasDao.getButacas(sesion.getId(), localizacion.getCodigo());
 
@@ -141,12 +141,12 @@ public class ButacasDAOTest extends BaseDAOTest
             butacas.add(butaca);
         }
 
-        butacasDao.reservaButacas(sesion.getId(), insertaCompra(), butacas);
+        butacasDao.reservaButacas(sesion.getId(), insertaCompra(), butacas, usuario1.getUsuario());
     }
 
     private CompraDTO insertaCompra()
     {
-        return comprasDao.insertaCompra(sesion.getId(), new Date(), false, BigDecimal.ONE);
+        return comprasDao.insertaCompra(sesion.getId(), new Date(), false, BigDecimal.ONE, "");
     }
     
     @Test(expected=ButacaOcupadaException.class)
@@ -161,9 +161,9 @@ public class ButacasDAOTest extends BaseDAOTest
         Butaca butaca = new Butaca(butacaDTO, false);
         butaca.setTipo(String.valueOf(sesion.getParPreciosSesions().get(0).getParTarifa().getId()));
             
-        butacasDao.reservaButacas(sesion.getId(), insertaCompra(), Arrays.asList(butaca));
+        butacasDao.reservaButacas(sesion.getId(), insertaCompra(), Arrays.asList(butaca), usuario1.getUsuario());
         
-        butacasDao.reservaButacas(sesion.getId(), insertaCompra(), Arrays.asList(butaca));
+        butacasDao.reservaButacas(sesion.getId(), insertaCompra(), Arrays.asList(butaca), usuario1.getUsuario());
     }
     
     @Test

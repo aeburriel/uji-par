@@ -12,6 +12,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,8 +31,14 @@ public class PlantillasPreciosResource extends BaseResource{
     {
         String userUID = AuthChecker.getUserUID(currentRequest);
 
-        return Response.ok().entity(new RestResponse(true, plantillaPreciosService.getAll(sort, start, limit, userUID),
-        		plantillaPreciosService.getTotalPlantillaPrecios(userUID))).build();
+        if (userUID != null)
+        {
+            return Response.ok().entity(new RestResponse(true, plantillaPreciosService.getAll(sort, start, limit, userUID), plantillaPreciosService.getTotalPlantillaPrecios(userUID))).build();
+        }
+        else
+        {
+            return Response.ok().entity(new RestResponse(true, new ArrayList<>(), 0)).build();
+        }
     }
 
     @GET

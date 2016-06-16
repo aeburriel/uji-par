@@ -8,7 +8,6 @@ import com.mysema.query.types.Expression;
 import com.mysema.query.types.QTuple;
 import com.sun.istack.logging.Logger;
 import es.uji.apps.par.config.Configuration;
-import es.uji.apps.par.config.ConfigurationInterface;
 import es.uji.apps.par.database.DatabaseHelper;
 import es.uji.apps.par.database.DatabaseHelperFactory;
 import es.uji.apps.par.db.*;
@@ -46,8 +45,8 @@ public class ComprasDAO extends BaseDAO {
 	}
 
 	@Transactional
-	public CompraDTO insertaCompra(Long sesionId, Date fecha, boolean taquilla, BigDecimal importe) {
-		SesionDTO sesion = sesionDAO.getSesion(sesionId);
+	public CompraDTO insertaCompra(Long sesionId, Date fecha, boolean taquilla, BigDecimal importe, String userUID) {
+		SesionDTO sesion = sesionDAO.getSesion(sesionId, userUID);
 		CompraDTO compraDTO = new CompraDTO(sesion, new Timestamp(
 				fecha.getTime()), taquilla, importe, UUID.randomUUID()
 				.toString());
@@ -59,8 +58,8 @@ public class ComprasDAO extends BaseDAO {
 
     @Transactional
     public CompraDTO insertaCompra(Long sesionId, Date fecha, boolean taquilla,
-                                   BigDecimal importe, String email, String nombre, String apellidos) {
-        SesionDTO sesion = sesionDAO.getSesion(sesionId);
+                                   BigDecimal importe, String email, String nombre, String apellidos, String userUID) {
+        SesionDTO sesion = sesionDAO.getSesion(sesionId, userUID);
 
         CompraDTO compraDTO = new CompraDTO(sesion, new Timestamp(
                 fecha.getTime()), taquilla, importe, UUID.randomUUID()
@@ -73,8 +72,8 @@ public class ComprasDAO extends BaseDAO {
 
     @Transactional
     public CompraDTO insertaCompraAbono(Long sesionId, Date fecha, boolean taquilla,
-                                   Abonado abonado) {
-        SesionDTO sesion = sesionDAO.getSesion(sesionId);
+                                   Abonado abonado, String userUID) {
+        SesionDTO sesion = sesionDAO.getSesion(sesionId, userUID);
 
         CompraDTO compraDTO = new CompraDTO(sesion, new Timestamp(
                 fecha.getTime()), taquilla, new BigDecimal(0), UUID.randomUUID()
@@ -87,8 +86,8 @@ public class ComprasDAO extends BaseDAO {
 
 	@Transactional
 	public CompraDTO reserva(Long sesionId, Date fecha, Date desde, Date hasta,
-			String observaciones) {
-		SesionDTO sesion = sesionDAO.getSesion(sesionId);
+			String observaciones, String userUID) {
+		SesionDTO sesion = sesionDAO.getSesion(sesionId, userUID);
 
 		CompraDTO compraDTO = new CompraDTO(sesion, new Timestamp(
 				fecha.getTime()), true, BigDecimal.ZERO, UUID.randomUUID()
@@ -106,13 +105,13 @@ public class ComprasDAO extends BaseDAO {
 
 	@Transactional
 	public CompraDTO guardaCompra(Long compraId, Long sesionId, Date fecha,
-			boolean taquilla, BigDecimal importe) {
+			boolean taquilla, BigDecimal importe, String userUID) {
 		CompraDTO compraDTO = getCompraById(compraId);
 
 		if (compraDTO == null) {
-			compraDTO = insertaCompra(sesionId, fecha, taquilla, importe);
+			compraDTO = insertaCompra(sesionId, fecha, taquilla, importe, userUID);
 		} else {
-			SesionDTO sesion = sesionDAO.getSesion(sesionId);
+			SesionDTO sesion = sesionDAO.getSesion(sesionId, userUID);
 			compraDTO.setParSesion(sesion);
 			compraDTO.setFecha(new Timestamp(fecha.getTime()));
 			compraDTO.setTaquilla(taquilla);

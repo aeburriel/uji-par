@@ -282,4 +282,36 @@ public class EventosDAOTest
 
 		Assert.assertNull(evento);
 	}
+
+	@Test
+	public void getTotalEventosActivosUsuarioConEventos()
+	{
+		int totalEventosActivos = eventosDAO.getTotalEventosActivos(usuarioConEventos.getUsuario());
+
+		Assert.assertTrue(totalEventosActivos == 2);
+	}
+
+	@Test
+	public void getTotalEventosActivosUsuarioSinEventos()
+	{
+		int totalEventosActivos = eventosDAO.getTotalEventosActivos(usuarioSinEventos.getUsuario());
+
+		Assert.assertTrue(totalEventosActivos == 1);
+	}
+
+	@Test
+	public void getTotalEventosUsuarioConEventos()
+	{
+		int totalEventosActivos = eventosDAO.getTotalEventos(usuarioConEventos.getUsuario());
+
+		Assert.assertTrue(totalEventosActivos == 3);
+	}
+
+	@Test
+	public void getTotalEventosUsuarioSinEventos()
+	{
+		int totalEventosActivos = eventosDAO.getTotalEventos(usuarioSinEventos.getUsuario());
+
+		Assert.assertTrue(totalEventosActivos == 1);
+	}
 }

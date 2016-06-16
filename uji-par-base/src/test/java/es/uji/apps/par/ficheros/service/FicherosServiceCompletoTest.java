@@ -1,10 +1,10 @@
 package es.uji.apps.par.ficheros.service;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-
 import es.uji.apps.par.exceptions.PrecioRepetidoException;
+import es.uji.apps.par.model.Butaca;
+import es.uji.apps.par.model.Evento;
+import es.uji.apps.par.model.Sala;
+import es.uji.apps.par.model.Sesion;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,10 +14,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.uji.apps.par.model.Butaca;
-import es.uji.apps.par.model.Evento;
-import es.uji.apps.par.model.Sala;
-import es.uji.apps.par.model.Sesion;
+import java.util.Arrays;
+import java.util.Calendar;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/applicationContext-db-test.xml" })
@@ -35,7 +33,7 @@ public class FicherosServiceCompletoTest extends FicherosServiceBaseTest
     @Transactional
     public void testGeneraRegistroBuzonSinEspectadores() throws Exception
     {
-        Sesion sesion = creaSesion(sala, evento);
+        Sesion sesion = creaSesion(sala, evento, usuario.getUsuario());
         String fichero = service.generaFicheroRegistros(generaFechaEnvio().getTime(), "FL", Arrays.asList(sesion), usuario.getUsuario()).serializa();
         String idInternoPelicula = String.format("%05d", evento.getId());
         String expected = String.format("0123FL%03d%03d00000000006000000000010000000000000000000.00\n" +
@@ -62,10 +60,10 @@ public class FicherosServiceCompletoTest extends FicherosServiceBaseTest
     @Transactional
     public void testGeneraRegistroBuzonConEspectadores() throws Exception
     {
-        Sesion sesion = creaSesion(sala, evento, "05/06/2013", "15:30");
+        Sesion sesion = creaSesion(sala, evento, "05/06/2013", "15:30", usuario.getUsuario());
         Butaca butaca1 = creaButaca("1", "1");
         Butaca butaca2 = creaButaca("1", "2");
-        registraCompra(sesion, butaca1, butaca2);
+        registraCompra(sesion, usuario.getUsuario(), butaca1, butaca2);
         String fichero = service.generaFicheroRegistros(generaFechaEnvio().getTime(), "FL", Arrays.asList(sesion), usuario.getUsuario()).serializa();
         String idInternoPelicula = String.format("%05d", evento.getId());
         String expected = String.format("0123FL%03d%03d00000000006000000000010000000000200000002.20\n" +
@@ -82,20 +80,21 @@ public class FicherosServiceCompletoTest extends FicherosServiceBaseTest
     @Transactional
     public void testGeneraRegistroBuzonConEspectadoresVariasSesionesVariasSalas() throws Exception
     {
-        Sesion sesion1 = creaSesion(sala, evento, "05/06/2013", "15:30");
+        Sesion sesion1 = creaSesion(sala, evento, "05/06/2013", "15:30", usuario.getUsuario());
         Butaca butaca1 = creaButaca("1", "1");
         Butaca butaca2 = creaButaca("1", "2");
-        registraCompra(sesion1, butaca1, butaca2);
+        registraCompra(sesion1, usuario.getUsuario(), butaca1, butaca2);
         Evento evento2 = creaEvento(tipoEvento, "exp1", "El Hobbit", "555", "Distribuidora 4", "1", "2");
         Sala sala2 = creaSala("789", "Sala 2");
-        Sesion sesion2 = creaSesion(sala2, evento2, "06/07/2013", "20:30");
+        addSalaUsuario(sala2, usuario);
+        Sesion sesion2 = creaSesion(sala2, evento2, "06/07/2013", "20:30", usuario.getUsuario());
         Butaca butaca3 = creaButaca("1", "1");
         Butaca butaca4 = creaButaca("1", "2");
-        registraCompra(sesion2, butaca3, butaca4);
-        Sesion sesion3 = creaSesion(sala2, evento2, "06/07/2013", "22:00");
+        registraCompra(sesion2, usuario.getUsuario(), butaca3, butaca4);
+        Sesion sesion3 = creaSesion(sala2, evento2, "06/07/2013", "22:00", usuario.getUsuario());
         Butaca butaca5 = creaButaca("1", "1");
         Butaca butaca6 = creaButaca("1", "2");
-	    registraCompra(sesion3, butaca5, butaca6);
+	    registraCompra(sesion3, usuario.getUsuario(), butaca5, butaca6);
 
         String fichero = service.generaFicheroRegistros(generaFechaEnvio().getTime(), "FL", Arrays.asList(sesion1, sesion2,
 				sesion3), usuario.getUsuario()).serializa();

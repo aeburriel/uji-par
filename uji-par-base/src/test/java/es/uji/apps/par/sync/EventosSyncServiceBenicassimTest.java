@@ -1,10 +1,10 @@
 package es.uji.apps.par.sync;
 
+import es.uji.apps.par.builders.CineBuilder;
+import es.uji.apps.par.builders.SalaBuilder;
 import es.uji.apps.par.builders.UsuarioBuilder;
 import es.uji.apps.par.dao.*;
-import es.uji.apps.par.db.EventoDTO;
-import es.uji.apps.par.db.SesionDTO;
-import es.uji.apps.par.db.UsuarioDTO;
+import es.uji.apps.par.db.*;
 import es.uji.apps.par.model.Evento;
 import es.uji.apps.par.model.Plantilla;
 import es.uji.apps.par.model.Sala;
@@ -63,17 +63,21 @@ public class EventosSyncServiceBenicassimTest extends SyncBaseTest
     public void setup()
     {
         syncService.setTipo("benicassim");
-        insertaSala();
+
+        CineDTO cine1 = new CineBuilder("Cine 1")
+                .build(entityManager);
+
+        SalaDTO salaDTO = new SalaBuilder("Sala 1", cine1)
+                .build(entityManager);
+
+        user = new UsuarioBuilder("user", "user@test.com", "user")
+                .withSala(salaDTO)
+                .build(entityManager);
+
+        sala = Sala.salaDTOtoSala(salaDTO);
+
         insertaPlantillaPrecios();
         insertaTiposEventos();
-
-        user = new UsuarioBuilder("user", "user@test.com", "user").build(entityManager);
-    }
-
-    private void insertaSala()
-    {
-        sala = new Sala("Sala 1");
-        sala = salasDAO.addSala(sala);
     }
 
     private void insertaPlantillaPrecios()
@@ -108,7 +112,7 @@ public class EventosSyncServiceBenicassimTest extends SyncBaseTest
     @Transactional
     public void testSyncNuevosItems() throws Exception
     {
-        syncService.sync(loadFromClasspath(RSS_CA), "");
+        syncService.sync(loadFromClasspath(RSS_CA), user.getUsuario());
 
         List<Evento> eventos = eventosDAO.getEventosConSesiones(user.getUsuario());
 
@@ -119,9 +123,9 @@ public class EventosSyncServiceBenicassimTest extends SyncBaseTest
     @Transactional
     public void testSyncNuevoItemDatos() throws Exception
     {
-        syncService.sync(loadFromClasspath(RSS_CA), "");
+        syncService.sync(loadFromClasspath(RSS_CA), user.getUsuario());
 
-        EventoDTO evento = eventosDAO.getEventoByRssId("789", "");
+        EventoDTO evento = eventosDAO.getEventoByRssId("789", user.getUsuario());
 
         assertNotNull("Evento nuevo insertado", evento);
 
@@ -144,11 +148,11 @@ public class EventosSyncServiceBenicassimTest extends SyncBaseTest
     @SuppressWarnings("deprecation")
     public void testSyncSesiones() throws Exception
     {
-        syncService.sync(loadFromClasspath(RSS_CA), "");
+        syncService.sync(loadFromClasspath(RSS_CA), user.getUsuario());
 
-        EventoDTO evento = eventosDAO.getEventoByRssId("789", "");
+        EventoDTO evento = eventosDAO.getEventoByRssId("789", user.getUsuario());
 
-        List<SesionDTO> sesiones = sesionesDao.getSesiones(evento.getId(), "", 0, 100);
+        List<SesionDTO> sesiones = sesionesDao.getSesiones(evento.getId(), "", 0, 100, user.getUsuario());
 
         assertEquals("Número sesiones", 3, sesiones.size());
         
@@ -193,13 +197,14 @@ public class EventosSyncServiceBenicassimTest extends SyncBaseTest
         sesionExistente.setParEvento(eventoDTO);
         sesionExistente.setRssId("123");
         sesionExistente.setFechaCelebracion(new Timestamp(113, 6, 7, 20, 0, 0, 0));
+        sesionExistente.setParSala(Sala.salaToSalaDTO(sala));
         sesionExistente = sesionesDao.persistSesion(sesionExistente);
         
-        syncService.sync(loadFromClasspath(RSS_CA), "");
+        syncService.sync(loadFromClasspath(RSS_CA), user.getUsuario());
 
-        EventoDTO evento = eventosDAO.getEventoByRssId("789", "");
+        EventoDTO evento = eventosDAO.getEventoByRssId("789", user.getUsuario());
 
-        List<SesionDTO> sesiones = sesionesDao.getSesiones(evento.getId(), "", 0, 100);
+        List<SesionDTO> sesiones = sesionesDao.getSesiones(evento.getId(), "", 0, 100, user.getUsuario());
 
         assertEquals("Número sesiones", 4, sesiones.size());
         
@@ -241,10 +246,10 @@ public class EventosSyncServiceBenicassimTest extends SyncBaseTest
         sesionExistente.setParPlantilla(Plantilla.plantillaPreciosToPlantillaPreciosDTO(plantilla));
         sesionExistente = sesionesDao.persistSesion(sesionExistente);
         
-        syncService.sync(loadFromClasspath(RSS_CA), "");
+        syncService.sync(loadFromClasspath(RSS_CA), user.getUsuario());
 
-        EventoDTO evento = eventosDAO.getEventoByRssId("789", "");
-        List<SesionDTO> sesiones = sesionesDao.getSesiones(evento.getId(), "", 0, 100);
+        EventoDTO evento = eventosDAO.getEventoByRssId("789", user.getUsuario());
+        List<SesionDTO> sesiones = sesionesDao.getSesiones(evento.getId(), "", 0, 100, user.getUsuario());
 
         assertEquals("Número sesiones", 3, sesiones.size());
         
@@ -273,9 +278,9 @@ public class EventosSyncServiceBenicassimTest extends SyncBaseTest
     @Transactional
     public void testSyncNuevoItemDatosIdiomaCa() throws Exception
     {
-        syncService.sync(loadFromClasspath(RSS_CA), "");
+        syncService.sync(loadFromClasspath(RSS_CA), user.getUsuario());
 
-        EventoDTO evento = eventosDAO.getEventoByRssId("789", "");
+        EventoDTO evento = eventosDAO.getEventoByRssId("789", user.getUsuario());
 
         assertEquals("Título VA del evento", "JUSTIN Y LA ESPADA DEL VALOR", evento.getTituloVa());
         assertEquals("Descripción VA del evento", "", evento.getDescripcionVa());
@@ -287,9 +292,9 @@ public class EventosSyncServiceBenicassimTest extends SyncBaseTest
     @Transactional
     public void testSyncNuevoItemDatosIdiomaEs() throws Exception
     {
-        syncService.sync(loadFromClasspath(RSS_ES), "");
+        syncService.sync(loadFromClasspath(RSS_ES), user.getUsuario());
 
-        EventoDTO evento = eventosDAO.getEventoByRssId("789", "");
+        EventoDTO evento = eventosDAO.getEventoByRssId("789", user.getUsuario());
 
         assertEquals("Título ES del evento", "JUSTIN Y LA ESPADA DEL VALOR", evento.getTituloEs());
         assertEquals("Descripción ES del evento", "", evento.getDescripcionEs());
@@ -302,9 +307,9 @@ public class EventosSyncServiceBenicassimTest extends SyncBaseTest
     // Comprobar que al ir a guardar el campo título del otro idioma no es null ni cadena vacía (petaría la constraint de Oracle)
     public void testSyncNuevoItemOtroIdiomaOk() throws Exception
     {
-        syncService.sync(loadFromClasspath(RSS_CA), "");
+        syncService.sync(loadFromClasspath(RSS_CA), user.getUsuario());
 
-        EventoDTO evento = eventosDAO.getEventoByRssId("789", "");
+        EventoDTO evento = eventosDAO.getEventoByRssId("789", user.getUsuario());
 
         assertNotNull("Título del otro idioma no nulo", evento.getTituloEs());
         assertTrue("Título del otro idioma distinto de \"\"", !evento.getTituloEs().equals(""));
@@ -338,9 +343,9 @@ public class EventosSyncServiceBenicassimTest extends SyncBaseTest
         eventoDTO.setDuracionEs("Duración ES");
         eventosDAO.updateEventoDTO(eventoDTO);
 
-        syncService.sync(loadFromClasspath(RSS_CA), "");
+        syncService.sync(loadFromClasspath(RSS_CA), user.getUsuario());
 
-        EventoDTO evento = eventosDAO.getEventoByRssId("839", "");
+        EventoDTO evento = eventosDAO.getEventoByRssId("839", user.getUsuario());
 
         assertEquals("Título ES de item existente", "Título ES", evento.getTituloEs());
         assertEquals("Características ES de item existente", "Características ES", evento.getCaracteristicasEs());

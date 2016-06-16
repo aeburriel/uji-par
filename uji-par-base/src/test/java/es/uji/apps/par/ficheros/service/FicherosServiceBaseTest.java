@@ -1,18 +1,17 @@
 package es.uji.apps.par.ficheros.service;
 
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.util.Arrays;
-
 import es.uji.apps.par.dao.*;
 import es.uji.apps.par.db.TarifaDTO;
 import es.uji.apps.par.db.TpvsDTO;
 import es.uji.apps.par.exceptions.*;
 import es.uji.apps.par.model.*;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import es.uji.apps.par.services.ComprasService;
 import es.uji.apps.par.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.util.Arrays;
 
 public class FicherosServiceBaseTest
 {
@@ -68,7 +67,7 @@ public class FicherosServiceBaseTest
         cine = creaCine();
         localizacion = creaLocalizacion("Platea");
         sala = creaSala("567", "Sala 1");
-		usuariosDAO.addSalaUsuario(sala, usuario);
+		addSalaUsuario(sala, usuario);
         tipoEvento = creaTipoEvento();
         plantilla = creaPlantilla();
 		tarifa = creaTarifa();
@@ -76,6 +75,11 @@ public class FicherosServiceBaseTest
         precioSesion = creaPrecioSesion(precioPlantilla);
         evento = creaEvento(tipoEvento);
     }
+
+	protected void addSalaUsuario(Sala sala, Usuario usuario)
+	{
+		usuariosDAO.addSalaUsuario(sala, usuario);
+	}
 
 	private Usuario creaUsuario() {
 		Usuario us = new Usuario();
@@ -108,13 +112,13 @@ public class FicherosServiceBaseTest
 		return tarifa;
 	}
 
-	protected void registraCompra(Sesion sesion1, Butaca... butacas) throws NoHayButacasLibresException,
+	protected void registraCompra(Sesion sesion1, String userUID, Butaca... butacas) throws NoHayButacasLibresException,
 			ButacaOcupadaException, CompraSinButacasException, IncidenciaNotFoundException {
-        ResultadoCompra resultado1 = comprasService.registraCompraTaquilla(sesion1.getId(), Arrays.asList(butacas));
+        ResultadoCompra resultado1 = comprasService.registraCompraTaquilla(sesion1.getId(), Arrays.asList(butacas), userUID);
         comprasService.marcaPagada(resultado1.getId());
     }
 
-    protected Sesion creaSesion(Sala sala, Evento evento, String fecha, String hora) throws ParseException
+    protected Sesion creaSesion(Sala sala, Evento evento, String fecha, String hora, String userUID) throws ParseException
     {
         Sesion sesion = new Sesion();
         sesion.setFechaCelebracionWithDate(DateUtils.spanishStringWithHourstoDate(fecha + " " + hora));
@@ -127,18 +131,18 @@ public class FicherosServiceBaseTest
         sesion.setVersionLinguistica("1");
         sesion.getEvento().setFormato("3");
 
-        sesionesDAO.addSesion(sesion);
+        sesionesDAO.addSesion(sesion, userUID);
         return sesion;
     }
 
-    protected Sesion creaSesion(Sala sala, Evento evento, String hora) throws ParseException
+    protected Sesion creaSesion(Sala sala, Evento evento, String hora, String userUID) throws ParseException
     {
-        return creaSesion(sala, evento, "11/12/2013", hora);
+        return creaSesion(sala, evento, "11/12/2013", hora, userUID);
     }
 
-	protected Sesion creaSesion(Sala sala, Evento evento) throws ParseException
+	protected Sesion creaSesion(Sala sala, Evento evento, String userUID) throws ParseException
 	{
-		return creaSesion(sala, evento, "11/12/2013", "22:00");
+		return creaSesion(sala, evento, "11/12/2013", "22:00", userUID);
 	}
 
     protected PreciosSesion creaPrecioSesion(PreciosPlantilla precioPlantilla)

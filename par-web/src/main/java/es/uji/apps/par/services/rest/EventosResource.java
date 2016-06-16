@@ -107,9 +107,9 @@ public class EventosResource extends BaseResource {
         try {
             Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
             Evento evento = eventosService.getEventoByRssId(contenidoId, user.getUsuario());
-            evento.setSesiones(sesionesService.getSesiones(evento.getId()));
+            evento.setSesiones(sesionesService.getSesiones(evento.getId(), user.getUsuario()));
 
-            return getTemplateEvento(evento, lang);
+            return getTemplateEvento(evento, lang, user.getUsuario());
         } catch (EventoNoEncontradoException e) {
             return getTemplateEventoNoEncontrado();
         }
@@ -122,9 +122,9 @@ public class EventosResource extends BaseResource {
         try {
             Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
             Evento evento = eventosService.getEvento(id, user.getUsuario());
-            evento.setSesiones(sesionesService.getSesiones(evento.getId()));
+            evento.setSesiones(sesionesService.getSesiones(evento.getId(), user.getUsuario()));
 
-            return getTemplateEvento(evento, lang);
+            return getTemplateEvento(evento, lang, user.getUsuario());
         } catch (EventoNoEncontradoException e) {
             return getTemplateEventoNoEncontrado();
         }
@@ -163,8 +163,8 @@ public class EventosResource extends BaseResource {
         return template;
     }
 
-    private Template getTemplateEvento(Evento evento, String langparam) throws MalformedURLException, ParseException {
-        List<Sesion> sesiones = sesionesService.getSesiones(evento.getId());
+    private Template getTemplateEvento(Evento evento, String langparam, String userUID) throws MalformedURLException, ParseException {
+        List<Sesion> sesiones = sesionesService.getSesiones(evento.getId(), userUID);
         borrarEntradasSeleccionadasConAnterioridad();
 
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + evento.getSesiones().get(0).getSala().getCine().getCodigo() + "/eventoDetalle", getLocale(), APP);
@@ -206,7 +206,7 @@ public class EventosResource extends BaseResource {
 
         template.put("evento", evento);
         template.put("sesiones", sesiones);
-        template.put("sesionesPlantilla", getSesionesPlantilla(sesiones));
+        template.put("sesionesPlantilla", getSesionesPlantilla(sesiones, userUID));
         template.put("lang", language);
 
         return template;
@@ -216,7 +216,7 @@ public class EventosResource extends BaseResource {
         currentRequest.getSession().removeAttribute(EntradasService.BUTACAS_COMPRA);
     }
 
-    private List<Map<String, Object>> getSesionesPlantilla(List<Sesion> sesiones) {
+    private List<Map<String, Object>> getSesionesPlantilla(List<Sesion> sesiones, String userUID) {
         DatabaseHelper databaseHelper = DatabaseHelperFactory.newInstance(configuration);
         List<Map<String, Object>> sesionesPlantilla = new ArrayList<Map<String, Object>>();
         Calendar cal = Calendar.getInstance();
@@ -232,7 +232,7 @@ public class EventosResource extends BaseResource {
             Map<String, Object> datos = new HashMap<String, Object>();
 
             List<DisponiblesLocalizacion> disponiblesNoNumerada = butacasService.getDisponiblesNoNumerada(sesion.getId());
-            List<PreciosSesion> preciosSesion = sesionesService.getPreciosSesion(sesion.getId());
+            List<PreciosSesion> preciosSesion = sesionesService.getPreciosSesion(sesion.getId(), userUID);
             int disponibles = 0;
             if (disponiblesNoNumerada != null) {
                 for (DisponiblesLocalizacion disponiblesLocalizacion : disponiblesNoNumerada) {
