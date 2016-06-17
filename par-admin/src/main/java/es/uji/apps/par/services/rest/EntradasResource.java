@@ -72,7 +72,7 @@ public class EntradasResource extends BaseResource {
         List<SesionAbono> sesiones = abono.getSesiones();
         if (sesiones != null && sesiones.size() > 0) {
             Sesion sesion = sesiones.get(0).getSesion();
-            template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + sesion.getSala().getHtmlTemplateName() + "Abono", locale, APP);
+            template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + sesion.getSala().getCine().getCodigo() + "/" + sesion.getSala().getHtmlTemplateName() + "Abono", locale, APP);
         }
         else {
             template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "butacasFragmentAbono", locale, APP);
