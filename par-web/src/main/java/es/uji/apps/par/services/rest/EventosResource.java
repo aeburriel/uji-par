@@ -149,7 +149,8 @@ public class EventosResource extends BaseResource {
     private Template getTemplateEventos(List<Evento> eventos, String langparam) throws MalformedURLException, ParseException {
         borrarEntradasSeleccionadasConAnterioridad();
 
-        Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "eventosListado", getLocale(), APP);
+        Cine cine = usersService.getUserCineByDomainUrl(uri.getBaseUri().toString());
+        Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + cine.getCodigo() + "/eventosListado", getLocale(), APP);
 
         String language = getLocale(langparam).getLanguage();
         String url = request.getRequestURL().toString();
