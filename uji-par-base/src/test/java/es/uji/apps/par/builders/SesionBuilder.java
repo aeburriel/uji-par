@@ -38,11 +38,13 @@ public class SesionBuilder
 	{
 		CompraDTO compraDTO = new CompraDTO();
 		compraDTO.setNombre(nombre);
+		compraDTO.setEmail(String.format("%s@test.com", nombre.toLowerCase()));
 		compraDTO.setAnulada(false);
 		compraDTO.setCaducada(false);
 		compraDTO.setPagada(true);
 		compraDTO.setReserva(false);
 		compraDTO.setImporte(importe);
+		compraDTO.setInfoPeriodica(true);
 
 		List<ButacaDTO> butacas = new ArrayList<>();
 		for (int i = 0; i < numeroButacas; i++)

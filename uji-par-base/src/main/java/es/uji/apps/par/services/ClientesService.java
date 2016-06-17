@@ -14,8 +14,8 @@ public class ClientesService {
     @Autowired
     private ClientesDAO clientesDAO;
 
-    public List<Cliente> getClientes(String sortParameter, int start, int limit) {
-        List<Tuple> compras = clientesDAO.getClientes(sortParameter, start, limit);
+    public List<Cliente> getClientes(String sortParameter, int start, int limit, String userUID) {
+        List<Tuple> compras = clientesDAO.getClientes(sortParameter, start, limit, userUID);
 
         List<Cliente> clientes = new ArrayList<Cliente>();
         for (Tuple compra : compras) {
@@ -35,11 +35,11 @@ public class ClientesService {
         return clientes;
     }
 
-    public int getTotalClientes() {
-        return clientesDAO.getTotalClientes();
+    public int getTotalClientes(String userUID) {
+        return clientesDAO.getTotalClientes(userUID);
     }
 
-    public List<String> getMails() {
-        return clientesDAO.getMails();
+    public List<String> getMails(String userUID) {
+        return clientesDAO.getMails(userUID);
     }
 }

@@ -181,6 +181,7 @@ public class FicherosServiceBaseTest
         evento.setVo(vo);
         evento.setSubtitulos(subtitulos);
 		evento.setParTpv(tpv);
+		evento.setFormato("3");
 
         eventosDAO.addEvento(evento);
 

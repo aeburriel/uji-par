@@ -19,7 +19,6 @@ public class AbonosDAO extends BaseDAO {
     private QAbonoDTO qAbonoDTO = QAbonoDTO.abonoDTO;
     private QSesionAbonoDTO qSesionAbonoDTO = QSesionAbonoDTO.sesionAbonoDTO;
     private QPlantillaDTO qPlantillaDTO = QPlantillaDTO.plantillaDTO;
-    private QSesionDTO qSesionDTO = QSesionDTO.sesionDTO;
     private QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
     private QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
     private QUsuarioDTO qUsuarioDTO = QUsuarioDTO.usuarioDTO;

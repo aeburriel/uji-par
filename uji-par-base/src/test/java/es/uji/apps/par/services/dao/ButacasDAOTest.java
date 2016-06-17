@@ -108,7 +108,7 @@ public class ButacasDAOTest extends BaseDAOTest
         Assert.assertEquals(localizacion.getCodigo(), butacas.get(0).getParLocalizacion().getCodigo());
         Assert.assertEquals(butaca.getFila(), butacas.get(0).getFila());
         Assert.assertEquals(butaca.getNumero(), butacas.get(0).getNumero());
-        Assert.assertEquals(BigDecimal.valueOf(10), butacas.get(0).getPrecio());
+        Assert.assertEquals(10, butacas.get(0).getPrecio().intValue());
     }
     
     @Transactional

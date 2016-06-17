@@ -185,9 +185,8 @@ public class ComprasDAOTest extends BaseDAOTest {
     public void getClientes() {
         final String MAIL = "test@test.com";
 
-        Sesion sesion1 = preparaSesion();
-        CompraDTO compraDTO = comprasDAO.insertaCompra(sesion1.getId(), new Date(), true, new BigDecimal(2), "");
-        ButacaDTO butaca1 = preparaButaca(Sesion.SesionToSesionDTO(sesion1),
+        CompraDTO compraDTO = comprasDAO.insertaCompra(sesion.getId(), new Date(), true, new BigDecimal(2), usuario1.getUsuario());
+        ButacaDTO butaca1 = preparaButaca(sesion,
                 Localizacion.localizacionToLocalizacionDTO(localizacion),
                 "1", "2",
                 new BigDecimal(2));
@@ -198,10 +197,10 @@ public class ComprasDAOTest extends BaseDAOTest {
         butaca1.setParCompra(compraDTO);
         butacasDAO.addButaca(butaca1);
 
-        List<Tuple> clientes = clientesDAO.getClientes("nombre", 0, 10);
+        List<Tuple> clientes = clientesDAO.getClientes("nombre", 0, 10, usuario1.getUsuario());
 
         assertNotNull(clientes);
-        assertEquals(clientes.size(), clientesDAO.getTotalClientes());
+        assertEquals(clientes.size(), clientesDAO.getTotalClientes(usuario1.getUsuario()));
         assertTrue(clientes.get(0).get(8, String.class).equals(MAIL));
     }
 
