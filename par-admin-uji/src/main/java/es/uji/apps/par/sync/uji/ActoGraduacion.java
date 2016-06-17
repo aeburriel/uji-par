@@ -1,9 +1,9 @@
 package es.uji.apps.par.sync.uji;
 
-import es.uji.apps.par.auth.AuthChecker;
 import es.uji.apps.par.dao.*;
 import es.uji.apps.par.db.*;
 import es.uji.apps.par.model.*;
+import es.uji.apps.par.services.UsersService;
 import es.uji.apps.par.sync.rss.jaxb.Item;
 import es.uji.apps.par.sync.utils.SyncUtils;
 import es.uji.apps.par.utils.DateUtils;
@@ -49,11 +49,14 @@ public class ActoGraduacion implements EventosTipoSync {
     @Autowired
     private PlantillasDAO plantillasDAO;
 
+    @Autowired
+    private UsersService usersService;
+
     @Context
     HttpServletRequest currentRequest;
 
     @Override
-    public void createNewTipoEvento(Item item, CineDTO cineDTO) throws MalformedURLException {
+    public void createNewTipoEvento(Item item, CineDTO cineDTO, String userUID) throws MalformedURLException {
         log.info(String.format("RSS insertando nuevo evento: %s - \"%s\"", item.getContenidoId(), item.getTitle()));
 
         EventoDTO evento = new EventoDTO();
@@ -62,12 +65,12 @@ public class ActoGraduacion implements EventosTipoSync {
         evento.setRssId(item.getContenidoId());
         evento.setParCine(cineDTO);
 
-        updateTipoEvento(evento, item);
+        updateTipoEvento(evento, item, userUID);
     }
 
     @Override
-    public void updateTipoEvento(EventoDTO evento, Item item) throws MalformedURLException {
-        String userUID = AuthChecker.getUserUID(currentRequest);
+    public void updateTipoEvento(EventoDTO evento, Item item, String userUID) throws MalformedURLException {
+        Cine cine = usersService.getUserCineByUserUID(userUID);
 
         log.info(String.format("RSS actualizando evento de tipo %s existente: %s - \"%s\"", item.getTipo(), evento.getRssId(),
                 evento.getTituloVa()));
@@ -89,9 +92,9 @@ public class ActoGraduacion implements EventosTipoSync {
         evento.setDescripcionVa(item.getContenido());
 
         String tipo = Utils.toUppercaseFirst(item.getTipo().trim());
-        TipoEventoDTO tipoEvento = tiposEventosDAO.getTipoEventoByNombreEs(tipo);
+        TipoEventoDTO tipoEvento = tiposEventosDAO.getTipoEventoByNombreEs(tipo, userUID);
         if (tipoEvento == null) {
-            tipoEvento = TipoEventoDTO.fromTipoEvento(tiposEventosDAO.addTipoEvento(new TipoEvento(tipo, tipo, false)));
+            tipoEvento = TipoEventoDTO.fromTipoEvento(tiposEventosDAO.addTipoEvento(new TipoEvento(tipo, tipo, false, cine)));
         }
         evento.setParTiposEvento(tipoEvento);
 

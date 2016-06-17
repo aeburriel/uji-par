@@ -1,10 +1,11 @@
 package es.uji.apps.par.services;
 
-import java.util.List;
-
-import javax.mail.MessagingException;
-import javax.ws.rs.core.MediaType;
-
+import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.dao.MailDAO;
+import es.uji.apps.par.db.MailDTO;
+import es.uji.commons.messaging.client.MessageNotSentException;
+import es.uji.commons.messaging.client.MessagingClient;
+import es.uji.commons.messaging.client.model.MailMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +13,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
-import es.uji.apps.par.config.Configuration;
-import es.uji.apps.par.dao.MailDAO;
-import es.uji.apps.par.db.MailDTO;
-import es.uji.commons.messaging.client.MessageNotSentException;
-import es.uji.commons.messaging.client.MessagingClient;
-import es.uji.commons.messaging.client.model.MailMessage;
+import javax.mail.MessagingException;
+import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 @Service
 public class MailService implements MailInterface
@@ -56,7 +54,7 @@ public class MailService implements MailInterface
     }
 
     //al llamarse desde el job de quartz, no se inyecta el mailDAO, y lo enviamos desde la interfaz
-    public synchronized void enviaPendientes(MailDAO mailDAO, EntradasService entradasService) throws MessagingException
+    public synchronized void enviaPendientes(MailDAO mailDAO, EntradasService entradasService, String userUID) throws MessagingException
     {
         log.info("Enviando mails pendientes...");
 

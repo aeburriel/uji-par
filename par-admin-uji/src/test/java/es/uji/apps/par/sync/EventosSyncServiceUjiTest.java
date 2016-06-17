@@ -1,8 +1,6 @@
 package es.uji.apps.par.sync;
 
-import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.dao.*;
-import es.uji.apps.par.db.EventoDTO;
 import es.uji.apps.par.db.SesionDTO;
 import es.uji.apps.par.db.TarifaDTO;
 import es.uji.apps.par.model.*;
@@ -63,6 +61,11 @@ public class EventosSyncServiceUjiTest extends SyncBaseTest
     @Autowired
     private PlantillasDAO plantillasDAO;
 
+    @Autowired
+    private UsuariosDAO usuariosDAO;
+
+    Usuario usuario;
+
     @Before
     public void setup()
     {
@@ -103,6 +106,14 @@ public class EventosSyncServiceUjiTest extends SyncBaseTest
         Cine cine = cinesDAO.addCine(new Cine("CODIGO", "nombre", "cif", "direccion", "codigoMunicipio", "nombreMunicipio", "cp", "empresa", "codigoRegistro", "telefono", BigDecimal.ONE));
         Sala sala = salasDAO.addSala(new Sala("SALA", "SALA", 10, 0, 10, "Cine", "Formato", "", cine));
 
+        usuario = new Usuario();
+        usuario.setNombre("usuario");
+        usuario.setMail("usuario@test.com");
+        usuario.setUsuario("usuario");
+
+        usuario = usuariosDAO.addUser(usuario);
+        usuariosDAO.addSalaUsuario(sala, usuario);
+
         insertaLocalizacion(sala);
     }
 
@@ -130,9 +141,9 @@ public class EventosSyncServiceUjiTest extends SyncBaseTest
     @Transactional
     public void testSyncNuevosItemsGraduacion() throws Exception
     {
-        syncService.sync(loadFromClasspath(RSS_TIPO_GRADUACION));
+        syncService.sync(loadFromClasspath(RSS_TIPO_GRADUACION), usuario.getUsuario());
 
-        List<Evento> eventos = eventosDAO.getEventosConSesiones();
+        List<Evento> eventos = eventosDAO.getEventosConSesiones(usuario.getUsuario());
 
         assertEquals("Número de eventos nuevos", 2, eventos.size());
     }
@@ -142,12 +153,12 @@ public class EventosSyncServiceUjiTest extends SyncBaseTest
 	@Ignore
     public void testSyncUpdateItemsGraduacion() throws Exception
     {
-        syncService.sync(loadFromClasspath(RSS_TIPO_GRADUACION));
-        List<Evento> eventos = eventosDAO.getEventosConSesiones();
+        syncService.sync(loadFromClasspath(RSS_TIPO_GRADUACION), usuario.getUsuario());
+        List<Evento> eventos = eventosDAO.getEventosConSesiones(usuario.getUsuario());
         assertEquals("Número de eventos nuevos", 2, eventos.size());
 
-        syncService.sync(loadFromClasspath(RSS_TIPO_GRADUACION_UPDATE));
-        List<SesionDTO> sesiones = sesionesDAO.getSesionesPorRssId("2508948");
+        syncService.sync(loadFromClasspath(RSS_TIPO_GRADUACION_UPDATE), usuario.getUsuario());
+        List<SesionDTO> sesiones = sesionesDAO.getSesionesPorRssId("2508948", usuario.getUsuario());
 
         //No cambia la fecha
         assertEquals("Fecha primera sesión", sesiones.get(0).getFechaCelebracion().toString(), "2015-10-16 19:00:00.0");

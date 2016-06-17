@@ -3,8 +3,10 @@ package es.uji.apps.par.services.rest;
 import com.sun.jersey.api.core.InjectParam;
 import es.uji.apps.par.auth.AuthChecker;
 import es.uji.apps.par.exceptions.GeneralPARException;
+import es.uji.apps.par.model.Cine;
 import es.uji.apps.par.model.TipoEvento;
 import es.uji.apps.par.services.TiposEventosService;
+import es.uji.apps.par.services.UsersService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -17,6 +19,9 @@ public class TiposEventosResource extends BaseResource
 {
     @InjectParam
     private TiposEventosService tiposEventosService;
+
+    @InjectParam
+    private UsersService usersService;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -45,7 +50,10 @@ public class TiposEventosResource extends BaseResource
     public Response add(TipoEvento tipoEvento) throws GeneralPARException
     {
         AuthChecker.canWrite(currentRequest);
-        
+        String userUID = AuthChecker.getUserUID(currentRequest);
+        Cine cine = usersService.getUserCineByUserUID(userUID);
+
+        tipoEvento.setCine(cine);
         TipoEvento newTipoEvento = tiposEventosService.addTipoEvento(tipoEvento);
         // TODO crear URI
         return Response.created(URI.create(""))

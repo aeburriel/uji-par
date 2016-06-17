@@ -102,6 +102,9 @@ public class TiposEventosDAO extends BaseDAO
         tipoEventoDTO.setNombreVa(tipoEvento.getNombreVa());
         tipoEventoDTO.setExportarICAA(tipoEvento.getExportarICAA());
 
+        if (tipoEvento.getCine() != null)
+            tipoEventoDTO.setParCine(new CineDTO(tipoEvento.getCine().getId()));
+
         entityManager.persist(tipoEventoDTO);
 
         tipoEvento.setId(tipoEventoDTO.getId());

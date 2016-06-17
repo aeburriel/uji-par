@@ -1,8 +1,8 @@
 package es.uji.apps.par.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import es.uji.apps.par.db.TipoEventoDTO;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class TipoEvento
@@ -11,6 +11,7 @@ public class TipoEvento
     private String nombreEs;
     private String nombreVa;
     private Boolean exportarICAA;
+	private Cine cine;
 
     public TipoEvento()
     {
@@ -26,6 +27,13 @@ public class TipoEvento
         this.nombreVa = nombreVa;
         this.exportarICAA = exportarICAA;
     }
+
+	public TipoEvento(String nombreEs, String nombreVa, Boolean exportarICAA, Cine cine) {
+		this.nombreEs = nombreEs;
+		this.nombreVa = nombreVa;
+		this.exportarICAA = exportarICAA;
+		this.cine = cine;
+	}
 
     public TipoEvento(TipoEventoDTO tipoEventoDTO)
     {
@@ -96,4 +104,13 @@ public class TipoEvento
 		this.exportarICAA = exportarICAA;
 	}
 
+	public Cine getCine()
+	{
+		return cine;
+	}
+
+	public void setCine(Cine cine)
+	{
+		this.cine = cine;
+	}
 }

@@ -148,7 +148,7 @@ public class ReportTest {
 	}
 
 	@Transactional
-	private Sesion altaSesion(Sala sala, Plantilla plantilla, String hora) {
+	private Sesion altaSesion(Sala sala, Plantilla plantilla, String hora, Usuario usuario) {
 		Sesion sesion = new Sesion();
 		sesion.setEvento(evento);
 		sesion.setFechaCelebracionWithDate(Calendar.getInstance().getTime());
@@ -163,7 +163,7 @@ public class ReportTest {
 		precioSesion.setTarifa(tarifa);
 		preciosSesion.add(precioSesion);
 		sesion.setPreciosSesion(preciosSesion);
-		Sesion sesionInsertada = sesionesDAO.addSesion(sesion);
+		Sesion sesionInsertada = sesionesDAO.addSesion(sesion, usuario.getUsuario());
 		sesion.setId(sesionInsertada.getId());
 		return sesion;
 	}
@@ -180,16 +180,16 @@ public class ReportTest {
 	}
 
 	@Transactional
-	private Compra altaCompra(Sesion sesion, String fila, String asiento, boolean taquilla) {
+	private Compra altaCompra(Sesion sesion, String fila, String asiento, boolean taquilla, Usuario usuario) {
 		BigDecimal importe = new BigDecimal(1);
-		CompraDTO compraDTO = comprasDAO.insertaCompra(sesion.getId(), Calendar.getInstance().getTime(), taquilla, importe);
+		CompraDTO compraDTO = comprasDAO.insertaCompra(sesion.getId(), Calendar.getInstance().getTime(), taquilla, importe, usuario.getUsuario());
 		compraDTO.setPagada(true);
 		Butaca butaca = new Butaca();
 		butaca.setFila(fila);
 		butaca.setNumero(asiento);
 		butaca.setLocalizacion(localizacion.getCodigo());
 		butaca.setTipo(String.valueOf(tarifa.getId()));
-		butacasDAO.reservaButacas(sesion.getId(), compraDTO, Arrays.asList(butaca));
+		butacasDAO.reservaButacas(sesion.getId(), compraDTO, Arrays.asList(butaca), usuario.getUsuario());
 		Compra compra = Compra.compraDTOtoCompra(compraDTO);
 		return compra;
 	}
@@ -363,7 +363,7 @@ public class ReportTest {
 		altaLocalizacion();
 		altaTarifa();
 		altaEvento();
-		Sesion sesion = altaSesion(sala, plantilla, "12:00");
+		Sesion sesion = altaSesion(sala, plantilla, "12:00", usuario);
 		altaReports("es.uji.apps.par.report.InformeSesionReport", EntradaReportFactory.TIPO_INFORME_PDF_SESIONES, sala);
 		InformeInterface informe = reportService.generaYRellenaPDFSesiones(Arrays.asList(sesion), new Locale("es"), usuario
 				.getUsuario
@@ -413,11 +413,11 @@ public class ReportTest {
 		altaLocalizacion();
 		altaTarifa();
 		altaEvento();
-		Sesion sesion = altaSesion(sala, plantilla, "12:00");
-		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00");
-		Compra compra = altaCompra(sesion, "1", "1", true);
-		altaCompra(sesion, "1", "2", true);
-		altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true);
+		Sesion sesion = altaSesion(sala, plantilla, "12:00", usuario);
+		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00", usuario2);
+		Compra compra = altaCompra(sesion, "1", "1", true, usuario);
+		altaCompra(sesion, "1", "2", true, usuario);
+		altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true, usuario2);
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(compra.getFecha());
 		cal.add(Calendar.DAY_OF_MONTH, -1);
@@ -456,11 +456,11 @@ public class ReportTest {
 		altaLocalizacion();
 		altaTarifa();
 		altaEvento();
-		Sesion sesion = altaSesion(sala, plantilla, "12:00");
-		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00");
-		Compra compra = altaCompra(sesion, "1", "1", true);
-		altaCompra(sesion, "1", "2", true);
-		altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true);
+		Sesion sesion = altaSesion(sala, plantilla, "12:00", usuario);
+		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00", usuario2);
+		Compra compra = altaCompra(sesion, "1", "1", true, usuario);
+		altaCompra(sesion, "1", "2", true, usuario);
+		altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true, usuario2);
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(compra.getFecha());
 		cal.add(Calendar.DAY_OF_MONTH, -1);
@@ -496,13 +496,13 @@ public class ReportTest {
 		altaLocalizacion();
 		altaTarifa();
 		altaEvento();
-		Sesion sesion = altaSesion(sala, plantilla, "12:00");
-		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00");
-		Compra compra = altaCompra(sesion, "1", "1", true);
+		Sesion sesion = altaSesion(sala, plantilla, "12:00", usuario);
+		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00", usuario2);
+		Compra compra = altaCompra(sesion, "1", "1", true, usuario);
 		comprasDAO.guardarCodigoPagoTarjeta(compra.getId(), "123");
-		Compra compra2 = altaCompra(sesion, "1", "2", true);
+		Compra compra2 = altaCompra(sesion, "1", "2", true, usuario);
 		comprasDAO.guardarCodigoPagoTarjeta(compra2.getId(), "1234");
-		Compra compra3 = altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true);
+		Compra compra3 = altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true, usuario2);
 		comprasDAO.guardarCodigoPagoTarjeta(compra3.getId(), "12345");
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(compra.getFecha());
@@ -535,11 +535,11 @@ public class ReportTest {
 		altaLocalizacion();
 		altaTarifa();
 		altaEvento();
-		Sesion sesion = altaSesion(sala, plantilla, "12:00");
-		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00");
-		Compra compra = altaCompra(sesion, "1", "1", true);
-		altaCompra(sesion, "1", "2", true);
-		altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true);
+		Sesion sesion = altaSesion(sala, plantilla, "12:00", usuario);
+		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00", usuario2);
+		Compra compra = altaCompra(sesion, "1", "1", true, usuario);
+		altaCompra(sesion, "1", "2", true, usuario);
+		altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true, usuario2);
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(compra.getFecha());
 		cal.add(Calendar.DAY_OF_MONTH, -1);
@@ -571,11 +571,11 @@ public class ReportTest {
 		altaLocalizacion();
 		altaTarifa();
 		altaEvento();
-		Sesion sesion = altaSesion(sala, plantilla, "12:00");
-		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00");
-		Compra compra = altaCompra(sesion, "1", "1", false);
-		altaCompra(sesion, "1", "2", false);
-		altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", false);
+		Sesion sesion = altaSesion(sala, plantilla, "12:00", usuario);
+		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00", usuario2);
+		Compra compra = altaCompra(sesion, "1", "1", false, usuario);
+		altaCompra(sesion, "1", "2", false, usuario);
+		altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", false, usuario2);
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(compra.getFecha());
 		cal.add(Calendar.DAY_OF_MONTH, -1);
@@ -607,11 +607,11 @@ public class ReportTest {
 		altaLocalizacion();
 		altaTarifa();
 		altaEvento();
-		Sesion sesion = altaSesion(sala, plantilla, "12:00");
-		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00");
-		Compra compra = altaCompra(sesion, "1", "1", true);
-		altaCompra(sesion, "1", "2", true);
-		altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true);
+		Sesion sesion = altaSesion(sala, plantilla, "12:00", usuario);
+		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00", usuario2);
+		Compra compra = altaCompra(sesion, "1", "1", true, usuario);
+		altaCompra(sesion, "1", "2", true, usuario);
+		altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true, usuario2);
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(compra.getFecha());
 		cal.add(Calendar.DAY_OF_MONTH, -1);
@@ -643,13 +643,13 @@ public class ReportTest {
 		altaLocalizacion();
 		altaTarifa();
 		altaEvento();
-		Sesion sesion = altaSesion(sala, plantilla, "12:00");
-		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00");
-		Compra compra = altaCompra(sesion, "1", "1", true);
+		Sesion sesion = altaSesion(sala, plantilla, "12:00", usuario);
+		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00", usuario2);
+		Compra compra = altaCompra(sesion, "1", "1", true, usuario);
 		comprasDAO.guardarCodigoPagoTarjeta(compra.getId(), "123");
-		Compra compra2 = altaCompra(sesion, "1", "2", true);
+		Compra compra2 = altaCompra(sesion, "1", "2", true, usuario);
 		comprasDAO.guardarCodigoPagoTarjeta(compra2.getId(), "1234");
-		Compra compra3 = altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true);
+		Compra compra3 = altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true, usuario2);
 		comprasDAO.guardarCodigoPagoTarjeta(compra3.getId(), "12345");
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(compra.getFecha());
@@ -680,13 +680,13 @@ public class ReportTest {
 		altaLocalizacion();
 		altaTarifa();
 		altaEvento();
-		Sesion sesion = altaSesion(sala, plantilla, "12:00");
-		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00");
-		Compra compra = altaCompra(sesion, "1", "1", true);
+		Sesion sesion = altaSesion(sala, plantilla, "12:00", usuario);
+		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00", usuario2);
+		Compra compra = altaCompra(sesion, "1", "1", true, usuario);
 		comprasDAO.guardarCodigoPagoTarjeta(compra.getId(), "123");
-		Compra compra2 = altaCompra(sesion, "1", "2", true);
+		Compra compra2 = altaCompra(sesion, "1", "2", true, usuario);
 		comprasDAO.guardarCodigoPagoTarjeta(compra2.getId(), "1234");
-		Compra compra3 = altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true);
+		Compra compra3 = altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true, usuario2);
 		comprasDAO.guardarCodigoPagoTarjeta(compra3.getId(), "12345");
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(compra.getFecha());

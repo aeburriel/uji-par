@@ -93,9 +93,9 @@ public class EventosSyncUji implements EventosSync {
 
         if (evento == null) {
             Cine cine = usersService.getUserCineByUserUID(userUID);
-            eventosTipoSync.createNewTipoEvento(item, Cine.cineToCineDTO(cine));
+            eventosTipoSync.createNewTipoEvento(item, Cine.cineToCineDTO(cine), userUID);
         } else {
-            eventosTipoSync.updateTipoEvento(evento, item);
+            eventosTipoSync.updateTipoEvento(evento, item, userUID);
         }
     }
 

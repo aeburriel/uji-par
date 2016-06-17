@@ -7,7 +7,7 @@ import es.uji.apps.par.sync.rss.jaxb.Item;
 import java.net.MalformedURLException;
 
 public interface EventosTipoSync {
-    void createNewTipoEvento(Item item, CineDTO cineDTO) throws MalformedURLException;
+    void createNewTipoEvento(Item item, CineDTO cineDTO, String userUID) throws MalformedURLException;
 
-    void updateTipoEvento(EventoDTO evento, Item item) throws MalformedURLException;
+    void updateTipoEvento(EventoDTO evento, Item item, String userUID) throws MalformedURLException;
 }
