@@ -1,6 +1,7 @@
 package es.uji.apps.par.services.rest;
 
 import com.sun.jersey.api.core.InjectParam;
+import es.uji.apps.par.auth.AuthChecker;
 import es.uji.apps.par.drawer.MapaDrawerInterface;
 
 import javax.servlet.ServletContext;
@@ -23,7 +24,8 @@ public class ImagenesResource extends BaseResource
     @Produces("image/jpeg")
     public Response datosEntrada(@PathParam("abonoId") Long abonoId, @PathParam("seccion") String seccion,
                                  @QueryParam("muestraReservadas") String muestraReservadas) throws Exception {
-        ByteArrayOutputStream os = mapaDrawer.generaImagenAbono(abonoId, seccion, muestraReservadas != null && muestraReservadas.equals("true"));
+        String userUID = AuthChecker.getUserUID(currentRequest);
+        ByteArrayOutputStream os = mapaDrawer.generaImagenAbono(abonoId, seccion, muestraReservadas != null && muestraReservadas.equals("true"), userUID);
 
         Response response = Response.ok(os.toByteArray())
                 .header("Cache-Control", "no-cache, no-store, must-revalidate").header("Pragma", "no-cache")

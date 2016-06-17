@@ -18,13 +18,30 @@ public class AbonosDAO extends BaseDAO {
 
     private QAbonoDTO qAbonoDTO = QAbonoDTO.abonoDTO;
     private QSesionAbonoDTO qSesionAbonoDTO = QSesionAbonoDTO.sesionAbonoDTO;
+    private QPlantillaDTO qPlantillaDTO = QPlantillaDTO.plantillaDTO;
+    private QSesionDTO qSesionDTO = QSesionDTO.sesionDTO;
+    private QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+    private QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
+    private QUsuarioDTO qUsuarioDTO = QUsuarioDTO.usuarioDTO;
 
     @Transactional
-    public List<Abono> getAbonos(String sortParameter, int start, int limit)
+    public List<Abono> getAbonos(String sortParameter, int start, int limit, String userUID)
     {
         List<Abono> abono = new ArrayList<Abono>();
-        List<AbonoDTO> abonosDTO = getQueryAbonos().orderBy(getSort(qAbonoDTO, sortParameter)).where(qAbonoDTO.anulado.eq(false).or(qAbonoDTO.anulado.isNull())).
-                offset(start).limit(limit).list(qAbonoDTO);
+
+        JPAQuery query = new JPAQuery(entityManager);
+
+        List<AbonoDTO> abonosDTO = query.from(qAbonoDTO)
+                .join(qAbonoDTO.parPlantilla, qPlantillaDTO)
+                .join(qPlantillaDTO.sala, qSalaDTO)
+                .join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+                .join(qSalasUsuarioDTO.parUsuario, qUsuarioDTO)
+                .orderBy(getSort(qAbonoDTO, sortParameter))
+                .where(qUsuarioDTO.usuario.eq(userUID).and(qAbonoDTO.anulado.eq(false).or(qAbonoDTO.anulado.isNull())))
+                .offset(start)
+                .limit(limit)
+                .distinct()
+                .list(qAbonoDTO);
 
         for (AbonoDTO abonoDB : abonosDTO)
         {
@@ -35,23 +52,24 @@ public class AbonosDAO extends BaseDAO {
     }
 
     @Transactional
-    private JPAQuery getQueryAbonos() {
-        JPAQuery query = new JPAQuery(entityManager);
-        return query.from(qAbonoDTO);
-    }
-
-    @Transactional
     public Abono addAbono(Abono abono)
     {
-        AbonoDTO abonoDTO = new AbonoDTO();
-        abonoDTO.setNombre(abono.getNombre());
-        abonoDTO.setParPlantilla(Plantilla.plantillaPreciosToPlantillaPreciosDTO(abono.getPlantillaPrecios()));
+        if (abono.getSesiones() != null && abono.getSesiones().size() > 0)
+        {
+            AbonoDTO abonoDTO = new AbonoDTO();
+            abonoDTO.setNombre(abono.getNombre());
+            abonoDTO.setParPlantilla(Plantilla.plantillaPreciosToPlantillaPreciosDTO(abono.getPlantillaPrecios()));
 
-        entityManager.persist(abonoDTO);
+            entityManager.persist(abonoDTO);
 
-        abono.setId(abonoDTO.getId());
-        updateSesionesAbono(abonoDTO.getId(), abono.getSesiones());
-        return abono;
+            abono.setId(abonoDTO.getId());
+            updateSesionesAbono(abonoDTO.getId(), abono.getSesiones());
+            return abono;
+        }
+        else
+        {
+            return null;
+        }
     }
 
     @Transactional
@@ -100,14 +118,38 @@ public class AbonosDAO extends BaseDAO {
     }
 
     @Transactional
-    public int getTotalAbonos() {
-        return (int) getQueryAbonos().where(qAbonoDTO.anulado.eq(false).or(qAbonoDTO.anulado.isNull())).count();
+    public int getTotalAbonos(String userUID)
+    {
+        JPAQuery query = new JPAQuery(entityManager);
+
+        return (int) query.from(qAbonoDTO)
+                .join(qAbonoDTO.parPlantilla, qPlantillaDTO)
+                .join(qPlantillaDTO.sala, qSalaDTO)
+                .join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+                .join(qSalasUsuarioDTO.parUsuario, qUsuarioDTO)
+                .where(qUsuarioDTO.usuario.eq(userUID).and(qAbonoDTO.anulado.eq(false).or(qAbonoDTO.anulado.isNull())))
+                .distinct()
+                .count();
     }
 
     @Transactional
-    public Abono getAbono(Long abonoId) {
-        AbonoDTO abonosDTO = getQueryAbonos().leftJoin(qAbonoDTO.parSesiones, qSesionAbonoDTO).fetch().where(qAbonoDTO.id.eq(abonoId).and(qAbonoDTO.anulado.eq(false).or(qAbonoDTO.anulado.isNull()))).uniqueResult(qAbonoDTO);
+    public Abono getAbono(Long abonoId, String userUID) {
+        JPAQuery query = new JPAQuery(entityManager);
 
-        return new Abono(abonosDTO);
+        AbonoDTO abonosDTO =query.from(qAbonoDTO)
+                .leftJoin(qAbonoDTO.parSesiones, qSesionAbonoDTO).fetch()
+                .join(qAbonoDTO.parPlantilla, qPlantillaDTO)
+                .join(qPlantillaDTO.sala, qSalaDTO)
+                .join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+                .join(qSalasUsuarioDTO.parUsuario, qUsuarioDTO)
+                .where(qUsuarioDTO.usuario.eq(userUID).and(qAbonoDTO.id.eq(abonoId)
+                        .and(qAbonoDTO.anulado.eq(false).or(qAbonoDTO.anulado.isNull()))))
+                .distinct()
+                .uniqueResult(qAbonoDTO);
+
+        if (abonosDTO != null)
+            return new Abono(abonosDTO);
+        else
+            return null;
     }
 }

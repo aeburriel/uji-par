@@ -1,6 +1,7 @@
 package es.uji.apps.par.services.rest;
 
 import com.sun.jersey.api.core.InjectParam;
+import es.uji.apps.par.auth.AuthChecker;
 import es.uji.apps.par.butacas.EstadoButacasRequest;
 import es.uji.apps.par.exceptions.Constantes;
 import es.uji.apps.par.model.Abono;
@@ -39,7 +40,9 @@ public class EntradasResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<Butaca> estadoButaca(@PathParam("abonoId") Long abonoId, EstadoButacasRequest params) throws Exception
     {
-        Abono abono = abonosService.getAbono(abonoId);
+        String userUID = AuthChecker.getUserUID(currentRequest);
+
+        Abono abono = abonosService.getAbono(abonoId, userUID);
 
         List<Long> sesionIds = new ArrayList<>();
         for (SesionAbono sesion:abono.getSesiones())
@@ -55,7 +58,9 @@ public class EntradasResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPreciosSesion(@PathParam("id") Long abonoId)
     {
-        return Response.ok().entity(abonosService.getPreciosAbono(abonoId)).build();
+        String userUID = AuthChecker.getUserUID(currentRequest);
+
+        return Response.ok().entity(abonosService.getPreciosAbono(abonoId, userUID)).build();
     }
 
     @GET
@@ -63,10 +68,12 @@ public class EntradasResource extends BaseResource {
     @Produces(MediaType.TEXT_HTML)
     public Response butacasAbonoFragment(@PathParam("id") long abonoId, @QueryParam("reserva") String reserva,
                                          @QueryParam("if") String isAdmin) throws Exception {
+        String userUID = AuthChecker.getUserUID(currentRequest);
+
         Locale locale = getLocale();
         String language = locale.getLanguage();
 
-        Abono abono = abonosService.getAbono(abonoId);
+        Abono abono = abonosService.getAbono(abonoId, userUID);
 
         HTMLTemplate template;
         List<SesionAbono> sesiones = abono.getSesiones();

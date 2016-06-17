@@ -108,6 +108,7 @@ UI =
             "error532": "El código de la distribuidora de la película es obligatorio",
             "error533": "El nombre de la distribuidora de la película es obligatorio",
             "selectSala": "Debe seleccionar una sala para el abono (sesiones de una única sala)",
+            "abonoSinSesiones": "No se puede crear un abono sin sesiones",
             "pinpad": {
                 "1": "Pendiente de confirmación",
                 "2": "Operación cancelada",

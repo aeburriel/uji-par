@@ -1,11 +1,11 @@
 package es.uji.apps.par.services;
 
-import com.sun.jersey.api.core.InjectParam;
 import es.uji.apps.par.dao.AbonosDAO;
-import es.uji.apps.par.db.PreciosSesionDTO;
 import es.uji.apps.par.exceptions.CampoRequeridoException;
 import es.uji.apps.par.exceptions.GeneralPARException;
-import es.uji.apps.par.model.*;
+import es.uji.apps.par.model.Abono;
+import es.uji.apps.par.model.PreciosPlantilla;
+import es.uji.apps.par.model.PreciosSesion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +24,9 @@ public class AbonosService {
     @Autowired
     private PreciosPlantillaService preciosPlantillaService;
 
-    public List<Abono> getAbonos(String sortParameter, int start, int limit)
+    public List<Abono> getAbonos(String sortParameter, int start, int limit, String userUID)
     {
-        return abonosDAO.getAbonos(sortParameter, start, limit);
+        return abonosDAO.getAbonos(sortParameter, start, limit, userUID);
     }
 
     public void removeAbono(Long id)
@@ -72,20 +72,25 @@ public class AbonosService {
 
         if (abono.getPlantillaPrecios() == null )
             throw new CampoRequeridoException("Plantilla");
+
+        if (abono.getSesiones() == null || abono.getSesiones().size() == 0)
+            throw new CampoRequeridoException("Sesiones");
     }
 
-    public int getTotalAbonos() {
-        return abonosDAO.getTotalAbonos();
+    public int getTotalAbonos(String userUID)
+    {
+        return abonosDAO.getTotalAbonos(userUID);
     }
 
-    public Abono getAbono(Long abonoId) {
-        return abonosDAO.getAbono(abonoId);
+    public Abono getAbono(Long abonoId, String userUID)
+    {
+        return abonosDAO.getAbono(abonoId, userUID);
     }
 
-    public List<PreciosSesion> getPreciosAbono(Long abonoId) {
+    public List<PreciosSesion> getPreciosAbono(Long abonoId, String userUID) {
         List<PreciosSesion> listaPreciosSesion = new ArrayList<PreciosSesion>();
 
-        Abono abono = getAbono(abonoId);
+        Abono abono = getAbono(abonoId, userUID);
         List<PreciosPlantilla> preciosPlantilla = preciosPlantillaService.getPreciosOfPlantilla(abono.getPlantillaPrecios().getId(), "", 0, 100);
 
         for(PreciosPlantilla precioPlantilla: preciosPlantilla) {

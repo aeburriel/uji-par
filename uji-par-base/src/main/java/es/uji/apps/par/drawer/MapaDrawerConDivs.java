@@ -12,7 +12,7 @@ public class MapaDrawerConDivs implements MapaDrawerInterface {
 	}
 
 	@Override
-	public ByteArrayOutputStream generaImagenAbono(long abonoId, String codigoLocalizacion, boolean mostrarReservadas) throws IOException {
+	public ByteArrayOutputStream generaImagenAbono(long abonoId, String codigoLocalizacion, boolean mostrarReservadas, String userUID) throws IOException {
 		throw new NotImplementedException("generaImagenAbono");
 	}
 }

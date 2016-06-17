@@ -262,8 +262,9 @@ public class CompraResource extends BaseResource {
     public Response getImportesAbonoButacas(@PathParam("id") Long abonoId,
                                        List<Butaca> butacasSeleccionadas) {
         AuthChecker.canWrite(currentRequest);
+		String userUID = AuthChecker.getUserUID(currentRequest);
 
-        BigDecimal importe = comprasService.calculaImporteButacasAbono(abonoId, butacasSeleccionadas);
+        BigDecimal importe = comprasService.calculaImporteButacasAbono(abonoId, butacasSeleccionadas, userUID);
 
         return Response.ok().entity(importe.setScale(2, BigDecimal.ROUND_HALF_UP).toString()).build();
     }

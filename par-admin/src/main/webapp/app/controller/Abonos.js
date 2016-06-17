@@ -251,7 +251,13 @@ Ext.define('Paranimf.controller.Abonos', {
    saveAbonoFormData: function(button, event, opts) {
       var grid = this.getGridAbonos();
       var form = this.getFormAbonos();
-      this.getSesiones().setValue(this.getGridSesionesAbonos().toJSON());
+       var sesionesJSON = this.getGridSesionesAbonos().toJSON();
+       if (sesionesJSON == "[]")
+       {
+           alert(UI.i18n.error.abonoSinSesiones);
+           return;
+       }
+      this.getSesiones().setValue(sesionesJSON);
       form.saveFormData(grid, urlPrefix + 'abono', undefined, undefined, function(form, action) {
          if (action != undefined && action.response != undefined && action.response.responseText != undefined) {
             var respuesta = Ext.JSON.decode(action.response.responseText, true);

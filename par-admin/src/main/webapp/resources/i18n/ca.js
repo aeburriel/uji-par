@@ -98,6 +98,7 @@ UI =
             "errorRealizaPago": "S'ha produït un error iniciant el pagament amb targeta",
             "errorReferenciaDePago": "Ha de realitzar el pagament des de la TPV, i després de l'operació, introduir la referència de pagament a la casella corresponent",
             "selectSala": "Ha de seleccionar una sala per a l'abonament (sessions d'una única sala)",
+            "abonoSinSesiones": "No es pot crear un abonament sense sessions",
             "pinpad": {
             	"-1":"Inicialització de pagaments incorrecta",
             	"-2":"Dades entrada incorrectes per a realitzar transacció",

@@ -36,8 +36,10 @@ public class AbonosResource extends BaseResource
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@QueryParam("sort") String sort, @QueryParam("start") int start, @QueryParam("limit") @DefaultValue("1000") int limit)
     {
-        return Response.ok().entity(new RestResponse(true, abonosService.getAbonos(sort, start, limit),
-                abonosService.getTotalAbonos())).build();
+        String userUID = AuthChecker.getUserUID(currentRequest);
+
+        return Response.ok().entity(new RestResponse(true, abonosService.getAbonos(sort, start, limit, userUID),
+                abonosService.getTotalAbonos(userUID))).build();
     }
 
     @GET

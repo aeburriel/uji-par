@@ -67,9 +67,9 @@ public class MapaDrawer implements MapaDrawerInterface
         return imagenToOutputStream(img);
     }
 
-    public ByteArrayOutputStream generaImagenAbono(long abonoId, String codigoLocalizacion, boolean mostrarReservadas) throws IOException
+    public ByteArrayOutputStream generaImagenAbono(long abonoId, String codigoLocalizacion, boolean mostrarReservadas, String userUID) throws IOException
     {
-        Abono abono = abonosService.getAbono(abonoId);
+        Abono abono = abonosService.getAbono(abonoId, userUID);
         List<Long> sesionIds = new ArrayList<Long>();
         for (SesionAbono sesion : abono.getSesiones()) {
             sesionIds.add(sesion.getSesion().getId());

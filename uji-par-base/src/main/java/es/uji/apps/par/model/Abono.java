@@ -5,7 +5,6 @@ import com.google.gson.reflect.TypeToken;
 import es.uji.apps.par.db.AbonoDTO;
 import es.uji.apps.par.db.SesionAbonoDTO;
 
-import javax.persistence.Column;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +31,7 @@ public class Abono {
     public Abono(AbonoDTO abonoDTO) {
         this.id = abonoDTO.getId();
         this.nombre = abonoDTO.getNombre();
+        this.anulado = abonoDTO.getAnulado();
         this.plantillaPrecios =  Plantilla.plantillaPreciosDTOtoPlantillaPrecios(abonoDTO.getParPlantilla());
         this.sesiones = new ArrayList<SesionAbono>();
         for (SesionAbonoDTO sesion : abonoDTO.getParSesiones()) {

@@ -169,10 +169,10 @@ public class ComprasService
             throw new CompraSinButacasException();
 
         ResultadoCompra resultadoCompra = new ResultadoCompra();
-        Abono abono = abonosService.getAbono(abonoId);
+        Abono abono = abonosService.getAbono(abonoId, userUID);
 
         Abonado abonado = compraAbonado.getAbonado();
-        abonado.setImporte(calculaImporteButacasAbono(abonoId, compraAbonado.getButacasSeleccionadas()));
+        abonado.setImporte(calculaImporteButacasAbono(abonoId, compraAbonado.getButacasSeleccionadas(), userUID));
         abonado.setAbono(abono);
         abonado = abonadosDAO.addAbonado(abonado);
 
@@ -207,10 +207,10 @@ public class ComprasService
         return importe;
     }
 
-    public BigDecimal calculaImporteButacasAbono(Long abonoId, List<Butaca> butacasSeleccionadas)
+    public BigDecimal calculaImporteButacasAbono(Long abonoId, List<Butaca> butacasSeleccionadas, String userUID)
     {
         BigDecimal importe = new BigDecimal("0");
-        List<PreciosSesion> preciosSesion = abonosService.getPreciosAbono(abonoId);
+        List<PreciosSesion> preciosSesion = abonosService.getPreciosAbono(abonoId, userUID);
 
         Map<String, Map<Long, PreciosSesion>> preciosLocalizacion = new HashMap<String, Map<Long, PreciosSesion>>();
         for (PreciosSesion sesion : preciosSesion) {
