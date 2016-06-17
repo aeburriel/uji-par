@@ -1,30 +1,43 @@
 package es.uji.apps.par.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.mysema.query.jpa.impl.JPADeleteClause;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.jpa.impl.JPAUpdateClause;
-
-import es.uji.apps.par.db.QTipoEventoDTO;
-import es.uji.apps.par.db.TipoEventoDTO;
+import es.uji.apps.par.db.*;
 import es.uji.apps.par.model.TipoEvento;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class TiposEventosDAO extends BaseDAO
 {
     private QTipoEventoDTO qTipoEventoDTO = QTipoEventoDTO.tipoEventoDTO;
+    private QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
+    private QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+    private QCineDTO qCineDTO = QCineDTO.cineDTO;
+    private QUsuarioDTO qUsuarioDTO = QUsuarioDTO.usuarioDTO;
 
     @Transactional
-    public List<TipoEvento> getTiposEventos(String sortParameter, int start, int limit)
+    public List<TipoEvento> getTiposEventos(String sortParameter, int start, int limit, String userUID)
     {
         List<TipoEvento> tipoEvento = new ArrayList<TipoEvento>();
-        List<TipoEventoDTO> tipusEventosDTO = getQueryTiposEventos().orderBy(getSort(qTipoEventoDTO, sortParameter)).
-        		offset(start).limit(limit).list(qTipoEventoDTO);
+
+        JPAQuery query = new JPAQuery(entityManager);
+
+        List<TipoEventoDTO> tipusEventosDTO = query.from(qTipoEventoDTO)
+                .leftJoin(qTipoEventoDTO.parCine, qCineDTO)
+                .leftJoin(qCineDTO.parSalas, qSalaDTO)
+                .leftJoin(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+                .leftJoin(qSalasUsuarioDTO.parUsuario, qUsuarioDTO)
+                .where((qUsuarioDTO.usuario.eq(userUID).or(qCineDTO.isNull())))
+                .distinct()
+                .orderBy(getSort(qTipoEventoDTO, sortParameter)).
+        		offset(start)
+                .limit(limit)
+                .list(qTipoEventoDTO);
 
         for (TipoEventoDTO tipoEventoDB : tipusEventosDTO)
         {
@@ -35,13 +48,17 @@ public class TiposEventosDAO extends BaseDAO
     }
     
     @Transactional
-    public TipoEventoDTO getTipoEventoByNombreVa(String nombreVa) {
+    public TipoEventoDTO getTipoEventoByNombreVa(String nombreVa, String userUID) {
         
         JPAQuery query = new JPAQuery(entityManager);
 
          List<TipoEventoDTO> tipos = query
                 .from(qTipoEventoDTO)
-                .where(qTipoEventoDTO.nombreVa.eq(nombreVa))
+                 .leftJoin(qTipoEventoDTO.parCine, qCineDTO)
+                 .leftJoin(qCineDTO.parSalas, qSalaDTO)
+                 .leftJoin(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+                 .leftJoin(qSalasUsuarioDTO.parUsuario, qUsuarioDTO)
+                 .where((qUsuarioDTO.usuario.eq(userUID).or(qCineDTO.isNull())).and(qTipoEventoDTO.nombreVa.eq(nombreVa)))
                 .list(qTipoEventoDTO);
          
          if (tipos.size() == 0)
@@ -51,13 +68,17 @@ public class TiposEventosDAO extends BaseDAO
     }
     
     @Transactional
-    public TipoEventoDTO getTipoEventoByNombreEs(String nombreEs) {
+    public TipoEventoDTO getTipoEventoByNombreEs(String nombreEs, String userUID) {
         
         JPAQuery query = new JPAQuery(entityManager);
 
          List<TipoEventoDTO> tipos = query
                 .from(qTipoEventoDTO)
-                .where(qTipoEventoDTO.nombreEs.eq(nombreEs))
+                 .leftJoin(qTipoEventoDTO.parCine, qCineDTO)
+                 .leftJoin(qCineDTO.parSalas, qSalaDTO)
+                 .leftJoin(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+                 .leftJoin(qSalasUsuarioDTO.parUsuario, qUsuarioDTO)
+                 .where((qUsuarioDTO.usuario.eq(userUID).or(qCineDTO.isNull())).and(qTipoEventoDTO.nombreEs.eq(nombreEs)))
                 .list(qTipoEventoDTO);
          
          if (tipos.size() == 0)
@@ -65,12 +86,6 @@ public class TiposEventosDAO extends BaseDAO
          else
              return tipos.get(0);
     }
-
-    @Transactional
-	private JPAQuery getQueryTiposEventos() {
-		JPAQuery query = new JPAQuery(entityManager);
-		return query.from(qTipoEventoDTO);
-	}
 
     @Transactional
     public long removeTipoEvento(long id)
@@ -106,7 +121,17 @@ public class TiposEventosDAO extends BaseDAO
     }
     
     @Transactional
-	public int getTotalTipusEventos() {
-		return (int) getQueryTiposEventos().count();
+	public int getTotalTipusEventos(String userUID)
+    {
+        JPAQuery query = new JPAQuery(entityManager);
+
+		return (int) query.from(qTipoEventoDTO)
+                .leftJoin(qTipoEventoDTO.parCine, qCineDTO)
+                .leftJoin(qCineDTO.parSalas, qSalaDTO)
+                .leftJoin(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+                .leftJoin(qSalasUsuarioDTO.parUsuario, qUsuarioDTO)
+                .where((qUsuarioDTO.usuario.eq(userUID).or(qCineDTO.isNull())))
+                .distinct()
+                .count();
 	}
 }

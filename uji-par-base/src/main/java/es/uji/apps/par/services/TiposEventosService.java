@@ -1,13 +1,12 @@
 package es.uji.apps.par.services;
 
-import java.util.List;
-
+import es.uji.apps.par.dao.TiposEventosDAO;
+import es.uji.apps.par.exceptions.CampoRequeridoException;
+import es.uji.apps.par.model.TipoEvento;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import es.uji.apps.par.exceptions.CampoRequeridoException;
-import es.uji.apps.par.dao.TiposEventosDAO;
-import es.uji.apps.par.model.TipoEvento;
+import java.util.List;
 
 @Service
 public class TiposEventosService
@@ -15,9 +14,9 @@ public class TiposEventosService
     @Autowired
     private TiposEventosDAO tiposEventosDAO;
 
-    public List<TipoEvento> getTiposEventos(String sortParameter, int start, int limit)
+    public List<TipoEvento> getTiposEventos(String sortParameter, int start, int limit, String userUID)
     {
-        return tiposEventosDAO.getTiposEventos(sortParameter, start, limit);
+        return tiposEventosDAO.getTiposEventos(sortParameter, start, limit, userUID);
     }
 
     public void removeTipoEvento(Integer id)
@@ -46,7 +45,8 @@ public class TiposEventosService
         	tipoEvento.setExportarICAA(false);
     }
 
-	public int getTotalTipusEventos() {
-		return tiposEventosDAO.getTotalTipusEventos();
+	public int getTotalTipusEventos(String userUID)
+    {
+		return tiposEventosDAO.getTotalTipusEventos(userUID);
 	}
 }

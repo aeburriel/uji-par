@@ -70,11 +70,10 @@ public class EventosDAOTest
 
 		//Usuario2
 
-		TipoEventoDTO tipoEvento = new TipoEventoBuilder("tipo", "tipo", false)
+		CineDTO cine1 = new CineBuilder("Cine 1")
 				.build(entityManager);
 
-
-		CineDTO cine1 = new CineBuilder("Cine 1")
+		TipoEventoDTO tipoEvento = new TipoEventoBuilder("tipo", "tipo", false, cine1)
 				.build(entityManager);
 
 		SalaDTO sala1 = new SalaBuilder("Sala 1", cine1)

@@ -1,27 +1,16 @@
 package es.uji.apps.par.services.rest;
 
-import java.net.URI;
-import java.util.Arrays;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import com.sun.jersey.api.core.InjectParam;
-
-import es.uji.apps.par.exceptions.GeneralPARException;
 import es.uji.apps.par.auth.AuthChecker;
+import es.uji.apps.par.exceptions.GeneralPARException;
 import es.uji.apps.par.model.TipoEvento;
 import es.uji.apps.par.services.TiposEventosService;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.net.URI;
+import java.util.Arrays;
 
 @Path("tipoevento")
 public class TiposEventosResource extends BaseResource
@@ -33,8 +22,10 @@ public class TiposEventosResource extends BaseResource
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@QueryParam("sort") String sort, @QueryParam("start") int start, @QueryParam("limit") @DefaultValue("1000") int limit)
     {
-        return Response.ok().entity(new RestResponse(true, tiposEventosService.getTiposEventos(sort, start, limit),
-        		tiposEventosService.getTotalTipusEventos())).build();
+        String userUID = AuthChecker.getUserUID(currentRequest);
+
+        return Response.ok().entity(new RestResponse(true, tiposEventosService.getTiposEventos(sort, start, limit, userUID),
+        		tiposEventosService.getTotalTipusEventos(userUID))).build();
     }
 
     @DELETE

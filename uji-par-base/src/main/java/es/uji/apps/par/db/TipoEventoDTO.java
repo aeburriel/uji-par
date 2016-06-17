@@ -5,14 +5,7 @@ import es.uji.apps.par.model.TipoEvento;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 
 /**
@@ -41,6 +34,10 @@ public class TipoEventoDTO implements Serializable {
 	
 	@Column(name="EXPORTAR_ICAA")
 	private Boolean exportarICAA;
+
+	@ManyToOne
+	@JoinColumn(name="CINE_ID")
+	private CineDTO parCine;
 
 	public TipoEventoDTO() {
 	}
@@ -85,7 +82,17 @@ public class TipoEventoDTO implements Serializable {
 		this.exportarICAA = exportarICAA;
 	}
 
-    public static TipoEventoDTO fromTipoEvento(TipoEvento tipoEvento) {
+	public CineDTO getParCine()
+	{
+		return parCine;
+	}
+
+	public void setParCine(CineDTO parCine)
+	{
+		this.parCine = parCine;
+	}
+
+	public static TipoEventoDTO fromTipoEvento(TipoEvento tipoEvento) {
         TipoEventoDTO tipoEventoDTO = new TipoEventoDTO();
         tipoEventoDTO.setId(tipoEvento.getId());
         tipoEventoDTO.setExportarICAA(tipoEvento.getExportarICAA());

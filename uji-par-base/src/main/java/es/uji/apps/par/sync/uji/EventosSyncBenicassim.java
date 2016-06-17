@@ -100,7 +100,7 @@ public class EventosSyncBenicassim implements EventosSync
                     evento.getTituloVa()));
         }
 
-        updateDatosEvento(item, evento);
+        updateDatosEvento(item, evento, userUID);
         
         if (evento.getParTiposEvento() != null)
         {
@@ -172,7 +172,7 @@ public class EventosSyncBenicassim implements EventosSync
         return Plantilla.plantillaPreciosDTOtoPlantillaPrecios(plantillas.get(0));
     }
 
-    private void updateDatosEvento(Item item, EventoDTO evento) throws MalformedURLException, IOException
+    private void updateDatosEvento(Item item, EventoDTO evento, String userUID) throws MalformedURLException, IOException
     {
         if (item.getSeientsNumerats() != null)
         {
@@ -200,7 +200,7 @@ public class EventosSyncBenicassim implements EventosSync
             if (item.getTipo() != null && !item.getTipo().equals(""))
             {
                 String tipo = Utils.toUppercaseFirst(item.getTipo().trim());
-                TipoEventoDTO tipoEvento = tipoEventosDAO.getTipoEventoByNombreVa(tipo);
+                TipoEventoDTO tipoEvento = tipoEventosDAO.getTipoEventoByNombreVa(tipo, userUID);
 
                 if (tipoEvento == null)
                     logeaTipoNoEncontrado(evento, tipo, item.getIdioma());
@@ -218,7 +218,7 @@ public class EventosSyncBenicassim implements EventosSync
             if (item.getTipo() != null && !item.getTipo().equals(""))
             {
                 String tipo = Utils.toUppercaseFirst(item.getTipo().trim());
-                TipoEventoDTO tipoEvento = tipoEventosDAO.getTipoEventoByNombreEs(tipo);
+                TipoEventoDTO tipoEvento = tipoEventosDAO.getTipoEventoByNombreEs(tipo, userUID);
 
                 if (tipoEvento == null)
                     logeaTipoNoEncontrado(evento, tipo, item.getIdioma());

@@ -80,7 +80,7 @@ public class EventosSyncUji implements EventosSync {
                     evento.getTituloVa()));
         }
 
-        updateDatosEvento(item, evento);
+        updateDatosEvento(item, evento, userUID);
 
         if (evento.getParTiposEvento() != null) {
             eventosDAO.updateEventoDTO(evento);
@@ -99,7 +99,7 @@ public class EventosSyncUji implements EventosSync {
         }
     }
 
-    private void updateDatosEvento(Item item, EventoDTO evento) throws IOException {
+    private void updateDatosEvento(Item item, EventoDTO evento, String userUID) throws IOException {
         if (item.getSeientsNumerats() != null) {
             evento.setAsientosNumerados(item.getSeientsNumerats().equals("si") ? true : false);
         }
@@ -123,7 +123,7 @@ public class EventosSyncUji implements EventosSync {
 
             if (item.getTipo() != null) {
                 String tipo = Utils.toUppercaseFirst(item.getTipo().trim());
-                TipoEventoDTO tipoEvento = tipoEventosDAO.getTipoEventoByNombreVa(tipo);
+                TipoEventoDTO tipoEvento = tipoEventosDAO.getTipoEventoByNombreVa(tipo, userUID);
 
                 if (tipoEvento == null)
                     logeaTipoNoEncontrado(evento, tipo, item.getIdioma());
@@ -138,7 +138,7 @@ public class EventosSyncUji implements EventosSync {
 
             if (item.getTipo() != null) {
                 String tipo = Utils.toUppercaseFirst(item.getTipo().trim());
-                TipoEventoDTO tipoEvento = tipoEventosDAO.getTipoEventoByNombreEs(tipo);
+                TipoEventoDTO tipoEvento = tipoEventosDAO.getTipoEventoByNombreEs(tipo, userUID);
 
                 if (tipoEvento == null)
                     logeaTipoNoEncontrado(evento, tipo, item.getIdioma());

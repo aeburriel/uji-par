@@ -62,6 +62,9 @@ public class CineDTO implements Serializable {
 
 	@OneToMany(mappedBy = "parCine", fetch=FetchType.LAZY)
 	private List<TarifaDTO> parTarifas;
+
+	@OneToMany(mappedBy = "parCine", fetch=FetchType.LAZY)
+	private List<TipoEventoDTO> parTiposEvento;
     
 	public CineDTO()
     {
@@ -239,5 +242,15 @@ public class CineDTO implements Serializable {
 	public void setParTarifas(List<TarifaDTO> parTarifas)
 	{
 		this.parTarifas = parTarifas;
+	}
+
+	public List<TipoEventoDTO> getParTiposEvento()
+	{
+		return parTiposEvento;
+	}
+
+	public void setParTiposEvento(List<TipoEventoDTO> parTiposEvento)
+	{
+		this.parTiposEvento = parTiposEvento;
 	}
 }

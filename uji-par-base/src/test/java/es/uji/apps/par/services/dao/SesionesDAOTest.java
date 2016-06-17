@@ -89,10 +89,10 @@ public class SesionesDAOTest
         //   -     ->  null -> Evento4 -> Sesion6 (Sala3)
         //   -     ->  null -> Evento4 -> Sesion7 (Sala3)
 
-        TipoEventoDTO tipoEvento = new TipoEventoBuilder("tipo", "tipo", false)
+        CineDTO cine1 = new CineBuilder("Cine 1")
                 .build(entityManager);
 
-        CineDTO cine1 = new CineBuilder("Cine 1")
+        TipoEventoDTO tipoEvento = new TipoEventoBuilder("tipo", "tipo", false, cine1)
                 .build(entityManager);
 
         sala1 = new SalaBuilder("Sala 1", cine1)
