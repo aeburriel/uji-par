@@ -58,6 +58,9 @@ public class SalaDTO implements Serializable
     @Column(name = "HTML_TEMPLATE_NAME")
     private String htmlTemplateName;
 
+    @Column(name="ASIENTOS_NUMERADOS")
+    private Boolean asientosNumerados;
+
     @ManyToOne
     @JoinColumn(name = "CINE_ID")
     private CineDTO parCine;
@@ -262,4 +265,14 @@ public class SalaDTO implements Serializable
 	public void setParSalasUsuario(List<SalasUsuarioDTO> parSalasUsuario) {
 		this.parSalasUsuario = parSalasUsuario;
 	}
+
+    public Boolean getAsientosNumerados()
+    {
+        return asientosNumerados;
+    }
+
+    public void setAsientosNumerados(Boolean asientosNumerados)
+    {
+        this.asientosNumerados = asientosNumerados;
+    }
 }

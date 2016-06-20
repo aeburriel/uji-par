@@ -102,17 +102,26 @@ Ext.define('Paranimf.view.EditBaseForm', {
          elemento.setDisabled(false);
   },
 
+    recargaComboStore: function(comboName, idASeleccionar, url) {
+        var combo = this.getForm().findField(comboName);
+        if (url != undefined)
+        {
+            combo.store.proxy.url = url;
+        }
+        combo.store.load(function(records, operation, success) {
+            if (success) {
+                combo.setDisabled(false);
+
+                if (idASeleccionar != undefined)
+                    combo.setValue(idASeleccionar);
+            }
+        });
+    },
+
   cargaComboStore: function(comboName, idASeleccionar) {
     var combo = this.getForm().findField(comboName);
     if (combo.store.count() == 0) {
-      combo.store.load(function(records, operation, success) {
-        if (success) {
-          combo.setDisabled(false);
-
-          if (idASeleccionar != undefined)
-            combo.setValue(idASeleccionar);
-        }
-      });
+      this.recargaComboStore(comboName, idASeleccionar);
     } else {
       combo.setDisabled(false);
 

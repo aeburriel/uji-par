@@ -2,7 +2,7 @@ Ext.define('Paranimf.controller.Eventos', {
    extend: 'Ext.app.Controller',
 
    views: ['EditModalWindow', 'EditBaseForm', 'EditBaseGrid', 'evento.GridEventos', 'evento.GridEventosMultisesion', 'evento.FormEventos', 'evento.PanelEventos', 'evento.GridSesiones', 'evento.FormSesiones', 'evento.GridPreciosSesion', 'evento.FormPreciosSesion', 'evento.FormPeliculaMultisesion'],
-   stores: ['Eventos', 'EventosMultisesion', 'TiposEventosSinPaginar', 'Sesiones', 'PlantillasPrecios', 'PreciosSesion', 'Salas', 'Nacionalidades', 'Peliculas', 'Tpvs'],
+   stores: ['Eventos', 'EventosMultisesion', 'TiposEventosSinPaginar', 'Sesiones', 'PlantillasPrecios', 'PreciosSesion', 'Salas', 'SalasEvento', 'Nacionalidades', 'Peliculas', 'Tpvs'],
    models: ['Evento', 'Sesion', 'PrecioSesion', 'Sala', 'HoraMinuto', 'Tpv'],
 
    refs: [{
@@ -362,7 +362,7 @@ Ext.define('Paranimf.controller.Eventos', {
    
    preparaStoresSesiones: function(comp, opts) {
 	   this.preparaStorePlantillaPrecios();
-	   this.preparaStoreSalas();
+	   this.preparaStoreSalas(this.getGridEventos().getSelectedRecord().data.id);
 
       if (!this.getGridEventos().getSelectedRecord().data.parTiposEvento.exportarICAA) {
          this.getSesionCine().hide();
@@ -400,13 +400,13 @@ Ext.define('Paranimf.controller.Eventos', {
       this.getFormSesiones().cargaComboStore('plantillaPrecios', idASeleccionar);
    },   
    
-   preparaStoreSalas: function() {
+   preparaStoreSalas: function(eventoId) {
       var idASeleccionar = undefined;
       if (this.getGridSesiones().getSelectedColumnId() != undefined) {
          var selectedRecord = this.getGridSesiones().getSelectedRecord();
          idASeleccionar = selectedRecord.data.sala;
       }
-      this.getFormSesiones().cargaComboStore('sala', idASeleccionar);
+      this.getFormSesiones().recargaComboStore('sala', idASeleccionar, urlPrefix + 'sala/evento/' + eventoId);
    },     
    
    showImagenIfExists: function(comp, opts) {

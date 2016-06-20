@@ -60,7 +60,7 @@ Ext.define('Paranimf.view.evento.FormSesiones', {
         forceSelection: false,
         displayField: 'nombre',
         valueField: 'id',
-        store: 'Salas',
+        store: 'SalasEvento',
         queryMode: 'local',
         typeAhead: true
      }]

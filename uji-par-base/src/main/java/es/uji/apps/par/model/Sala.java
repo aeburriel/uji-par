@@ -1,13 +1,12 @@
 package es.uji.apps.par.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlRootElement;
-
+import es.uji.apps.par.db.SalaDTO;
 import es.uji.apps.par.exceptions.GeneralPARException;
 import es.uji.apps.par.exceptions.RegistroSerializaException;
-import es.uji.apps.par.db.SalaDTO;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.List;
 
 @XmlRootElement
 public class Sala
@@ -23,6 +22,7 @@ public class Sala
     private String subtitulo;
     private String htmlTemplateName;
     private Cine cine;
+    private boolean asientosNumerados;
 
     public Sala()
     {
@@ -64,6 +64,7 @@ public class Sala
         this.setFormato(salaDTO.getFormato());
         this.setSubtitulo(salaDTO.getSubtitulo());
         this.setHtmlTemplateName(salaDTO.getHtmlTemplateName());
+        this.setAsientosNumerados(salaDTO.getAsientosNumerados());
 
         if (salaDTO.getParCine() != null)
             this.setCine(Cine.cineDTOToCine(salaDTO.getParCine()));
@@ -88,6 +89,7 @@ public class Sala
         salaDTO.setFormato(sala.getFormato());
         salaDTO.setSubtitulo(sala.getSubtitulo());
         salaDTO.setHtmlTemplateName(sala.getHtmlTemplateName());
+        salaDTO.setAsientosNumerados(sala.isAsientosNumerados());
 
         if (sala.getCine() != null)
             salaDTO.setParCine(Cine.cineToCineDTO(sala.getCine()));
@@ -103,16 +105,6 @@ public class Sala
             salas.add(Sala.salaDTOtoSala(salaDTO));
 
         return salas;
-    }
-
-    public static List<SalaDTO> salasToSalasDTO(List<Sala> salas)
-    {
-        ArrayList<SalaDTO> salasDTO = new ArrayList<SalaDTO>();
-
-        for (Sala sala : salas)
-            salasDTO.add(Sala.salaToSalaDTO(sala));
-
-        return salasDTO;
     }
 
     public long getId()
@@ -221,6 +213,16 @@ public class Sala
 
     public void setHtmlTemplateName(String htmlTemplateName) {
         this.htmlTemplateName = htmlTemplateName;
+    }
+
+    public boolean isAsientosNumerados()
+    {
+        return asientosNumerados;
+    }
+
+    public void setAsientosNumerados(boolean asientosNumerados)
+    {
+        this.asientosNumerados = asientosNumerados;
     }
 
     public static void checkValidity(String nombre, String codigo) throws RegistroSerializaException {
