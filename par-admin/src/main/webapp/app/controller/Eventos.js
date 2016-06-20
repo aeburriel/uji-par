@@ -174,6 +174,10 @@ Ext.define('Paranimf.controller.Eventos', {
             change: this.cambiaPlantilla
          },
 
+         'formSesiones combobox[name=sala]': {
+            change: this.cambiaSala
+         },
+
          'gridPreciosSesion button[action=add]': {
             click: this.addPrecioSesion
          },
@@ -262,6 +266,30 @@ Ext.define('Paranimf.controller.Eventos', {
          this.getGridPreciosSesion().ocultarToolbar();
          this.cargarPreciosPlantilla(newValue);
       }
+   },
+
+   cambiaSala: function(combo, newValue, oldValue, opts) {
+      if (newValue != undefined && newValue != '' && newValue != 0) {
+         this.getComboPlantillaPrecios().store.proxy.url = urlPrefix + 'plantillaprecios/sala/' + newValue;
+      }
+      else {
+         this.getComboPlantillaPrecios().store.proxy.url = urlPrefix + 'plantillaprecios';
+      }
+
+      var self = this;
+      this.getComboPlantillaPrecios().store.load(function(records, operation, success) {
+         var plantilla = self.getComboPlantillaPrecios().value;
+
+         if (plantilla != undefined && plantilla != '' && plantilla != 0) {
+            for (var i = 0; i < records.length; i++) {
+               if (plantilla == records[i].data.id)
+               {
+                  return;
+               }
+            }
+         }
+         self.getComboPlantillaPrecios().setValue(-1);
+      });
    },
 
    cargarPreciosPlantilla: function(plantillaId) {
@@ -407,6 +435,8 @@ Ext.define('Paranimf.controller.Eventos', {
          idASeleccionar = selectedRecord.data.sala;
       }
       this.getFormSesiones().recargaComboStore('sala', idASeleccionar, urlPrefix + 'sala/evento/' + eventoId);
+
+      this.cambiaSala(this.getComboSala(), this.getComboSala().value);
    },     
    
    showImagenIfExists: function(comp, opts) {

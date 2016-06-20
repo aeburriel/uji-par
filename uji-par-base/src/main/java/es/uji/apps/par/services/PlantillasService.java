@@ -61,4 +61,27 @@ public class PlantillasService {
 	public int getTotalPlantillasEditables(String userUID) {
 		return plantillasPreciosDAO.getTotalPlantillasEditables(userUID);
 	}
+
+	public List<Plantilla> getBySala(Long salaId, String sortParameter, int start, int limit, String userUID)
+	{
+		List<Plantilla> plantillaPrecios = new ArrayList<Plantilla>();
+
+		Plantilla plantilla = new Plantilla("- Sin plantilla");
+		plantilla.setId(-1);
+		plantillaPrecios.add(plantilla);
+
+		if (salaId != null)
+		{
+			for (PlantillaDTO plantillaDTO : plantillasPreciosDAO.getBySala(salaId, sortParameter, start, limit, userUID))
+			{
+				plantillaPrecios.add(new Plantilla(plantillaDTO));
+			}
+		}
+		return plantillaPrecios;
+	}
+
+	public int getTotalPlantillaPreciosBySala(Long salaId, String userUID)
+	{
+		return plantillasPreciosDAO.getTotalPlantillaPreciosBySala(salaId, userUID);
+	}
 }

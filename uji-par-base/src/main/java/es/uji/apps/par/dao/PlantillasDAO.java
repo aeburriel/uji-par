@@ -19,7 +19,7 @@ public class PlantillasDAO extends BaseDAO {
 	@Transactional
 	public List<PlantillaDTO> get(boolean filtrarEditables, String sortParameter, int start, int limit, String userUID) {
         List<PlantillaDTO> plantillaPrecios = new ArrayList<PlantillaDTO>();
-        List<PlantillaDTO> listaPlantillaPreciosDTO = new ArrayList<PlantillaDTO>();
+        List<PlantillaDTO> listaPlantillaPreciosDTO;
         
         if (filtrarEditables)
         	listaPlantillaPreciosDTO = getQueryPlantillasEditables(userUID).orderBy(getSort(qPlantillaDTO, sortParameter)).
@@ -59,6 +59,18 @@ public class PlantillasDAO extends BaseDAO {
 				.join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
 				.where(qSalasUsuarioDTO.parUsuario.usuario.eq(userUID));
 	}
+
+	@Transactional
+	private JPAQuery getQueryPlantillasBySala(Long salaId, String userUID) {
+		QSalaDTO qSalaDTO = new QSalaDTO("qSalaDTO");
+		QSalasUsuarioDTO qSalasUsuarioDTO = new QSalasUsuarioDTO("qSalasUsuarioDTO");
+
+		JPAQuery query = new JPAQuery(entityManager);
+		return query.from(qPlantillaDTO)
+				.leftJoin(qPlantillaDTO.sala, qSalaDTO).fetch()
+				.join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+				.where(qSalaDTO.id.eq(salaId).and(qSalasUsuarioDTO.parUsuario.usuario.eq(userUID)));
+	}
 	
 	@Transactional
 	public long remove(long id) {
@@ -96,5 +108,26 @@ public class PlantillasDAO extends BaseDAO {
 	@Transactional
 	public int getTotalPlantillasEditables(String userUID) {
 		return (int) getQueryPlantillasEditables(userUID).count();
+	}
+
+	@Transactional
+	public List<PlantillaDTO> getBySala(Long salaId, String sortParameter, int start, int limit, String userUID)
+	{
+		List<PlantillaDTO> plantillaPrecios = new ArrayList<>();
+		List<PlantillaDTO> listaPlantillaPreciosDTO = getQueryPlantillasBySala(salaId, userUID).orderBy(getSort(qPlantillaDTO, sortParameter)).
+				offset(start).limit(limit).list(qPlantillaDTO);
+
+		for (PlantillaDTO plantillaPreciosDB : listaPlantillaPreciosDTO)
+		{
+			plantillaPrecios.add(plantillaPreciosDB);
+		}
+
+		return plantillaPrecios;
+	}
+
+	@Transactional
+	public int getTotalPlantillaPreciosBySala(Long salaId, String userUID)
+	{
+		return (int) getQueryPlantillasBySala(salaId, userUID).count();
 	}
 }

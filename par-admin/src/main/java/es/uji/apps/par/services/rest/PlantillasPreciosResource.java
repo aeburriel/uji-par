@@ -33,7 +33,25 @@ public class PlantillasPreciosResource extends BaseResource{
 
         if (userUID != null)
         {
-            return Response.ok().entity(new RestResponse(true, plantillaPreciosService.getAll(sort, start, limit, userUID), plantillaPreciosService.getTotalPlantillaPrecios(userUID))).build();
+            List<Plantilla> all = plantillaPreciosService.getBySala(null, sort, start, limit, userUID);
+            return Response.ok().entity(new RestResponse(true, all, all.size())).build();
+        }
+        else
+        {
+            return Response.ok().entity(new RestResponse(true, new ArrayList<>(), 0)).build();
+        }
+    }
+
+    @GET
+    @Path("sala/{salaId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getBySala(@PathParam("salaId") Long salaId, @QueryParam("sort") String sort, @QueryParam("start") int start, @QueryParam("limit") @DefaultValue("1000") int limit)
+    {
+        String userUID = AuthChecker.getUserUID(currentRequest);
+
+        if (userUID != null)
+        {
+            return Response.ok().entity(new RestResponse(true, plantillaPreciosService.getBySala(salaId, sort, start, limit, userUID), plantillaPreciosService.getTotalPlantillaPreciosBySala(salaId, userUID))).build();
         }
         else
         {
