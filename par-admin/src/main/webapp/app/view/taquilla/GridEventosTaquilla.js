@@ -46,7 +46,7 @@ Ext.define('Paranimf.view.taquilla.GridEventosTaquilla', {
         }
       }, {
         dataIndex: langsAllowed && langsAllowed.length > 1 ? 'tituloVa' : 'tituloEs',
-        text: langsAllowed && langsAllowed.length > 1 ? UI.i18n.field.title_va : UI.i18n.field.title_es,
+        text: langsAllowed && langsAllowed.length > 1 ? UI.i18n.field.title_va : UI.i18n.field.title,
         flex: 5
       },{
           dataIndex: 'rssId',
