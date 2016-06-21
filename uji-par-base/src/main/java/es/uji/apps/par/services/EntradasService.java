@@ -90,6 +90,7 @@ public class EntradasService {
 		String reportClass = comprasDAO.getReportClassByCompraUUID(uuidCompra, EntradaReportFactory.TIPO_ENTRADA_TAQUILLA);
 		if (entradaTaquillaReport == null)
 			entradaTaquillaReport = EntradaReportFactory.newInstanceTaquilla(reportClass);
+
 		EntradaReportTaquillaInterface entrada = entradaTaquillaReport.create(new Locale(configuration.getIdiomaPorDefecto()), configuration);
 
 		rellenaEntradaTaquilla(uuidCompra, entrada, userUID);
@@ -100,20 +101,39 @@ public class EntradasService {
         CompraDTO compra = comprasDAO.getCompraByUuid(uuidCompra);
         List<TarifaDTO> tarifas = tarifasDAO.getAll("", 0, 100, userUID);
 
-        String tituloVa = compra.getParSesion().getParEvento().getTituloVa();
-        List<EventoMultisesion> peliculas = eventosService.getPeliculas(compra.getParSesion().getParEvento().getId());
-        if (peliculas.size() > 0) {
-            tituloVa += ": ";
-            for (EventoMultisesion pelicula : peliculas) {
-                tituloVa += pelicula.getTituloVa() + ", ";
-            }
-            tituloVa = tituloVa.substring(0, tituloVa.length() - 2);
-        }
+		String titulo;
+		List<EventoMultisesion> peliculas = eventosService.getPeliculas(compra.getParSesion().getParEvento().getId());
+		Locale locale = new Locale(configuration.getIdiomaPorDefecto());
+		if (locale.getLanguage().equals("ca"))
+		{
+			titulo = compra.getParSesion().getParEvento().getTituloVa();
+			if (peliculas.size() > 0)
+			{
+				titulo += ": ";
+				for (EventoMultisesion pelicula : peliculas)
+				{
+					titulo += pelicula.getTituloVa() + ", ";
+				}
+				titulo = titulo.substring(0, titulo.length() - 2);
+			}
+		}
+		else {
+			titulo = compra.getParSesion().getParEvento().getTituloEs();
+			if (peliculas.size() > 0)
+			{
+				titulo += ": ";
+				for (EventoMultisesion pelicula : peliculas)
+				{
+					titulo += pelicula.getTituloEs() + ", ";
+				}
+				titulo = titulo.substring(0, titulo.length() - 2);
+			}
+		}
         String fecha = DateUtils.dateToSpanishString(compra.getParSesion().getFechaCelebracion());
         String hora = DateUtils.dateToHourString(compra.getParSesion().getFechaCelebracion());
         String horaApertura = compra.getParSesion().getHoraApertura();
 
-        entrada.setTitulo(tituloVa);
+        entrada.setTitulo(titulo);
         entrada.setFecha(fecha);
         entrada.setHora(hora);
         entrada.setHoraApertura(horaApertura);
@@ -125,7 +145,14 @@ public class EntradasService {
                 EntradaModelReport entradaModelReport = new EntradaModelReport();
                 entradaModelReport.setFila(butaca.getFila());
                 entradaModelReport.setNumero(butaca.getNumero());
-                entradaModelReport.setZona(butaca.getParLocalizacion().getNombreVa());
+				if (locale.getLanguage().equals("ca"))
+				{
+					entradaModelReport.setZona(butaca.getParLocalizacion().getNombreVa());
+				}
+				else
+				{
+					entradaModelReport.setZona(butaca.getParLocalizacion().getNombreEs());
+				}
                 entradaModelReport.setTotal(ReportUtils.formatEuros(butaca.getPrecio()));
                 entradaModelReport.setCifEmpresa(butaca.getParSesion().getParEvento().getParTpv().getCif());
                 entradaModelReport.setNombreEmpresa(butaca.getParSesion().getParEvento().getParTpv().getNombre());
@@ -156,20 +183,40 @@ public class EntradasService {
     }
 
     private void rellenaEntrada(CompraDTO compra, EntradaReportOnlineInterface entrada, String userUID) throws NullPointerException {
-        String tituloCa = compra.getParSesion().getParEvento().getTituloVa();
-        List<EventoMultisesion> peliculas = eventosService.getPeliculas(compra.getParSesion().getParEvento().getId());
-        if (peliculas.size() > 0) {
-            tituloCa += ": ";
-            for (EventoMultisesion pelicula : peliculas) {
-                tituloCa += pelicula.getTituloVa() + ", ";
-            }
-            tituloCa = tituloCa.substring(0, tituloCa.length() - 2);
-        }
+		String titulo;
+		List<EventoMultisesion> peliculas = eventosService.getPeliculas(compra.getParSesion().getParEvento().getId());
+		Locale locale = new Locale(configuration.getIdiomaPorDefecto());
+		if (locale.getLanguage().equals("ca"))
+		{
+			titulo = compra.getParSesion().getParEvento().getTituloVa();
+			if (peliculas.size() > 0)
+			{
+				titulo += ": ";
+				for (EventoMultisesion pelicula : peliculas)
+				{
+					titulo += pelicula.getTituloVa() + ", ";
+				}
+				titulo = titulo.substring(0, titulo.length() - 2);
+			}
+		}
+		else
+		{
+			titulo = compra.getParSesion().getParEvento().getTituloEs();
+			if (peliculas.size() > 0)
+			{
+				titulo += ": ";
+				for (EventoMultisesion pelicula : peliculas)
+				{
+					titulo += pelicula.getTituloEs() + ", ";
+				}
+				titulo = titulo.substring(0, titulo.length() - 2);
+			}
+		}
         String fecha = DateUtils.dateToSpanishString(compra.getParSesion().getFechaCelebracion());
         String hora = DateUtils.dateToHourString(compra.getParSesion().getFechaCelebracion());
         String horaApertura = compra.getParSesion().getHoraApertura();
 
-        entrada.setTitulo(tituloCa);
+        entrada.setTitulo(titulo);
         entrada.setFecha(fecha);
         entrada.setHora(hora);
         entrada.setHoraApertura(horaApertura);
@@ -199,9 +246,17 @@ public class EntradasService {
 
     private void rellenaButaca(EntradaModelReport entradaModelReport, CompraDTO compra, EntradaReportOnlineInterface entrada, ButacaDTO butaca, String userUID) {
         TarifaDTO tarifaCompra = tarifasDAO.get(Integer.valueOf(butaca.getTipo()), userUID);
+		Locale locale = new Locale(configuration.getIdiomaPorDefecto());
+		if (locale.getLanguage().equals("ca"))
+		{
+			entradaModelReport.setZona(butaca.getParLocalizacion().getNombreVa());
+		}
+		else
+		{
+			entradaModelReport.setZona(butaca.getParLocalizacion().getNombreEs());
+		}
         entradaModelReport.setFila(butaca.getFila());
         entradaModelReport.setNumero(butaca.getNumero());
-        entradaModelReport.setZona(butaca.getParLocalizacion().getNombreVa());
         entradaModelReport.setTotal(ReportUtils.formatEuros(butaca.getPrecio()));
         entradaModelReport.setCifEmpresa(butaca.getParSesion().getParEvento().getParTpv().getCif());
         entradaModelReport.setNombreEmpresa(butaca.getParSesion().getParEvento().getParTpv().getNombre());

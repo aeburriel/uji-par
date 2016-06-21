@@ -46,4 +46,37 @@ public class ReportUtils {
             return "de desembre";
         }
     }
+
+    public static String getMesEspanolConDe(Calendar fecha)
+    {
+        int mes = fecha.get(Calendar.MONTH);
+
+        switch (mes)
+        {
+            case 0:
+                return "de enero";
+            case 1:
+                return "de febrero";
+            case 2:
+                return "de marzo";
+            case 3:
+                return "de abril";
+            case 4:
+                return "de mayo";
+            case 5:
+                return "de junio";
+            case 6:
+                return "de julio";
+            case 7:
+                return "de agosto";
+            case 8:
+                return "de septiembre";
+            case 9:
+                return "de octubre";
+            case 10:
+                return "de noviembre";
+            default:
+                return "de diciembre";
+        }
+    }
 }
