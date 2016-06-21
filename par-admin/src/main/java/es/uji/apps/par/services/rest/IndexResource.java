@@ -40,7 +40,7 @@ public class IndexResource extends BaseResource
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "admin", getLocale(), APP);
 
         String userUID = AuthChecker.getUserUID(currentRequest);
-        template.put("user", usersService.getUserById(userUID));
+        template.put("user", usersService.getUserById(userUID).getNombre());
         template.put("urlPublic", configuration.getUrlPublic());
 		template.put("allowMultisesion", configuration.getAllowMultisesion());
         template.put("payModes", configuration.getPayModes(getLocale()));
