@@ -59,7 +59,8 @@ Ext.define('Paranimf.view.evento.FormEventos', {
 				}, {
 					fieldLabel : UI.i18n.field.title_va,
 					name : 'tituloVa',
-					allowBlank : false
+					hidden: langsAllowed && langsAllowed.length > 1 ? false : true,
+					allowBlank: langsAllowed && langsAllowed.length > 1 ? false : true
 				} ]
 			},
 
@@ -78,7 +79,8 @@ Ext.define('Paranimf.view.evento.FormEventos', {
 				}, {
 					fieldLabel : UI.i18n.field.description_va,
 					name : 'descripcionVa',
-					allowBlank : true
+					hidden: langsAllowed && langsAllowed.length > 1 ? false : true,
+					allowBlank: langsAllowed && langsAllowed.length > 1 ? false : true
 				} ]
 			},
 
@@ -363,7 +365,8 @@ Ext.define('Paranimf.view.evento.FormEventos', {
 				}, {
 					fieldLabel : UI.i18n.field.company_va,
 					name : 'companyiaVa',
-					allowBlank : true
+					hidden: langsAllowed && langsAllowed.length > 1 ? false : true,
+					allowBlank: langsAllowed && langsAllowed.length > 1 ? false : true
 				} ]
 			},
 
@@ -382,7 +385,8 @@ Ext.define('Paranimf.view.evento.FormEventos', {
 				}, {
 					fieldLabel : UI.i18n.field.staff_va,
 					name : 'interpretesVa',
-					allowBlank : true
+					hidden: langsAllowed && langsAllowed.length > 1 ? false : true,
+					allowBlank: langsAllowed && langsAllowed.length > 1 ? false : true
 				} ]
 			},
 
@@ -401,7 +405,8 @@ Ext.define('Paranimf.view.evento.FormEventos', {
 				}, {
 					fieldLabel : UI.i18n.field.duration_va,
 					name : 'duracionVa',
-					allowBlank : true
+					hidden: langsAllowed && langsAllowed.length > 1 ? false : true,
+					allowBlank: langsAllowed && langsAllowed.length > 1 ? false : true
 				} ]
 			},
 
@@ -420,7 +425,8 @@ Ext.define('Paranimf.view.evento.FormEventos', {
 				}, {
 					fieldLabel : UI.i18n.field.awards_va,
 					name : 'premiosVa',
-					allowBlank : true
+					hidden: langsAllowed && langsAllowed.length > 1 ? false : true,
+					allowBlank: langsAllowed && langsAllowed.length > 1 ? false : true
 				} ]
 			},
 
@@ -441,7 +447,8 @@ Ext.define('Paranimf.view.evento.FormEventos', {
 						{
 							fieldLabel : UI.i18n.field.characteristics_va,
 							name : 'caracteristicasVa',
-							allowBlank : true
+							hidden: langsAllowed && langsAllowed.length > 1 ? false : true,
+							allowBlank: langsAllowed && langsAllowed.length > 1 ? false : true
 						} ]
 			},
 
@@ -460,7 +467,8 @@ Ext.define('Paranimf.view.evento.FormEventos', {
 				}, {
 					fieldLabel : UI.i18n.field.comments_va,
 					name : 'comentariosVa',
-					allowBlank : true
+					hidden: langsAllowed && langsAllowed.length > 1 ? false : true,
+					allowBlank: langsAllowed && langsAllowed.length > 1 ? false : true
 				} ]
 			} ]
 });

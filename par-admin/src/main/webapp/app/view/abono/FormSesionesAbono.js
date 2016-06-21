@@ -18,7 +18,7 @@ Ext.define('Paranimf.view.abono.FormSesionesAbono', {
       name: 'evento',
       xtype: 'combobox',
       forceSelection: true,
-      displayField: 'tituloVa',
+      displayField: langsAllowed && langsAllowed.length > 1 ? 'tituloVa' : 'tituloEs',
       valueField: 'id',
       store: 'EventosCombo',
       queryMode: 'remote',

@@ -45,10 +45,10 @@ Ext.define('Paranimf.view.compra.GridEventosComprasReservas', {
       text: UI.i18n.field.type,
       flex: 2,
       renderer: function (val, p) {
-        return val["nombreVa"];
+        return langsAllowed && langsAllowed.length > 1 ? val["nombreVa"] : val["nombreEs"];
       }
     }, {
-      dataIndex: 'tituloVa',
+      dataIndex: langsAllowed && langsAllowed.length > 1 ? 'tituloVa' : 'tituloEs',
       text: UI.i18n.field.title,
       flex: 5
     }];

@@ -18,7 +18,7 @@ Ext.define('Paranimf.view.evento.FormPreciosSesion', {
     fieldLabel: UI.i18n.field.localizacion,
     name: 'localizacion_id',
     xtype: 'combobox',
-    displayField: 'nombreVa',
+    displayField: langsAllowed && langsAllowed.length > 1 ? 'nombreVa' : 'nombreEs',
     forceSelection: false,
     valueField: 'id',
     store: 'Localizaciones',

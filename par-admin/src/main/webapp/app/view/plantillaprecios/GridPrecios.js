@@ -36,7 +36,7 @@ Ext.define('Paranimf.view.plantillaprecios.GridPrecios', {
         text: UI.i18n.field.idTarifa,
         sortable: false
       }, {
-        dataIndex: 'parLocalizacione.nombreVa',
+        dataIndex: langsAllowed && langsAllowed.length > 1 ? 'parLocalizacione.nombreVa' : 'parLocalizacione.nombreEs',
         text: UI.i18n.field.localizacion,
         flex: 2
       }, {

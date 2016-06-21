@@ -42,11 +42,11 @@ Ext.define('Paranimf.view.taquilla.GridEventosTaquilla', {
         text: UI.i18n.field.type,
         flex: 2,
         renderer: function (val, p) {
-          return val["nombreVa"];
+          return langsAllowed && langsAllowed.length > 1 ? val["nombreVa"] : val["nombreEs"];
         }
       }, {
-        dataIndex: 'tituloVa',
-        text: UI.i18n.field.title_va,
+        dataIndex: langsAllowed && langsAllowed.length > 1 ? 'tituloVa' : 'tituloEs',
+        text: langsAllowed && langsAllowed.length > 1 ? UI.i18n.field.title_va : UI.i18n.field.title_es,
         flex: 5
       },{
           dataIndex: 'rssId',

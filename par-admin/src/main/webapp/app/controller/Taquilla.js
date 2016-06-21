@@ -752,7 +752,7 @@ Ext.define('Paranimf.controller.Taquilla', {
                         columnWidth: 1 / 2,
                         name: localizacion.codigo,
                         hidden: true,
-                        title: UI.i18n.legends.entrades + " " + localizacion.nombreVa.toUpperCase(),
+                        title: UI.i18n.legends.entrades + " " + localizacion.nombreEs.toUpperCase(),
                         items: [{
                             name: localizacion.codigo,
                             xtype: 'panelNumeroEntradas'

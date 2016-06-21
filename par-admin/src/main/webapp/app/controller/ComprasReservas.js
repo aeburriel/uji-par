@@ -405,7 +405,7 @@ Ext.define('Paranimf.controller.ComprasReservas', {
       var storeSesiones = this.getGridSesionesComprasReservas().getStore();
       var eventoId = record[0].get('id');
       
-      this.getGridSesionesComprasReservas().setTitle(UI.i18n.gridTitle.sesionesCompras + ': ' + record[0].get('tituloVa'));
+      this.getGridSesionesComprasReservas().setTitle(UI.i18n.gridTitle.sesionesCompras + ': ' + record[0].get('tituloEs'));
 
       storeSesiones.getProxy().url = urlPrefix + 'evento/' + eventoId + '/sesiones';
       storeSesiones.load();

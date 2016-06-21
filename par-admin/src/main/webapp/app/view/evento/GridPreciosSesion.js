@@ -24,7 +24,7 @@ Ext.define('Paranimf.view.evento.GridPreciosSesion', {
         sortable: false,
         text: UI.i18n.field.idTarifa
       }, {
-        dataIndex: 'parLocalizacione.nombreVa',
+        dataIndex: langsAllowed && langsAllowed.length > 1 ? 'parLocalizacione.nombreVa' : 'parLocalizacione.nombreEs',
         text: UI.i18n.field.localizacion,
         flex: 2,
         renderer: function(value, metaData, record, row, col, store, gridView){

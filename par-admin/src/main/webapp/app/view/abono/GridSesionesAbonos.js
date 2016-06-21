@@ -25,7 +25,7 @@ Ext.define('Paranimf.view.abono.GridSesionesAbonos', {
       hidden: true,
       text: UI.i18n.field.idIntern
     }, {
-      dataIndex: 'tituloVa',
+      dataIndex: langsAllowed && langsAllowed.length > 1 ? 'tituloVa' : 'tituloEs',
       text: UI.i18n.field.nameMulti,
       flex: 1
     }, {

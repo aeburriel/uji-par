@@ -21,7 +21,9 @@ Ext.define('Paranimf.view.tipoevento.FormTiposEventos', {
       name: 'nombreEs'
    }, {
 	  fieldLabel: UI.i18n.field.name_va,
-	  name: 'nombreVa'
+	  name: 'nombreVa',
+      hidden: langsAllowed && langsAllowed.length > 1 ? false : true,
+      allowBlank: langsAllowed && langsAllowed.length > 1 ? false : true
    }, {
       xtype: 'combobox',
       forceSelection: false,
