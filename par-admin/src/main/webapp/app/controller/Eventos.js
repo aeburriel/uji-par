@@ -364,6 +364,7 @@ Ext.define('Paranimf.controller.Eventos', {
             precio : button.up('form').getForm().findField('precio').value,
             localizacion_id: localizacionSeleccionada,
             "parLocalizacione.nombreVa": this.getComboLocalizaciones().rawValue,
+            "parLocalizacione.nombreEs": this.getComboLocalizaciones().rawValue,
             tarifa_id: tarifaSeleccionada,
             "parTarifa.nombre": this.getComboTarifas().rawValue,
          });
