@@ -33,6 +33,16 @@ public class UsuariosDAO extends BaseDAO
 	}
 
 	@Transactional
+	public Usuario getUserById(String userUID)
+	{
+		JPAQuery query = new JPAQuery(entityManager);
+
+		UsuarioDTO usuarioDTO = query.from(qUserDTO).where(qUserDTO.usuario.eq(userUID)).uniqueResult(qUserDTO);
+
+		return new Usuario(usuarioDTO);
+	}
+
+	@Transactional
 	private JPAQuery getQueryUsuarios()
 	{
 		JPAQuery query = new JPAQuery(entityManager);

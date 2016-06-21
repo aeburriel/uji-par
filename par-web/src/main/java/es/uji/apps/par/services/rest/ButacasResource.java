@@ -1,23 +1,16 @@
 package es.uji.apps.par.services.rest;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.sun.jersey.api.core.InjectParam;
+import es.uji.apps.par.model.Butaca;
+import es.uji.apps.par.services.ButacasService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import com.sun.jersey.api.core.InjectParam;
-
-import es.uji.apps.par.db.ButacaDTO;
-import es.uji.apps.par.model.Butaca;
-import es.uji.apps.par.services.ButacasService;
+import java.util.List;
+import java.util.Locale;
 
 @Path("sesion")
 public class ButacasResource extends BaseResource
@@ -37,8 +30,11 @@ public class ButacasResource extends BaseResource
         {
             return apiAccessDenied();
         }
+
+        Locale locale = getLocale();
+        String language = locale.getLanguage();
         
-        List<Butaca> butacas = butacasService.getButacasNoAnuladas(idSesion);
+        List<Butaca> butacas = butacasService.getButacasNoAnuladas(idSesion, language);
 
         return Response.ok().entity(butacas).build();
     }

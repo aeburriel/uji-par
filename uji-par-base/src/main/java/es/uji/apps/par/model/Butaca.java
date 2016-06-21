@@ -1,19 +1,14 @@
 package es.uji.apps.par.model;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import es.uji.apps.par.db.ButacaDTO;
+
+import javax.xml.bind.annotation.XmlRootElement;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.xml.bind.annotation.XmlRootElement;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import com.sun.jersey.api.core.InjectParam;
-import es.uji.apps.par.config.Configuration;
-import es.uji.apps.par.db.ButacaDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @XmlRootElement
 public class Butaca
@@ -44,13 +39,13 @@ public class Butaca
         return butacaDTO;
     }
 
-    public static List<Butaca> butacasDTOToButacas(List<ButacaDTO> butacasDTO, boolean isIdEntrada)
+    public static List<Butaca> butacasDTOToButacas(List<ButacaDTO> butacasDTO, boolean isIdEntrada, String language)
     {
         List<Butaca> butacas = new ArrayList<Butaca>();
          
          for (ButacaDTO butacaDTO: butacasDTO)
          {
-             butacas.add(new Butaca(butacaDTO, isIdEntrada));
+             butacas.add(new Butaca(butacaDTO, isIdEntrada, language));
          }
          
          return butacas;
@@ -66,14 +61,21 @@ public class Butaca
         this.tipo = tipo;
     }
 
-    public Butaca(ButacaDTO butacaDTO, boolean isIdEntrada)
+    public Butaca(ButacaDTO butacaDTO, boolean isIdEntrada, String language)
     {
         id = butacaDTO.getId();
         fila = butacaDTO.getFila();
         numero = butacaDTO.getNumero();
         precio = butacaDTO.getPrecio();
         localizacion = butacaDTO.getParLocalizacion().getCodigo();
-        localizacionNombre = butacaDTO.getParLocalizacion().getNombreVa();
+        if (language.equals("ca"))
+        {
+            localizacionNombre = butacaDTO.getParLocalizacion().getNombreVa();
+        }
+        else
+        {
+            localizacionNombre = butacaDTO.getParLocalizacion().getNombreEs();
+        }
         tipo = butacaDTO.getTipo();
         presentada = butacaDTO.getPresentada();
         

@@ -124,13 +124,13 @@ public class ButacasService
         return disponibles;
     }
 
-	public List<Butaca> getButacasCompra(Long idCompra, String sort, int start, int limit) {
+	public List<Butaca> getButacasCompra(Long idCompra, String sort, int start, int limit, String language) {
 		List<Tuple> listaButacasDTO = butacasDAO.getButacasCompra(idCompra, sort, start, limit);
 		List<Butaca> listaButacas = new ArrayList<Butaca>();
 		for (Tuple objButacaTarifa: listaButacasDTO) {
 			ButacaDTO butacaDTO = objButacaTarifa.get(0, ButacaDTO.class);
 			TarifaDTO tarifaDTO = objButacaTarifa.get(1, TarifaDTO.class);
-			Butaca butaca = new Butaca(butacaDTO, configuration.isIdEntrada());
+			Butaca butaca = new Butaca(butacaDTO, configuration.isIdEntrada(), language);
 			butaca.setTipo(tarifaDTO.getNombre());
 			listaButacas.add(butaca);
 		}
@@ -142,9 +142,9 @@ public class ButacasService
 		return butacasDAO.getTotalButacasCompra(idCompra);
 	}
 
-    public List<Butaca> getButacasNoAnuladas(Long idSesion)
+    public List<Butaca> getButacasNoAnuladas(Long idSesion, String language)
     {
-         return Butaca.butacasDTOToButacas(butacasDAO.getButacasNoAnuladas(idSesion), configuration.isIdEntrada());
+         return Butaca.butacasDTOToButacas(butacasDAO.getButacasNoAnuladas(idSesion), configuration.isIdEntrada(), language);
     }
 
     public void updatePresentadas(List<Butaca> butacas)

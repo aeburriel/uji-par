@@ -1,22 +1,32 @@
 package es.uji.apps.par.services.rest;
 
 import com.sun.jersey.api.core.InjectParam;
+import es.uji.apps.par.auth.AuthChecker;
 import es.uji.apps.par.auth.Authenticator;
 import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.exceptions.Constantes;
 import es.uji.apps.par.i18n.ResourceProperties;
+import es.uji.apps.par.services.UsersService;
 import es.uji.commons.web.template.HTMLTemplate;
 import es.uji.commons.web.template.Template;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.util.Locale;
 
 @Path("index")
 public class IndexResource extends BaseResource
 {
+    @InjectParam
+    private UsersService usersService;
+
 	@InjectParam
 	Configuration configuration;
+
+    @Context
+    HttpServletRequest currentRequest;
 	
     @GET
     @Produces(MediaType.TEXT_HTML)
@@ -29,7 +39,8 @@ public class IndexResource extends BaseResource
 
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "admin", getLocale(), APP);
 
-        template.put("user", currentRequest.getSession().getAttribute(Authenticator.USER_ATTRIBUTE));
+        String userUID = AuthChecker.getUserUID(currentRequest);
+        template.put("user", usersService.getUserById(userUID));
         template.put("urlPublic", configuration.getUrlPublic());
 		template.put("allowMultisesion", configuration.getAllowMultisesion());
         template.put("payModes", configuration.getPayModes(getLocale()));

@@ -366,7 +366,7 @@ Ext.define('Paranimf.controller.Eventos', {
             tarifa_id: tarifaSeleccionada,
             "parTarifa.nombre": this.getComboTarifas().rawValue
          });
-         
+
          if (indiceFilaSeleccionada != -1) {
             var recordSeleccionado = this.getGridPreciosSesion().store.getAt(indiceFilaSeleccionada);
             console.log(recordSeleccionado);

@@ -18,6 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 @Path("compra")
 public class CompraResource extends BaseResource {
@@ -275,10 +276,13 @@ public class CompraResource extends BaseResource {
 	public Response getButacasCompra(@PathParam("idCompra") Long idCompra,
 			@QueryParam("sort") String sort, @QueryParam("start") int start,
 			@QueryParam("limit") @DefaultValue("1000") int limit) {
+		Locale locale = getLocale();
+		String language = locale.getLanguage();
+
 		return Response
 				.ok()
 				.entity(new RestResponse(true, butacasService.getButacasCompra(
-						idCompra, sort, start, limit), butacasService
+						idCompra, sort, start, limit, language), butacasService
 						.getTotalButacasCompra(idCompra))).build();
 	}
 

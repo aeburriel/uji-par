@@ -71,4 +71,9 @@ public class UsersService
     {
         return usuariosDAO.getUserCineByUserUID(userUID);
     }
+
+    public Usuario getUserById(String userUID)
+    {
+        return usuariosDAO.getUserById(userUID);
+    }
 }
