@@ -345,7 +345,6 @@ Ext.define('Paranimf.controller.Eventos', {
       var encontrado = false;
       for (var i=0;i<this.getGridPreciosSesion().store.count();i++) {
          var record = this.getGridPreciosSesion().store.getAt(i);
-         //console.log(record, localizacionSeleccionada, tarifaSeleccionada);
          if (record.data.localizacion == localizacionSeleccionada && record.data.tarifa == tarifaSeleccionada)
             encontrado = true;
       }
@@ -353,7 +352,6 @@ Ext.define('Paranimf.controller.Eventos', {
    },
 
    savePrecioSesion: function(button, event, opts) {
-      //console.log("savePrecioSesion");
       var indiceFilaSeleccionada = this.getGridPreciosSesion().getIndiceFilaSeleccionada();
       var localizacionSeleccionada = this.getComboLocalizaciones().value;
       var tarifaSeleccionada = this.getComboTarifas().value;
@@ -366,9 +364,9 @@ Ext.define('Paranimf.controller.Eventos', {
             "parLocalizacione.nombreVa": this.getComboLocalizaciones().rawValue,
             "parLocalizacione.nombreEs": this.getComboLocalizaciones().rawValue,
             tarifa_id: tarifaSeleccionada,
-            "parTarifa.nombre": this.getComboTarifas().rawValue,
+            "parTarifa.nombre": this.getComboTarifas().rawValue
          });
-         //console.log(precioSesion);
+         
          if (indiceFilaSeleccionada != -1) {
             var recordSeleccionado = this.getGridPreciosSesion().store.getAt(indiceFilaSeleccionada);
             console.log(recordSeleccionado);
