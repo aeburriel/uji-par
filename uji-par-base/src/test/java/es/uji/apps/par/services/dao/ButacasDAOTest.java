@@ -97,7 +97,7 @@ public class ButacasDAOTest extends BaseDAOTest
         ButacaDTO butacaDTO = preparaButaca(sesion, Localizacion.localizacionToLocalizacionDTO(localizacion), "1", "2",
                 BigDecimal.ONE);
 
-        Butaca butaca = new Butaca(butacaDTO, false);
+        Butaca butaca = new Butaca(butacaDTO, false, "ca");
         butaca.setTipo(String.valueOf(sesion.getParPreciosSesions().get(0).getParTarifa().getId()));
 
         butacasDao.reservaButacas(sesion.getId(), insertaCompra(), Arrays.asList(butaca), usuario1.getUsuario());
@@ -135,7 +135,7 @@ public class ButacasDAOTest extends BaseDAOTest
             ButacaDTO butacaDTO = preparaButaca(sesion, Localizacion.localizacionToLocalizacionDTO(localizacion), null, null,
                 BigDecimal.ONE);
 
-            Butaca butaca = new Butaca(butacaDTO, false);
+            Butaca butaca = new Butaca(butacaDTO, false, "ca");
             butaca.setTipo(String.valueOf(sesion.getParPreciosSesions().get(0).getParTarifa().getId()));
             
             butacas.add(butaca);
@@ -158,7 +158,7 @@ public class ButacasDAOTest extends BaseDAOTest
         ButacaDTO butacaDTO = preparaButaca(sesion, Localizacion.localizacionToLocalizacionDTO(localizacion), "1", "2",
             BigDecimal.ONE);
 
-        Butaca butaca = new Butaca(butacaDTO, false);
+        Butaca butaca = new Butaca(butacaDTO, false, "ca");
         butaca.setTipo(String.valueOf(sesion.getParPreciosSesions().get(0).getParTarifa().getId()));
             
         butacasDao.reservaButacas(sesion.getId(), insertaCompra(), Arrays.asList(butaca), usuario1.getUsuario());
