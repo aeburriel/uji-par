@@ -93,6 +93,8 @@ Butacas = (function() {
 		if (!$('#' + id).hasClass('mapaSeleccionada')) {
 			$('#' + id).removeClass('mapaLibre');
 			$('#' + id).addClass('mapaSeleccionada');
+			$('#' + id + '-mini').removeClass('mapaLibre');
+			$('#' + id + '-mini').addClass('mapaSeleccionada');
 		}
 	}
 	
@@ -115,6 +117,8 @@ Butacas = (function() {
 		if ($('#' + getIdButaca(butaca)).hasClass('mapaSeleccionada')) {
 		    $('#' + getIdButaca(butaca)).removeClass('mapaSeleccionada');
 		    $('#' + getIdButaca(butaca)).addClass('mapaLibre');
+			$('#' + getIdButaca(butaca) + '-mini').removeClass('mapaSeleccionada');
+			$('#' + getIdButaca(butaca) + '-mini').addClass('mapaLibre');
 		}	    
 		for ( var i = 0; i < butacasSeleccionadas.length; i++) {
 			if (iguales(butaca, butacasSeleccionadas[i])) {
