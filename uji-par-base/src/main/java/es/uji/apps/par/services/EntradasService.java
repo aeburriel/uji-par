@@ -163,6 +163,8 @@ public class EntradasService {
                 }
                 entradaModelReport.setTipo(butaca.getTipo());
                 entradaModelReport.setIniciales(butaca.getParLocalizacion().getIniciales());
+				entradaModelReport.setCifEmpresa(compra.getParSesion().getParEvento().getParTpv().getCif());
+				entradaModelReport.setSala(butaca.getParSesion().getParSala().getNombre());
 
                 for (TarifaDTO tarifa : tarifas) {
                     if (tarifa.getId() == Long.valueOf(butaca.getTipo())) {
