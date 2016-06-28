@@ -269,6 +269,7 @@ public class EntradasService {
         }
         entradaModelReport.setTipo(tarifaCompra.getNombre());
         entradaModelReport.setTarifaDefecto(tarifaCompra.getDefecto());
+		entradaModelReport.setSala(butaca.getParSesion().getParSala().getNombre());
         entrada.generaPaginaButaca(entradaModelReport, configuration.getUrlPublicSinHTTPS());
     }
 
