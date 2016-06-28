@@ -28,6 +28,8 @@ public class Configuration
     private static final String URL_ADMIN = "uji.par.urlAdmin";
     private static final String MAIL_HOST = "uji.par.mail.host";
     private static final String MAIL_FROM = "uji.par.mail.from";
+	private static final String MAIL_USERNAME = "uji.par.mail.username";
+	private static final String MAIL_PASSWORD = "uji.par.mail.password";
     private static final String COMO_LLEGAR = "uji.par.urlComoLlegar";
     private static final String PAY_MODES = "uji.par.paymodes";
     private static final String URL_CONDICIONES_PRIVACIDAD = "uji.par.urlCondicionesPrivacidad";
@@ -676,5 +678,15 @@ public class Configuration
 			return false;
 		else
 			return true;
+	}
+
+	public String getMailPassword()
+	{
+		return getProperty(MAIL_PASSWORD);
+	}
+
+	public String getMailUsername()
+	{
+		return getProperty(MAIL_USERNAME);
 	}
 }

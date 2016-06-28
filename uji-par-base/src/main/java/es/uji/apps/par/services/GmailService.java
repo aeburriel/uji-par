@@ -16,26 +16,26 @@ import java.util.List;
 import java.util.Properties;
 
 @Service
-public class JavaMailService implements MailInterface
+public class GmailService implements MailInterface
 {
-	private static final Logger log = LoggerFactory.getLogger(JavaMailService.class);
-    
+	private static final Logger log = LoggerFactory.getLogger(GmailService.class);
+
     @Autowired
 	MailDAO mailDao;
 
 	@Autowired
 	Configuration configuration;
 
-    public JavaMailService()
+    public GmailService()
     {
-        
+
     }
 
     public void anyadeEnvio(String to, String titulo, String texto, String uuid)
     {
         mailDao.insertaMail(configuration.getMailFrom(), to, titulo, texto, uuid);
     }
-    
+
     private Address[] getMailAddressList(String path) throws AddressException
     {
         if (path == null || path.equals(""))
@@ -53,24 +53,36 @@ public class JavaMailService implements MailInterface
 
         return result;
     }
-    
-    private Message createMailMessage(String de, String para, String titulo, Configuration configuration) throws MessagingException
-    {
-        Properties props = System.getProperties();
-        props.put("mail.smtp.host", configuration.getMailHost());
 
-        Session session = Session.getInstance(props, null);
+    private Message createMailMessage(String de, String para, String titulo, final Configuration configuration) throws MessagingException
+    {
+		Properties props = new Properties();
+		props.put("mail.smtps.host", configuration.getMailHost());
+		props.put("mail.smtps.auth", "true");
+
+		Authenticator auth = null;
+		if (configuration.getMailPassword() != null && configuration.getMailUsername() != null)
+		{
+			auth = new Authenticator()
+			{
+				protected PasswordAuthentication getPasswordAuthentication()
+				{
+					return new PasswordAuthentication(configuration.getMailUsername(), configuration.getMailPassword());
+				}
+			};
+		}
+		Session session = Session.getInstance(props, auth);
         Message message = new MimeMessage(session);
 
         message.addHeader("Auto-Submitted", "auto-generated");
-        
+
         message.setSubject(titulo);
         message.setSentDate(new Date());
 
         message.setFrom(new InternetAddress(de));
         message.setReplyTo(getMailAddressList(para));
-        message.setRecipients(javax.mail.Message.RecipientType.TO, getMailAddressList(para));
-        message.setRecipients(javax.mail.Message.RecipientType.BCC, getMailAddressList("debug@wifi.benicassim.es"));
+        message.setRecipients(Message.RecipientType.TO, getMailAddressList(para));
+        message.setRecipients(Message.RecipientType.BCC, getMailAddressList("nicolas.manero@4tic.com"));
 
         return message;
     }
@@ -142,24 +154,25 @@ public class JavaMailService implements MailInterface
     }
 
     //al llamarse desde el job de quartz, no se inyecta el mailDAO, ni el service y lo enviamos desde la interfaz
-    public synchronized void enviaPendientes(MailDAO mailDAO, EntradasService entradasService, Configuration configuration) throws MessagingException {
-    	if (configuration.getEnviarMailsEntradas() == null || configuration.getEnviarMailsEntradas().equals("true")) {
-	        log.info("** - Enviando mails pendientes desde JavaMailService...");
-	
-	        List<MailDTO> mails = mailDAO.getMailsPendientes();
-	
-	        for (MailDTO mail : mails)
-	        {
-	        	enviaMailMultipart(mail.getDe(), mail.getPara(), mail.getTitulo(), mail.getTexto(), mail.getUuid(), entradasService, configuration);
-	            mailDAO.marcaEnviado(mail.getId());
-	        }
-    	}
+    public synchronized void enviaPendientes(MailDAO mailDAO, EntradasService entradasService, Configuration configuration) throws MessagingException
+	{
+		if (configuration.getEnviarMailsEntradas() == null || configuration.getEnviarMailsEntradas().equals("true"))
+		{
+			log.info("** - Enviando mails pendientes desde GmailService...");
+			List<MailDTO> mails = mailDAO.getMailsPendientes();
+
+			for (MailDTO mail : mails)
+			{
+				enviaMailMultipart(mail.getDe(), mail.getPara(), mail.getTitulo(), mail.getTexto(), mail.getUuid(), entradasService, configuration);
+				mailDAO.marcaEnviado(mail.getId());
+			}
+		}
     }
     
     public static void main(String[] args) throws MessagingException
     {
-    	JavaMailService mail = new JavaMailService();
+    	GmailService mail = new GmailService();
 
-        mail.enviaMailMultipart("no_reply@wifi.benicassim.es", "debug@wifi.benicassim.es", "Esto es el cuerpo", "Hola que tal!", "uuid", null, mail.configuration);
+        mail.enviaMailMultipart("no_reply@uji.es", "nicolas.manero@4tic.com", "Esto es el cuerpo", "Hola que tal!", "uuid", null, mail.configuration);
     }
 }

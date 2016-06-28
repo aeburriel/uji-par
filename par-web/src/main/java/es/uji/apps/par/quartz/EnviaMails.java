@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+
 @Service
 public class EnviaMails
 {
@@ -27,9 +29,17 @@ public class EnviaMails
     {
 		log.info("Inicializamos la clase de envio de mails: " + configuration.getMailingClass());
     	try {
-    		return (MailInterface) Class.forName(configuration.getMailingClass()).newInstance();
-    	} catch(Exception e) {
+			return (MailInterface) Class.forName(configuration.getMailingClass()).newInstance();
+		} catch(Exception e) {
     		throw new RuntimeException("Imposible instanciar la clase de envio de mails: " + configuration.getMailingClass());
     	}
+    }
+
+	public void ejecuta() throws MessagingException
+	{
+        log.info("Inicializamos envío de mails");
+
+		MailInterface mailInterface = newInstanceMailSender();
+		mailInterface.enviaPendientes(mailDAO, entradasService, configuration);
     }
 }
