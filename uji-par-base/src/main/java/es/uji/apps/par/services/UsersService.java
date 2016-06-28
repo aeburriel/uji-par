@@ -59,7 +59,7 @@ public class UsersService
 
     public Usuario getUserByDomainUrl(String domainUrl)
     {
-        return usuariosDAO.getUserByDomainUrl(domainUrl);
+        return usuariosDAO.getUserByDomainUrl(domainUrl.replaceFirst("^(http://|https://)",""));
     }
 
     public Cine getUserCineByDomainUrl(String domainUrl)
