@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Entrades</string>
+    <string name="title_eventos">Events</string>
+    <string name="action_sincronizar">Sincronitzar</string>
+    <string name="action_settings">Ajustos</string>
+    <string name="title_sesiones">Sesions</string>
+    <string name="sincronizar">Sincronitzar</string>
+    <string name="vendidas">Venudes:</string>
+    <string name="presentadas">Han entrat:</string>
+    <string name="escanea_boton">Escanejar</string>
+    <string name="presentadas_sin_subir">N\'HI HAN ENTRADES PER PUJAR</string>
+    <string name="no_sincronizada">NO SINCRONITZADA</string>
+    <string name="ultima_sinc">"SINCRONITZADA: "</string>
+    <string name="entrada_ok">ENTRADA CORRECTA</string>
+    <string name="entrada_descuento">ENTRADA AMB DESCOMPTE</string>
+    <string name="ya_presentada">"JA PRESENTADA\n"</string>
+    <string name="sincronizado">Sincronització correcta</string>
+    <string name="entrada_no_sesion">NO TROBADA EN AQUESTA SESSIÓ (PROVI A SINCRONITZAR)</string>
+    <string name="entrada_otra_sesion">NO PERTANY A AQUESTA SESSIÓ</string>
+    <string name="manual_buscar">Cercar</string>
+    <string name="title_entrada_manual">Marcar entrada</string>
+    <string name="title_info_sesion">Info sessió</string>
+    <string name="manual_boton">Manual</string>
+    <string name="marcar_como_presentada">Marcar entrada acabada en -%1$s com presentada?</string>
+    <string name="actualizado">Events i sessions actualitzats</string>
+    <string name="error_marcando_presentada">Error marcant butaca com presentada</string>
+    <string name="error_recuperando_eventos_bd">Error recuperant events de BD</string>
+    <string name="error_recuperando_sesiones_bd">Error recuperant sessions de BD</string>
+    <string name="error_sincronizando_entradas">Error sincronitzant l\'estat de les butaques en el mòbil</string>
+    <string name="error_sincronizando_butacas">Error sincronitzant entrades</string>
+    <string name="error_escaneando_entrada">Error escanejant entrada</string>
+    <string name="error_recuperando_datos_sesion">Error recuperant dades de sessió</string>
+    <string name="error_sincronizando_eventos">Error sincronitzant els events</string>
+    <string name="error_de_conexion">Error de connexió</string>
+    <string name="conexion_red_no_disponible">Connexió de xarxa no disponible</string>
+    <string name="no_url_apikey">És obligatori introduir una url i API key</string>
+    <string name="eventos_list_empty">"Per a sincronitzar els events premeu "</string>
+    <string name="settings_empty">"Per poder sincronitzar cal introduir una URL i API key vàlides des de "</string>
+    <string name="action_sincronizar_entradas">Sincronitzar entrades</string>
+    <string name="error_consultando_butacas_movil">Error llegint entrades guardades al mòbil</string>
+    <string name="error_guardando_backup_butacas">Error guardant backup de entrades</string>
+    <string name="error_actualizando_butacas_rest">Error recuperant dades de butaques des de la web</string>
+    <string name="error_enviando_butacas_rest">Error enviant les dades de butaques a la web</string>
+    <string name="error_insertando_eventos_bd">Error insertant eventos en BD mòbil</string>
+    <string name="error_insertando_butacas_bd">Error insertant butaques en BD mòbil</string>
+    <string name="error_actualizando_eventos_rest">Error recuperant events des de la web</string>
+    <string name="marcada_como_presentada">Entrada marcada com presentada</string>
+    <string name="instalar_barcode_scanner">Per favor, instaleu la app \"Barcode scanner\" des de Google Play</string>
+    <string name="filter_on">Filtre activat</string>
+    <string name="filter_off">Filtre desactivat</string>
+    <string name="pref_host">URL de connexió</string>
+    <string name="pref_host_summ">Exemple: http://www.exemple.com</string>
+    <string name="pref_port">Port</string>
+    <string name="pref_port_summ"></string>
+    <string name="pref_apikey">API key</string>
+    <string name="pref_apikey_summ"></string>
+
+</resources>

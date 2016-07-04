@@ -1,9 +1,9 @@
 package com.fourtic.paranimf.entradas.application;
 
-import java.util.Locale;
-
 import android.app.Application;
 import android.content.res.Configuration;
+
+import java.util.Locale;
 
 public class ParanimfApplication extends Application
 {
@@ -19,7 +19,7 @@ public class ParanimfApplication extends Application
     {
         Configuration config = getBaseContext().getResources().getConfiguration();
 
-        Locale.setDefault(new Locale("ca"));
+        Locale.setDefault(new Locale("es"));
         getBaseContext().getResources()
                 .updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
     }

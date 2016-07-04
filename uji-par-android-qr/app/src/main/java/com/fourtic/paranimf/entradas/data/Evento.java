@@ -1,13 +1,13 @@
 package com.fourtic.paranimf.entradas.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @DatabaseTable
 public class Evento
@@ -15,7 +15,7 @@ public class Evento
     @DatabaseField(columnName = "id", id = true)
     private int id;
 
-    @SerializedName("tituloVa")
+    @SerializedName("tituloEs")
     @DatabaseField(columnName = "titulo")
     private String titulo;
     
