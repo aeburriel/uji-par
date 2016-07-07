@@ -285,12 +285,15 @@ public class EventosResource extends BaseResource {
 
     @GET
     @Path("{id}/imagen")
-    public Response getImagenEvento(@PathParam("id") Long eventoId) {
+    public Response getImagenEvento(@PathParam("id") Long eventoId) throws IOException {
         try {
             Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
             Evento evento = eventosService.getEvento(eventoId, user.getUsuario());
 
-            return Response.ok(evento.getImagen()).type(evento.getImagenContentType()).build();
+			byte[] imagen = (evento.getImagen() != null) ? evento.getImagen() : eventosService.getImagenSustitutivaSiExiste();
+			String contentType = (evento.getImagenContentType() != null) ? evento.getImagenContentType() : eventosService.getImagenSustitutivaContentType();
+
+            return Response.ok(imagen).type(contentType).build();
         } catch (EventoNoEncontradoException e) {
             return Response.noContent().build();
         }
