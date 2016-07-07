@@ -258,14 +258,15 @@ public class InformeModelReport {
         }
     }
 
-    public static InformeModelReport fromButaca(ButacaDTO butaca, String anticipada) {
+    public static InformeModelReport fromButaca(ButacaDTO butaca, String anticipada, boolean localizacionEnValenciano) {
         InformeModelReport informeModel = new InformeModelReport();
         informeModel.setSesion(DateUtils.dateToSpanishStringWithHour(butaca.getParSesion().getFechaCelebracion()).toString());
         informeModel.setTipoEntrada(butaca.getTipo());
         informeModel.setNumeroEntradas(1);
         informeModel.setFechaCompra(DateUtils.dateToSpanishString(butaca.getParCompra().getFecha()));
         informeModel.setTotal(butaca.getPrecio());
-        informeModel.setLocalizacion(butaca.getParLocalizacion().getNombreVa());
+        informeModel.setLocalizacion((localizacionEnValenciano)?butaca.getParLocalizacion().getNombreVa():butaca
+				.getParLocalizacion().getNombreEs());
         informeModel.setAnulada(butaca.getAnulada());
         informeModel.setAforo(butaca.getParLocalizacion().getTotalEntradas());
 

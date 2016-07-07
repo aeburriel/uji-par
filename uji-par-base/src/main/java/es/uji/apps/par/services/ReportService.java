@@ -468,7 +468,8 @@ public class ReportService {
 		for (Tuple butacaYTarifa: butacasYTarifas) {
 			ButacaDTO butacaDTO = butacaYTarifa.get(0, ButacaDTO.class);
 			String nombreTarifa = butacaYTarifa.get(1, String.class);
-			InformeModelReport informeModel = InformeModelReport.fromButaca(butacaDTO, configuration.getHorasVentaAnticipada());
+			InformeModelReport informeModel = InformeModelReport.fromButaca(butacaDTO, configuration.getHorasVentaAnticipada(),
+					configuration.getLocalizacionEnValenciano());
 			informeModel.setTipoEntrada(nombreTarifa);
 			compras.add(informeModel);
 		}
