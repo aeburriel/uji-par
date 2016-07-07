@@ -42,7 +42,8 @@ public class FileAuthenticator implements Authenticator
         }
         else
         {
-			session.setAttribute(ERROR_LOGIN, true);
+			if (request.getParameter(LOGIN_PARAM) != null)
+				session.setAttribute(ERROR_LOGIN, true);
             return AUTH_FAILED;
         }
     }
