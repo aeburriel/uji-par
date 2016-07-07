@@ -107,9 +107,10 @@ public class EventosResource extends BaseResource {
         try {
             Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
             Evento evento = eventosService.getEventoByRssId(contenidoId, user.getUsuario());
-            evento.setSesiones(sesionesService.getSesiones(evento.getId(), user.getUsuario()));
+			List<Sesion> sesiones = sesionesService.getSesiones(evento.getId(), user.getUsuario());
+			evento.setSesiones(sesiones);
 
-            return getTemplateEvento(evento, lang, user.getUsuario());
+            return getTemplateEvento(evento, lang, user.getUsuario(), sesiones);
         } catch (EventoNoEncontradoException e) {
             return getTemplateEventoNoEncontrado();
         }
@@ -122,9 +123,10 @@ public class EventosResource extends BaseResource {
         try {
             Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
             Evento evento = eventosService.getEvento(id, user.getUsuario());
-            evento.setSesiones(sesionesService.getSesiones(evento.getId(), user.getUsuario()));
+			List<Sesion> sesiones = sesionesService.getSesiones(evento.getId(), user.getUsuario());
+			evento.setSesiones(sesiones);
 
-            return getTemplateEvento(evento, lang, user.getUsuario());
+            return getTemplateEvento(evento, lang, user.getUsuario(), sesiones);
         } catch (EventoNoEncontradoException e) {
             return getTemplateEventoNoEncontrado();
         }
@@ -164,14 +166,14 @@ public class EventosResource extends BaseResource {
         return template;
     }
 
-    private Template getTemplateEvento(Evento evento, String langparam, String userUID) throws MalformedURLException, ParseException {
-        List<Sesion> sesiones = sesionesService.getSesiones(evento.getId(), userUID);
+    private Template getTemplateEvento(Evento evento, String langparam, String userUID, List<Sesion> sesiones) throws
+			MalformedURLException, ParseException {
         borrarEntradasSeleccionadasConAnterioridad();
 
-        Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + evento.getSesiones().get(0).getSala().getCine().getCodigo() + "/eventoDetalle", getLocale(), APP);
+        Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + evento.getSesiones().get(0).getSala().getCine()
+				.getCodigo() + "/eventoDetalle", getLocale(), APP);
 
         String tipoEvento, titulo, companyia, duracion, caracteristicas, premios, descripcion;
-
         String language = getLocale(langparam).getLanguage();
 
         if (language.equals("ca")) {
