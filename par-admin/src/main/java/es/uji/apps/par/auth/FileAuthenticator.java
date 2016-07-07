@@ -30,16 +30,19 @@ public class FileAuthenticator implements Authenticator
         if (loginAdminOk(request))
         {
             session.setAttribute(USER_ATTRIBUTE, request.getParameter(LOGIN_PARAM));
+			session.setAttribute(ERROR_LOGIN, false);
             return AUTH_OK;
         }
         else if (loginUserReadonlyOk(request))
         {
             session.setAttribute(USER_ATTRIBUTE, request.getParameter(LOGIN_PARAM));
             session.setAttribute(READONLY_ATTRIBUTE, true);
+			session.setAttribute(ERROR_LOGIN, false);
             return AUTH_OK;
         }
         else
         {
+			session.setAttribute(ERROR_LOGIN, true);
             return AUTH_FAILED;
         }
     }

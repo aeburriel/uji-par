@@ -1,6 +1,7 @@
 package es.uji.apps.par.services.rest;
 
 import com.sun.jersey.api.core.InjectParam;
+import es.uji.apps.par.auth.Authenticator;
 import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.exceptions.Constantes;
 import es.uji.commons.web.template.HTMLTemplate;
@@ -26,7 +27,10 @@ public class LoginResource extends BaseResource
     {
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "login", getLocale(), APP);
         template.put("urlPublic", configuration.getUrlPublic());
-        template.put("error", error);
+		Boolean errorLogin = (Boolean) currentRequest.getSession().getAttribute(Authenticator.ERROR_LOGIN);
+
+		if (errorLogin != null && errorLogin)
+        	template.put("error", true);
 
         return template;
     }

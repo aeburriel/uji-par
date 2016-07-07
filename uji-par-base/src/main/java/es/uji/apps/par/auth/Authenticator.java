@@ -12,7 +12,8 @@ public interface Authenticator
     
     public static final String USER_ATTRIBUTE = "user";
     public static final String READONLY_ATTRIBUTE = "readonly";
+	public static final String ERROR_LOGIN = "errorLogin";
 
-    public int authenticate(HttpServletRequest request);
+	public int authenticate(HttpServletRequest request);
 	public void setConfiguration(Configuration configuration);
 }
