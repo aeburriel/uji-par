@@ -532,8 +532,8 @@ public class ComprasDAO extends BaseDAO {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<Object[]> getComprasInFechas(String fechaInicio, String fechaFin, String userUID) {
-		String sql = "select e.titulo_va, s.fecha_celebracion, b.tipo, l.codigo, count(b.id) as cantidad, sum(b.precio) as total, c.sesion_id, "
-				+ "l.nombre_va, f.nombre "
+		String sql = "select e.titulo_es, s.fecha_celebracion, b.tipo, l.codigo, count(b.id) as cantidad, sum(b.precio) as total, c.sesion_id, "
+				+ "l.nombre_es, f.nombre "
 				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, par_localizaciones l, par_tarifas f, "
 				+ "par_salas sala, par_salas_usuarios su, par_usuarios u "
 				+ "where b.compra_id = c.id and s.id = c.sesion_id and e.id = s.evento_id and l.id=b.localizacion_id "
@@ -542,8 +542,8 @@ public class ComprasDAO extends BaseDAO {
 				+ "and c.taquilla = " + dbHelper.trueString() + " "
 				+ "and c.codigo_pago_tarjeta is null "
 				+ "and f.id = "	+ dbHelper.toInteger("b.tipo") + " "
-				+ "group by c.sesion_id, e.titulo_va, b.tipo, s.fecha_celebracion, l.codigo, l.nombre_va, f.nombre "
-				+ "order by e.titulo_va";
+				+ "group by c.sesion_id, e.titulo_es, b.tipo, s.fecha_celebracion, l.codigo, l.nombre_es, f.nombre "
+				+ "order by e.titulo_es";
 
 		return entityManager.createNativeQuery(sql).getResultList();
 	}
@@ -551,7 +551,7 @@ public class ComprasDAO extends BaseDAO {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<Object[]> getComprasPorEventoInFechas(String fechaInicio, String fechaFin, String userUID) {
-		String sql = "select e.id, e.titulo_va, b.tipo, count(b.id) as cantidad, sum(b.precio) as total, c.taquilla, "
+		String sql = "select e.id, e.titulo_es, b.tipo, count(b.id) as cantidad, sum(b.precio) as total, c.taquilla, "
 				+ "f.nombre "
 				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, par_tarifas f, "
 				+ "par_salas sala, par_salas_usuarios su, par_usuarios u "
@@ -559,8 +559,8 @@ public class ComprasDAO extends BaseDAO {
 				+ "and sala.id = s.sala_id and u.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = u.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
 				+ "and f.id = "	+ dbHelper.toInteger("b.tipo") + " "
-				+ "group by e.id, e.titulo_va, b.tipo, c.taquilla, f.nombre "
-				+ "order by e.titulo_va";
+				+ "group by e.id, e.titulo_es, b.tipo, c.taquilla, f.nombre "
+				+ "order by e.titulo_es";
 
 		return entityManager.createNativeQuery(sql).getResultList();
 	}
@@ -568,7 +568,7 @@ public class ComprasDAO extends BaseDAO {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<Object[]> getComprasEfectivo(String fechaInicio, String fechaFin, String userUID) {
-		String sql = "select e.titulo_va, s.fecha_celebracion, b.tipo, count(b.id) as cantidad, sum(b.precio) as total, "
+		String sql = "select e.titulo_es, s.fecha_celebracion, b.tipo, count(b.id) as cantidad, sum(b.precio) as total, "
 				+ "c.sesion_id, e.porcentaje_iva, "
 				+ "f.nombre "
 				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, par_tarifas f, "
@@ -580,8 +580,8 @@ public class ComprasDAO extends BaseDAO {
 				+ "and (c.codigo_pago_tarjeta is null and c.referencia_pago is null) "
 				+ "and f.id = " + dbHelper.toInteger("b.tipo") + " "
 				+ "and c.abonado_id is null "
-				+ "group by c.sesion_id, e.titulo_va, b.tipo, s.fecha_celebracion, e.porcentaje_iva, f.nombre "
-				+ "order by e.titulo_va, s.fecha_celebracion, f.nombre";
+				+ "group by c.sesion_id, e.titulo_es, b.tipo, s.fecha_celebracion, e.porcentaje_iva, f.nombre "
+				+ "order by e.titulo_es, s.fecha_celebracion, f.nombre";
 
 		return entityManager.createNativeQuery(sql).getResultList();
 	}
@@ -609,7 +609,7 @@ public class ComprasDAO extends BaseDAO {
 	@Transactional
 	public List<Object[]> getComprasTpv(String fechaInicio, String fechaFin, String userUID) {
 		String formato = "DD";
-		String sql = "select e.titulo_va, s.fecha_celebracion, b.tipo, count(b.id) as cantidad, sum(b.precio) as total, c.sesion_id, "
+		String sql = "select e.titulo_es, s.fecha_celebracion, b.tipo, count(b.id) as cantidad, sum(b.precio) as total, c.sesion_id, "
 				+ "e.porcentaje_iva, "
 				+ dbHelper.trunc("c.fecha", formato)
 				+ ", f.nombre "
@@ -621,7 +621,7 @@ public class ComprasDAO extends BaseDAO {
 				+ "and (c.caducada is null or c.caducada = " + dbHelper.falseString() + ") "
 				+ "and (c.codigo_pago_tarjeta is not null or c.codigo_pago_pasarela is not null or c.referencia_pago is not null or c.taquilla = " + dbHelper.falseString() + ") "
 				+ "and f.id = " + dbHelper.toInteger("b.tipo") + " "
-				+ "group by c.sesion_id, e.titulo_va, b.tipo, s.fecha_celebracion, e.porcentaje_iva, "
+				+ "group by c.sesion_id, e.titulo_es, b.tipo, s.fecha_celebracion, e.porcentaje_iva, "
 				+ dbHelper.trunc("c.fecha", formato) + ", f.nombre "
 				+ "order by " + dbHelper.trunc("c.fecha", formato) + ", s.fecha_celebracion, f.nombre";
 
@@ -631,7 +631,7 @@ public class ComprasDAO extends BaseDAO {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<Object[]> getComprasEventos(String fechaInicio, String fechaFin, String userUID) {
-		String sql = "select e.titulo_va, s.fecha_celebracion, b.tipo, count(b.id) as cantidad, sum(b.precio) as total, "
+		String sql = "select e.titulo_es, s.fecha_celebracion, b.tipo, count(b.id) as cantidad, sum(b.precio) as total, "
 				+ "e.porcentaje_iva, "
 				+ dbHelper.caseString("b.tipo", new String[] { "'normal'", "1",
 						"'descuento'", "2", "'aulaTeatro'", "3",
@@ -643,7 +643,7 @@ public class ComprasDAO extends BaseDAO {
 				+ "and sala.id = s.sala_id and u.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = u.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
 				+ "and f.id = "	+ dbHelper.toInteger("b.tipo") + " "
-				+ "group by e.id, s.id, e.titulo_va, b.tipo, s.fecha_celebracion, e.porcentaje_iva, f.nombre "
+				+ "group by e.id, s.id, e.titulo_es, b.tipo, s.fecha_celebracion, e.porcentaje_iva, f.nombre "
 				+ "order by s.fecha_celebracion, tipoOrden";
 
 		return entityManager.createNativeQuery(sql).getResultList();

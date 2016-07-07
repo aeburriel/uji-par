@@ -272,11 +272,23 @@ public class InformeModelReport {
 
         if (anticipada != null)
             informeModel.setTipoVenta(getTipoVenta(butaca.getParCompra().getTaquilla(), butaca.getParSesion().getFechaCelebracion(), butaca.getParCompra().getFecha(), anticipada));
+		else
+			informeModel.setTipoVenta(getTipoVenta(butaca.getParCompra().getTaquilla(), butaca.getParCompra()
+					.getCodigoPagoTarjeta()));
 
         return informeModel;
     }
 
-    public Boolean getAnulada() {
+	private static TipoVenta getTipoVenta(boolean taquilla, String codigoPagoTarjeta) {
+		if (!taquilla)
+			return TipoVenta.TPV;
+		else if (codigoPagoTarjeta != null && !codigoPagoTarjeta.trim().equals(""))
+			return TipoVenta.FISICA_TPV;
+		else
+			return TipoVenta.FISICA_TAQUILLA;
+	}
+
+	public Boolean getAnulada() {
         return anulada;
     }
 
