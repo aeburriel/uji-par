@@ -19,6 +19,7 @@ public class SettingsActivity extends BasePreferenceActivity implements
 	public static final String PREF_HOST = "pref_host";
 	public static final String PREF_PORT = "pref_port";
 	public static final String PREF_APIKEY = "pref_apikey";
+	public static final String PREF_EXT_SCAN = "pref_ext_scan";
 
 	@Inject
 	private RestService rest;
@@ -53,6 +54,7 @@ public class SettingsActivity extends BasePreferenceActivity implements
 			String key) {
 		rest.setURLFromPreferences(this);
 		rest.setAPIKeyFromPreferences(this);
+		rest.setLectorExternoFromPreferences(this);
 
 		updatePrefSummary(findPreference(key));
 	}

@@ -1,12 +1,5 @@
 package com.fourtic.paranimf.entradas.activity;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import roboguice.inject.InjectExtra;
-import roboguice.inject.InjectView;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -29,22 +22,26 @@ import com.fourtic.paranimf.entradas.db.SesionDao;
 import com.fourtic.paranimf.entradas.exception.ButacaDeOtraSesionException;
 import com.fourtic.paranimf.entradas.exception.ButacaNoEncontradaException;
 import com.fourtic.paranimf.entradas.network.EstadoRed;
+import com.fourtic.paranimf.entradas.rest.RestService;
 import com.fourtic.paranimf.entradas.scan.ResultadoScan;
 import com.fourtic.paranimf.entradas.sync.SincronizadorButacas;
 import com.fourtic.paranimf.entradas.sync.SincronizadorButacas.SyncCallback;
 import com.fourtic.paranimf.utils.Utils;
 import com.google.inject.Inject;
 import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 
-import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.conn.HttpHostConnectException;
+import java.sql.SQLException;
+import java.util.Date;
+
+import roboguice.inject.InjectExtra;
+import roboguice.inject.InjectView;
 
 public class SesionInfoActivity extends BaseNormalActivity
 {
     private static final String BARCODE_SCANNER_PACKAGE = "com.google.zxing.client.android";
 
-    private static final int REQUEST_CODE = 49374;
+    private static final int EXTERNAL_SCANNER_REQUEST = 1;
+    private static final int BARCODE_SCANNER_REQUEST = 49374;
 
     @Inject
     private ButacaDao butacaDao;
@@ -96,6 +93,9 @@ public class SesionInfoActivity extends BaseNormalActivity
 
     @Inject
     private EstadoRed network;
+
+    @Inject
+    private RestService rest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -208,16 +208,22 @@ public class SesionInfoActivity extends BaseNormalActivity
 
     protected void abreActividadEscanear()
     {
-        if (aplicacionInstalada(BARCODE_SCANNER_PACKAGE))
+        if (this.rest.hasExtScan())
         {
-            IntentIntegrator scanIntegrator = new IntentIntegrator(this);
-            scanIntegrator.initiateScan();
+            Intent intent = new Intent(this, LectorExternoActivity.class);
+            startActivityForResult(intent, EXTERNAL_SCANNER_REQUEST);
         }
         else
         {
-            Toast.makeText(this, R.string.instalar_barcode_scanner, Toast.LENGTH_LONG)
-                    .show();
-            abrirGooglePlay(BARCODE_SCANNER_PACKAGE);
+            if (aplicacionInstalada(BARCODE_SCANNER_PACKAGE))
+            {
+                IntentIntegrator scanIntegrator = new IntentIntegrator(this);
+                scanIntegrator.initiateScan();
+            } else
+            {
+                Toast.makeText(this, R.string.instalar_barcode_scanner, Toast.LENGTH_LONG).show();
+                abrirGooglePlay(BARCODE_SCANNER_PACKAGE);
+            }
         }
     }
 
@@ -244,11 +250,20 @@ public class SesionInfoActivity extends BaseNormalActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK)
+        if ((requestCode == EXTERNAL_SCANNER_REQUEST || requestCode == BARCODE_SCANNER_REQUEST) && resultCode == Activity.RESULT_OK)
         {
         	try
             {
-            	IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+                String scanningResult;
+                if (requestCode == BARCODE_SCANNER_REQUEST)
+                {
+                    scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data).getContents();
+                }
+                else
+                {
+                    scanningResult = data.getAction();
+                }
+
             	if (scanningResult != null) {
             		procesCodigoBarras(scanningResult);
             	}
@@ -263,13 +278,11 @@ public class SesionInfoActivity extends BaseNormalActivity
                 gestionaError(getString(R.string.error_escaneando_entrada), e);
             }
         }
-    };
+    }
 
-    private void procesCodigoBarras(IntentResult scanningResult) throws SQLException
+    private void procesCodigoBarras(String uuid) throws SQLException
     {
         abreActividadEscanear();
-
-        final String uuid = scanningResult.getContents();//data.getStringExtra("SCAN_RESULT");
 
         try
         {
@@ -374,7 +387,7 @@ public class SesionInfoActivity extends BaseNormalActivity
     private boolean aplicacionInstalada(String uri)
     {
         PackageManager pm = getPackageManager();
-        boolean app_installed = false;
+        boolean app_installed;
         try
         {
             pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);

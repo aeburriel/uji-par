@@ -42,6 +42,10 @@
         </activity>
         <activity android:name="com.fourtic.paranimf.entradas.activity.SettingsActivity" >
         </activity>
+        <activity
+            android:name="com.fourtic.paranimf.entradas.activity.LectorExternoActivity"
+            android:label="@string/title_entrada_manual" >
+        </activity>
         <meta-data android:name="com.crashlytics.ApiKey" android:value="9d60b7bf4c5738bb9609c1f673c51de6058b9816"/>
     </application>
 

@@ -21,6 +21,7 @@
     <string name="entrada_otra_sesion">NO PERTANY A AQUESTA SESSIÓ</string>
     <string name="manual_buscar">Cercar</string>
     <string name="title_entrada_manual">Marcar entrada</string>
+    <string name="title_lector_externo">Lector extern</string>
     <string name="title_info_sesion">Info sessió</string>
     <string name="manual_boton">Manual</string>
     <string name="marcar_como_presentada">Marcar entrada acabada en -%1$s com presentada?</string>
@@ -56,5 +57,6 @@
     <string name="pref_port_summ"></string>
     <string name="pref_apikey">API key</string>
     <string name="pref_apikey_summ"></string>
+    <string name="pref_ext_scan">Lector extern</string>
 
 </resources>

@@ -1,19 +1,5 @@
 package com.fourtic.paranimf.entradas.rest;
 
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
-import java.security.KeyStore;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicHeader;
-
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -36,6 +22,20 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.PersistentCookieStore;
 import com.loopj.android.http.RequestParams;
 
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicHeader;
+
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.security.KeyStore;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 @Singleton
 public class RestService {
 	private static final String PORT_SEPARATOR = ":";
@@ -47,11 +47,13 @@ public class RestService {
 	private Context context;
 	private String url;
 	private String apiKey;
+	private boolean extScan;
 
 	@Inject
 	public RestService(Application application) {
 		setURLFromPreferences(application);
 		setAPIKeyFromPreferences(application);
+		setLectorExternoFromPreferences(application);
 		this.context = application;
 		this.client = new AsyncHttpClient();
 		this.gson = new Gson();
@@ -82,6 +84,12 @@ public class RestService {
 		this.apiKey = sharedPref.getString(SettingsActivity.PREF_APIKEY, "").trim();
 	}
 
+	public void setLectorExternoFromPreferences(Context context) {
+		SharedPreferences sharedPref = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		this.extScan = sharedPref.getBoolean(SettingsActivity.PREF_EXT_SCAN, false);
+	}
+
 	private void initSsl() {
 		try {
 			KeyStore trustStore = KeyStore.getInstance(KeyStore
@@ -106,6 +114,10 @@ public class RestService {
 
 	private String getApiKey() {
 		return "?key=" + this.apiKey;
+	}
+
+	public boolean hasExtScan() {
+		return this.extScan;
 	}
 
 	private Map<String, Object> createMap(Object... args) {
@@ -338,22 +350,4 @@ public class RestService {
 
 		public void onError(Throwable throwable, String errorMessage);
 	}
-
-	/*
-	 * public void saveNewAppointment(String fecha, String hora, String
-	 * descripcion, int avisar, final ResultCallback<Void> responseHandler) {
-	 * try { Map<String, Object> data = createMap("fecha", fecha, "hora", hora,
-	 * "descripcion", descripcion, "avisar", avisar);
-	 * 
-	 * postJSON(BASE_SECURE_URL + "/citas", data, new
-	 * AsyncHttpResponseHandler(context, true) {
-	 * 
-	 * @Override public void onSuccess(int status, String response, boolean
-	 * fromCache) { responseHandler.onSuccess(null); };
-	 * 
-	 * @Override public void onFailure(Throwable error, String errorBody) {
-	 * responseHandler.onError(error, getErrorMessage(errorBody)); } }); } catch
-	 * (Exception e) { responseHandler.onError(e, ""); } }
-	 */
-
 }

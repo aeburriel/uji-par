@@ -12,4 +12,7 @@
         android:key="pref_apikey"
         android:title="@string/pref_apikey"
         android:summary="@string/pref_apikey_summ" />
+    <SwitchPreference
+        android:key="pref_ext_scan"
+        android:title="@string/pref_ext_scan" />
 </PreferenceScreen>
