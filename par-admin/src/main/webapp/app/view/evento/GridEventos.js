@@ -67,7 +67,7 @@ Ext.define('Paranimf.view.evento.GridEventos', {
       }, {
         dataIndex: 'imagenSrc',
         text: UI.i18n.field.imagen,
-        flex: 4,
+        flex: 3,
         renderer: function (val, record, p) {
           if (val != undefined) {
             return '<a href="' + urlPrefix + 'evento/' + p.data.id + '/imagen" target="blank">' + UI.i18n.field.imagenInsertada + '</a>'
@@ -77,6 +77,13 @@ Ext.define('Paranimf.view.evento.GridEventos', {
           dataIndex: 'rssId',
           text: UI.i18n.field.rssId,
           hidden: true
+      },{
+        text: UI.i18n.field.urlPublica,
+        dataIndex: 'id',
+        flex: 4,
+        renderer: function(value) {
+          return urlPublic + '/rest/evento/id/' + value;
+        }
       }];
 
       this.callParent(arguments);

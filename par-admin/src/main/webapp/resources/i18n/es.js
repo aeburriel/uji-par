@@ -272,6 +272,7 @@ UI =
             "client": "Clientes"
         },
         "field": {
+            "urlPublica": "URL pública",
             "tpv": "TPV",
             "poblacion": "Población",
             "codigoPostal": "C.P.",
@@ -349,7 +350,7 @@ UI =
             "dadesGenerals": "Datos generales",
             "idDevolucion": "Cód. TPV",
             "ficheroICAAenviado": "Enviado al ICAA",
-            "imagenInsertada": "Ver la imagen insertada",
+            "imagenInsertada": "Ver la imagen",
             "startDate": "Fecha inicial",
             "minutos": "Minutos",
             "defecto": "Tarifa por defecto",

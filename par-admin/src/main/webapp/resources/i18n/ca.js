@@ -272,6 +272,7 @@ UI =
             "client": "Clients"
         },
         "field": {
+            "urlPublica": "URL Pública",
             "tpv": "TPV",
             "poblacion": "Població",
             "codigoPostal": "C.P.",
@@ -347,7 +348,7 @@ UI =
 			"online": "Online",
 			"sessionTime": "Hora de la sessió",
 			"imagen": "Imatge",
-			"imagenInsertada": "Veure la imatge inserida",
+			"imagenInsertada": "Veure la imatge",
 			"uploadImagen": "Inserir imatge",
             "retenciones": "Retencions",
             "icaa": "Dades de la pel·lícula (únicament per a cinema)",

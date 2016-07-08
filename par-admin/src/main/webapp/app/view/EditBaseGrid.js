@@ -5,6 +5,10 @@ Ext.override(Ext.grid.View,{
 Ext.define('Paranimf.view.EditBaseGrid', {
    extend: 'Ext.grid.Panel',
 
+   viewConfig: {
+      enableTextSelection: true
+   },
+
    tbar: [{
       xtype: 'button',
       text: UI.i18n.button.add,
