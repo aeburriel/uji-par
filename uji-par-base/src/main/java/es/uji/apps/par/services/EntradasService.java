@@ -139,6 +139,9 @@ public class EntradasService {
         entrada.setHoraApertura(horaApertura);
         entrada.setUrlPortada(configuration.getUrlPublicSinHTTPS() + "/rest/evento/"
                 + compra.getParSesion().getParEvento().getId() + "/imagenEntrada");
+		entrada.setCif(compra.getParSesion().getParEvento().getParTpv().getCif());
+		entrada.setPromotor(compra.getParSesion().getParEvento().getPromotor());
+		entrada.setNifPromotor(compra.getParSesion().getParEvento().getNifPromotor());
 
         for (ButacaDTO butaca : compra.getParButacas()) {
             if (butaca.getAnulada() == null || butaca.getAnulada() == false) {
@@ -154,7 +157,6 @@ public class EntradasService {
 					entradaModelReport.setZona(butaca.getParLocalizacion().getNombreEs());
 				}
                 entradaModelReport.setTotal(ReportUtils.formatEuros(butaca.getPrecio()));
-                entradaModelReport.setCifEmpresa(butaca.getParSesion().getParEvento().getParTpv().getCif());
                 entradaModelReport.setNombreEmpresa(butaca.getParSesion().getParEvento().getParTpv().getNombre());
                 if (configuration.isIdEntrada()) {
                     entradaModelReport.setBarcode(compra.getUuid() + "-" + butaca.getIdEntrada());
@@ -163,7 +165,6 @@ public class EntradasService {
                 }
                 entradaModelReport.setTipo(butaca.getTipo());
                 entradaModelReport.setIniciales(butaca.getParLocalizacion().getIniciales());
-				entradaModelReport.setCifEmpresa(compra.getParSesion().getParEvento().getParTpv().getCif());
 				entradaModelReport.setSala(butaca.getParSesion().getParSala().getNombre());
 
                 for (TarifaDTO tarifa : tarifas) {
@@ -225,6 +226,9 @@ public class EntradasService {
         entrada.setUrlPortada(configuration.getUrlPublicSinHTTPS() + "/rest/evento/"
                 + compra.getParSesion().getParEvento().getId() + "/imagenEntrada");
         entrada.setUrlPublicidad(configuration.getUrlPieEntrada());
+		entrada.setCif(compra.getParSesion().getParEvento().getParTpv().getCif());
+		entrada.setPromotor(compra.getParSesion().getParEvento().getPromotor());
+		entrada.setNifPromotor(compra.getParSesion().getParEvento().getNifPromotor());
         int totalButacas = 0;
 
         for (ButacaDTO butaca : compra.getParButacas()) {

@@ -20,6 +20,8 @@ Ext.define('Paranimf.model.Evento', {
       'comentariosEs',
       'comentariosVa',
       'tipoEvento',
+      'promotor',
+      'nifPromotor',
       
       'parTiposEvento',
       {name: 'tpv', mapping: 'parTpv.id'},

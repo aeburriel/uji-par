@@ -356,6 +356,8 @@ UI =
             "expediente": "Num expedient calificació",
             "codigoDistribuidora": "Codi distribuidora",
             "nombreDistribuidora": "Nom distribuidora",
+            "promotor": "Promotor",
+            "nifPromotor": "NIF Promotor",
             "nacionalidad": "Nacionalitat",
             "vo": "VO",
             "subtitulos": "Subtítols",

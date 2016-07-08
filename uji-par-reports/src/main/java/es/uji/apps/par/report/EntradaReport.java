@@ -42,6 +42,9 @@ public class EntradaReport extends Report implements EntradaReportOnlineInterfac
     private String urlPublicidad;
     private String urlPortada;
     private String barcode;
+    private String cif;
+    private String promotor;
+    private String nifPromotor;
     private int totalButacas;
 
 	public EntradaReport() throws ReportSerializerInitException {
@@ -544,5 +547,20 @@ public class EntradaReport extends Report implements EntradaReportOnlineInterfac
     public void setBarcode(String barcode)
     {
         this.barcode = barcode;
+    }
+
+    public void setCif(String cif)
+    {
+        this.cif = cif;
+    }
+
+    public void setPromotor(String promotor)
+    {
+        this.promotor = promotor;
+    }
+
+    public void setNifPromotor(String nifPromotor)
+    {
+        this.nifPromotor = nifPromotor;
     }
 }

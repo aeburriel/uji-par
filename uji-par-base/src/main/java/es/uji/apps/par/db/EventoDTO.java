@@ -95,6 +95,12 @@ public class EventoDTO implements Serializable {
     @Column(name="FORMATO")
     private String formato;
 
+	@Column(name="PROMOTOR")
+	private String promotor;
+
+	@Column(name="NIF_PROMOTOR")
+	private String nifPromotor;
+
 	@ManyToOne
 	@JoinColumn(name="CINE_ID")
 	private CineDTO parCine;
@@ -479,5 +485,25 @@ public class EventoDTO implements Serializable {
 	public void setParCine(CineDTO parCine)
 	{
 		this.parCine = parCine;
+	}
+
+	public String getPromotor()
+	{
+		return promotor;
+	}
+
+	public void setPromotor(String promotor)
+	{
+		this.promotor = promotor;
+	}
+
+	public String getNifPromotor()
+	{
+		return nifPromotor;
+	}
+
+	public void setNifPromotor(String nifPromotor)
+	{
+		this.nifPromotor = nifPromotor;
 	}
 }

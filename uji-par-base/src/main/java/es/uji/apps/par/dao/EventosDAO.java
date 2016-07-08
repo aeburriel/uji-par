@@ -142,7 +142,7 @@ public class EventosDAO extends BaseDAO
                 " e.RETENCION_SGAE as retencionsgae, e.IVA_SGAE as ivasgae, e.PORCENTAJE_IVA as porcentajeiva, " +
                 " e.RSS_ID as rssid, (select min(s.FECHA_CELEBRACION) from PAR_SESIONES s where e.id=s.EVENTO_ID) as fechaPrimeraSesion, " +
                 " e.EXPEDIENTE, e.COD_DISTRI, e.NOM_DISTRI, e.NACIONALIDAD, e.VO, e.METRAJE, e.SUBTITULOS, t.exportar_icaa, e.formato, " +
-                " (select count(*) from par_eventos_multisesion pem where pem.evento_id = e.id), tp.ID as tpv, tp.NOMBRE as tpvNombre " +
+                " (select count(*) from par_eventos_multisesion pem where pem.evento_id = e.id), tp.ID as tpv, tp.NOMBRE as tpvNombre, e.PROMOTOR, e.NIF_PROMOTOR " +
                 " from PAR_EVENTOS e left outer join PAR_CINES c on e.CINE_ID = c.id left outer join PAR_SALAS sa on sa.CINE_ID=c.id left outer join PAR_SALAS_USUARIOS sau on sa.id=sau.SALA_ID "
                 + "left outer join PAR_USUARIOS u on u.id=sau.USUARIO_ID "
                 + "left outer join PAR_SESIONES s on e.id=s.EVENTO_ID inner join PAR_TIPOS_EVENTO t on e.TIPO_EVENTO_ID=t"
@@ -253,6 +253,9 @@ public class EventosDAO extends BaseDAO
             evento.setParTpv(tpv);
         }
         evento.setMultipleTpv(configuration.isMultipleTpvEnabled());
+
+        evento.setPromotor((String) array[38]);
+        evento.setNifPromotor((String) array[39]);
 
         return evento;
     }
@@ -378,6 +381,9 @@ public class EventosDAO extends BaseDAO
         }
         eventoDTO.setParTpv(parTpv);
 
+        eventoDTO.setPromotor(evento.getPromotor());
+        eventoDTO.setNifPromotor(evento.getNifPromotor());
+
         eventoDTO.setPremiosEs(evento.getPremiosEs());
         eventoDTO.setPremiosVa(evento.getPremiosVa());
 
@@ -450,6 +456,9 @@ public class EventosDAO extends BaseDAO
 
         eventoDTO.setParTiposEvento(TipoEvento.tipoEventoToTipoEventoDTO(evento.getParTiposEvento()));
         eventoDTO.setParTpv(Tpv.tpvToTpvDTO(evento.getParTpv()));
+
+        eventoDTO.setPromotor(evento.getPromotor());
+        eventoDTO.setNifPromotor(evento.getNifPromotor());
 
         if (evento.getImagenSrc() != null && !evento.getImagenSrc().equals("")) {
             eventoDTO.setImagen(evento.getImagen());

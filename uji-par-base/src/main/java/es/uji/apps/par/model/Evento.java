@@ -41,6 +41,8 @@ public class Evento
     private String comentariosEs;
     private String comentariosVa;
     private TipoEvento parTiposEvento;
+    private String promotor;
+    private String nifPromotor;
     private Tpv parTpv;
     private long tipoEvento;
     private Boolean asientosNumerados;
@@ -261,7 +263,7 @@ public class Evento
             String duracionVa, String premiosVa, String caracteristicasVa, String comentariosVa,
             byte[] dataBinary, String nombreArchivo, String mediaType, Integer tipoEventoId, Integer tpvId,
             BigDecimal porcentajeIVA, BigDecimal retencionSGAE, BigDecimal ivaSGAE, Boolean asientosNumerados, 
-            String expediente, String codigoDistribuidora, String nombreDistribuidora, String nacionalidad, String vo, String metraje, String subtitulos, String formato, Cine cine)
+            String expediente, String codigoDistribuidora, String nombreDistribuidora, String nacionalidad, String vo, String metraje, String subtitulos, String formato, Cine cine, String promotor, String nifPromotor)
     {
         this.sesiones = new ArrayList<Sesion>();
         this.rssId = rssId;
@@ -299,6 +301,9 @@ public class Evento
             this.parTpv = new Tpv();
             this.parTpv.setId(tpvId);
         }
+
+        this.promotor = promotor;
+        this.nifPromotor = nifPromotor;
         
         this.porcentajeIVA = porcentajeIVA;
         this.retencionSGAE = retencionSGAE;
@@ -697,6 +702,26 @@ public class Evento
     public void setCine(Cine cine)
     {
         this.cine = cine;
+    }
+
+    public String getPromotor()
+    {
+        return promotor;
+    }
+
+    public void setPromotor(String promotor)
+    {
+        this.promotor = promotor;
+    }
+
+    public String getNifPromotor()
+    {
+        return nifPromotor;
+    }
+
+    public void setNifPromotor(String nifPromotor)
+    {
+        this.nifPromotor = nifPromotor;
     }
 
     public static void checkValidity(int codigoPelicula, String codigoExpediente, String titulo, String codigoDistribuidora2,

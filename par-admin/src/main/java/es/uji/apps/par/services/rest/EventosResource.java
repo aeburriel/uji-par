@@ -208,7 +208,9 @@ public class EventosResource
             @FormDataParam("subtitulos") String subtitulos,
 			@FormDataParam("multisesion") String checkMultisesion,
 			@FormDataParam("jsonEventosMultisesion") String jsonEventosMultisesion,
-            @FormDataParam("formato") String formato) throws GeneralPARException
+            @FormDataParam("formato") String formato,
+            @FormDataParam("promotor") String promotor,
+            @FormDataParam("nifPromotor") String nifPromotor) throws GeneralPARException
     {
         String nombreArchivo = (dataBinaryDetail != null) ? dataBinaryDetail.getFileName() : "";
         String mediaType = (imagenBodyPart != null) ? imagenBodyPart.getMediaType().toString() : "";
@@ -220,7 +222,7 @@ public class EventosResource
                 premiosEs, caracteristicasEs, comentariosEs, tituloVa, descripcionVa, companyiaVa,
                 interpretesVa, duracionVa, premiosVa, caracteristicasVa, comentariosVa, dataBinary,
                 nombreArchivo, mediaType, tipoEventoId, tpvId, porcentajeIVA, retencionSGAE, ivaSGAE, asientosNumerados,
-                expediente, codigoDistribuidora, nombreDistribuidora, nacionalidad, vo, metraje, subtitulos, formato, cine);
+                expediente, codigoDistribuidora, nombreDistribuidora, nacionalidad, vo, metraje, subtitulos, formato, cine, promotor, nifPromotor);
 
 		if (checkMultisesion != null && checkMultisesion.equalsIgnoreCase("on"))
 			evento.setEventosMultisesion(jsonEventosMultisesion);
@@ -284,7 +286,9 @@ public class EventosResource
             @FormDataParam("subtitulos") String subtitulos,
 			@FormDataParam("multisesion") String checkMultisesion,
 			@FormDataParam("jsonEventosMultisesion") String jsonEventosMultisesion,
-            @FormDataParam("formato") String formato) throws GeneralPARException
+            @FormDataParam("formato") String formato,
+            @FormDataParam("promotor") String promotor,
+            @FormDataParam("nifPromotor") String nifPromotor) throws GeneralPARException
     {
         AuthChecker.canWrite(currentRequest);
         String userUID = AuthChecker.getUserUID(currentRequest);
@@ -298,7 +302,7 @@ public class EventosResource
                 premiosEs, caracteristicasEs, comentariosEs, tituloVa, descripcionVa, companyiaVa,
                 interpretesVa, duracionVa, premiosVa, caracteristicasVa, comentariosVa, dataBinary,
                 nombreArchivo, mediaType, tipoEventoId, tpvId, porcentajeIVA, retencionSGAE, ivaSGAE, asientosNumerados,
-                expediente, codigoDistribuidora, nombreDistribuidora, nacionalidad, vo, metraje, subtitulos, formato, cine);
+                expediente, codigoDistribuidora, nombreDistribuidora, nacionalidad, vo, metraje, subtitulos, formato, cine, promotor, nifPromotor);
 
 		if (checkMultisesion != null && checkMultisesion.equalsIgnoreCase("on"))
 			evento.setEventosMultisesion(jsonEventosMultisesion);

@@ -39,6 +39,9 @@ public class EntradaActoGraduacionReport extends Report implements EntradaReport
     protected String urlPortada;
     private int totalButacas;
     private String barcode;
+    private String cif;
+    private String promotor;
+    private String nifPromotor;
 	private Configuration configuration;
 
 	public EntradaActoGraduacionReport() throws ReportSerializerInitException {
@@ -461,4 +464,19 @@ public class EntradaActoGraduacionReport extends Report implements EntradaReport
     }
 
     public boolean esAgrupada() { return true; }
+
+    public void setPromotor(String promotor)
+    {
+        this.promotor = promotor;
+    }
+
+    public void setNifPromotor(String nifPromotor)
+    {
+        this.nifPromotor = nifPromotor;
+    }
+
+    public void setCif(String cif)
+    {
+        this.cif = cif;
+    }
 }

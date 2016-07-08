@@ -297,6 +297,8 @@ UI =
             "idIntern": "Identificador interno",
             "comments_va": "Comentaris",
             "nombreDistribuidora": "Nombre distribuidora",
+            "promotor": "Promotor",
+            "nifPromotor": "NIF Promotor",
             "plantillaPreusInterna": "Identificador interno de la plantilla de precios",
             "idLocalitzacio": "Identificador interno de la localización",
             "awards_va": "Premis",

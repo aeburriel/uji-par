@@ -126,6 +126,18 @@ Ext.define('Paranimf.view.evento.FormEventos', {
 							[ false, UI.i18n.message.no ] ]
 				})
 			},
+			{
+				fieldLabel : UI.i18n.field.promotor,
+				name : 'promotor',
+				labelWidth : 140,
+				allowBlank : true
+			},
+			{
+				fieldLabel : UI.i18n.field.nifPromotor,
+				name : 'nifPromotor',
+				labelWidth : 140,
+				allowBlank : true
+			},
 
 			{
 				xtype : 'fieldset',

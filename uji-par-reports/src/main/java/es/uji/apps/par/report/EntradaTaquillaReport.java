@@ -1,32 +1,7 @@
 package es.uji.apps.par.report;
 
-import java.awt.Canvas;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Locale;
-
-import org.xml.sax.SAXException;
-
 import es.uji.apps.fopreports.Report;
-import es.uji.apps.fopreports.fop.Block;
-import es.uji.apps.fopreports.fop.BlockContainer;
-import es.uji.apps.fopreports.fop.BorderStyleType;
-import es.uji.apps.fopreports.fop.DisplayAlignType;
-import es.uji.apps.fopreports.fop.ExternalGraphic;
-import es.uji.apps.fopreports.fop.Flow;
-import es.uji.apps.fopreports.fop.FontStyleType;
-import es.uji.apps.fopreports.fop.Leader;
-import es.uji.apps.fopreports.fop.LinefeedTreatmentType;
-import es.uji.apps.fopreports.fop.PageBreakAfterType;
-import es.uji.apps.fopreports.fop.PageSequence;
-import es.uji.apps.fopreports.fop.RegionBody;
-import es.uji.apps.fopreports.fop.SimplePageMaster;
-import es.uji.apps.fopreports.fop.TableCell;
-import es.uji.apps.fopreports.fop.TextAlignType;
-import es.uji.apps.fopreports.fop.WrapOptionType;
+import es.uji.apps.fopreports.fop.*;
 import es.uji.apps.fopreports.serialization.FopPDFSerializer;
 import es.uji.apps.fopreports.serialization.ReportSerializationException;
 import es.uji.apps.fopreports.serialization.ReportSerializer;
@@ -36,6 +11,13 @@ import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.i18n.ResourceProperties;
 import es.uji.apps.par.report.components.BaseTable;
 import es.uji.apps.par.report.components.EntradaReportStyle;
+import org.xml.sax.SAXException;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Locale;
 
 public class EntradaTaquillaReport extends Report implements EntradaReportTaquillaInterface
 {
@@ -61,6 +43,9 @@ public class EntradaTaquillaReport extends Report implements EntradaReportTaquil
     private String total;
     private String barcode;
     private String tipoEntrada;
+	private String cif;
+	private String promotor;
+	private String nifPromotor;
 
     public EntradaTaquillaReport() throws ReportSerializerInitException {
     	super(reportSerializer, new EntradaReportStyle());
@@ -496,6 +481,21 @@ public class EntradaTaquillaReport extends Report implements EntradaReportTaquil
     {
         this.horaApertura = horaApertura;
     }
+
+	public void setPromotor(String promotor)
+	{
+		this.promotor = promotor;
+	}
+
+	public void setCif(String cif)
+	{
+		this.cif = cif;
+	}
+
+	public void setNifPromotor(String nifPromotor)
+	{
+		this.nifPromotor = nifPromotor;
+	}
 
 	public void setUrlPortada(String urlPortada) {
 		// TODO Auto-generated method stub
