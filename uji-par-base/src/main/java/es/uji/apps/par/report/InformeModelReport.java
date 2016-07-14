@@ -271,10 +271,14 @@ public class InformeModelReport {
         informeModel.setAforo(butaca.getParLocalizacion().getTotalEntradas());
 
         if (anticipada != null)
-            informeModel.setTipoVenta(getTipoVenta(butaca.getParCompra().getTaquilla(), butaca.getParSesion().getFechaCelebracion(), butaca.getParCompra().getFecha(), anticipada));
-		else
-			informeModel.setTipoVenta(getTipoVenta(butaca.getParCompra().getTaquilla(), butaca.getParCompra()
-					.getCodigoPagoTarjeta()));
+            informeModel.setTipoVenta(getTipoVenta(butaca.getParCompra().getTaquilla(), butaca.getParSesion().getFechaCelebracion
+					(), butaca.getParCompra().getFecha(), anticipada));
+		else {
+			String codigoPagoTarjeta = (butaca.getParCompra().getCodigoPagoTarjeta() != null) ? butaca.getParCompra()
+					.getCodigoPagoTarjeta() : (butaca.getParCompra().getReferenciaPago() != null) ? butaca.getParCompra()
+					.getReferenciaPago(): null;
+			informeModel.setTipoVenta(getTipoVenta(butaca.getParCompra().getTaquilla(), codigoPagoTarjeta));
+		}
 
         return informeModel;
     }
