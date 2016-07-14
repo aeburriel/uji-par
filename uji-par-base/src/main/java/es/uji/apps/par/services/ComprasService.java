@@ -443,8 +443,8 @@ public class ComprasService
         comprasDAO.rellenaCodigoPagoPasarela(idCompra, recibo);
     }
 
-	public void passarACompra(Long sesionId, Long idCompraReserva) {
-		comprasDAO.passarACompra(sesionId, idCompraReserva);
+	public void passarACompra(Long sesionId, Long idCompraReserva, String recibo) {
+		comprasDAO.passarACompra(sesionId, idCompraReserva, recibo);
         if (configuration.isIdEntrada()) {
             butacasDAO.asignarIdEntrada(idCompraReserva);
         }

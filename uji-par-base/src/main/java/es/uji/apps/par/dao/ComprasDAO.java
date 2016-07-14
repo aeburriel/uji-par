@@ -816,7 +816,7 @@ public class ComprasDAO extends BaseDAO {
 	}
 
 	@Transactional
-	public void passarACompra(Long sesionId, Long idCompraReserva) {
+	public void passarACompra(Long sesionId, Long idCompraReserva, String recibo) {
 		QCompraDTO qCompraDTO = QCompraDTO.compraDTO;
 		JPAUpdateClause updateC = new JPAUpdateClause(entityManager, qCompraDTO);
 		updateC.set(qCompraDTO.reserva, false)
@@ -825,6 +825,7 @@ public class ComprasDAO extends BaseDAO {
 				.setNull(qCompraDTO.hasta)
 				.set(qCompraDTO.caducada, false)
 				.set(qCompraDTO.anulada, false)
+				.set(qCompraDTO.referenciaPago, recibo)
 				.where(qCompraDTO.id.eq(idCompraReserva).and(
 						qCompraDTO.parSesion.id.eq(sesionId).and(
 								qCompraDTO.reserva.eq(true)))).execute();

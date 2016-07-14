@@ -11,7 +11,8 @@ UI =
             "datosFichero": "Datos necesarios para generar el fichero para el ICAA",
             "incidencias": "Selección de la incidencia ocurrida en la sesión seleccionada",
             "config": "Configuración del sistema",
-            "peliculas": "Selección de la película a añadir a la multisessión"
+            "peliculas": "Selección de la película a añadir a la multisessión",
+            "formasPago": "Forma de pago"
         },
         "message": {
             "cambiarButacaSoloLocalizacion": "Solo es posible cambiar de butaca dentro de una misma localización y tarifa. Si quiere cambiar de localización es necesario anular esta butaca y realizar una nueva compra. ¿Desea cambiar la butaca seleccionada?",

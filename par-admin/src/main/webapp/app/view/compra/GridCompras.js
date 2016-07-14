@@ -187,5 +187,9 @@ Ext.define('Paranimf.view.compra.GridCompras', {
 
   showAddCompraWindow: function() {
     this.createPercentageModalWindow('formCompras').show();
+  },
+
+  showFormasDePagoWindow: function() {
+    this.createPercentageModalWindow('formFormasDePago', undefined, undefined, UI.i18n.formTitle.formasPago).show();
   }
 });

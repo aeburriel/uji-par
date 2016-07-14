@@ -11,7 +11,8 @@ UI =
             "anularPrevia": "Anul·lar compra prèvia",
             "datosFichero": "Dades necessàries per a generar el fitxer per a l'ICAA",
             "incidencias": "Selecció de la incidència ocorreguda en la sessió seleccionada",
-            "peliculas": "Selecció de la pel·lícula a afegir a la multisessió"
+            "peliculas": "Selecció de la pel·lícula a afegir a la multisessió",
+            "formasPago": "Forma de pagament"
         },
         "message": {
             "cambiarButacaSoloLocalizacion": "Només és possible canviar de butaca dins d'una mateixa localització i tarifa. Si vol canviar de localització cal anul·lar aquesta butaca i realitzar una nova compra. Voleu canviar la butaca seleccionada?",

@@ -130,10 +130,16 @@ public class CompraResource extends BaseResource {
 	@PUT
 	@Path("{idSesion}/passaracompra/{idCompra}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response passarACompra(@PathParam("idSesion") Long sesionId, @PathParam("idCompra") Long idCompraReserva) {
+	public Response passarACompra(@PathParam("idSesion") Long sesionId, @PathParam("idCompra") Long idCompraReserva, @QueryParam
+			("recibo") String recibo, @QueryParam("tipopago") String tipoPago) {
 		AuthChecker.canWrite(currentRequest);
 
-		comprasService.passarACompra(sesionId, idCompraReserva);
+		if (tipoPago != null && tipoPago.trim().toLowerCase().equals("tarjetaoffline"))
+			recibo = recibo;
+		else
+			recibo = "";
+
+		comprasService.passarACompra(sesionId, idCompraReserva, recibo);
 		return Response.ok().build();
 	}
 

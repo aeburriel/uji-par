@@ -1,7 +1,7 @@
 Ext.define('Paranimf.controller.ComprasReservas', {
   extend: 'Ext.app.Controller',
 
-  views: ['EditModalWindow', 'EditBaseForm', 'EditBaseGrid', 'compra.PanelComprasReservas', 'compra.GridEventosComprasReservas', 'compra.GridSesionesComprasReservas', 'compra.PanelCompras', 'compra.FormCambiaButaca', 'compra.GridCompras', 'compra.GridDetalleCompras'],
+  views: ['EditModalWindow', 'EditBaseForm', 'EditBaseGrid', 'compra.PanelComprasReservas', 'compra.GridEventosComprasReservas', 'compra.GridSesionesComprasReservas', 'compra.PanelCompras', 'compra.FormCambiaButaca', 'compra.GridCompras', 'compra.GridDetalleCompras', 'compra.FormFormasDePago'],
   stores: ['Compras', 'EventosTaquillaAll', 'SesionesTaquillaAll', 'ButacasCompra', 'ButacasLibres'],
   models: ['Compra', 'Evento', 'Sesion', 'Butaca'],
 
@@ -68,6 +68,15 @@ Ext.define('Paranimf.controller.ComprasReservas', {
     }, {
       ref: 'pagingToolbarDetalle',
       selector: 'gridDetalleCompras pagingtoolbar'
+    }, {
+      ref: 'formFormasDePago',
+      selector: 'formFormasDePago'
+    }, {
+      ref: 'comboTipoPago',
+      selector: 'formFormasDePago combobox[name=tipoPago]'
+    }, {
+      ref: 'txtReciboPago',
+      selector: 'formFormasDePago textfield[name=referenciaDePago]'
     }
   ],
 
@@ -147,7 +156,15 @@ Ext.define('Paranimf.controller.ComprasReservas', {
 
       'formCambiaButaca button[action=save]': {
         click: this.saveCambiaButaca
-      }, 
+      },
+
+      'formFormasDePago button[action=save]': {
+        click: this.doPassarReservaACompra
+      },
+
+      'formFormasDePago combobox[name=tipoPago]': {
+        change: this.changeFormaPago
+      }
     });     
   },
 
@@ -246,37 +263,61 @@ Ext.define('Paranimf.controller.ComprasReservas', {
       alert(UI.i18n.message.selectRow);
     else {
       var selectedRecord = this.getGridCompras().getSelectedRecord();
-      console.log(selectedRecord);
-      if (selectedRecord.data.reserva == true) {
-        if (confirm(UI.i18n.message.surePassarACompra)) {
-          var idSesion = this.getGridSesionesComprasReservas().getSelectedColumnId();
-          var idCompra = this.getGridCompras().getSelectedColumnId();
-          var me = this;
-          this.getGridCompras().setLoading(UI.i18n.message.loading);
+      
+      if (selectedRecord.data.reserva == true)
+        this.getGridCompras().showFormasDePagoWindow();
+    }
+  },
 
-          Ext.Ajax.request({
-            url : urlPrefix + 'compra/' + idSesion + '/passaracompra/' + idCompra,
-            method: 'PUT',
-            success: function (response) {
-              me.setStoreCompras();
-              me.getGridCompras().setLoading(false);
-              me.getGridCompras().deseleccionar();
-              me.getGridCompras().getStore().load();
-            }, failure: function (response) {
-              
-              me.getGridCompras().setLoading(false);
-              
-              var resp = Ext.JSON.decode(response.responseText, true);
-              
-              if (resp['message'])
-                alert(resp['message']);
-              else  
-                alert(UI.i18n.error.passarReservaCompra);
-            }
-          });
-        }
-      } else
-        alert(UI.i18n.error.compraNoReserva);
+  changeFormaPago: function(combo, val, oldVal) {
+    this.getTxtReciboPago().allowBlank = (val === 'tarjetaOffline');
+    if (val === 'tarjetaOffline')
+      this.getTxtReciboPago().show();
+    else
+      this.getTxtReciboPago().hide();
+  },
+
+  doPassarReservaACompra: function() {
+    var tipoPago = this.getComboTipoPago().value;
+    var txtRecibo = this.getTxtReciboPago().value;
+
+    if (tipoPago != undefined && tipoPago !== 0 && tipoPago !== '') {
+      
+      if ((tipoPago == 'tarjetaOffline' && txtRecibo != undefined && txtRecibo != '') || tipoPago != 'tarjetaOffline') {
+        txtRecibo = (tipoPago == 'tarjetaOffline') ? txtRecibo : '';
+        var selectedRecord = this.getGridCompras().getSelectedRecord();
+        
+        if (selectedRecord.data.reserva == true) {
+          
+          if (confirm(UI.i18n.message.surePassarACompra)) {
+            var idSesion = this.getGridSesionesComprasReservas().getSelectedColumnId();
+            var idCompra = this.getGridCompras().getSelectedColumnId();
+            var me = this;
+            this.getGridCompras().setLoading(UI.i18n.message.loading);
+
+            Ext.Ajax.request({
+              url : urlPrefix + 'compra/' + idSesion + '/passaracompra/' + idCompra + '?tipopago=' + tipoPago + '&recibo=' + txtRecibo,
+              method: 'PUT',
+              success: function (response) {
+                me.setStoreCompras();
+                me.getGridCompras().setLoading(false);
+                me.getGridCompras().deseleccionar();
+                me.getGridCompras().getStore().load();
+                me.getFormFormasDePago().up('window').close();
+              }, failure: function (response) {
+                me.getGridCompras().setLoading(false);
+                var resp = Ext.JSON.decode(response.responseText, true);
+                
+                if (resp['message'])
+                  alert(resp['message']);
+                else  
+                  alert(UI.i18n.error.passarReservaCompra);
+              }
+            });
+          }
+        } else
+          alert(UI.i18n.error.compraNoReserva);
+      }
     }
   },
 
