@@ -31,6 +31,7 @@ public class InformeModelReport {
     private Integer canceladasTaquilla;
     private Integer vendidasTaquilla;
     private Boolean anulada;
+	private Boolean isReserva;
 
     public InformeModelReport() {
     }
@@ -269,6 +270,7 @@ public class InformeModelReport {
 				.getParLocalizacion().getNombreEs());
         informeModel.setAnulada(butaca.getAnulada());
         informeModel.setAforo(butaca.getParLocalizacion().getTotalEntradas());
+		informeModel.setReserva(butaca.getParCompra().getReserva());
 
         if (anticipada != null)
             informeModel.setTipoVenta(getTipoVenta(butaca.getParCompra().getTaquilla(), butaca.getParSesion().getFechaCelebracion
@@ -299,4 +301,12 @@ public class InformeModelReport {
     public void setAnulada(Boolean anulada) {
         this.anulada = anulada;
     }
+
+	public Boolean getReserva() {
+		return isReserva;
+	}
+
+	public void setReserva(Boolean reserva) {
+		isReserva = reserva;
+	}
 }
