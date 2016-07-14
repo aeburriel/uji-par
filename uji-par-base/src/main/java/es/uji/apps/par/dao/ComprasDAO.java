@@ -658,7 +658,8 @@ public class ComprasDAO extends BaseDAO {
 				+ "and sala.id = s.sala_id and u.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = u.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
 				+ "and c.taquilla = " + dbHelper.trueString() + " "
-				+ "and (c.codigo_pago_tarjeta is not null or c.referencia_pago is not null)";
+				+ "and ((c.codigo_pago_tarjeta is not null and c.codigo_pago_tarjeta <> '') "
+				+ " or (c.referencia_pago is not null and c.referencia_pago <> '')) ";
 
         List<Object[]> result = entityManager.createNativeQuery(sql).getResultList();
 
@@ -677,7 +678,8 @@ public class ComprasDAO extends BaseDAO {
 				+ "and sala.id = s.sala_id and u.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = u.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
 				+ "and c.taquilla = " + dbHelper.trueString() + " "
-				+ "and (c.codigo_pago_tarjeta is null and c.referencia_pago is null)";
+				+ "and ((c.codigo_pago_tarjeta is null or c.codigo_pago_tarjeta = '') "
+				+ " and (c.referencia_pago is null or c.referencia_pago = ''))";
 
 		List<Object[]> result = entityManager.createNativeQuery(sql).getResultList();
 
