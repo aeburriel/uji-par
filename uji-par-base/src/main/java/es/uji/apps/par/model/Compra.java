@@ -56,6 +56,8 @@ public class Compra
             this.setIdDevolucion(compraDTO.getCodigoPagoPasarela());
         else if (compraDTO.getCodigoPagoTarjeta()!=null)
             this.setIdDevolucion(compraDTO.getCodigoPagoTarjeta());
+		else if (compraDTO.getReferenciaPago()!=null)
+			this.setIdDevolucion(compraDTO.getReferenciaPago());
     }
 
     public static Compra compraDTOtoCompra(CompraDTO compraDTO)

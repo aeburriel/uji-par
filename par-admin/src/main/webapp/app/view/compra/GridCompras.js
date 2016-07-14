@@ -174,7 +174,7 @@ Ext.define('Paranimf.view.compra.GridCompras', {
        text: UI.i18n.field.idDevolucion,
        renderer: function (val, p) {
     	   if (val)
-    		   return '<a target="blank" href="javascript:window.prompt(\'' +  UI.i18n.message.ctrlCCopiar + ':\', \'' + val + '\'); return false;">' + val + '</a>';
+    		   return val;
     	   else
     		   return '';
        },
