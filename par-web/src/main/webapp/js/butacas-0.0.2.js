@@ -33,29 +33,26 @@ Butacas = (function() {
 	
 	function cargaPrecios(callback) {
 		$.getJSON(baseUrl + '/rest/entrada/' + sesionId + '/precios', function(respuesta){
-			for (var i=0; i<respuesta.data.length; i++)
-			{
-				var sesion = respuesta.data[i];
-				var idTarifa = sesion.tarifa.id;
-				
-				if (modoAdmin) {
-					console.log("ES MODO ADMIN");
-					tarifas[sesion.tarifa.id] = sesion.tarifa.nombre;
-				}
-				else {
-					console.log("NO ES MODO ADMIN", sesion.tarifa);
-					if (sesion.tarifa.isPublico == 'on')
-						tarifas[sesion.tarifa.id] = sesion.tarifa.nombre;
-				}
-					
-				
-				
-				if (precios[sesion.localizacion.codigo] == undefined)
-					precios[sesion.localizacion.codigo]= {};
-				
-				if (sesion.tarifa.defecto)
-					tarifaDefecto = sesion.tarifa.id;
-				precios[sesion.localizacion.codigo][idTarifa] = sesion.precio;
+			for (var i=0; i<respuesta.data.length; i++) {
+                var sesion = respuesta.data[i];
+                var idTarifa = sesion.tarifa.id;
+
+                if (modoAdmin || sesion.tarifa.isPublico == 'on') {
+                    if (modoAdmin) {
+                        console.log("ES MODO ADMIN");
+                    }
+                    else {
+                        console.log("NO ES MODO ADMIN", sesion.tarifa);
+                    }
+                    tarifas[sesion.tarifa.id] = sesion.tarifa.nombre;
+
+                    if (precios[sesion.localizacion.codigo] == undefined)
+                        precios[sesion.localizacion.codigo] = {};
+
+                    if (sesion.tarifa.defecto)
+                        tarifaDefecto = sesion.tarifa.id;
+                    precios[sesion.localizacion.codigo][idTarifa] = sesion.precio;
+                }
 			}
 			
 			refrescaEstadoButacas();
@@ -64,8 +61,7 @@ Butacas = (function() {
 			callback(precios);
 		});
 	}
-	
-	
+
 	function ocultaButacasSeleccionadas() {
 		$('.mapaSeleccionada').addClass('mapaLibre');
 		$('.mapaSeleccionada').removeClass('mapaSeleccionada');

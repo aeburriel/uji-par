@@ -35,25 +35,23 @@ Butacas = (function() {
 			{
 				var sesion = respuesta[i];
 				var idTarifa = sesion.tarifa.id;
-				
-				if (modoAdmin) {
-					console.log("ES MODO ADMIN");
-					tarifas[sesion.tarifa.id] = sesion.tarifa.nombre;
-				}
-				else {
-					console.log("NO ES MODO ADMIN", sesion.tarifa);
-					if (sesion.tarifa.isPublico == 'on')
-						tarifas[sesion.tarifa.id] = sesion.tarifa.nombre;
-				}
-					
-				
-				
-				if (precios[sesion.localizacion.codigo] == undefined)
-					precios[sesion.localizacion.codigo]= {};
-				
-				if (sesion.tarifa.defecto)
-					tarifaDefecto = sesion.tarifa.id;
-				precios[sesion.localizacion.codigo][idTarifa] = sesion.precio;
+
+                if (modoAdmin || sesion.tarifa.isPublico == 'on') {
+                    if (modoAdmin) {
+                        console.log("ES MODO ADMIN");
+                    }
+                    else {
+                        console.log("NO ES MODO ADMIN", sesion.tarifa);
+                    }
+                    tarifas[sesion.tarifa.id] = sesion.tarifa.nombre;
+
+                    if (precios[sesion.localizacion.codigo] == undefined)
+                        precios[sesion.localizacion.codigo] = {};
+
+                    if (sesion.tarifa.defecto)
+                        tarifaDefecto = sesion.tarifa.id;
+                    precios[sesion.localizacion.codigo][idTarifa] = sesion.precio;
+                }
 			}
 			
 			refrescaEstadoButacas();
