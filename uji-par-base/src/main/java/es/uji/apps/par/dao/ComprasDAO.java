@@ -169,8 +169,7 @@ public class ComprasDAO extends BaseDAO {
 	}
 
 	@Transactional
-	public void marcarPagadaConReferenciaDePago(Long idCompra,
-			String referenciaPago) {
+	public void marcarPagadaConReferenciaDePago(Long idCompra, String referenciaPago) {
 		CompraDTO compra = getCompraById(idCompra);
 
 		compra.setPagada(true);
@@ -577,7 +576,7 @@ public class ComprasDAO extends BaseDAO {
 				+ "and sala.id = s.sala_id and u.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = u.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
 				+ "and c.taquilla = " + dbHelper.trueString() + " "
-				+ "and (c.codigo_pago_tarjeta is null and c.referencia_pago is null) "
+				+ getSQLCompraIsEfectivo()
 				+ "and f.id = " + dbHelper.toInteger("b.tipo") + " "
 				+ "and c.abonado_id is null "
 				+ "group by c.sesion_id, e.titulo_es, b.tipo, s.fecha_celebracion, e.porcentaje_iva, f.nombre "
@@ -596,13 +595,26 @@ public class ComprasDAO extends BaseDAO {
 				+ "and sala.id = s.sala_id and u.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = u.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
 				+ "and c.taquilla = " + dbHelper.trueString() + " "
-				+ "and (c.codigo_pago_tarjeta is null and c.referencia_pago is null) "
+				+ getSQLCompraIsEfectivo()
 				+ "and f.id = " + dbHelper.toInteger("b.tipo") + " "
 				+ "and c.abonado_id is not null "
 				+ "group by a.nombre, b.tipo "
 				+ "order by a.nombre";
 
 		return entityManager.createNativeQuery(sql).getResultList();
+	}
+
+	private String getSQLCompraIsEfectivo() {
+		return "and ((c.codigo_pago_tarjeta IS NULL or c.codigo_pago_tarjeta = '') "
+				+ "and (c.referencia_pago IS NULL or c.referencia_pago = '')) ";
+	}
+
+	private String getSQLCompraIsTPV(boolean contarOnline) {
+		String sql = "and ((c.codigo_pago_tarjeta is not null and c.codigo_pago_tarjeta <> '') "
+				+ "or (c.codigo_pago_pasarela is not null and c.codigo_pago_pasarela <> '') "
+				+ "or (c.referencia_pago is not null and c.referencia_pago <> '') ";
+		sql += (contarOnline) ? "or c.taquilla = " + dbHelper.falseString() + ") " : ") ";
+		return sql;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -619,7 +631,7 @@ public class ComprasDAO extends BaseDAO {
 				+ "and sala.id = s.sala_id and u.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = u.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
 				+ "and (c.caducada is null or c.caducada = " + dbHelper.falseString() + ") "
-				+ "and (c.codigo_pago_tarjeta is not null or c.codigo_pago_pasarela is not null or c.referencia_pago is not null or c.taquilla = " + dbHelper.falseString() + ") "
+				+ getSQLCompraIsTPV(true)
 				+ "and f.id = " + dbHelper.toInteger("b.tipo") + " "
 				+ "group by c.sesion_id, e.titulo_es, b.tipo, s.fecha_celebracion, e.porcentaje_iva, "
 				+ dbHelper.trunc("c.fecha", formato) + ", f.nombre "
@@ -658,8 +670,7 @@ public class ComprasDAO extends BaseDAO {
 				+ "and sala.id = s.sala_id and u.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = u.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
 				+ "and c.taquilla = " + dbHelper.trueString() + " "
-				+ "and ((c.codigo_pago_tarjeta is not null and c.codigo_pago_tarjeta <> '') "
-				+ " or (c.referencia_pago is not null and c.referencia_pago <> '')) ";
+				+ getSQLCompraIsTPV(false);
 
         List<Object[]> result = entityManager.createNativeQuery(sql).getResultList();
 
@@ -678,8 +689,7 @@ public class ComprasDAO extends BaseDAO {
 				+ "and sala.id = s.sala_id and u.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = u.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
 				+ "and c.taquilla = " + dbHelper.trueString() + " "
-				+ "and ((c.codigo_pago_tarjeta is null or c.codigo_pago_tarjeta = '') "
-				+ " and (c.referencia_pago is null or c.referencia_pago = ''))";
+				+ getSQLCompraIsEfectivo();
 
 		List<Object[]> result = entityManager.createNativeQuery(sql).getResultList();
 
