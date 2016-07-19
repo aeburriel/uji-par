@@ -65,4 +65,9 @@ public class HSQLDBHelper implements DatabaseHelper
 	{
 		return columna;
 	}
+
+	@Override
+	public String toDate() {
+		return "TO_DATE";
+	}
 }

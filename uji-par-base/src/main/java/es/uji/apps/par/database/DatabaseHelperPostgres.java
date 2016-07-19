@@ -95,4 +95,9 @@ public class DatabaseHelperPostgres implements DatabaseHelper
 	public String toInteger(String columna) {
 		return "CAST(coalesce(" + columna + ", '0') AS integer)";
 	}
+
+	@Override
+	public String toDate() {
+		return "TO_TIMESTAMP";
+	}
 }

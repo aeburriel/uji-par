@@ -23,4 +23,6 @@ public interface DatabaseHelper
     public int booleanToNumber(Object valor);
     
     public String toInteger(String columna);
+
+	public String toDate();
 }

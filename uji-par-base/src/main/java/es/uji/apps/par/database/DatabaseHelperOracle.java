@@ -78,4 +78,9 @@ public class DatabaseHelperOracle implements DatabaseHelper
 	public String toInteger(String columna) {
 		return "TO_NUMBER(" + columna + ")";
 	}
+
+	@Override
+	public String toDate() {
+		return "TO_DATE";
+	}
 }
