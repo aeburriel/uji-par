@@ -356,6 +356,7 @@ UI =
 			"imagenInsertada": "Veure la imatge",
 			"uploadImagen": "Inserir imatge",
             "imagenPubli": "Imatge de publicitat",
+            "imagenPubliCondiciones": "*La imatge inserida apareixerà en l'entrada amb una mida de 510px d'ample i 270px d'alt. El format recomanat és PNG o JPG.",
             "imagenPubliInsertada": "Veure la imatge de publicitat",
             "uploadImagenPubli": "Inserir imatge de publicitat",
             "retenciones": "Retencions",

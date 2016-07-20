@@ -166,6 +166,10 @@ Ext.define('Paranimf.view.evento.FormEventos', {
 				xtype : 'fieldset',
 				title : UI.i18n.field.imagenPubli,
 				items : [ {
+					xtype : 'label',
+					text: UI.i18n.field.imagenPubliCondiciones,
+					anchor : '100%'
+				}, {
 					name : 'dataBinaryPubli',
 					anchor : '100%',
 					allowBlank : true,

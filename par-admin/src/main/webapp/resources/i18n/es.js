@@ -323,6 +323,7 @@ UI =
             "formato": "Formato",
             "imagen": "Imagen",
             "imagenPubli": "Imagen de publicidad",
+            "imagenPubliCondiciones": "*La imagen insertada aparecerá en la entrada con un tamaño de 510px de ancho y 270px de alto. El formato recomendado es PNG o JPG.",
             "codigoDistribuidora": "Código distribuidora",
             "selectPelicula": "Película",
             "versionLinguistica": "Versión lingüística",
