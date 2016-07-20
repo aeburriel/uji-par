@@ -39,6 +39,7 @@ Ext.define('Paranimf.view.taquilla.FormComprar', {
 	   items: [{
 		        id    : 'pasoSeleccionar',
 		        xtype : 'panel',
+		   		autoScroll: true,
 		        layout: 'card',
 		        border: false,
 		        frame: false,
@@ -59,6 +60,7 @@ Ext.define('Paranimf.view.taquilla.FormComprar', {
 		   },
 	       {
 		       	id: 'pasoPagar',
+			   	autoScroll: true,
 		       	xtype: 'panel',
 		       	layout: {
 		       		type: 'vbox',
@@ -71,6 +73,7 @@ Ext.define('Paranimf.view.taquilla.FormComprar', {
 		       	        {
 		       	        	name: 'panelComprar',
 		       	        	xtype: 'panel',
+							autoScroll: true,
 		       	        	region: 'center',
 		   					frame: false,
 		   					align: 'middle',
@@ -153,6 +156,7 @@ Ext.define('Paranimf.view.taquilla.FormComprar', {
 		       	        {
 		       	        	name: 'panelReservar',
 		       	        	xtype: 'panel',
+							autoScroll: true,
 		   					frame: false,
 		   					border: 0,
 		    		       	defaults: {
