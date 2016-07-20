@@ -225,7 +225,17 @@ public class EntradasService {
         entrada.setHoraApertura(horaApertura);
         entrada.setUrlPortada(configuration.getUrlPublicSinHTTPS() + "/rest/evento/"
                 + compra.getParSesion().getParEvento().getId() + "/imagenEntrada");
-        entrada.setUrlPublicidad(configuration.getUrlPieEntrada());
+
+		if (compra.getParSesion().getParEvento().getImagenPubliSrc() != null)
+		{
+			entrada.setUrlPublicidad(configuration.getUrlPublicSinHTTPS() + "/rest/evento/"
+					+ compra.getParSesion().getParEvento().getId() + "/imagenPubliEntrada");
+		}
+		else
+		{
+			entrada.setUrlPublicidad(configuration.getUrlPieEntrada());
+		}
+
 		entrada.setCif(compra.getParSesion().getParEvento().getParTpv().getCif());
 		entrada.setPromotor(compra.getParSesion().getParEvento().getPromotor());
 		entrada.setNifPromotor(compra.getParSesion().getParEvento().getNifPromotor());

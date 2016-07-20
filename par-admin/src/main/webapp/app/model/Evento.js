@@ -33,6 +33,11 @@ Ext.define('Paranimf.model.Evento', {
       'imagenContentType',
       'imagenSrc',
 
+      'dataBinaryPubli',
+      'dataBinaryDetailPubli',
+      'imagenPubliContentType',
+      'imagenPubliSrc',
+
       'asientosNumerados',
       'porcentajeIVA',
       'retencionSGAE',

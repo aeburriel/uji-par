@@ -86,6 +86,23 @@ public class EventosResource
     }
 
     @GET
+    @Path("{id}/imagenPubli")
+    public Response getImagenPubliEvento(@PathParam("id") Long eventoId)
+    {
+        try
+        {
+            String userUID = AuthChecker.getUserUID(currentRequest);
+            Evento evento = eventosService.getEvento(eventoId, userUID);
+
+            return Response.ok(evento.getImagenPubli()).type(evento.getImagenPubliContentType()).build();
+        }
+        catch (EventoNoEncontradoException e)
+        {
+            return Response.noContent().build();
+        }
+    }
+
+    @GET
     @Path("{id}/sesiones")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSesiones(@PathParam("id") Long eventoId, @QueryParam("activos") boolean activos,
@@ -181,6 +198,9 @@ public class EventosResource
             @FormDataParam("dataBinary") byte[] dataBinary,
             @FormDataParam("dataBinary") FormDataContentDisposition dataBinaryDetail,
             @FormDataParam("dataBinary") FormDataBodyPart imagenBodyPart,
+            @FormDataParam("dataBinaryPubli") byte[] dataBinaryPubli,
+            @FormDataParam("dataBinaryPubli") FormDataContentDisposition dataBinaryDetailPubli,
+            @FormDataParam("dataBinaryPubli") FormDataBodyPart imagenBodyPartPubli,
             @FormDataParam("premiosEs") String premiosEs,
             @FormDataParam("caracteristicasEs") String caracteristicasEs,
             @FormDataParam("comentariosEs") String comentariosEs,
@@ -215,13 +235,17 @@ public class EventosResource
         String nombreArchivo = (dataBinaryDetail != null) ? dataBinaryDetail.getFileName() : "";
         String mediaType = (imagenBodyPart != null) ? imagenBodyPart.getMediaType().toString() : "";
 
+        String nombreArchivoPubli = (dataBinaryDetailPubli != null) ? dataBinaryDetailPubli.getFileName() : "";
+        String mediaTypePubli = (imagenBodyPartPubli != null) ? imagenBodyPartPubli.getMediaType().toString() : "";
+
         String userUID = AuthChecker.getUserUID(currentRequest);
         Cine cine = usersService.getUserCineByUserUID(userUID);
 
         Evento evento = new Evento(rssId, tituloEs, descripcionEs, companyiaEs, interpretesEs, duracionEs,
                 premiosEs, caracteristicasEs, comentariosEs, tituloVa, descripcionVa, companyiaVa,
                 interpretesVa, duracionVa, premiosVa, caracteristicasVa, comentariosVa, dataBinary,
-                nombreArchivo, mediaType, tipoEventoId, tpvId, porcentajeIVA, retencionSGAE, ivaSGAE, asientosNumerados,
+                nombreArchivo, mediaType, dataBinaryPubli,
+                nombreArchivoPubli, mediaTypePubli, tipoEventoId, tpvId, porcentajeIVA, retencionSGAE, ivaSGAE, asientosNumerados,
                 expediente, codigoDistribuidora, nombreDistribuidora, nacionalidad, vo, metraje, subtitulos, formato, cine, promotor, nifPromotor);
 
 		if (checkMultisesion != null && checkMultisesion.equalsIgnoreCase("on"))
@@ -259,6 +283,9 @@ public class EventosResource
             @FormDataParam("dataBinary") byte[] dataBinary,
             @FormDataParam("dataBinary") FormDataContentDisposition dataBinaryDetail,
             @FormDataParam("dataBinary") FormDataBodyPart imagenBodyPart,
+            @FormDataParam("dataBinaryPubli") byte[] dataBinaryPubli,
+            @FormDataParam("dataBinaryPubli") FormDataContentDisposition dataBinaryDetailPubli,
+            @FormDataParam("dataBinaryPubli") FormDataBodyPart imagenBodyPartPubli,
             @FormDataParam("premiosEs") String premiosEs,
             @FormDataParam("caracteristicasEs") String caracteristicasEs,
             @FormDataParam("comentariosEs") String comentariosEs,
@@ -296,12 +323,16 @@ public class EventosResource
         String nombreArchivo = (dataBinaryDetail != null) ? dataBinaryDetail.getFileName() : "";
         String mediaType = (imagenBodyPart != null) ? imagenBodyPart.getMediaType().toString() : "";
 
+        String nombreArchivoPubli = (dataBinaryDetailPubli != null) ? dataBinaryDetailPubli.getFileName() : "";
+        String mediaTypePubli = (imagenBodyPartPubli != null) ? imagenBodyPartPubli.getMediaType().toString() : "";
+
         Cine cine = usersService.getUserCineByUserUID(userUID);
 
         Evento evento = new Evento(rssId, tituloEs, descripcionEs, companyiaEs, interpretesEs, duracionEs,
                 premiosEs, caracteristicasEs, comentariosEs, tituloVa, descripcionVa, companyiaVa,
                 interpretesVa, duracionVa, premiosVa, caracteristicasVa, comentariosVa, dataBinary,
-                nombreArchivo, mediaType, tipoEventoId, tpvId, porcentajeIVA, retencionSGAE, ivaSGAE, asientosNumerados,
+                nombreArchivo, mediaType, dataBinaryPubli,
+                nombreArchivoPubli, mediaTypePubli, tipoEventoId, tpvId, porcentajeIVA, retencionSGAE, ivaSGAE, asientosNumerados,
                 expediente, codigoDistribuidora, nombreDistribuidora, nacionalidad, vo, metraje, subtitulos, formato, cine, promotor, nifPromotor);
 
 		if (checkMultisesion != null && checkMultisesion.equalsIgnoreCase("on"))
@@ -361,6 +392,17 @@ public class EventosResource
         AuthChecker.canWrite(currentRequest);
         
         eventosService.removeImagen(eventoId);
+        return Response.ok().entity(new RestResponse(true)).build();
+    }
+
+    @DELETE
+    @Path("{id}/imagenPubli")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response removeImagenPubli(@PathParam("id") Integer eventoId)
+    {
+        AuthChecker.canWrite(currentRequest);
+
+        eventosService.removeImagenPubli(eventoId);
         return Response.ok().entity(new RestResponse(true)).build();
     }
     

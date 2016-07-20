@@ -83,6 +83,7 @@ public class EventosResource extends BaseResource {
     private void imagenesANull(List<Evento> eventos) {
         for (Evento evento : eventos) {
             evento.setImagen(null);
+            evento.setImagenPubli(null);
         }
     }
 
@@ -302,6 +303,22 @@ public class EventosResource extends BaseResource {
     }
 
     @GET
+    @Path("{id}/imagenPubli")
+    public Response getImagenPubliEvento(@PathParam("id") Long eventoId) throws IOException {
+        try {
+            Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
+            Evento evento = eventosService.getEvento(eventoId, user.getUsuario());
+
+            byte[] imagenPubli = (evento.getImagenPubli() != null) ? evento.getImagenPubli() : eventosService.getImagenPubliSustitutivaSiExiste();
+            String contentType = (evento.getImagenPubliContentType() != null) ? evento.getImagenPubliContentType() : eventosService.getImagenPubliSustitutivaContentType();
+
+            return Response.ok(imagenPubli).type(contentType).build();
+        } catch (EventoNoEncontradoException e) {
+            return Response.noContent().build();
+        }
+    }
+
+    @GET
     @Path("{id}/imagenEntrada")
     public Response getImagenEntrada(@PathParam("id") Long eventoId) throws IOException, ImageReadException {
         try {
@@ -323,4 +340,25 @@ public class EventosResource extends BaseResource {
         }
     }
 
+    @GET
+    @Path("{id}/imagenPubliEntrada")
+    public Response getImagenPubliEntrada(@PathParam("id") Long eventoId) throws IOException, ImageReadException {
+        try {
+            Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
+            Evento evento = eventosService.getEvento(eventoId, user.getUsuario());
+
+            byte[] imagenPubli = (evento.getImagenPubli() != null) ? evento.getImagenPubli() : eventosService.getImagenPubliSustitutivaSiExiste();
+            String contentType = (evento.getImagenPubliContentType() != null) ? evento.getImagenPubliContentType() : eventosService.getImagenPubliSustitutivaContentType();
+
+            if (imagenPubli != null) {
+                ByteArrayOutputStream bos = new ByteArrayOutputStream(imagenPubli.length);
+                bos.write(imagenPubli, 0, imagenPubli.length);
+                return Response.ok(bos.toByteArray()).type(contentType).build();
+            } else {
+                return Response.status(404).build();
+            }
+        } catch (EventoNoEncontradoException e) {
+            return Response.noContent().build();
+        }
+    }
 }

@@ -73,6 +73,15 @@ Ext.define('Paranimf.view.evento.GridEventos', {
             return '<a href="' + urlPrefix + 'evento/' + p.data.id + '/imagen" target="blank">' + UI.i18n.field.imagenInsertada + '</a>'
           }
         }
+      }, {
+          dataIndex: 'imagenPubliSrc',
+          text: UI.i18n.field.imagenPubli,
+          flex: 3,
+          renderer: function (val, record, p) {
+              if (val != undefined) {
+                  return '<a href="' + urlPrefix + 'evento/' + p.data.id + '/imagenPubli" target="blank">' + UI.i18n.field.imagenPubliInsertada + '</a>'
+              }
+          }
       },{
           dataIndex: 'rssId',
           text: UI.i18n.field.rssId,

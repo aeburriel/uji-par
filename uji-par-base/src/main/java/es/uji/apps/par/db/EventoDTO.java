@@ -62,6 +62,16 @@ public class EventoDTO implements Serializable {
 	@Column(name="IMAGEN_SRC")
 	private String imagenSrc;
 
+	@Lob
+	@Column(name="IMAGEN_PUBLI")
+	private byte[] imagenPubli;
+
+	@Column(name="IMAGEN_PUBLI_CONTENT_TYPE")
+	private String imagenPubliContentType;
+
+	@Column(name="IMAGEN_PUBLI_SRC")
+	private String imagenPubliSrc;
+
 	@Column(name="INTERPRETES_ES")
 	private String interpretesEs;
 
@@ -274,6 +284,36 @@ public class EventoDTO implements Serializable {
 
 	public void setImagenSrc(String imagenSrc) {
 		this.imagenSrc = imagenSrc;
+	}
+
+	public byte[] getImagenPubli()
+	{
+		return imagenPubli;
+	}
+
+	public void setImagenPubli(byte[] imagenPubli)
+	{
+		this.imagenPubli = imagenPubli;
+	}
+
+	public String getImagenPubliContentType()
+	{
+		return imagenPubliContentType;
+	}
+
+	public void setImagenPubliContentType(String imagenPubliContentType)
+	{
+		this.imagenPubliContentType = imagenPubliContentType;
+	}
+
+	public String getImagenPubliSrc()
+	{
+		return imagenPubliSrc;
+	}
+
+	public void setImagenPubliSrc(String imagenPubliSrc)
+	{
+		this.imagenPubliSrc = imagenPubliSrc;
 	}
 
 	public String getInterpretesEs() {

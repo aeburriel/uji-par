@@ -27,6 +27,9 @@ Ext.define('Paranimf.controller.Eventos', {
       ref: 'botonDeleteImagen',
       selector: 'formEventos button[action=deleteImage]'
    }, {
+      ref: 'botonDeleteImagenPubli',
+      selector: 'formEventos button[action=deleteImagePubli]'
+   }, {
       ref: 'checkMultisesion',
       selector: 'formEventos checkbox[name=multisesion]'
    }, {
@@ -128,6 +131,10 @@ Ext.define('Paranimf.controller.Eventos', {
 
          'formEventos button[action=deleteImage]': {
             click: this.deleteImage
+         },
+
+         'formEventos button[action=deleteImagePubli]': {
+            click: this.deleteImagePubli
          },
          
          'formEventos': {
@@ -442,14 +449,22 @@ Ext.define('Paranimf.controller.Eventos', {
       var record = comp.getRecord();
       
 	   if (record != undefined && record.data["imagenSrc"]) {
-         var imagen = comp.down("#imagenInsertada");
-         var idEvento = record.data["id"]; 
-		   imagen.html = '<a href="' + urlPrefix + 'evento/' + idEvento + '/imagen" target="blank">' + UI.i18n.field.imagenInsertada + '</a>';
+         var idEvento = record.data["id"];
 
-         if (!readOnlyUser)
+          var imagen = comp.down("#imagenInsertada");
+          imagen.html = '<a href="' + urlPrefix + 'evento/' + idEvento + '/imagen" target="blank">' + UI.i18n.field.imagenInsertada + '</a>';
+
+          var imagenPubli = comp.down("#imagenPubliInsertada");
+          imagenPubli.html = '<a href="' + urlPrefix + 'evento/' + idEvento + '/imagenPubli" target="blank">' + UI.i18n.field.imagenPubliInsertada + '</a>';
+
+         if (!readOnlyUser) {
             this.getBotonDeleteImagen().show();
+            this.getBotonDeleteImagenPubli().show();
+         }
+
       } else {
-         this.getBotonDeleteImagen().hide();
+          this.getBotonDeleteImagen().hide();
+          this.getBotonDeleteImagenPubli().hide();
       }
    },
 
@@ -487,6 +502,27 @@ Ext.define('Paranimf.controller.Eventos', {
            }, failure: function (response) {
               alert(UI.i18n.error.deletedImage);
            }
+         });
+      }
+   },
+
+   deleteImagePubli: function(button, event, opts) {
+      if (confirm(UI.i18n.message.sureDeleteImagePubli)) {
+         var record = button.up('form').getRecord();
+         var idEvento = record.data["id"];
+         var grid = this.getGridEventos();
+
+         Ext.Ajax.request({
+            url : urlPrefix + 'evento/' + idEvento + '/imagenPubli',
+            method: 'DELETE',
+            success: function (response) {
+               alert(UI.i18n.message.deletedImagePubli);
+
+               button.up('window').close();
+               grid.store.load();
+            }, failure: function (response) {
+               alert(UI.i18n.error.deletedImagePubli);
+            }
          });
       }
    },

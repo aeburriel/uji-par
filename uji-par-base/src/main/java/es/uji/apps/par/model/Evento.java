@@ -34,6 +34,9 @@ public class Evento
     private byte[] imagen;
     private String imagenSrc;
     private String imagenContentType;
+    private byte[] imagenPubli;
+    private String imagenPubliSrc;
+    private String imagenPubliContentType;
     private String premiosEs;
     private String premiosVa;
     private String caracteristicasEs;
@@ -97,6 +100,10 @@ public class Evento
     	evento.setImagenContentType(eventoDTO.getImagenContentType());
     	evento.setImagenSrc(eventoDTO.getImagenSrc());
 
+        evento.setImagenPubli(eventoDTO.getImagenPubli());
+        evento.setImagenPubliContentType(eventoDTO.getImagenPubliContentType());
+        evento.setImagenPubliSrc(eventoDTO.getImagenPubliSrc());
+
     	evento.setPremiosEs(eventoDTO.getPremiosEs());
     	evento.setPremiosVa(eventoDTO.getPremiosVa());
 
@@ -154,6 +161,10 @@ public class Evento
     	eventoDTO.setImagen(evento.getImagen());
     	eventoDTO.setImagenContentType(evento.getImagenContentType());
     	eventoDTO.setImagenSrc(evento.getImagenSrc());
+
+        eventoDTO.setImagenPubli(evento.getImagenPubli());
+        eventoDTO.setImagenPubliContentType(evento.getImagenPubliContentType());
+        eventoDTO.setImagenPubliSrc(evento.getImagenPubliSrc());
 
     	eventoDTO.setPremiosEs(evento.getPremiosEs());
     	eventoDTO.setPremiosVa(evento.getPremiosVa());
@@ -219,6 +230,13 @@ public class Evento
         this.imagenContentType = eventoDTO.getImagenContentType();
         this.imagenSrc = eventoDTO.getImagenSrc();
 
+        if (eventoDTO.getImagenPubli() != null)
+        {
+            this.imagenPubli = eventoDTO.getImagenPubli();
+            this.imagenPubliContentType = eventoDTO.getImagenPubliContentType();
+            this.imagenPubliSrc = eventoDTO.getImagenPubliSrc();
+        }
+
         this.premiosEs = eventoDTO.getPremiosEs();
         this.premiosVa = eventoDTO.getPremiosVa();
 
@@ -261,7 +279,7 @@ public class Evento
             String duracionEs, String premiosEs, String caracteristicasEs, String comentariosEs,
             String tituloVa, String descripcionVa, String companyiaVa, String interpretesVa,
             String duracionVa, String premiosVa, String caracteristicasVa, String comentariosVa,
-            byte[] dataBinary, String nombreArchivo, String mediaType, Integer tipoEventoId, Integer tpvId,
+            byte[] dataBinary, String nombreArchivo, String mediaType, byte[] dataBinaryPubli, String nombreArchivoPubli, String mediaTypePubli, Integer tipoEventoId, Integer tpvId,
             BigDecimal porcentajeIVA, BigDecimal retencionSGAE, BigDecimal ivaSGAE, Boolean asientosNumerados, 
             String expediente, String codigoDistribuidora, String nombreDistribuidora, String nacionalidad, String vo, String metraje, String subtitulos, String formato, Cine cine, String promotor, String nifPromotor)
     {
@@ -288,6 +306,10 @@ public class Evento
         this.imagen = dataBinary;
         this.imagenSrc = nombreArchivo;
         this.imagenContentType = mediaType;
+
+        this.imagenPubli = dataBinaryPubli;
+        this.imagenPubliSrc = nombreArchivoPubli;
+        this.imagenPubliContentType = mediaTypePubli;
 
         if (tipoEventoId != null)
         {
@@ -355,6 +377,42 @@ public class Evento
     public void setImagenContentType(String imagenContentType)
     {
         this.imagenContentType = imagenContentType;
+    }
+
+    public String getImagenSrc()
+    {
+        return imagenSrc;
+    }
+
+    @XmlTransient
+    public byte[] getImagenPubli()
+    {
+        return imagenPubli;
+    }
+
+    public void setImagenPubli(byte[] imagenPubli)
+    {
+        this.imagenPubli = imagenPubli;
+    }
+
+    public String getImagenPubliSrc()
+    {
+        return imagenPubliSrc;
+    }
+
+    public void setImagenPubliSrc(String imagenPubliSrc)
+    {
+        this.imagenPubliSrc = imagenPubliSrc;
+    }
+
+    public String getImagenPubliContentType()
+    {
+        return imagenPubliContentType;
+    }
+
+    public void setImagenPubliContentType(String imagenPubliContentType)
+    {
+        this.imagenPubliContentType = imagenPubliContentType;
     }
 
     public TipoEvento getParTiposEvento()
@@ -546,11 +604,6 @@ public class Evento
     public void setComentariosVa(String comentariosVa)
     {
         this.comentariosVa = comentariosVa;
-    }
-
-    public String getImagenSrc()
-    {
-        return imagenSrc;
     }
 
 	public Boolean getAsientosNumerados()

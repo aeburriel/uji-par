@@ -117,6 +117,11 @@ public class EventosService
         eventosDAO.deleteImagen(eventoId);
     }
 
+	public void removeImagenPubli(Integer eventoId)
+	{
+		eventosDAO.deleteImagenPubli(eventoId);
+	}
+
 	public int getTotalEventosActivos(String userUID) {
 		return eventosDAO.getTotalEventosActivos(userUID);
 	}
@@ -148,8 +153,21 @@ public class EventosService
 			return null;
 	}
 
+	public byte[] getImagenPubliSustitutivaSiExiste() throws IOException {
+		String path = configuration.getPathImagenPubliSustitutiva();
+		if (path != null) {
+			FileInputStream fis = new FileInputStream("/etc/uji/par/imagenes/" + path);
+			return IOUtils.toByteArray(fis);
+		} else
+			return null;
+	}
+
 	public String getImagenSustitutivaContentType() {
 		return configuration.getImagenSustitutivaContentType();
+	}
+
+	public String getImagenPubliSustitutivaContentType() {
+		return configuration.getImagenPubliSustitutivaContentType();
 	}
 
 	public List<Evento> getPeliculas() {

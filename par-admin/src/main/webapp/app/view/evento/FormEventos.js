@@ -31,6 +31,11 @@ Ext.define('Paranimf.view.evento.FormEventos', {
 		text : UI.i18n.button.eliminarImagen,
 		action : 'deleteImage',
 		hidden: (readOnlyUser == undefined)?false:readOnlyUser
+	}, {
+		xtype : 'button',
+		text : UI.i18n.button.eliminarImagenPubli,
+		action : 'deleteImagePubli',
+		hidden: (readOnlyUser == undefined)?false:readOnlyUser
 	} ],
 
 	items : [
@@ -154,6 +159,24 @@ Ext.define('Paranimf.view.evento.FormEventos', {
 				}, {
 					xtype : 'label',
 					id : 'imagenInsertada'
+				} ]
+			},
+
+			{
+				xtype : 'fieldset',
+				title : UI.i18n.field.imagenPubli,
+				items : [ {
+					name : 'dataBinaryPubli',
+					anchor : '100%',
+					allowBlank : true,
+					fieldLabel : UI.i18n.field.uploadImagenPubli,
+					labelWidth : 130,
+					msgTarget : 'side',
+					xtype : 'filefield',
+					buttonText : '...'
+				}, {
+					xtype : 'label',
+					id : 'imagenPubliInsertada'
 				} ]
 			},
 

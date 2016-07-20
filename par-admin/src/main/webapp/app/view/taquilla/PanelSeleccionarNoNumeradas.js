@@ -4,7 +4,7 @@ Ext.define('Paranimf.view.taquilla.PanelSeleccionarNoNumeradas', {
    	autoScroll: true,
    	border: false,
    	defaults: {
-      anchor: '100%',
+      anchor: '100%'
    	},
    	items: [{
 		name: 'localizaciones',

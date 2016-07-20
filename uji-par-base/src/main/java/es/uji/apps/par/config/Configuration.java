@@ -86,6 +86,8 @@ public class Configuration
 	private static final String ACTIVE_DIRECTORY_DC = "activedirectory.dc";
 	private static final String IMAGEN_SUSTITUTIVA = "uji.reports.imagenSustitutiva";
 	private static final String IMAGEN_SUSTITUTIVA_CONTENT_TYPE = "uji.reports.imagenSustitutivaContentType";
+	private static final String IMAGEN_PUBLI_SUSTITUTIVA = "uji.reports.imagenPubliSustitutiva";
+	private static final String IMAGEN_PUBLI_SUSTITUTIVA_CONTENT_TYPE = "uji.reports.imagenPubliSustitutivaContentType";
 	private static final String PORCENTAJE_IVA_DEFECTO = "uji.par.porcentajeIvaDefecto";
     private static final String TIPOS_INFORME = "uji.reports.tipos";
 	private static final String TIPOS_INFORME_GENERALES = "uji.reports.tiposGenerales";
@@ -549,8 +551,16 @@ public class Configuration
 		return getNoObligatoryProperty(IMAGEN_SUSTITUTIVA);
 	}
 
+	public String getPathImagenPubliSustitutiva() {
+		return getNoObligatoryProperty(IMAGEN_PUBLI_SUSTITUTIVA);
+	}
+
 	public String getImagenSustitutivaContentType() {
 		return getNoObligatoryProperty(IMAGEN_SUSTITUTIVA_CONTENT_TYPE);
+	}
+
+	public String getImagenPubliSustitutivaContentType() {
+		return getNoObligatoryProperty(IMAGEN_PUBLI_SUSTITUTIVA_CONTENT_TYPE);
 	}
 
 	public String getPorcentajeIvaDefecto() {
