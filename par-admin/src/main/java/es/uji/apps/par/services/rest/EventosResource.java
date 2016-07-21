@@ -187,10 +187,11 @@ public class EventosResource
                 .build();
     }
 
+    //@Produces(MediaType.APPLICATION_JSON)
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response addEvento(@FormDataParam("tituloEs") String tituloEs,
+    @Produces({"text/html"})
+    public String addEvento(@FormDataParam("tituloEs") String tituloEs,
             @FormDataParam("descripcionEs") String descripcionEs,
             @FormDataParam("companyiaEs") String companyiaEs,
             @FormDataParam("interpretesEs") String interpretesEs,
@@ -254,8 +255,12 @@ public class EventosResource
         Evento newEvento = eventosService.addEvento(evento);
 
         // TODO -> crear URL
-        return Response.created(URI.create(""))
-                .entity(new RestResponse(true, Arrays.asList(newEvento), 1)).build();
+        /*return Response.created(URI.create(""))
+        .entity(new RestResponse(true, Arrays.asList(newEvento), 1)).build();*/
+
+        // devolvemos el json como text/html ya que un content-type json hace que el explorer no lo acepte al hacer la petición vía submit en lugar de ajax-request
+
+        return "{success: 'true'}";
     }
 
     @POST
