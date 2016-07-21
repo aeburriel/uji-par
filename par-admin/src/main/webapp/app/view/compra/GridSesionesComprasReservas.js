@@ -70,6 +70,6 @@ Ext.define('Paranimf.view.compra.GridSesionesComprasReservas', {
   },
 
   showVerComprasWindow: function() {
-    this.createPercentageModalWindow('panelCompras', undefined, 0.8, UI.i18n.gridTitle.compras, false).show();
+    this.createPercentageModalWindow('panelCompras', undefined, 0.95, UI.i18n.gridTitle.compras, false).show();
   }
 });
