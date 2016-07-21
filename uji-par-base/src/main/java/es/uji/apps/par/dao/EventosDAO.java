@@ -328,10 +328,9 @@ public class EventosDAO extends BaseDAO
 
         entityManager.persist(eventoDTO);
 
-        evento.setId(eventoDTO.getId());
-        evento.setParTpv(new Tpv(eventoDTO.getParTpv()));
         updateEventosMultisesion(eventoDTO.getId(), evento.getEventosMultisesion());
-        return evento;
+
+        return new Evento(eventoDTO, false);
     }
 
     @Transactional

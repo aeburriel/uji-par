@@ -232,7 +232,10 @@ public class Evento
 
         if (eventoDTO.getImagenPubli() != null)
         {
-            this.imagenPubli = eventoDTO.getImagenPubli();
+            if (crearConImagen)
+            {
+                this.imagenPubli = eventoDTO.getImagenPubli();
+            }
             this.imagenPubliContentType = eventoDTO.getImagenPubliContentType();
             this.imagenPubliSrc = eventoDTO.getImagenPubliSrc();
         }
