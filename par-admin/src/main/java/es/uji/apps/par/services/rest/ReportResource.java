@@ -195,6 +195,28 @@ public class ReportResource extends BaseResource {
                 .type("application/pdf").build();
     }
 
+	@POST
+	@Path("taquilla/{fechaInicio}/{fechaFin}/tpv/online/pdf")
+	@Produces("application/pdf")
+	public Response generatePdfTpvOnline(@PathParam("fechaInicio") String fechaInicio, @PathParam("fechaFin") String fechaFin) throws
+			TranscoderException, IOException, ReportSerializationException, ParseException {
+		ByteArrayOutputStream ostream = new ByteArrayOutputStream();
+
+		try {
+			String userUID = AuthChecker.getUserUID(currentRequest);
+			reportService.getPdfTpvOnlineSubtotales(fechaInicio, fechaFin, ostream, getLocale(), userUID);
+		} catch (SinIvaException e) {
+			log.error("Error", e);
+
+			String errorMsj = String.format("ERROR: Cal introduir l'IVA de l'event \"%s\"", e.getEvento());
+			return Response.serverError().type(MediaType.TEXT_PLAIN).entity(errorMsj).build();
+		}
+
+		return Response.ok(ostream.toByteArray())
+				.header("Content-Disposition", "attachment; filename =\"informeOnline " + fechaInicio + "-" + fechaFin + ".pdf\"")
+				.type("application/pdf").build();
+	}
+
     @POST
     @Path("taquilla/{fechaInicio}/{fechaFin}/eventos/pdf")
     @Produces("application/pdf")

@@ -617,9 +617,29 @@ public class ComprasDAO extends BaseDAO {
 		return sql;
 	}
 
+	private String getSQLCompraIsTPVOnline() {
+		String sql = "and ((c.codigo_pago_tarjeta is not null "
+				+ "or c.codigo_pago_pasarela is not null "
+				+ "or c.referencia_pago is not null) "
+				+ "and c.taquilla = " + dbHelper.falseString() + ") ";
+		return sql;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<Object[]> getComprasTpv(String fechaInicio, String fechaFin, String userUID) {
+		return getComprasTpvType(fechaInicio, fechaFin, userUID, false);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<Object[]> getComprasTpvOnline(String fechaInicio, String fechaFin, String userUID) {
+		return getComprasTpvType(fechaInicio, fechaFin, userUID, true);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Transactional
+	private List<Object[]> getComprasTpvType(String fechaInicio, String fechaFin, String userUID, boolean onlyOnline) {
 		String formato = "DD";
 		String sql = "select e.titulo_es, s.fecha_celebracion, b.tipo, count(b.id) as cantidad, sum(b.precio) as total, c.sesion_id, "
 				+ "e.porcentaje_iva, "
@@ -631,7 +651,7 @@ public class ComprasDAO extends BaseDAO {
 				+ "and sala.id = s.sala_id and u.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = u.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
 				+ "and (c.caducada is null or c.caducada = " + dbHelper.falseString() + ") "
-				+ getSQLCompraIsTPV(true)
+				+ (onlyOnline ? getSQLCompraIsTPVOnline() : getSQLCompraIsTPV(true))
 				+ "and f.id = " + dbHelper.toInteger("b.tipo") + " "
 				+ "group by c.sesion_id, e.titulo_es, b.tipo, s.fecha_celebracion, e.porcentaje_iva, "
 				+ dbHelper.trunc("c.fecha", formato) + ", f.nombre "

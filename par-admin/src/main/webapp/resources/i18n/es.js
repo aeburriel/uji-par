@@ -224,6 +224,7 @@ UI =
             "anularEntrada": "Anular entrada individual",
             "cambiarButaca": "Cambiar butaca",
             "generatePdfTpv": "PDF de TPV",
+            "generatePdfTpvOnline": "PDF de TPV online",
             "saveFileICAA": "Generar fichero para el ICAA",
             "reply": "Responder",
             "printEntradaDirectamente": "Imprimir directamente",

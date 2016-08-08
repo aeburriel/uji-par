@@ -39,8 +39,12 @@ Ext.define('Paranimf.controller.Informes', {
          
          'panelInformes button[action=generatePdfTpv]': {
            click: this.generatePdfTpv
-         }, 
-         
+         },
+
+         'panelInformes button[action=generatePdfTpvOnline]': {
+            click: this.generatePdfTpvOnline
+         },
+
          'panelInformes button[action=generatePdfEventos]': {
            click: this.generatePdfEventos
          },          
@@ -242,8 +246,26 @@ Ext.define('Paranimf.controller.Informes', {
 
       document.body.appendChild(form);
       form.submit();
-   }, 
-   
+   },
+
+   generatePdfTpvOnline: function(button, event, opts) {
+      console.log(this.getFechaInicio(), this.getFechaFin());
+
+      if (!this.sonFechasValidas(this.getFechaInicio().value, this.getFechaFin().value))
+         return;
+
+      var strFechaInicio = this.getStrFecha(this.getFechaInicio().value);
+      var strFechaFin = this.getStrFecha(this.getFechaFin().value);
+
+      var form = document.createElement("form");
+      form.setAttribute("method", "post");
+      form.setAttribute("action", urlPrefix + 'report/taquilla/' + strFechaInicio + '/' + strFechaFin + '/tpv/online/pdf');
+      form.setAttribute("target", "_blank");
+
+      document.body.appendChild(form);
+      form.submit();
+   },
+
    generatePdfEventos: function(button, event, opts) {
       console.log(this.getFechaInicio(), this.getFechaFin());
       

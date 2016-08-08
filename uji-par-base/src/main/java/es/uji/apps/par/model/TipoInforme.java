@@ -55,7 +55,10 @@ public class TipoInforme {
 				"\"suffix\": \"/pdf\"},{\"id\":\"pdfEfectiu\",\"nombreCA\":\"PDF de taquilla en efectiu\"," +
 				"\"nombreES\":\"PDF de taquilla en efectivo\", \"prefix\": \"taquilla/\", \"suffix\": \"/efectivo/pdf\"}," +
 				"{\"id\":\"pdfTpv\",\"nombreCA\":\"PDF de TPVs\",\"nombreES\":\"PDF de TPVs\", " +
-				"\"prefix\": \"taquilla/\", \"suffix\": \"/tpv/pdf\"},{\"id\":\"pdfSGAE\",\"nombreCA\":\"PDF SGAE\",\"nombreES\":\"PDF SGAE\", \"prefix\": \"taquilla/\", \"suffix\": \"/eventos/pdf\"}]";
+				"\"prefix\": \"taquilla/\", \"suffix\": \"/tpv/pdf\"}, " +
+				"{\"id\":\"pdfTpvOnline\",\"nombreCA\":\"PDF de TPVs online\",\"nombreES\":\"PDF de TPVs online\", " +
+				"\"prefix\": \"taquilla/\", \"suffix\": \"/tpv/online/pdf\"}, " +
+				"{\"id\":\"pdfSGAE\",\"nombreCA\":\"PDF SGAE\",\"nombreES\":\"PDF SGAE\", \"prefix\": \"taquilla/\", \"suffix\": \"/eventos/pdf\"}]";
 	}
 
 	public String getPrefix() {

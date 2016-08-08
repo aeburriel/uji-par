@@ -231,6 +231,7 @@ UI =
             "generatePdfTaquilla": "PDF de taquilla",
             "generatePdfEfectivo": "PDF d'efectiu",
             "generatePdfTpv": "PDF de TPV",
+            "generatePdfTpvOnline": "PDF de TPV online",
             "generatePdfEventos": "PDF SGAE",
             "saveFileICAA": "Generar fitxer per a l'ICAA",
             "marcarComoEnviados": "Marcar com a enviades a l'ICAA",
