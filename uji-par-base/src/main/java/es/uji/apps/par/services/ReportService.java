@@ -327,14 +327,31 @@ public class ReportService {
 		informe.serialize(bos);
 	}
 
+	public void getPdfTpvOnlineSubtotales(String fechaInicio, String fechaFin, OutputStream bos, Locale locale, String userUID) throws
+			ReportSerializationException, ParseException, SinIvaException {
+		InformeInterface informe = generaYRellenaInformePDFOnlineTPVSubtotales(fechaInicio, fechaFin, locale, userUID);
+		informe.serialize(bos);
+	}
+
 	public InformeInterface generaYRellenaInformePDFTaquillaTPVSubtotales(String fechaInicio, String fechaFin, Locale locale,
 			String userUID) throws ParseException {
+		return generaYRellenaInformePDFTypeTPVSubtotales(fechaInicio, fechaFin, locale, userUID, false);
+	}
+
+	public InformeInterface generaYRellenaInformePDFOnlineTPVSubtotales(String fechaInicio, String fechaFin, Locale locale,
+			String userUID) throws ParseException {
+		return generaYRellenaInformePDFTypeTPVSubtotales(fechaInicio, fechaFin, locale, userUID, true);
+	}
+
+	private InformeInterface generaYRellenaInformePDFTypeTPVSubtotales(String fechaInicio, String fechaFin, Locale locale,
+			String userUID, boolean onlyOnline) throws ParseException {
 		String className = usuariosDAO.getReportClassNameForUserAndType(userUID, EntradaReportFactory
 				.TIPO_INFORME_PDF_TAQUILLA_TPV_SUBTOTALES);
 		InformeInterface informeTaquillaTpvSubtotalesReport = EntradaReportFactory.newInstanceInformeTaquillaTpvSubtotalesReport
 				(className);
 		InformeInterface informe = informeTaquillaTpvSubtotalesReport.create(locale, configuration);
-		List<InformeModelReport> compras = objectsSesionesToInformesTpv(comprasDAO.getComprasTpv(fechaInicio, fechaFin, userUID));
+		List<Object[]> comprasTpv = onlyOnline ? comprasDAO.getComprasTpvOnline(fechaInicio, fechaFin, userUID) : comprasDAO.getComprasTpv(fechaInicio, fechaFin, userUID);
+		List<InformeModelReport> compras = objectsSesionesToInformesTpv(comprasTpv);
 
 		informe.genera(getSpanishStringDateFromBBDDString(fechaInicio), getSpanishStringDateFromBBDDString(fechaFin),
 				compras, null, configuration.getCargoInformeEfectivo(), configuration.getFirmanteInformeEfectivo());
