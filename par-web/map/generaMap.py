@@ -147,7 +147,10 @@ def genera_minimap(fichero):
         butaca['yIni'] = butaca['yIni'] / 2
 
         style = 'minimapa'
-        st += '<div th:class="\'%s \' + ${estilosOcupadas.%s_%s_%s != null ? estilosOcupadas.%s_%s_%s : \'mapaLibre\'}" style="position: absolute;left: %spx;top: %spx;"></div>\n'%(style, butaca['localizacion'], butaca['fila'], butaca['numero'], butaca['localizacion'], butaca['fila'], butaca['numero'], butaca['xIni'], butaca['yIni'])
+        st += '<div id="%s-%s-%s-mini" th:class="\'%s \' + ${estilosOcupadas.%s_%s_%s != null ? estilosOcupadas.%s_%s_%s : \'mapaLibre\'}" style="position: absolute;left: %spx;top: %spx;"></div>\n'%(butaca['localizacion'], butaca['fila'], butaca['numero'], style, butaca['localizacion'],
+                                                                                                                                                                                                       butaca['fila'], butaca['numero'], butaca['localizacion'],
+                                                                                                                                                                                                       butaca['fila'],
+                                                                                                                                                                                     butaca['numero'], butaca['xIni'], butaca['yIni'])
 
 
     return st
