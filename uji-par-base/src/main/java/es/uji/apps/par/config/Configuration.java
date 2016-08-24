@@ -577,9 +577,9 @@ public class Configuration
 
 	public boolean isDebug() {
 		String debug = getNoObligatoryProperty(ENTORNO);
-		if (debug != null && debug.toLowerCase().equals("devel"))
+		if (debug == null || !debug.toLowerCase().equals("prod"))
 			return true;
-
+		else
 			return false;
 	}
 
