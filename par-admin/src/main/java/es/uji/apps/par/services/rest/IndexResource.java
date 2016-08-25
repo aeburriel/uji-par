@@ -3,7 +3,6 @@ package es.uji.apps.par.services.rest;
 import com.sun.jersey.api.core.InjectParam;
 import es.uji.apps.par.auth.AuthChecker;
 import es.uji.apps.par.auth.Authenticator;
-import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.exceptions.Constantes;
 import es.uji.apps.par.i18n.ResourceProperties;
 import es.uji.apps.par.services.UsersService;
@@ -14,6 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 @Path("index")
@@ -21,9 +23,6 @@ public class IndexResource extends BaseResource
 {
     @InjectParam
     private UsersService usersService;
-
-	@InjectParam
-	Configuration configuration;
 
     @Context
     HttpServletRequest currentRequest;
@@ -41,7 +40,7 @@ public class IndexResource extends BaseResource
 
         String userUID = AuthChecker.getUserUID(currentRequest);
         template.put("user", usersService.getUserById(userUID).getNombre());
-        template.put("urlPublic", configuration.getUrlPublic());
+        template.put("urlPublic", configurationSelector.getUrlPublic());
 		template.put("allowMultisesion", configuration.getAllowMultisesion());
         template.put("payModes", configuration.getPayModes(getLocale()));
         template.put("lang", getLocale().getLanguage());
@@ -60,6 +59,17 @@ public class IndexResource extends BaseResource
         template.put("clientes", configuration.isMenuClientes());
 
         return template;
+    }
+
+    @GET
+    @Path("public/properties")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response index() throws Exception
+    {
+        List<String> properties = new ArrayList<>();
+        properties.add(configurationSelector.getUrlPublic());
+
+        return Response.ok().entity(new RestResponse(true, properties, 1)).build();
     }
 
     private String getMenu(boolean readOnlyUser) {

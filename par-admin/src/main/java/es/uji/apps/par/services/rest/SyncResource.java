@@ -53,7 +53,7 @@ public class SyncResource extends BaseResource {
                 if (syncUrlsHeaderToken != null && syncUrlsToken != null)
                     urlConnection.setRequestProperty(syncUrlsHeaderToken, syncUrlsToken);
 
-                Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
+                Usuario user = usersService.getUserByServerName(uri.getBaseUri().toString());
                 eventosSyncService.sync(urlConnection.getInputStream(), user.getUsuario());
             } catch (Exception e) {
                 if (urlRssException != null)

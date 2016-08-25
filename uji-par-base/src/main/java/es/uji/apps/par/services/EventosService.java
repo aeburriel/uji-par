@@ -131,10 +131,10 @@ public class EventosService
 	}
 
 	//url: "http://www.example.com/test/23173?idioma=##IDIOMA##"
-	public List<EventoParaSync> getEventosActivosParaVentaOnline() {
+	public List<EventoParaSync> getEventosActivosParaVentaOnline(String urlPublic) {
 		List<EventoDTO> eventosDTO = eventosDAO.getEventosActivosParaVentaOnline();
 		List<EventoParaSync> eventosParaSync = new ArrayList<EventoParaSync>();
-		String urlPrefix = configuration.getUrlPublic() + "/rest/evento/";
+		String urlPrefix = urlPublic + "/rest/evento/";
 		String urlSuffix = "?lang=##IDIOMA##";
 		
 		for (EventoDTO eventoDTO: eventosDTO) {

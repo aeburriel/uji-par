@@ -1,13 +1,12 @@
 package es.uji.apps.par.model;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-
-import javax.xml.bind.annotation.XmlRootElement;
-
+import es.uji.apps.par.db.CineDTO;
 import es.uji.apps.par.exceptions.GeneralPARException;
 import es.uji.apps.par.exceptions.RegistroSerializaException;
-import es.uji.apps.par.db.CineDTO;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 @XmlRootElement
 public class Cine implements Serializable
@@ -26,6 +25,7 @@ public class Cine implements Serializable
     private String codigoRegistro;
     private String telefono;
     private BigDecimal iva;
+    private String urlPublic;
 
     public Cine()
     {
@@ -63,6 +63,7 @@ public class Cine implements Serializable
         cineDTO.setCodigoRegistro(cine.getCodigoRegistro());
         cineDTO.setTelefono(cine.getTelefono());
         cineDTO.setIva(cine.getIva());
+        cineDTO.setUrlPublic(cine.getUrlPublic());
 
         return cineDTO;
     }
@@ -83,6 +84,7 @@ public class Cine implements Serializable
         cine.setCodigoRegistro(cineDTO.getCodigoRegistro());
         cine.setTelefono(cineDTO.getTelefono());
         cine.setIva(cineDTO.getIva());
+        cine.setUrlPublic(cineDTO.getUrlPublic());
 
         return cine;
     }
@@ -206,7 +208,17 @@ public class Cine implements Serializable
     {
         this.iva = iva;
     }
-    
+
+    public String getUrlPublic()
+    {
+        return urlPublic;
+    }
+
+    public void setUrlPublic(String urlPublic)
+    {
+        this.urlPublic = urlPublic;
+    }
+
     public static void checkValidity(String codi) throws RegistroSerializaException {
     	if (codi == null)
             throw new RegistroSerializaException(GeneralPARException.CODIGO_CINE_NULO_CODE);

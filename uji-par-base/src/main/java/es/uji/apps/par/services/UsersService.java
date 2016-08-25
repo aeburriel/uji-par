@@ -57,14 +57,14 @@ public class UsersService
 		return usuariosDAO.getTotalUsuarios();
 	}
 
-    public Usuario getUserByDomainUrl(String domainUrl)
+    public Usuario getUserByServerName(String serverName)
     {
-        return usuariosDAO.getUserByDomainUrl(domainUrl.replaceFirst("^(http://|https://)",""));
+        return usuariosDAO.getUserByServerName(serverName);
     }
 
-    public Cine getUserCineByDomainUrl(String domainUrl)
+    public Cine getUserCineByServerName(String serverName)
     {
-        return usuariosDAO.getUserCineByDomainUrl(domainUrl.replaceFirst("^(http://|https://)",""));
+        return usuariosDAO.getUserCineByServerName(serverName);
     }
 
     public Cine getUserCineByUserUID(String userUID)

@@ -2,7 +2,6 @@ package es.uji.apps.par.services.rest.crm;
 
 import com.sun.jersey.api.core.InjectParam;
 import es.uji.apps.par.auth.AuthChecker;
-import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.exceptions.ButacaOcupadaException;
 import es.uji.apps.par.exceptions.CompraSinButacasException;
 import es.uji.apps.par.exceptions.NoHayButacasLibresException;
@@ -36,9 +35,6 @@ public class CrmResource extends BaseResource {
 
     @InjectParam
     private ButacasService butacasService;
-
-	@InjectParam
-	Configuration configuration;
 
     @Context
     HttpServletRequest currentRequest;
@@ -108,7 +104,7 @@ public class CrmResource extends BaseResource {
 
                     if (resultadoCompra.getCorrecta()) {
                         comprasService.marcaPagada(resultadoCompra.getId());
-                        String urlPdf = configuration.getUrlPublic() + "/rest/compra/" + resultadoCompra.getUuid() + "/pdf";
+                        String urlPdf = configurationSelector.getUrlPublic() + "/rest/compra/" + resultadoCompra.getUuid() + "/pdf";
                         return Response.ok(new ResponseMessage(true, urlPdf)).build();
                     }
                     else {

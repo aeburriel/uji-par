@@ -1,20 +1,18 @@
 package es.uji.apps.par.services.rest;
 
 import com.sun.jersey.api.core.InjectParam;
-import es.uji.apps.par.exceptions.Constantes;
 import es.uji.apps.par.builders.PublicPageBuilderInterface;
-import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.db.CompraDTO;
+import es.uji.apps.par.exceptions.Constantes;
 import es.uji.apps.par.i18n.ResourceProperties;
 import es.uji.apps.par.services.ComprasService;
 import es.uji.apps.par.services.EntradasService;
-import es.uji.apps.par.tpv.TpvInterface;
 import es.uji.apps.par.services.MailService;
+import es.uji.apps.par.tpv.TpvInterface;
 import es.uji.commons.web.template.HTMLTemplate;
 import es.uji.commons.web.template.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,9 +43,6 @@ public class TpvResource extends BaseResource implements TpvInterface
     
     @Context
     private HttpServletRequest request;
-
-	@InjectParam
-	Configuration configuration;
 
 	@InjectParam
 	private PublicPageBuilderInterface publicPageBuilderInterface;
@@ -116,7 +111,7 @@ public class TpvResource extends BaseResource implements TpvInterface
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "compraValida", locale, APP);
         String url = request.getRequestURL().toString();
 
-        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(configuration.getUrlPublic(), url,
+        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(configurationSelector.getUrlPublic(), url,
 				language.toString()));
         template.put("baseUrl", getBaseUrlPublic());
 

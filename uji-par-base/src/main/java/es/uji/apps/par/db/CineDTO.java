@@ -51,6 +51,9 @@ public class CineDTO implements Serializable {
     @Column(name = "IVA")
     private BigDecimal iva;
 
+	@Column(name = "URL_PUBLIC")
+	private String urlPublic;
+
 	@OneToMany(mappedBy = "parCine", fetch=FetchType.LAZY)
 	private List<SalaDTO> parSalas;
 	
@@ -72,7 +75,7 @@ public class CineDTO implements Serializable {
 	
 	public CineDTO(String codigo, String nombre, String cif, String direccion,
             String codigoMunicipio, String nombreMunicipio, String cp, String empresa, String codigoRegistro,
-            String telefono, BigDecimal iva)
+            String telefono, BigDecimal iva, String urlPublic)
     {
         this.codigo = codigo;
         this.nombre = nombre;
@@ -85,6 +88,7 @@ public class CineDTO implements Serializable {
         this.codigoRegistro = codigoRegistro;
         this.telefono = telefono;
         this.iva = iva;
+		this.urlPublic = urlPublic;
     }
 
 	public CineDTO(long id) {
@@ -252,5 +256,15 @@ public class CineDTO implements Serializable {
 	public void setParTiposEvento(List<TipoEventoDTO> parTiposEvento)
 	{
 		this.parTiposEvento = parTiposEvento;
+	}
+
+	public String getUrlPublic()
+	{
+		return urlPublic;
+	}
+
+	public void setUrlPublic(String urlPublic)
+	{
+		this.urlPublic = urlPublic;
 	}
 }

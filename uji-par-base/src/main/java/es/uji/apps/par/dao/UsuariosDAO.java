@@ -63,6 +63,7 @@ public class UsuariosDAO extends BaseDAO
 		usuarioDTO.setNombre(user.getNombre());
 		usuarioDTO.setMail(user.getMail());
 		usuarioDTO.setUsuario(user.getUsuario());
+		usuarioDTO.setUrl(user.getUrl());
 
 		entityManager.persist(usuarioDTO);
 
@@ -122,11 +123,11 @@ public class UsuariosDAO extends BaseDAO
 		return query.from(qUsuarioDTO).join(qUsuarioDTO.parSalasUsuario, qSalasUsuarioDTO).join(qSalasUsuarioDTO.parSala, qSalaDTO).join(qSalaDTO.parReports, qReportDTO).where(qUsuarioDTO.usuario.toUpperCase().eq(login.toUpperCase()).and(qReportDTO.tipo.toUpperCase().eq(tipoInformePdf.toUpperCase()))).uniqueResult(qReportDTO.clase);
 	}
 
-	public Usuario getUserByDomainUrl(String domainUrl)
+	public Usuario getUserByServerName(String serverName)
 	{
 		JPAQuery query = new JPAQuery(entityManager);
 
-		List<UsuarioDTO> users = query.from(qUserDTO).where(qUserDTO.url.eq(domainUrl)).list(qUserDTO);
+		List<UsuarioDTO> users = query.from(qUserDTO).where(qUserDTO.url.eq(serverName)).list(qUserDTO);
 
 		if (users.size() > 0)
 		{
@@ -141,7 +142,7 @@ public class UsuariosDAO extends BaseDAO
 		}
 	}
 
-	public Cine getUserCineByDomainUrl(String domainUrl)
+	public Cine getUserCineByServerName(String serverName)
 	{
 		JPAQuery query = new JPAQuery(entityManager);
 		QUsuarioDTO qUsuarioDTO = QUsuarioDTO.usuarioDTO;
@@ -149,7 +150,7 @@ public class UsuariosDAO extends BaseDAO
 		QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
 		QCineDTO qCineDTO = QCineDTO.cineDTO;
 
-		List<CineDTO> cines = query.from(qUsuarioDTO).join(qUsuarioDTO.parSalasUsuario, qSalasUsuarioDTO).join(qSalasUsuarioDTO.parSala, qSalaDTO).join(qSalaDTO.parCine, qCineDTO).where(qUserDTO.url.eq(domainUrl)).list(qCineDTO);
+		List<CineDTO> cines = query.from(qUsuarioDTO).join(qUsuarioDTO.parSalasUsuario, qSalasUsuarioDTO).join(qSalasUsuarioDTO.parSala, qSalaDTO).join(qSalaDTO.parCine, qCineDTO).where(qUserDTO.url.eq(serverName)).list(qCineDTO);
 
 		return Cine.cineDTOToCine(cines.get(0));
 	}

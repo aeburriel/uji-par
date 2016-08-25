@@ -35,7 +35,7 @@ public class ComprasResource extends BaseResource
     @Produces("application/pdf")
     public Response datosEntrada(@PathParam("id") String uuidCompra) throws Exception
     {
-        Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
+        Usuario user = usersService.getUserByServerName(uri.getBaseUri().toString());
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 

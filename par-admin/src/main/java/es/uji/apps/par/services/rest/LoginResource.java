@@ -1,8 +1,6 @@
 package es.uji.apps.par.services.rest;
 
-import com.sun.jersey.api.core.InjectParam;
 import es.uji.apps.par.auth.Authenticator;
-import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.exceptions.Constantes;
 import es.uji.commons.web.template.HTMLTemplate;
 import es.uji.commons.web.template.Template;
@@ -18,15 +16,12 @@ import javax.ws.rs.core.Response;
 @Path("login")
 public class LoginResource extends BaseResource
 {
-	@InjectParam
-	Configuration configuration;
-
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Template index(@QueryParam("error") boolean error) throws Exception
     {
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "login", getLocale(), APP);
-        template.put("urlPublic", configuration.getUrlPublic());
+        template.put("urlPublic", configurationSelector.getUrlPublic());
 		Boolean errorLogin = (Boolean) currentRequest.getSession().getAttribute(Authenticator.ERROR_LOGIN);
 
 		if (errorLogin != null && errorLogin)

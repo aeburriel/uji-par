@@ -2,10 +2,10 @@ package es.uji.apps.par.services.rest;
 
 import com.sun.jersey.api.client.ClientResponse.Status;
 import com.sun.jersey.api.core.InjectParam;
-import es.uji.apps.par.exceptions.ResponseMessage;
 import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.config.ConfigurationSelector;
+import es.uji.apps.par.exceptions.ResponseMessage;
 import es.uji.apps.par.i18n.ResourceProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +24,9 @@ public class BaseResource
 
 	@InjectParam
 	Configuration configuration;
+
+    @InjectParam
+    protected ConfigurationSelector configurationSelector;
 
     protected Locale getLocale()
     {
@@ -91,7 +94,7 @@ public class BaseResource
 
     protected String getBaseUrlPublic()
     {
-        return configuration.getUrlPublic();
+        return configurationSelector.getUrlPublic();
     }
     
     
@@ -100,7 +103,7 @@ public class BaseResource
     protected String getBaseUrlPublicLimpio()
     {
     	String urlPublicLimpio = configuration.getUrlPublicLimpio(); 
-        urlPublicLimpio = (urlPublicLimpio == null)?configuration.getUrlPublic():urlPublicLimpio;
+        urlPublicLimpio = (urlPublicLimpio == null)? configurationSelector.getUrlPublic():urlPublicLimpio;
         return urlPublicLimpio;
     }
 

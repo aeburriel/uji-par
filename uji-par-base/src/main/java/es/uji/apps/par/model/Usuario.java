@@ -1,8 +1,8 @@
 package es.uji.apps.par.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import es.uji.apps.par.db.UsuarioDTO;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class Usuario
@@ -11,6 +11,7 @@ public class Usuario
     private String nombre;
     private String mail;
     private String usuario;
+    private String url;
 
     public Usuario()
     {
@@ -22,6 +23,7 @@ public class Usuario
         this.nombre = usuarioDTO.getNombre();
         this.mail = usuarioDTO.getMail();
         this.usuario = usuarioDTO.getUsuario();
+        this.url = usuarioDTO.getUrl();
     }
 
     public long getId()
@@ -62,5 +64,15 @@ public class Usuario
     public void setUsuario(String usuario)
     {
         this.usuario = usuario;
+    }
+
+    public String getUrl()
+    {
+        return url;
+    }
+
+    public void setUrl(String url)
+    {
+        this.url = url;
     }
 }

@@ -20,7 +20,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.ParseException;
@@ -48,9 +47,6 @@ public class EventosResource extends BaseResource {
     @InjectParam
     private PublicPageBuilderInterface publicPageBuilderInterface;
 
-    @Context
-    UriInfo uri;
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getEventos() {
@@ -58,7 +54,7 @@ public class EventosResource extends BaseResource {
             return apiAccessDenied();
         }
 
-        Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
+        Usuario user = usersService.getUserByServerName(request.getServerName());
         List<Evento> eventos = eventosService.getEventosConSesiones(user.getUsuario());
 
         imagenesANull(eventos);
@@ -76,7 +72,7 @@ public class EventosResource extends BaseResource {
 
         List<EventoParaSync> eventos;
 
-        eventos = eventosService.getEventosActivosParaVentaOnline();
+        eventos = eventosService.getEventosActivosParaVentaOnline(configurationSelector.getUrlPublic());
         return Response.ok().entity(eventos).build();
     }
 
@@ -92,7 +88,7 @@ public class EventosResource extends BaseResource {
     @Produces(MediaType.TEXT_HTML)
     public Template getEventos(@QueryParam("lang") String lang) throws Exception {
         try {
-            Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
+            Usuario user = usersService.getUserByServerName(request.getServerName());
             List<Evento> eventosActivos = eventosService.getEventosActivos("[{\"property\":\"fechaPrimeraSesion\",\"direction\":\"ASC\"}]", 0, 1000, user.getUsuario());
 
             return getTemplateEventos(eventosActivos, lang);
@@ -106,7 +102,7 @@ public class EventosResource extends BaseResource {
     @Produces(MediaType.TEXT_HTML)
     public Template getEvento(@PathParam("contenidoId") Long contenidoId, @QueryParam("lang") String lang) throws Exception {
         try {
-            Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
+            Usuario user = usersService.getUserByServerName(request.getServerName());
             Evento evento = eventosService.getEventoByRssId(contenidoId, user.getUsuario());
 			List<Sesion> sesiones = sesionesService.getSesiones(evento.getId(), user.getUsuario());
 			evento.setSesiones(sesiones);
@@ -122,7 +118,7 @@ public class EventosResource extends BaseResource {
     @Produces(MediaType.TEXT_HTML)
     public Template getEventoById(@PathParam("id") Long id, @QueryParam("lang") String lang) throws Exception {
         try {
-            Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
+            Usuario user = usersService.getUserByServerName(request.getServerName());
             Evento evento = eventosService.getEvento(id, user.getUsuario());
 			List<Sesion> sesiones = sesionesService.getSesiones(evento.getId(), user.getUsuario());
 			evento.setSesiones(sesiones);
@@ -134,7 +130,7 @@ public class EventosResource extends BaseResource {
     }
 
     private Template getTemplateEventoNoEncontrado() throws MalformedURLException, ParseException {
-        Cine cine = usersService.getUserCineByDomainUrl(uri.getBaseUri().toString());
+        Cine cine = usersService.getUserCineByServerName(request.getServerName());
 
         Locale locale = getLocale();
         String language = locale.getLanguage();
@@ -152,7 +148,7 @@ public class EventosResource extends BaseResource {
     private Template getTemplateEventos(List<Evento> eventos, String langparam) throws MalformedURLException, ParseException {
         borrarEntradasSeleccionadasConAnterioridad();
 
-        Cine cine = usersService.getUserCineByDomainUrl(uri.getBaseUri().toString());
+        Cine cine = usersService.getUserCineByServerName(request.getServerName());
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + cine.getCodigo() + "/eventosListado", getLocale(), APP);
 
         String language = getLocale(langparam).getLanguage();
@@ -290,7 +286,7 @@ public class EventosResource extends BaseResource {
     @Path("{id}/imagen")
     public Response getImagenEvento(@PathParam("id") Long eventoId) throws IOException {
         try {
-            Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
+            Usuario user = usersService.getUserByServerName(request.getServerName());
             Evento evento = eventosService.getEvento(eventoId, user.getUsuario());
 
 			byte[] imagen = (evento.getImagen() != null) ? evento.getImagen() : eventosService.getImagenSustitutivaSiExiste();
@@ -306,7 +302,7 @@ public class EventosResource extends BaseResource {
     @Path("{id}/imagenPubli")
     public Response getImagenPubliEvento(@PathParam("id") Long eventoId) throws IOException {
         try {
-            Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
+            Usuario user = usersService.getUserByServerName(request.getServerName());
             Evento evento = eventosService.getEvento(eventoId, user.getUsuario());
 
             byte[] imagenPubli = (evento.getImagenPubli() != null) ? evento.getImagenPubli() : eventosService.getImagenPubliSustitutivaSiExiste();
@@ -322,7 +318,7 @@ public class EventosResource extends BaseResource {
     @Path("{id}/imagenEntrada")
     public Response getImagenEntrada(@PathParam("id") Long eventoId) throws IOException, ImageReadException {
         try {
-            Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
+            Usuario user = usersService.getUserByServerName(request.getServerName());
             Evento evento = eventosService.getEvento(eventoId, user.getUsuario());
 
             byte[] imagen = (evento.getImagen() != null) ? evento.getImagen() : eventosService.getImagenSustitutivaSiExiste();
@@ -344,7 +340,7 @@ public class EventosResource extends BaseResource {
     @Path("{id}/imagenPubliEntrada")
     public Response getImagenPubliEntrada(@PathParam("id") Long eventoId) throws IOException, ImageReadException {
         try {
-            Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
+            Usuario user = usersService.getUserByServerName(request.getServerName());
             Evento evento = eventosService.getEvento(eventoId, user.getUsuario());
 
             byte[] imagenPubli = (evento.getImagenPubli() != null) ? evento.getImagenPubli() : eventosService.getImagenPubliSustitutivaSiExiste();

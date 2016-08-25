@@ -90,7 +90,7 @@ public class EntradasResource extends BaseResource {
     @Path("{id}")
     @Produces(MediaType.TEXT_HTML)
     public Response datosEntrada(@PathParam("id") Long sesionId) throws Exception {
-        Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
+        Usuario user = usersService.getUserByServerName(uri.getBaseUri().toString());
         Sesion sesion = sesionesService.getSesion(sesionId, user.getUsuario());
         if (sesion.getCanalInternet() && (sesion.getAnulada() == null || sesion.getAnulada() == false)) {
             currentRequest.getSession().setAttribute(EntradasService.ID_SESION, sesionId);
@@ -255,7 +255,7 @@ public class EntradasResource extends BaseResource {
                                       @FormParam("platea1Normal") String platea1Normal, @FormParam("platea1Descuento") String platea1Descuento,
                                       @FormParam("platea2Normal") String platea2Normal, @FormParam("platea2Descuento") String platea2Descuento,
                                       @FormParam("uuidCompra") String uuidCompra, @FormParam("b_t") String strButacas) throws Exception {
-        Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
+        Usuario user = usersService.getUserByServerName(uri.getBaseUri().toString());
         Sesion sesion = sesionesService.getSesion(sesionId, user.getUsuario());
 
         if (Utils.isAsientosNumerados(sesion.getEvento())) {
@@ -675,7 +675,7 @@ public class EntradasResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPreciosSesion(@PathParam("id") Long sesionId)
     {
-        Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
+        Usuario user = usersService.getUserByServerName(uri.getBaseUri().toString());
 
         return Response.ok().entity(new RestResponse(true, sesionesService.getPreciosSesion(sesionId, user.getUsuario()),
                 sesionesService.getTotalPreciosSesion(sesionId))).build();
@@ -687,7 +687,7 @@ public class EntradasResource extends BaseResource {
     public Response butacasFragment(@PathParam("id") long sesionId, @QueryParam("reserva") String reserva,
                                     @QueryParam("if") String isAdmin) throws Exception
     {
-        Usuario user = usersService.getUserByDomainUrl(uri.getBaseUri().toString());
+        Usuario user = usersService.getUserByServerName(uri.getBaseUri().toString());
 
         Locale locale = getLocale();
         String language = locale.getLanguage();

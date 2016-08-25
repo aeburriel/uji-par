@@ -87,6 +87,7 @@
 
     <bean id="ConfigurationInterface" class="es.uji.apps.par.config.ConfigurationInFile" />
     <bean id="Configuration" class="es.uji.apps.par.config.Configuration" />
+    <bean id="ConfigurationSelector" class="es.uji.apps.par.config.ConfigurationProperties" />
 
     <bean id="cinesDAO" class="es.uji.apps.par.dao.CinesDAO">
     </bean>

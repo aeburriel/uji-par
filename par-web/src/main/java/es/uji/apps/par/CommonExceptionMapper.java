@@ -1,7 +1,17 @@
 package es.uji.apps.par;
 
-import java.text.ParseException;
-import java.util.Locale;
+import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.config.ConfigurationSelector;
+import es.uji.apps.par.exceptions.Constantes;
+import es.uji.commons.web.template.HTMLTemplate;
+import es.uji.commons.web.template.Template;
+import es.uji.commons.web.template.model.GrupoMenu;
+import es.uji.commons.web.template.model.ItemMenu;
+import es.uji.commons.web.template.model.Menu;
+import es.uji.commons.web.template.model.Pagina;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -10,19 +20,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-
-import es.uji.apps.par.exceptions.Constantes;
-import es.uji.commons.web.template.model.GrupoMenu;
-import es.uji.commons.web.template.model.ItemMenu;
-import es.uji.commons.web.template.model.Menu;
-import es.uji.commons.web.template.model.Pagina;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import es.uji.apps.par.config.Configuration;
-import es.uji.commons.web.template.HTMLTemplate;
-import es.uji.commons.web.template.Template;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.text.ParseException;
+import java.util.Locale;
 
 @Provider
 public class CommonExceptionMapper implements ExceptionMapper<Exception>
@@ -34,6 +33,9 @@ public class CommonExceptionMapper implements ExceptionMapper<Exception>
 
 	@Autowired
 	Configuration configuration;
+
+	@Autowired
+	ConfigurationSelector configurationSelector;
     
     protected static final String APP = "par";
     protected static final String LANG = "language";
@@ -105,14 +107,14 @@ public class CommonExceptionMapper implements ExceptionMapper<Exception>
 		Pagina pagina = null;
 
 		try {
-			pagina = new Pagina(configuration.getUrlPublic(), configuration.getUrlPublic(), language, configuration.getHtmlTitle());
+			pagina = new Pagina(configurationSelector.getUrlPublic(), configurationSelector.getUrlPublic(), language, configuration.getHtmlTitle());
 			pagina.setTitulo(configuration.getHtmlTitle());
 			pagina.setSubTitulo("");
 		} catch (ParseException e) {
 
 		}
 		template.put("idioma", language);
-		template.put("baseUrl", configuration.getUrlPublic());
+		template.put("baseUrl", configurationSelector.getUrlPublic());
 		template.put("pagina", pagina);
 
 		Menu menu = new Menu();
