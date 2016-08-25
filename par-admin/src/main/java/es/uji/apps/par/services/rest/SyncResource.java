@@ -11,10 +11,8 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.net.URL;
@@ -34,9 +32,6 @@ public class SyncResource extends BaseResource {
 	@InjectParam
 	Configuration configuration;
 
-    @Context
-    UriInfo uri;
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response syncronizaDesdeURL() throws JAXBException, IOException, ParseException {
@@ -53,7 +48,7 @@ public class SyncResource extends BaseResource {
                 if (syncUrlsHeaderToken != null && syncUrlsToken != null)
                     urlConnection.setRequestProperty(syncUrlsHeaderToken, syncUrlsToken);
 
-                Usuario user = usersService.getUserByServerName(uri.getBaseUri().toString());
+                Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
                 eventosSyncService.sync(urlConnection.getInputStream(), user.getUsuario());
             } catch (Exception e) {
                 if (urlRssException != null)

@@ -22,14 +22,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.UriInfo;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -62,12 +60,6 @@ public class EntradasResource extends BaseResource {
     @Context
     HttpServletResponse currentResponse;
 
-    @Context
-    HttpServletRequest currentRequest;
-
-    @Context
-    private HttpServletRequest request;
-
     @InjectParam
     private TpvInterface tpvInterface;
 
@@ -83,14 +75,11 @@ public class EntradasResource extends BaseResource {
     @InjectParam
     private PublicPageBuilderInterface publicPageBuilderInterface;
 
-    @Context
-    UriInfo uri;
-
     @GET
     @Path("{id}")
     @Produces(MediaType.TEXT_HTML)
     public Response datosEntrada(@PathParam("id") Long sesionId) throws Exception {
-        Usuario user = usersService.getUserByServerName(uri.getBaseUri().toString());
+        Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
         Sesion sesion = sesionesService.getSesion(sesionId, user.getUsuario());
         if (sesion.getCanalInternet() && (sesion.getAnulada() == null || sesion.getAnulada() == false)) {
             currentRequest.getSession().setAttribute(EntradasService.ID_SESION, sesionId);
@@ -108,7 +97,7 @@ public class EntradasResource extends BaseResource {
                                                       List<Butaca> butacasOcupadas, String error, String userUID) throws Exception {
         Sesion sesion = sesionesService.getSesion(sesionId, userUID);
         String urlBase = getBaseUrlPublic();
-        String url = request.getRequestURL().toString();
+        String url = currentRequest.getRequestURL().toString();
 
         if (!sesion.getEnPlazoVentaInternet())
             return paginaFueraDePlazo();
@@ -255,7 +244,7 @@ public class EntradasResource extends BaseResource {
                                       @FormParam("platea1Normal") String platea1Normal, @FormParam("platea1Descuento") String platea1Descuento,
                                       @FormParam("platea2Normal") String platea2Normal, @FormParam("platea2Descuento") String platea2Descuento,
                                       @FormParam("uuidCompra") String uuidCompra, @FormParam("b_t") String strButacas) throws Exception {
-        Usuario user = usersService.getUserByServerName(uri.getBaseUri().toString());
+        Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
         Sesion sesion = sesionesService.getSesion(sesionId, user.getUsuario());
 
         if (Utils.isAsientosNumerados(sesion.getEvento())) {
@@ -382,7 +371,7 @@ public class EntradasResource extends BaseResource {
         String language = locale.getLanguage();
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + compra.getParSesion().getParSala().getParCine().getCodigo() + "/datosComprador", locale, APP);
         String urlBase = getBaseUrlPublic();
-        String url = request.getRequestURL().toString();
+        String url = currentRequest.getRequestURL().toString();
         template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(urlBase, url, language.toString()));
         template.put("baseUrl", getBaseUrlPublic());
 
@@ -652,7 +641,7 @@ public class EntradasResource extends BaseResource {
 
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "compraFinalizada", locale, APP);
         String urlBase = getBaseUrlPublic();
-        String url = request.getRequestURL().toString();
+        String url = currentRequest.getRequestURL().toString();
         template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(urlBase, url, language.toString()));
         template.put("baseUrl", getBaseUrlPublic());
 
@@ -675,7 +664,7 @@ public class EntradasResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPreciosSesion(@PathParam("id") Long sesionId)
     {
-        Usuario user = usersService.getUserByServerName(uri.getBaseUri().toString());
+        Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
 
         return Response.ok().entity(new RestResponse(true, sesionesService.getPreciosSesion(sesionId, user.getUsuario()),
                 sesionesService.getTotalPreciosSesion(sesionId))).build();
@@ -687,7 +676,7 @@ public class EntradasResource extends BaseResource {
     public Response butacasFragment(@PathParam("id") long sesionId, @QueryParam("reserva") String reserva,
                                     @QueryParam("if") String isAdmin) throws Exception
     {
-        Usuario user = usersService.getUserByServerName(uri.getBaseUri().toString());
+        Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
 
         Locale locale = getLocale();
         String language = locale.getLanguage();

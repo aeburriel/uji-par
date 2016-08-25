@@ -4,9 +4,7 @@ import com.sun.jersey.api.core.InjectParam;
 import es.uji.apps.par.model.Butaca;
 import es.uji.apps.par.services.ButacasService;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -18,15 +16,12 @@ public class ButacasResource extends BaseResource
     @InjectParam
     private ButacasService butacasService;
 
-    @Context
-    private HttpServletRequest request;
-    
     @GET
     @Path("{idSesion}/butacas")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getButacasNoAnuladas(@PathParam("idSesion") Long idSesion) throws InterruptedException
     {
-        if (!correctApiKey(request))
+        if (!correctApiKey(currentRequest))
         {
             return apiAccessDenied();
         }
@@ -44,7 +39,7 @@ public class ButacasResource extends BaseResource
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateEntradasPresentadas(@PathParam("id") Long sesionId, List<Butaca> butacas)
     {
-        if (!correctApiKey(request))
+        if (!correctApiKey(currentRequest))
         {
             return apiAccessDenied();
         }
@@ -59,7 +54,7 @@ public class ButacasResource extends BaseResource
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateEntradaPresentada(@PathParam("id") Long sesionId, Butaca butaca)
     {
-        if (!correctApiKey(request))
+        if (!correctApiKey(currentRequest))
         {
             return apiAccessDenied();
         }

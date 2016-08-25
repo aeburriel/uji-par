@@ -12,7 +12,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import java.io.ByteArrayOutputStream;
 
 @Path("compra")
@@ -27,15 +26,12 @@ public class ComprasResource extends BaseResource
     @Context
     HttpServletResponse currentResponse;
 
-    @Context
-    UriInfo uri;
-
     @GET
     @Path("{id}/pdf")
     @Produces("application/pdf")
     public Response datosEntrada(@PathParam("id") String uuidCompra) throws Exception
     {
-        Usuario user = usersService.getUserByServerName(uri.getBaseUri().toString());
+        Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
