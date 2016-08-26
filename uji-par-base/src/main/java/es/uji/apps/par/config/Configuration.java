@@ -33,7 +33,6 @@ public class Configuration
     private static final String PAY_MODES = "uji.par.paymodes";
     private static final String URL_CONDICIONES_PRIVACIDAD = "uji.par.urlCondicionesPrivacidad";
     private static final String GASTOS_GESTION = "uji.par.gastosGestion";
-    private static final String ENVIAR_MAILS_ERROR = "uji.par.enviarMailsError";
     private static final String ENVIAR_MAILS_ENTRADAS = "uji.par.enviarMailsEntradas";
     private static final String URL_PIE_ENTRADA = "uji.par.urlPieEntrada";
     private static final String ENTORNO = "uji.par.entorno";
@@ -46,20 +45,11 @@ public class Configuration
     private static final String USER_READONLY_LOGIN = "uji.par.auth.readonly.login";
     private static final String USER_READONLY_PASSWORD = "uji.par.auth.readonly.password";    
     private static final String JDBC_URL = "uji.db.jdbcUrl";
-    private static final String DB_USER = "uji.db.username";
-    private static final String DB_PASS = "uji.db.password";
     private static final String SYNC_TIPO = "uji.sync.lugar";
     public static final String SYNC_URL_TIPO = "uji.sync.rss";
     public static final String SYNC_TOKEN = "uji.sync.token";
     public static final String SYNC_HEADER_TOKEN = "uji.sync.headerToken";
     private static final String SYNC_HORAS_INICIO_VENTA_ONLINE = "uji.sync.horasInicioVentaOnlineTrasCreacion";
-    private static final String ENTRADA_TAQUILLA_REPORT = "uji.reports.entradaTaquillaReport.class";
-    private static final String ENTRADA_ONLINE_REPORT = "uji.reports.entradaOnlineReport.class";
-	private static final String INFORME_TAQUILLA_REPORT = "uji.reports.informeTaquilla.class";
-	private static final String INFORME_EFECTIVO_REPORT = "uji.reports.informeEfectivo.class";
-	private static final String INFORME_TAQUILLA_SUBTOTALES_TPV_REPORT = "uji.reports.informeTaquillaTpvSubtotales.class";
-	private static final String INFORME_EVENTOS_REPORT = "uji.reports.informeEventos.class";
-	private static final String INFORME_SESION_REPORT = "uji.reports.informeSesion.class";	
 	private static final String BARCODE_WIDTH_HEIGHT = "uji.reports.barcodeWidthHeight";
 	private static final String LOGO_REPORT = "uji.reports.logo";
     private static final String ENTRADA_ID = "uji.reports.entradaId";
@@ -71,12 +61,10 @@ public class Configuration
 	private static final String TPV_TERMINAL = "uji.tpv.terminal";
 	private static final String TPV_TRANSACTION = "uji.tpv.transaction";
 	private static final String TPV_NOMBRE = "uji.tpv.nombre";
-	private static final String URL_TPV = "uji.tpv.url";
 	private static final String MAILING_CLASS = "uji.par.mail.class";
 	private static final String TMP_FOLDER = "uji.tmp.folder";
 	private static final String PGP_PASSPHRASE = "uji.pgp.key";
 	private static final String CODIGO_BUZON = "uji.codigo.buzon";
-	private static final String WSDL_URL = "uji.tpv.wsdlurl";
 	private static final String ACTIVE_DIRECTORY_IP = "activedirectory.ip";
 	private static final String ACTIVE_DIRECTORY_Port = "activedirectory.port";
 	private static final String ACTIVE_DIRECTORY_DOMAIN = "activedirectory.domain";
@@ -105,10 +93,7 @@ public class Configuration
     public static final String JSON_LOCALIZACIONES_PATH = "/etc/uji/par/butacas/";
 	private static final String IS_LOADED_FROM_RESOURCE = "uji.par.isLoadedFromResource";
 
-
-	private static String fileName = "/etc/uji/par/app.properties";
     private Properties properties;
-
 
 	@Autowired
     public Configuration(ConfigurationInterface configurationInterface) throws IOException
@@ -266,25 +251,10 @@ public class Configuration
         return getProperty(GASTOS_GESTION);
     }
     
-    public String getEnviarMailsError()
-    {
-        return getProperty(ENVIAR_MAILS_ERROR);
-    }
-
-    public void desactivaLogGmail()
-    {
-        properties.setProperty(ENVIAR_MAILS_ERROR, "false");
-    }
-    
     public String getUrlPieEntrada()
     {
         return getProperty(URL_PIE_ENTRADA);
     }
-    
-    public String getEntorno()
-    {
-        return getProperty(ENTORNO);
-    }  
     
     public String getCargoInformeEfectivo()
     {
@@ -309,11 +279,6 @@ public class Configuration
     public String getAuthClass()
     {
         return getProperty(AUTH_CLASS);
-    }
-    
-    public String getEntradaTaquillaReport()
-    {
-        return getProperty(ENTRADA_TAQUILLA_REPORT);
     }
     
     public List<String> getAdminLogin()
@@ -397,26 +362,6 @@ public class Configuration
 		return getProperty(LOCALIZACIONES + "." + localizacion).split(PROPERTIES_SEPARATOR);
 	}
 
-	public String getEntradaOnlineReport() {
-		return getProperty(ENTRADA_ONLINE_REPORT);
-	}
-
-	public String getInformeTaquillaReport() {
-		return getProperty(INFORME_TAQUILLA_REPORT);
-	}
-
-	public String getInformeEfectivoReport() {
-		return getProperty(INFORME_EFECTIVO_REPORT);
-	}
-
-	public String getInformeTaquillaTpvSubtotalesReport() {
-		return getProperty(INFORME_TAQUILLA_SUBTOTALES_TPV_REPORT);
-	}
-
-	public String getInformeEventosReport() {
-		return getProperty(INFORME_EVENTOS_REPORT);
-	}
-
 	public String getBarcodeWidthHeight() {
 		return getProperty(BARCODE_WIDTH_HEIGHT);
 	}
@@ -465,10 +410,6 @@ public class Configuration
 		return getNoObligatoryProperty(TPV_NOMBRE);
 	}
 
-	public String getInformeSesionReport() {
-		return getProperty(INFORME_SESION_REPORT); 
-	}
-
     public String getInformeReport(String tipo) {
         return getProperty("uji.reports." + tipo + ".class");
     }
@@ -477,10 +418,6 @@ public class Configuration
         return getProperty(TIPOS_INFORME);
     }
 	
-	public String getURLTPV() {
-		return getProperty(URL_TPV);
-	}
-
 	public String getMailingClass() {
 		return getProperty(MAILING_CLASS);
 	}
@@ -497,24 +434,6 @@ public class Configuration
 		return getProperty(CODIGO_BUZON);
 	}
 
-	public static String getWSDLURL() {
-		try {
-			Properties propertiesFile = new Properties();
-			propertiesFile.load(new ConfigurationInFile().getPathToFile());
-			return propertiesFile.getProperty(WSDL_URL);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	public String getDBUser() {
-		return getProperty(DB_USER);
-	}
-	
-	public String getDBPassword() {
-		return getProperty(DB_PASS);
-	}
-	
 	public String getActiveDirectoryIP() {
 		return getProperty(ACTIVE_DIRECTORY_IP);
 	}
