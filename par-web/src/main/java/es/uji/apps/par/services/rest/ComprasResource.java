@@ -35,7 +35,7 @@ public class ComprasResource extends BaseResource
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-        entradasService.generaEntrada(uuidCompra, bos, user.getUsuario());
+        entradasService.generaEntrada(uuidCompra, bos, user.getUsuario(), configurationSelector.getUrlPublicSinHTTPS());
 
         Response response = Response.ok(bos.toByteArray())
                 .header("Cache-Control", "no-cache, no-store, must-revalidate")
