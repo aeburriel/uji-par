@@ -203,7 +203,7 @@ public class EntradasReportsTest {
 	@Test
 	public void testNombreClaseEntradaTaquilla() throws ReportSerializationException, SAXException, IOException {
 		altaReports("es.uji.apps.par.report.EntradaTaquillaReport", EntradaReportFactory.TIPO_ENTRADA_TAQUILLA);
-		EntradaReportTaquillaInterface entrada = entradasService.generaEntradaTaquillaYRellena(compra.getUuid(), usuario.getUsuario());
+		EntradaReportTaquillaInterface entrada = entradasService.generaEntradaTaquillaYRellena(compra.getUuid(), usuario.getUsuario(), "");
 		Assert.assertNotNull(entrada);
 		Assert.assertEquals("es.uji.apps.par.report.EntradaTaquillaReport", entrada.getClass().getName());
 	}
@@ -211,7 +211,7 @@ public class EntradasReportsTest {
 	@Test
 	public void testNombreClaseEntradaOnline() throws ReportSerializationException, SAXException, IOException {
 		altaReports("es.uji.apps.par.report.EntradaReport", EntradaReportFactory.TIPO_ENTRADA_ONLINE);
-		EntradaReportOnlineInterface entrada = entradasService.generaEntradaOnlineYRellena(compra.getUuid(), usuario.getUsuario());
+		EntradaReportOnlineInterface entrada = entradasService.generaEntradaOnlineYRellena(compra.getUuid(), usuario.getUsuario(), "");
 		Assert.assertNotNull(entrada);
 		Assert.assertEquals("es.uji.apps.par.report.EntradaReport", entrada.getClass().getName());
 	}
@@ -256,7 +256,7 @@ public class EntradasReportsTest {
 		butacasDAO.reservaButacas(sesionActoGraduacion.getId(), compraDTO, Arrays.asList(butaca), usuario.getUsuario());
 		Compra compraActoGraduacion = Compra.compraDTOtoCompra(compraDTO);
 
-		EntradaReportOnlineInterface entrada = entradasService.generaEntradaOnlineYRellena(compraActoGraduacion.getUuid(), usuario.getUsuario());
+		EntradaReportOnlineInterface entrada = entradasService.generaEntradaOnlineYRellena(compraActoGraduacion.getUuid(), usuario.getUsuario(), "");
 		Assert.assertNotNull(entrada);
 		Assert.assertEquals("es.uji.apps.par.report.EntradaActoGraduacionReport", entrada.getClass().getName());
 	}
