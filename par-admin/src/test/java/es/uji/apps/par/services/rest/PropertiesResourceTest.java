@@ -32,9 +32,10 @@ import javax.ws.rs.core.Response;
 @Transactional
 public class PropertiesResourceTest extends BaseResourceTest
 {
-    String URL = "localhost:9003/par-public";
-    String PUBLIC_URL = String.format("https://%s", URL);
-    String PUBLIC_URL_SIN_HTTPS = String.format("http://%s", URL);
+    String WEB = "localhost:9003/par-public";
+
+    String PUBLIC_URL = String.format("https://%s", WEB);
+    String PUBLIC_URL_SIN_HTTPS = String.format("http://%s", WEB);
     String PUBLIC_URL_LIMPIO = PUBLIC_URL_SIN_HTTPS;
 
     @Autowired

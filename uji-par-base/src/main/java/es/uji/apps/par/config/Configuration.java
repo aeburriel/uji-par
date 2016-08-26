@@ -24,7 +24,6 @@ public class Configuration
     private static final String PROPERTIES_SEPARATOR = ",";
 	private static final String SECRET = "uji.par.secret";
     private static final String LOCALIZACIONES = "uji.par.localizaciones";
-    private static final String URL_ADMIN = "uji.par.urlAdmin";
     private static final String MAIL_HOST = "uji.par.mail.host";
     private static final String MAIL_FROM = "uji.par.mail.from";
 	private static final String MAIL_USERNAME = "uji.par.mail.username";
@@ -214,11 +213,6 @@ public class Configuration
     	}
     	
     	return "[" + StringUtils.join(payModes, PROPERTIES_SEPARATOR) + "]";
-    }
-
-    public String getUrlAdmin()
-    {
-        return getProperty(URL_ADMIN);
     }
 
     public String getSecret()

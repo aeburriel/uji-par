@@ -29,10 +29,13 @@ import javax.ws.rs.core.Response;
 @Transactional
 public class DataBasePropertiesResourceTest extends BaseResourceTest
 {
-    String URL = "ejemplo.de.url";
-    String PUBLIC_URL = String.format("https://%s", URL);
-    String PUBLIC_URL_SIN_HTTPS = String.format("http://%s", URL);
+    String WEB = "ejemplo.de.url";
+    String ADMIN = "ejemplo.de.urladmin";
+
+    String PUBLIC_URL = String.format("https://%s", WEB);
+    String PUBLIC_URL_SIN_HTTPS = String.format("http://%s", WEB);
     String PUBLIC_URL_LIMPIO = PUBLIC_URL;
+    String ADMIN_URL = String.format("https://%s", ADMIN);
 
     private WebResource resource;
 

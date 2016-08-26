@@ -1,9 +1,6 @@
 package es.uji.apps.par.services.rest;
 
-import com.sun.jersey.api.core.InjectParam;
 import es.uji.apps.par.auth.Authenticator;
-import es.uji.apps.par.config.Configuration;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
@@ -19,9 +16,6 @@ public class LogoutResource extends BaseResource
     @Context
     HttpServletResponse currentResponse;
 
-	@InjectParam
-	Configuration configuration;
-    
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Response logout() throws Exception
@@ -29,8 +23,10 @@ public class LogoutResource extends BaseResource
         currentRequest.getSession().removeAttribute(Authenticator.USER_ATTRIBUTE);
         currentRequest.getSession().removeAttribute(Authenticator.READONLY_ATTRIBUTE);
 		currentRequest.getSession().removeAttribute(Authenticator.ERROR_LOGIN);
-        
-        currentResponse.sendRedirect(configuration.getUrlAdmin() + "/rest/login");
+
+        String redirect = this.currentRequest.getRequestURL().toString().replaceFirst("logout$", "login");
+
+        currentResponse.sendRedirect(redirect);
         return null;
     }
 }
