@@ -107,7 +107,7 @@ public class CommonExceptionMapper implements ExceptionMapper<Exception>
 		Pagina pagina = null;
 
 		try {
-			pagina = new Pagina(configurationSelector.getUrlPublic(), configurationSelector.getUrlPublic(), language, configuration.getHtmlTitle());
+			pagina = new Pagina(configurationSelector.getUrlPublic(), configurationSelector.getUrlPublic(), language, configurationSelector.getHtmlTitle());
 			pagina.setTitulo(configurationSelector.getHtmlTitle());
 			pagina.setSubTitulo("");
 		} catch (ParseException e) {
