@@ -45,4 +45,39 @@ public class ConfigurationDataBase implements ConfigurationSelector
 
 		return cine.getNombre();
 	}
+
+	public String getMailFrom()
+	{
+		Cine cine = usuariosDAO.getUserCineByServerName(this.currentRequest.getServerName());
+
+		return cine.getMailFrom();
+	}
+
+	public String getUrlComoLlegar()
+	{
+		Cine cine = usuariosDAO.getUserCineByServerName(this.currentRequest.getServerName());
+
+		return cine.getUrlComoLlegar();
+	}
+
+	public String getUrlCondicionesPrivacidad()
+	{
+		Cine cine = usuariosDAO.getUserCineByServerName(this.currentRequest.getServerName());
+
+		return cine.getUrlPrivacidad();
+	}
+
+	public String getUrlPieEntrada()
+	{
+		Cine cine = usuariosDAO.getUserCineByServerName(this.currentRequest.getServerName());
+
+		return cine.getUrlPieEntrada();
+	}
+
+	public String getLogoReport()
+	{
+		Cine cine = usuariosDAO.getUserCineByServerName(this.currentRequest.getServerName());
+
+		return cine.getLogoReport();
+	}
 }

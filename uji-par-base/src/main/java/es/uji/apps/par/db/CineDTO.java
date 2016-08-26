@@ -54,6 +54,21 @@ public class CineDTO implements Serializable {
 	@Column(name = "URL_PUBLIC")
 	private String urlPublic;
 
+	@Column(name = "URL_PRIVACIDAD")
+	private String urlPrivacidad;
+
+	@Column(name = "URL_COMO_LLEGAR")
+	private String urlComoLlegar;
+
+	@Column(name = "MAIL_FROM")
+	private String mailFrom;
+
+	@Column(name = "LOGO_REPORT")
+	private String logoReport;
+
+	@Column(name = "URL_PIE_ENTRADA")
+	private String urlPieEntrada;
+
 	@OneToMany(mappedBy = "parCine", fetch=FetchType.LAZY)
 	private List<SalaDTO> parSalas;
 	
@@ -75,7 +90,7 @@ public class CineDTO implements Serializable {
 	
 	public CineDTO(String codigo, String nombre, String cif, String direccion,
             String codigoMunicipio, String nombreMunicipio, String cp, String empresa, String codigoRegistro,
-            String telefono, BigDecimal iva, String urlPublic)
+            String telefono, BigDecimal iva, String urlPublic, String urlPrivacidad, String urlComoLlegar, String urlPieEntrada, String mailFrom, String logoReport)
     {
         this.codigo = codigo;
         this.nombre = nombre;
@@ -89,6 +104,11 @@ public class CineDTO implements Serializable {
         this.telefono = telefono;
         this.iva = iva;
 		this.urlPublic = urlPublic;
+		this.urlPrivacidad = urlPrivacidad;
+		this.urlComoLlegar = urlComoLlegar;
+		this.urlPieEntrada = urlPieEntrada;
+		this.mailFrom = mailFrom;
+		this.logoReport = logoReport;
     }
 
 	public CineDTO(long id) {
@@ -266,5 +286,55 @@ public class CineDTO implements Serializable {
 	public void setUrlPublic(String urlPublic)
 	{
 		this.urlPublic = urlPublic;
+	}
+
+	public String getUrlPrivacidad()
+	{
+		return urlPrivacidad;
+	}
+
+	public void setUrlPrivacidad(String urlPrivacidad)
+	{
+		this.urlPrivacidad = urlPrivacidad;
+	}
+
+	public String getUrlComoLlegar()
+	{
+		return urlComoLlegar;
+	}
+
+	public void setUrlComoLlegar(String urlComoLlegar)
+	{
+		this.urlComoLlegar = urlComoLlegar;
+	}
+
+	public String getMailFrom()
+	{
+		return mailFrom;
+	}
+
+	public void setMailFrom(String mailFrom)
+	{
+		this.mailFrom = mailFrom;
+	}
+
+	public String getLogoReport()
+	{
+		return logoReport;
+	}
+
+	public void setLogoReport(String logoReport)
+	{
+		this.logoReport = logoReport;
+	}
+
+	public String getUrlPieEntrada()
+	{
+		return urlPieEntrada;
+	}
+
+	public void setUrlPieEntrada(String urlPieEntrada)
+	{
+		this.urlPieEntrada = urlPieEntrada;
 	}
 }

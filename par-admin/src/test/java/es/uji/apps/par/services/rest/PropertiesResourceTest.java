@@ -34,7 +34,11 @@ public class PropertiesResourceTest extends BaseResourceTest
 {
     String WEB = "localhost:9003/par-public";
     String HTML_TITLE = "HTML TITLE";
-
+    String CONDICIONES_URL = "http://example.com/condiciones.html";
+    String COMO_LLEGAR_URL = "http://example.com/documento.pdf";
+    String PIE_ENTRADA_URL = "http://example.com/example.jpg";
+    String MAIL_FROM = "mailFrom";
+    String LOGO_REPORT = "logo-vertical-color.svg";
     String PUBLIC_URL = String.format("https://%s", WEB);
     String PUBLIC_URL_SIN_HTTPS = String.format("http://%s", WEB);
     String PUBLIC_URL_LIMPIO = PUBLIC_URL_SIN_HTTPS;
@@ -96,10 +100,15 @@ public class PropertiesResourceTest extends BaseResourceTest
         });
 
         Assert.assertNotNull(restResponse.getData());
-        Assert.assertTrue(restResponse.getTotal() == 4);
+        Assert.assertTrue(restResponse.getTotal() == 9);
         Assert.assertEquals(restResponse.getData().get(0), PUBLIC_URL);
         Assert.assertEquals(restResponse.getData().get(1), PUBLIC_URL_SIN_HTTPS);
         Assert.assertEquals(restResponse.getData().get(2), PUBLIC_URL_LIMPIO);
         Assert.assertEquals(restResponse.getData().get(3), HTML_TITLE);
+        Assert.assertEquals(restResponse.getData().get(4), CONDICIONES_URL);
+        Assert.assertEquals(restResponse.getData().get(5), COMO_LLEGAR_URL);
+        Assert.assertEquals(restResponse.getData().get(6), PIE_ENTRADA_URL);
+        Assert.assertEquals(restResponse.getData().get(7), MAIL_FROM);
+        Assert.assertEquals(restResponse.getData().get(8), LOGO_REPORT);
     }
 }

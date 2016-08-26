@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Locale;
 
 public interface InformeInterface {
-	public InformeInterface create(Locale locale, Configuration configuration);
+	public InformeInterface create(Locale locale, Configuration configuration, String logoReport);
 	public void serialize(OutputStream output) throws ReportSerializationException;
 	public void genera(String inicio, String fin, List<InformeModelReport> compras, BigDecimal totalTaquillaTPV,
             BigDecimal totalTaquillaEfectivo, BigDecimal totalOnline);

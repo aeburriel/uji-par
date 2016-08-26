@@ -14,6 +14,11 @@ public class ConfigurationProperties implements ConfigurationSelector
 	private static final String URL_PUBLIC_SIN_HTTPS = "uji.par.urlPublicSinHTTPS";
 	private static final String URL_PUBLIC_LIMPIO = "uji.par.urlPublicLimpio";
 	private static final String HTML_TITLE = "uji.par.htmltitle";
+	private static final String COMO_LLEGAR = "uji.par.urlComoLlegar";
+	private static final String URL_CONDICIONES_PRIVACIDAD = "uji.par.urlCondicionesPrivacidad";
+	private static final String MAIL_FROM = "uji.par.mail.from";
+	private static final String URL_PIE_ENTRADA = "uji.par.urlPieEntrada";
+	private static final String LOGO_REPORT = "uji.reports.logo";
 
 	private static final Logger log = LoggerFactory.getLogger(ConfigurationProperties.class);
 
@@ -77,5 +82,30 @@ public class ConfigurationProperties implements ConfigurationSelector
 	public String getHtmlTitle()
 	{
 		return getProperty(HTML_TITLE);
+	}
+
+	public String getMailFrom()
+	{
+		return getProperty(MAIL_FROM);
+	}
+
+	public String getUrlComoLlegar()
+	{
+		return getProperty(COMO_LLEGAR);
+	}
+
+	public String getUrlCondicionesPrivacidad()
+	{
+		return getProperty(URL_CONDICIONES_PRIVACIDAD);
+	}
+
+	public String getUrlPieEntrada()
+	{
+		return getProperty(URL_PIE_ENTRADA);
+	}
+
+	public String getLogoReport()
+	{
+		return getProperty(LOGO_REPORT);
 	}
 }

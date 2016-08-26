@@ -300,7 +300,7 @@ public class CompraResource extends BaseResource {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
 		String userUID = AuthChecker.getUserUID(currentRequest);
-		entradasService.generaEntrada(uuidCompra, bos, userUID, configurationSelector.getUrlPublicSinHTTPS());
+		entradasService.generaEntrada(uuidCompra, bos, userUID, configurationSelector.getUrlPublicSinHTTPS(), configurationSelector.getUrlPieEntrada());
 
 		Response response = Response.ok(bos.toByteArray())
 				.header("Cache-Control", "no-cache, no-store, must-revalidate")

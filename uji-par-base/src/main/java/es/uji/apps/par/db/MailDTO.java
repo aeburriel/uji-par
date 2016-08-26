@@ -43,6 +43,9 @@ public class MailDTO implements Serializable
     @Column(name = "URL_PUBLIC")
     private String urlPublic;
 
+    @Column(name = "URL_PIE_ENTRADA")
+    private String urlPieEntrada;
+
     public MailDTO()
     {
     }
@@ -133,5 +136,15 @@ public class MailDTO implements Serializable
     public void setUrlPublic(String urlPublic)
     {
         this.urlPublic = urlPublic;
+    }
+
+    public String getUrlPieEntrada()
+    {
+        return urlPieEntrada;
+    }
+
+    public void setUrlPieEntrada(String urlPieEntrada)
+    {
+        this.urlPieEntrada = urlPieEntrada;
     }
 }

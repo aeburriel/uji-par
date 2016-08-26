@@ -1,29 +1,13 @@
 package es.uji.apps.par.report;
 
-import java.io.File;
-import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import es.uji.apps.fopreports.Report;
-import es.uji.apps.fopreports.fop.Block;
-import es.uji.apps.fopreports.fop.BlockContainer;
-import es.uji.apps.fopreports.fop.BorderStyleType;
-import es.uji.apps.fopreports.fop.ExternalGraphic;
-import es.uji.apps.fopreports.fop.TableCell;
-import es.uji.apps.fopreports.fop.TextAlignType;
-import es.uji.apps.fopreports.fop.WhiteSpaceType;
+import es.uji.apps.fopreports.fop.*;
 import es.uji.apps.fopreports.serialization.FopPDFSerializer;
 import es.uji.apps.fopreports.serialization.ReportSerializationException;
 import es.uji.apps.fopreports.serialization.ReportSerializer;
 import es.uji.apps.fopreports.serialization.ReportSerializerInitException;
-import es.uji.apps.par.exceptions.SinIvaException;
 import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.exceptions.SinIvaException;
 import es.uji.apps.par.i18n.ResourceProperties;
 import es.uji.apps.par.model.Cine;
 import es.uji.apps.par.model.Evento;
@@ -33,6 +17,11 @@ import es.uji.apps.par.report.components.BaseTable;
 import es.uji.apps.par.report.components.InformeTaquillaReportStyle;
 import es.uji.apps.par.utils.DateUtils;
 import es.uji.apps.par.utils.ReportUtils;
+
+import java.io.File;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.util.*;
 
 public class InformeSesionReport extends Report implements InformeInterface
 {
@@ -45,12 +34,13 @@ public class InformeSesionReport extends Report implements InformeInterface
     private Locale locale;
     private InformeTaquillaReportStyle style;
 	Configuration configuration;
+	String logoReport;
     
     public InformeSesionReport() throws ReportSerializerInitException {
 		super(reportSerializer, new InformeTaquillaReportStyle());
 	}
 
-    private InformeSesionReport(ReportSerializer serializer, InformeTaquillaReportStyle style, Locale locale, Configuration configuration)
+    private InformeSesionReport(ReportSerializer serializer, InformeTaquillaReportStyle style, Locale locale, Configuration configuration, String logoReport)
             throws ReportSerializerInitException
     {
         super(serializer, style);
@@ -58,6 +48,7 @@ public class InformeSesionReport extends Report implements InformeInterface
         this.style = style;
         this.locale = locale;
 		this.configuration = configuration;
+		this.logoReport = logoReport;
     }
 
     public void genera(String cargo, String firmante, List<InformeSesion> informesSesion, Cine cine, boolean printSesion) 
@@ -126,7 +117,7 @@ public class InformeSesionReport extends Report implements InformeInterface
 	private Block getLogo()
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + configuration.getLogoReport()).getAbsolutePath());
+        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + logoReport).getAbsolutePath());
         externalGraphic.setMaxWidth("2cm");
 
         Block block = new Block();
@@ -407,14 +398,14 @@ public class InformeSesionReport extends Report implements InformeInterface
             reportSerializer = new FopPDFSerializer();
     }
 
-    public InformeInterface create(Locale locale, Configuration configuration)
+    public InformeInterface create(Locale locale, Configuration configuration, String logoReport)
     {
         try
         {
             initStatics();
             InformeTaquillaReportStyle estilo = new InformeTaquillaReportStyle();
 
-            return new InformeSesionReport(reportSerializer, estilo, locale, configuration);
+            return new InformeSesionReport(reportSerializer, estilo, locale, configuration, logoReport);
         }
         catch (ReportSerializerInitException e)
         {

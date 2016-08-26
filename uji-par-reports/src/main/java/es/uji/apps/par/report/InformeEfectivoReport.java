@@ -35,12 +35,13 @@ public class InformeEfectivoReport extends Report implements InformeInterface
     private InformeTaquillaReportStyle style;
 
 	Configuration configuration;
+    String logoReport;
     
     public InformeEfectivoReport() throws ReportSerializerInitException {
 		super(reportSerializer, new InformeTaquillaReportStyle());
 	}
 
-    private InformeEfectivoReport(ReportSerializer serializer, InformeTaquillaReportStyle style, Locale locale, Configuration configuration)
+    private InformeEfectivoReport(ReportSerializer serializer, InformeTaquillaReportStyle style, Locale locale, Configuration configuration, String logoReport)
             throws ReportSerializerInitException
     {
         super(serializer, style);
@@ -48,6 +49,7 @@ public class InformeEfectivoReport extends Report implements InformeInterface
         this.style = style;
         this.locale = locale;
 		this.configuration = configuration;
+        this.logoReport = logoReport;
     }
 
     public void genera(String inicio, String fin, List<InformeModelReport> compras, List<InformeAbonoReport> abonos, String cargoInformeEfectivo,
@@ -66,7 +68,7 @@ public class InformeEfectivoReport extends Report implements InformeInterface
     private void creaLogo()
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + configuration.getLogoReport()).getAbsolutePath());
+        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + logoReport).getAbsolutePath());
         externalGraphic.setMaxWidth("2cm");
 
         Block block = withNewBlock();
@@ -345,14 +347,14 @@ public class InformeEfectivoReport extends Report implements InformeInterface
             reportSerializer = new FopPDFSerializer();
     }
 
-    public InformeInterface create(Locale locale, Configuration configuration)
+    public InformeInterface create(Locale locale, Configuration configuration, String logoReport)
     {
         try
         {
             initStatics();
             InformeTaquillaReportStyle estilo = new InformeTaquillaReportStyle();
 
-            return new InformeEfectivoReport(reportSerializer, estilo, locale, configuration);
+            return new InformeEfectivoReport(reportSerializer, estilo, locale, configuration, logoReport);
         }
         catch (ReportSerializerInitException e)
         {

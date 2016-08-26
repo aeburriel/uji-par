@@ -6,4 +6,9 @@ public interface ConfigurationSelector
 	String getUrlPublicSinHTTPS();
 	String getUrlPublicLimpio();
 	String getHtmlTitle();
+	String getMailFrom();
+	String getUrlComoLlegar();
+	String getUrlCondicionesPrivacidad();
+	String getUrlPieEntrada();
+	String getLogoReport();
 }

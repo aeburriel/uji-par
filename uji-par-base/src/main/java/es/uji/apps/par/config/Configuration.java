@@ -25,15 +25,11 @@ public class Configuration
 	private static final String SECRET = "uji.par.secret";
     private static final String LOCALIZACIONES = "uji.par.localizaciones";
     private static final String MAIL_HOST = "uji.par.mail.host";
-    private static final String MAIL_FROM = "uji.par.mail.from";
 	private static final String MAIL_USERNAME = "uji.par.mail.username";
 	private static final String MAIL_PASSWORD = "uji.par.mail.password";
-    private static final String COMO_LLEGAR = "uji.par.urlComoLlegar";
     private static final String PAY_MODES = "uji.par.paymodes";
-    private static final String URL_CONDICIONES_PRIVACIDAD = "uji.par.urlCondicionesPrivacidad";
     private static final String GASTOS_GESTION = "uji.par.gastosGestion";
     private static final String ENVIAR_MAILS_ENTRADAS = "uji.par.enviarMailsEntradas";
-    private static final String URL_PIE_ENTRADA = "uji.par.urlPieEntrada";
     private static final String ENTORNO = "uji.par.entorno";
     private static final String INFORME_EFECTIVO_CARGO = "uji.par.informeEfectivo.cargo";
     private static final String INFORME_EFECTIVO_FIRMANTE = "uji.par.informeEfectivo.firmante";
@@ -50,7 +46,6 @@ public class Configuration
     public static final String SYNC_HEADER_TOKEN = "uji.sync.headerToken";
     private static final String SYNC_HORAS_INICIO_VENTA_ONLINE = "uji.sync.horasInicioVentaOnlineTrasCreacion";
 	private static final String BARCODE_WIDTH_HEIGHT = "uji.reports.barcodeWidthHeight";
-	private static final String LOGO_REPORT = "uji.reports.logo";
     private static final String ENTRADA_ID = "uji.reports.entradaId";
 	private static final String API_KEY = "api.key";
     private static final String TPV = "uji.tpv";
@@ -224,31 +219,11 @@ public class Configuration
         return getProperty(MAIL_HOST);
     }
 
-    public String getMailFrom()
-    {
-        return getProperty(MAIL_FROM);
-    }
-
-    public String getUrlComoLlegar()
-    {
-        return getProperty(COMO_LLEGAR);
-    }
-
-    public String getUrlCondicionesPrivacidad()
-    {
-        return getProperty(URL_CONDICIONES_PRIVACIDAD);
-    }
-
     public String getGastosGestion()
     {
         return getProperty(GASTOS_GESTION);
     }
-    
-    public String getUrlPieEntrada()
-    {
-        return getProperty(URL_PIE_ENTRADA);
-    }
-    
+
     public String getCargoInformeEfectivo()
     {
         return getProperty(INFORME_EFECTIVO_CARGO);
@@ -357,10 +332,6 @@ public class Configuration
 
 	public String getBarcodeWidthHeight() {
 		return getProperty(BARCODE_WIDTH_HEIGHT);
-	}
-
-	public String getLogoReport() {
-		return getProperty(LOGO_REPORT);
 	}
 
 	public String getApiKey() {

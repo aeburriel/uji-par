@@ -118,7 +118,7 @@ public class TpvResource extends BaseResource implements TpvInterface
         template.put("referencia", recibo);
         template.put("email", compra.getEmail());
         template.put("url", getBaseUrlPublic() + "/rest/compra/" + compra.getUuid() + "/pdf");
-        template.put("urlComoLlegar", configuration.getUrlComoLlegar());
+        template.put("urlComoLlegar", configurationSelector.getUrlComoLlegar());
         template.put("lang", language);
 
         return template;

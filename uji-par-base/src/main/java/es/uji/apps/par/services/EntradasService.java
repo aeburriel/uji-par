@@ -51,16 +51,16 @@ public class EntradasService {
     private static EntradaReportTaquillaInterface entradaTaquillaReport;
     private static EntradaReportOnlineInterface entradaOnlineReport;
 
-    public void generaEntrada(String uuidCompra, OutputStream outputStream, String userUID, String urlPublicSinHTTPS) throws ReportSerializationException {
+    public void generaEntrada(String uuidCompra, OutputStream outputStream, String userUID, String urlPublicSinHTTPS, String urlPieEntrada) throws ReportSerializationException {
 		try {
-			EntradaReportOnlineInterface entrada = generaEntradaOnlineYRellena(uuidCompra, userUID, urlPublicSinHTTPS);
+			EntradaReportOnlineInterface entrada = generaEntradaOnlineYRellena(uuidCompra, userUID, urlPublicSinHTTPS, urlPieEntrada);
 			entrada.serialize(outputStream);
 		} catch (NullPointerException e) {
 			log.error("La compra con uuid " + uuidCompra + " no existe");
 		}
     }
 
-	public EntradaReportOnlineInterface generaEntradaOnlineYRellena(String uuidCompra, String userUID, String urlPublicSinHTTPS) throws
+	public EntradaReportOnlineInterface generaEntradaOnlineYRellena(String uuidCompra, String userUID, String urlPublicSinHTTPS, String urlPieEntrada) throws
 			ReportSerializationException {
 		CompraDTO compra = comprasDAO.getCompraByUuid(uuidCompra);
 		if (compra == null)
@@ -77,7 +77,7 @@ public class EntradasService {
 		}
 
 		EntradaReportOnlineInterface entrada = entradaOnlineReport.create(new Locale(configuration.getIdiomaPorDefecto()), configuration);
-		rellenaEntrada(compra, entrada, userUID, urlPublicSinHTTPS);
+		rellenaEntrada(compra, entrada, userUID, urlPublicSinHTTPS, urlPieEntrada);
 		return entrada;
 	}
 
@@ -185,7 +185,7 @@ public class EntradasService {
         }
     }
 
-    private void rellenaEntrada(CompraDTO compra, EntradaReportOnlineInterface entrada, String userUID, String urlPublicSinHTTPS) throws NullPointerException {
+    private void rellenaEntrada(CompraDTO compra, EntradaReportOnlineInterface entrada, String userUID, String urlPublicSinHTTPS, String urlPieEntrada) throws NullPointerException {
 		String titulo;
 		List<EventoMultisesion> peliculas = eventosService.getPeliculas(compra.getParSesion().getParEvento().getId());
 		Locale locale = new Locale(configuration.getIdiomaPorDefecto());
@@ -233,7 +233,7 @@ public class EntradasService {
 		}
 		else
 		{
-			entrada.setUrlPublicidad(configuration.getUrlPieEntrada());
+			entrada.setUrlPublicidad(urlPieEntrada);
 		}
 
 		entrada.setCif(compra.getParSesion().getParEvento().getParTpv().getCif());
@@ -293,6 +293,6 @@ public class EntradasService {
         EntradasService service = ctx.getBean(EntradasService.class);
 
         //service.generaEntradaTaquilla("e3a762c9-9107-47b7-b13d-175e308aa24f", new FileOutputStream("/tmp/entrada.pdf"));
-        service.generaEntrada("e3a762c9-9107-47b7-b13d-175e308aa24f", new FileOutputStream("/tmp/entrada.pdf"), "", "");
+        service.generaEntrada("e3a762c9-9107-47b7-b13d-175e308aa24f", new FileOutputStream("/tmp/entrada.pdf"), "", "https", "urlPieEntrada");
     }
 }
