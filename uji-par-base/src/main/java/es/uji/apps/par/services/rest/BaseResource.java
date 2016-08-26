@@ -102,7 +102,7 @@ public class BaseResource
     //deberían arreglarlo ellos pero no lo quieren hacer
     protected String getBaseUrlPublicLimpio()
     {
-    	String urlPublicLimpio = configuration.getUrlPublicLimpio(); 
+    	String urlPublicLimpio = configurationSelector.getUrlPublicLimpio();
         urlPublicLimpio = (urlPublicLimpio == null)? configurationSelector.getUrlPublic():urlPublicLimpio;
         return urlPublicLimpio;
     }

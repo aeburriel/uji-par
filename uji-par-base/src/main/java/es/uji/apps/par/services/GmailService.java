@@ -3,6 +3,7 @@ package es.uji.apps.par.services;
 import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.dao.MailDAO;
 import es.uji.apps.par.db.MailDTO;
+import es.uji.apps.par.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +32,9 @@ public class GmailService implements MailInterface
 
     }
 
-    public void anyadeEnvio(String to, String titulo, String texto, String uuid)
+    public void anyadeEnvio(String to, String titulo, String texto, String uuid, String urlPublic)
     {
-        mailDao.insertaMail(configuration.getMailFrom(), to, titulo, texto, uuid);
+        mailDao.insertaMail(configuration.getMailFrom(), to, titulo, texto, uuid, urlPublic);
     }
 
     private Address[] getMailAddressList(String path) throws AddressException
@@ -101,7 +102,7 @@ public class GmailService implements MailInterface
     }
             
             
-    private void enviaMailMultipart(String de, String para, String titulo, String texto, String uuid, 
+    private void enviaMailMultipart(String de, String para, String titulo, String texto, String uuid, String urlPublicSinHTTPS,
     		EntradasService entradasService, Configuration configuration) throws MessagingException {
     	try {
 			if (uuid == null) {
@@ -109,7 +110,7 @@ public class GmailService implements MailInterface
 				throw new NullPointerException();
 			}
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			entradasService.generaEntrada(uuid, baos, configuration.getAdminLogin().get(0));
+			entradasService.generaEntrada(uuid, baos, configuration.getAdminLogin().get(0), urlPublicSinHTTPS);
 			Message message = createMailMessage(de, para, titulo, configuration);
 			Multipart multipart = new MimeMultipart();
 			BodyPart messageBodyPart = new MimeBodyPart();
@@ -163,7 +164,7 @@ public class GmailService implements MailInterface
 
 			for (MailDTO mail : mails)
 			{
-				enviaMailMultipart(mail.getDe(), mail.getPara(), mail.getTitulo(), mail.getTexto(), mail.getUuid(), entradasService, configuration);
+				enviaMailMultipart(mail.getDe(), mail.getPara(), mail.getTitulo(), mail.getTexto(), mail.getUuid(), Utils.sinHTTPS(mail.getUrlPublic()), entradasService, configuration);
 				mailDAO.marcaEnviado(mail.getId());
 			}
 		}
@@ -173,6 +174,6 @@ public class GmailService implements MailInterface
     {
     	GmailService mail = new GmailService();
 
-        mail.enviaMailMultipart("no_reply@uji.es", "nicolas.manero@4tic.com", "Esto es el cuerpo", "Hola que tal!", "uuid", null, mail.configuration);
+        mail.enviaMailMultipart("no_reply@uji.es", "nicolas.manero@4tic.com", "Esto es el cuerpo", "Hola que tal!", "uuid",  "url", null, mail.configuration);
     }
 }

@@ -35,9 +35,9 @@ public class MailService implements MailInterface
     	client = new MessagingClient();
     }
 
-    public void anyadeEnvio(String to, String titulo, String texto, String uuid)
+    public void anyadeEnvio(String to, String titulo, String texto, String uuid, String urlPublic)
     {
-        mailDao.insertaMail(configuration.getMailFrom(), to, titulo, texto, uuid);
+        mailDao.insertaMail(configuration.getMailFrom(), to, titulo, texto, uuid, urlPublic);
     }
 
     private void enviaMail(String de, String para, String titulo, String texto) throws MessageNotSentException

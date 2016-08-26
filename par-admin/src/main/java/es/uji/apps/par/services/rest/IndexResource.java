@@ -68,8 +68,10 @@ public class IndexResource extends BaseResource
     {
         List<String> properties = new ArrayList<>();
         properties.add(configurationSelector.getUrlPublic());
+        properties.add(configurationSelector.getUrlPublicSinHTTPS());
+        properties.add(configurationSelector.getUrlPublicLimpio());
 
-        return Response.ok().entity(new RestResponse(true, properties, 1)).build();
+        return Response.ok().entity(new RestResponse(true, properties, properties.size())).build();
     }
 
     private String getMenu(boolean readOnlyUser) {

@@ -148,7 +148,7 @@ public class TpvResource extends BaseResource implements TpvInterface
         String titulo = ResourceProperties.getProperty(getLocale(), "mail.entradas.titulo");
         String texto = ResourceProperties.getProperty(getLocale(), "mail.entradas.texto", urlEntradas);
 
-        mailService.anyadeEnvio(email, titulo, texto, uuid);
+        mailService.anyadeEnvio(email, titulo, texto, uuid, configurationSelector.getUrlPublic());
     }
 
 	@Override

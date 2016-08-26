@@ -65,8 +65,6 @@ public class Configuration
     private static final String ENTRADA_ID = "uji.reports.entradaId";
 	private static final String API_KEY = "api.key";
 	private static final String HTML_TITLE = "uji.par.htmltitle";
-	private static final String URL_PUBLIC_SIN_HTTPS = "uji.par.urlPublicSinHTTPS";
-	private static final String URL_PUBLIC_LIMPIO = "uji.par.urlPublicLimpio";
     private static final String TPV = "uji.tpv";
 	private static final String TPV_CURRENCY = "uji.tpv.currency";
 	private static final String TPV_CODE = "uji.tpv.code";
@@ -435,10 +433,6 @@ public class Configuration
 		return getProperty(HTML_TITLE);
 	}
 
-	public String getUrlPublicSinHTTPS() {
-		return getProperty(URL_PUBLIC_SIN_HTTPS);
-	}
-
     public String getTpvLangCaCode() {
         return TPV_LANG_CA_CODE;
     }
@@ -519,10 +513,6 @@ public class Configuration
 	
 	public String getDBPassword() {
 		return getProperty(DB_PASS);
-	}
-
-	public String getUrlPublicLimpio() {
-		return getNoObligatoryProperty(URL_PUBLIC_LIMPIO);
 	}
 	
 	public String getActiveDirectoryIP() {

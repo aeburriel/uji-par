@@ -1,15 +1,8 @@
 package es.uji.apps.par.db;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
 
 /**
  * The persistent class for the PAR_MAILS database table.
@@ -46,6 +39,9 @@ public class MailDTO implements Serializable
     
     @Column(name = "COMPRA_UUID")
     private String uuid;
+
+    @Column(name = "URL_PUBLIC")
+    private String urlPublic;
 
     public MailDTO()
     {
@@ -129,4 +125,13 @@ public class MailDTO implements Serializable
 		this.uuid = uuid;
 	}
 
+    public String getUrlPublic()
+    {
+        return urlPublic;
+    }
+
+    public void setUrlPublic(String urlPublic)
+    {
+        this.urlPublic = urlPublic;
+    }
 }

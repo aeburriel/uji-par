@@ -2,6 +2,7 @@ package es.uji.apps.par.config;
 
 import es.uji.apps.par.dao.UsuariosDAO;
 import es.uji.apps.par.model.Cine;
+import es.uji.apps.par.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,8 +30,12 @@ public class ConfigurationDataBase implements ConfigurationSelector
 	public String getUrlPublicSinHTTPS()
 	{
 		Cine cine = usuariosDAO.getUserCineByServerName(this.currentRequest.getServerName());
-		String urlPublicSinHTTPS = cine.getUrlPublic().replaceFirst("^https://", "http://");
 
-		return urlPublicSinHTTPS;
+		return Utils.sinHTTPS(cine.getUrlPublic());
+	}
+
+	public String getUrlPublicLimpio()
+	{
+		return getUrlPublic();
 	}
 }

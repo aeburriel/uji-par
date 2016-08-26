@@ -158,4 +158,9 @@ public class Utils
 		}
 		return listaLong;
 	}
+
+	public static String sinHTTPS(String url)
+	{
+		return url.replaceFirst("^https://", "http://");
+	}
 }

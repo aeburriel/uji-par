@@ -1,19 +1,16 @@
 package es.uji.apps.par.dao;
 
-import java.sql.Timestamp;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.mysema.query.jpa.impl.JPAQuery;
-
 import es.uji.apps.par.db.MailDTO;
 import es.uji.apps.par.db.QMailDTO;
 import es.uji.apps.par.utils.DateUtils;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.sql.Timestamp;
+import java.util.List;
 
 @Repository
 public class MailDAO
@@ -24,7 +21,7 @@ public class MailDAO
     private QMailDTO qMailDTO = QMailDTO.mailDTO;
 
     @Transactional
-    public void insertaMail(String de, String para, String titulo, String texto, String uuid)
+    public void insertaMail(String de, String para, String titulo, String texto, String uuid, String urlPublic)
     {
         MailDTO mailDTO = new MailDTO();
 
@@ -34,6 +31,7 @@ public class MailDAO
         mailDTO.setTexto(texto);
         mailDTO.setFechaCreado(new Timestamp(DateUtils.getCurrentDate().getTime()));
 		mailDTO.setUuid(uuid);
+        mailDTO.setUrlPublic(urlPublic);
         entityManager.persist(mailDTO);
     }
 
