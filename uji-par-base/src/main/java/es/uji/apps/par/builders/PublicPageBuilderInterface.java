@@ -5,5 +5,5 @@ import es.uji.commons.web.template.model.Pagina;
 import java.text.ParseException;
 
 public interface PublicPageBuilderInterface {
-	public Pagina buildPublicPageInfo(String urlBase, String url, String idioma) throws ParseException;
+	public Pagina buildPublicPageInfo(String urlBase, String url, String idioma, String htmlTitle) throws ParseException;
 }

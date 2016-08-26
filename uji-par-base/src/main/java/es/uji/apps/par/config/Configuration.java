@@ -53,7 +53,6 @@ public class Configuration
 	private static final String LOGO_REPORT = "uji.reports.logo";
     private static final String ENTRADA_ID = "uji.reports.entradaId";
 	private static final String API_KEY = "api.key";
-	private static final String HTML_TITLE = "uji.par.htmltitle";
     private static final String TPV = "uji.tpv";
 	private static final String TPV_CURRENCY = "uji.tpv.currency";
 	private static final String TPV_CODE = "uji.tpv.code";
@@ -366,10 +365,6 @@ public class Configuration
 
 	public String getApiKey() {
 		return getProperty(API_KEY);
-	}
-
-	public String getHtmlTitle() {
-		return getProperty(HTML_TITLE);
 	}
 
     public String getTpvLangCaCode() {

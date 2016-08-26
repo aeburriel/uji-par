@@ -113,7 +113,7 @@ public class EntradasResource extends BaseResource {
         template.put("baseUrl", getBaseUrlPublic());
         template.put("fecha", DateUtils.dateToSpanishString(sesion.getFechaCelebracion()));
         template.put("hora", sesion.getHoraCelebracion());
-        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(urlBase, url, language.toString()));
+        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(urlBase, url, language.toString(), configurationSelector.getHtmlTitle()));
         template.put("tipoEventoEs", sesion.getEvento().getParTiposEvento().getNombreEs());
         template.put("butacasFragment", Constantes.PLANTILLAS_DIR + sesion.getSala().getCine().getCodigo() + "/" + sesion.getSala().getHtmlTemplateName());
 		Calendar cal = Calendar.getInstance();
@@ -182,7 +182,7 @@ public class EntradasResource extends BaseResource {
         template.put("baseUrl", getBaseUrlPublic());
         template.put("fecha", DateUtils.dateToSpanishString(sesion.getFechaCelebracion()));
         template.put("hora", sesion.getHoraCelebracion());
-        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(urlBase, urlBase, language.toString()));
+        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(urlBase, urlBase, language.toString(), configurationSelector.getHtmlTitle()));
         Calendar cal = Calendar.getInstance();
         template.put("millis", cal.getTime().getTime());
         List<Tarifa> tarifas = new ArrayList<Tarifa>();
@@ -372,7 +372,7 @@ public class EntradasResource extends BaseResource {
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + compra.getParSesion().getParSala().getParCine().getCodigo() + "/datosComprador", locale, APP);
         String urlBase = getBaseUrlPublic();
         String url = currentRequest.getRequestURL().toString();
-        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(urlBase, url, language.toString()));
+        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(urlBase, url, language.toString(), configurationSelector.getHtmlTitle()));
         template.put("baseUrl", getBaseUrlPublic());
 
         template.put("idioma", language);
@@ -642,7 +642,7 @@ public class EntradasResource extends BaseResource {
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "compraFinalizada", locale, APP);
         String urlBase = getBaseUrlPublic();
         String url = currentRequest.getRequestURL().toString();
-        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(urlBase, url, language.toString()));
+        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(urlBase, url, language.toString(), configurationSelector.getHtmlTitle()));
         template.put("baseUrl", getBaseUrlPublic());
 
         template.put("idioma", language);

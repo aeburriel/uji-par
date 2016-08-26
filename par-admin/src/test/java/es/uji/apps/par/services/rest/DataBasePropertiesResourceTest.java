@@ -30,12 +30,11 @@ import javax.ws.rs.core.Response;
 public class DataBasePropertiesResourceTest extends BaseResourceTest
 {
     String WEB = "ejemplo.de.url";
-    String ADMIN = "ejemplo.de.urladmin";
+    String HTML_TITLE = "CINE NOMBRE";
 
     String PUBLIC_URL = String.format("https://%s", WEB);
     String PUBLIC_URL_SIN_HTTPS = String.format("http://%s", WEB);
     String PUBLIC_URL_LIMPIO = PUBLIC_URL;
-    String ADMIN_URL = String.format("https://%s", ADMIN);
 
     private WebResource resource;
 
@@ -80,9 +79,10 @@ public class DataBasePropertiesResourceTest extends BaseResourceTest
         });
 
         Assert.assertNotNull(restResponse.getData());
-        Assert.assertTrue(restResponse.getTotal() == 3);
+        Assert.assertTrue(restResponse.getTotal() == 4);
         Assert.assertEquals(restResponse.getData().get(0), PUBLIC_URL);
         Assert.assertEquals(restResponse.getData().get(1), PUBLIC_URL_SIN_HTTPS);
         Assert.assertEquals(restResponse.getData().get(2), PUBLIC_URL_LIMPIO);
+        Assert.assertEquals(restResponse.getData().get(3), HTML_TITLE);
     }
 }

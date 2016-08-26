@@ -38,4 +38,11 @@ public class ConfigurationDataBase implements ConfigurationSelector
 	{
 		return getUrlPublic();
 	}
+
+	public String getHtmlTitle()
+	{
+		Cine cine = usuariosDAO.getUserCineByServerName(this.currentRequest.getServerName());
+
+		return cine.getNombre();
+	}
 }

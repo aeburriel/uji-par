@@ -33,6 +33,7 @@ import javax.ws.rs.core.Response;
 public class PropertiesResourceTest extends BaseResourceTest
 {
     String WEB = "localhost:9003/par-public";
+    String HTML_TITLE = "HTML TITLE";
 
     String PUBLIC_URL = String.format("https://%s", WEB);
     String PUBLIC_URL_SIN_HTTPS = String.format("http://%s", WEB);
@@ -95,9 +96,10 @@ public class PropertiesResourceTest extends BaseResourceTest
         });
 
         Assert.assertNotNull(restResponse.getData());
-        Assert.assertTrue(restResponse.getTotal() == 3);
+        Assert.assertTrue(restResponse.getTotal() == 4);
         Assert.assertEquals(restResponse.getData().get(0), PUBLIC_URL);
         Assert.assertEquals(restResponse.getData().get(1), PUBLIC_URL_SIN_HTTPS);
         Assert.assertEquals(restResponse.getData().get(2), PUBLIC_URL_LIMPIO);
+        Assert.assertEquals(restResponse.getData().get(3), HTML_TITLE);
     }
 }

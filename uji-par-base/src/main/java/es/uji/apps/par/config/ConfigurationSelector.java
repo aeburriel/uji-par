@@ -5,4 +5,5 @@ public interface ConfigurationSelector
 	String getUrlPublic();
 	String getUrlPublicSinHTTPS();
 	String getUrlPublicLimpio();
+	String getHtmlTitle();
 }

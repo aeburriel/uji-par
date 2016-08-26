@@ -133,7 +133,7 @@ public class EventosResource extends BaseResource {
 
         String url = currentRequest.getRequestURL().toString();
 
-        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(getBaseUrlPublic(), url, language.toString()));
+        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(getBaseUrlPublic(), url, language.toString(), configurationSelector.getHtmlTitle()));
         template.put("baseUrl", getBaseUrlPublic());
         template.put("lang", language);
 
@@ -149,7 +149,7 @@ public class EventosResource extends BaseResource {
         String language = getLocale(langparam).getLanguage();
         String url = currentRequest.getRequestURL().toString();
 
-        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(getBaseUrlPublic(), url, language.toString()));
+        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(getBaseUrlPublic(), url, language.toString(), configurationSelector.getHtmlTitle()));
         template.put("baseUrl", getBaseUrlPublic());
 
         template.put("eventos", eventos);
@@ -188,7 +188,7 @@ public class EventosResource extends BaseResource {
 
         String url = currentRequest.getRequestURL().toString();
 
-        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(getBaseUrlPublic(), url, language.toString()));
+        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(getBaseUrlPublic(), url, language.toString(), configurationSelector.getHtmlTitle()));
         template.put("baseUrl", getBaseUrlPublic());
 
         template.put("tipoEvento", tipoEvento);

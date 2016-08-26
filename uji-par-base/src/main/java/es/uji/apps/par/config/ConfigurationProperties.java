@@ -13,6 +13,7 @@ public class ConfigurationProperties implements ConfigurationSelector
 	private static final String URL_PUBLIC = "uji.par.urlPublic";
 	private static final String URL_PUBLIC_SIN_HTTPS = "uji.par.urlPublicSinHTTPS";
 	private static final String URL_PUBLIC_LIMPIO = "uji.par.urlPublicLimpio";
+	private static final String HTML_TITLE = "uji.par.htmltitle";
 
 	private static final Logger log = LoggerFactory.getLogger(ConfigurationProperties.class);
 
@@ -71,5 +72,10 @@ public class ConfigurationProperties implements ConfigurationSelector
 	public String getUrlPublicLimpio()
 	{
 		return getNoObligatoryProperty(URL_PUBLIC_LIMPIO);
+	}
+
+	public String getHtmlTitle()
+	{
+		return getProperty(HTML_TITLE);
 	}
 }

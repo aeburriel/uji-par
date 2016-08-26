@@ -70,6 +70,7 @@ public class IndexResource extends BaseResource
         properties.add(configurationSelector.getUrlPublic());
         properties.add(configurationSelector.getUrlPublicSinHTTPS());
         properties.add(configurationSelector.getUrlPublicLimpio());
+        properties.add(configurationSelector.getHtmlTitle());
 
         return Response.ok().entity(new RestResponse(true, properties, properties.size())).build();
     }
