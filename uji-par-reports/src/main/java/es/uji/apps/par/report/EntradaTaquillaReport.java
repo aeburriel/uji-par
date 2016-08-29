@@ -46,6 +46,8 @@ public class EntradaTaquillaReport extends Report implements EntradaReportTaquil
 	private String cif;
 	private String promotor;
 	private String nifPromotor;
+	private String nombreEntidad;
+	private String direccion;
 
     public EntradaTaquillaReport() throws ReportSerializerInitException {
     	super(reportSerializer, new EntradaReportStyle());
@@ -500,5 +502,15 @@ public class EntradaTaquillaReport extends Report implements EntradaReportTaquil
 	public void setUrlPortada(String urlPortada) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public void setNombreEntidad(String nombreEntidad)
+	{
+		this.nombreEntidad = nombreEntidad;
+	}
+
+	public void setDireccion(String direccion)
+	{
+		this.direccion = direccion;
 	}
 }

@@ -7,18 +7,20 @@ import java.io.OutputStream;
 import java.util.Locale;
 
 public interface EntradaReportOnlineInterface {
-	public EntradaReportOnlineInterface create(Locale locale, Configuration configuration);
-	public void setTitulo(String titulo);
-	public void setFecha(String fecha);
-	public void setHora(String hora);
-	public void setHoraApertura(String horaApertura);
-	public void setCif(String cif);
-	public void setPromotor(String promotor);
-	public void setNifPromotor(String nifPromotor);
-	public void generaPaginaButaca(EntradaModelReport entrada, String urlPublic);
-	public void serialize(OutputStream output) throws ReportSerializationException;
-	public void setUrlPublicidad(String urlPublicidad);
-	public void setUrlPortada(String urlPortada);
-	public boolean esAgrupada();
-	public void setTotalButacas(int totalButacas);
+	EntradaReportOnlineInterface create(Locale locale, Configuration configuration);
+	void setTitulo(String titulo);
+	void setFecha(String fecha);
+	void setHora(String hora);
+	void setHoraApertura(String horaApertura);
+	void setCif(String cif);
+	void setPromotor(String promotor);
+	void setNifPromotor(String nifPromotor);
+	void generaPaginaButaca(EntradaModelReport entrada, String urlPublic);
+	void serialize(OutputStream output) throws ReportSerializationException;
+	void setUrlPublicidad(String urlPublicidad);
+	void setUrlPortada(String urlPortada);
+	boolean esAgrupada();
+	void setTotalButacas(int totalButacas);
+	void setNombreEntidad(String nombreEntidad);
+	void setDireccion(String direccion);
 }

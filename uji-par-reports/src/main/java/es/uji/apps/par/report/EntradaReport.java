@@ -46,6 +46,8 @@ public class EntradaReport extends Report implements EntradaReportOnlineInterfac
     private String promotor;
     private String nifPromotor;
     private int totalButacas;
+    private String nombreEntidad;
+    private String direccion;
 
 	public EntradaReport() throws ReportSerializerInitException {
     	super(reportSerializer, new EntradaReportStyle());
@@ -542,6 +544,16 @@ public class EntradaReport extends Report implements EntradaReportOnlineInterfac
 
     public void setTotalButacas(int totalButacas) {
         this.totalButacas = totalButacas;
+    }
+
+    public void setNombreEntidad(String nombreEntidad)
+    {
+        this.nombreEntidad = nombreEntidad;
+    }
+
+    public void setDireccion(String direccion)
+    {
+        this.direccion = direccion;
     }
 
     public void setBarcode(String barcode)

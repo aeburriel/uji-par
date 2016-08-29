@@ -43,6 +43,8 @@ public class EntradaActoGraduacionReport extends Report implements EntradaReport
     private String promotor;
     private String nifPromotor;
 	private Configuration configuration;
+    private String nombreEntidad;
+    private String direccion;
 
 	public EntradaActoGraduacionReport() throws ReportSerializerInitException {
         super(reportSerializer, new EntradaReportStyle());
@@ -461,6 +463,16 @@ public class EntradaActoGraduacionReport extends Report implements EntradaReport
 
     public void setTotalButacas(int totalButacas) {
         this.totalButacas = totalButacas;
+    }
+
+    public void setNombreEntidad(String nombreEntidad)
+    {
+        this.nombreEntidad = nombreEntidad;
+    }
+
+    public void setDireccion(String direccion)
+    {
+        this.direccion = direccion;
     }
 
     public boolean esAgrupada() { return true; }

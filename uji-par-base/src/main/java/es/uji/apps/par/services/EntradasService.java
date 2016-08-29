@@ -139,6 +139,8 @@ public class EntradasService {
         entrada.setHoraApertura(horaApertura);
         entrada.setUrlPortada(urlPublicSinHTTPS + "/rest/evento/"
                 + compra.getParSesion().getParEvento().getId() + "/imagenEntrada");
+		entrada.setNombreEntidad(compra.getParSesion().getParEvento().getParCine().getNombre());
+		entrada.setDireccion(String.format("%s %s %s", compra.getParSesion().getParEvento().getParCine().getDireccion(), compra.getParSesion().getParEvento().getParCine().getCp(), compra.getParSesion().getParEvento().getParCine().getNombreMunicipio()));
 		entrada.setCif(compra.getParSesion().getParEvento().getParTpv().getCif());
 		entrada.setPromotor(compra.getParSesion().getParEvento().getPromotor());
 		entrada.setNifPromotor(compra.getParSesion().getParEvento().getNifPromotor());
@@ -236,6 +238,8 @@ public class EntradasService {
 			entrada.setUrlPublicidad(urlPieEntrada);
 		}
 
+		entrada.setNombreEntidad(compra.getParSesion().getParEvento().getParCine().getNombre());
+		entrada.setDireccion(String.format("%s %s %s", compra.getParSesion().getParEvento().getParCine().getDireccion(), compra.getParSesion().getParEvento().getParCine().getCp(), compra.getParSesion().getParEvento().getParCine().getNombreMunicipio()));
 		entrada.setCif(compra.getParSesion().getParEvento().getParTpv().getCif());
 		entrada.setPromotor(compra.getParSesion().getParEvento().getPromotor());
 		entrada.setNifPromotor(compra.getParSesion().getParEvento().getNifPromotor());
