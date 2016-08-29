@@ -141,6 +141,7 @@ public class EntradasService {
                 + compra.getParSesion().getParEvento().getId() + "/imagenEntrada");
 		entrada.setNombreEntidad(compra.getParSesion().getParEvento().getParCine().getNombre());
 		entrada.setDireccion(String.format("%s %s %s", compra.getParSesion().getParEvento().getParCine().getDireccion(), compra.getParSesion().getParEvento().getParCine().getCp(), compra.getParSesion().getParEvento().getParCine().getNombreMunicipio()));
+		entrada.setUrlCondiciones( compra.getParSesion().getParEvento().getParCine().getUrlPrivacidad());
 		entrada.setCif(compra.getParSesion().getParEvento().getParTpv().getCif());
 		entrada.setPromotor(compra.getParSesion().getParEvento().getPromotor());
 		entrada.setNifPromotor(compra.getParSesion().getParEvento().getNifPromotor());

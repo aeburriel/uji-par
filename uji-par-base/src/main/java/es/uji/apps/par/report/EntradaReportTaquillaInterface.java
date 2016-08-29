@@ -23,4 +23,5 @@ public interface EntradaReportTaquillaInterface {
 	void setUrlPortada(String urlPortada);
 	void setNombreEntidad(String nombreEntidad);
 	void setDireccion(String direccion);
+	void setUrlCondiciones(String urlCondiciones);
 }
