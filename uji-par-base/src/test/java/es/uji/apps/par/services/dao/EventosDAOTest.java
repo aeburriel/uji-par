@@ -53,6 +53,7 @@ public class EventosDAOTest
 	UsuarioDTO usuarioConEventos;
 	UsuarioDTO usuarioSinEventos;
 	EventoDTO evento1;
+	CineDTO cine1;
 	final String RSS_ID = "100";
 
 	@Before
@@ -127,10 +128,10 @@ public class EventosDAOTest
 		TipoEvento tipoEvento = tiposEventosDAO.addTipoEvento(new TipoEvento("Tipo evento"));
 		Tpv tpv = new Tpv();
 		tpv.setNombre("Test TPV");
-		if (tpvsDAO.getTpvDefault() == null)
-			tpvsDAO.addTpv(tpv, true);
+		if (tpvsDAO.getTpvDefault(cine1.getId()) == null)
+			tpvsDAO.addTpv(tpv, cine1.getId());
 
-		TpvsDTO tpvDefault = tpvsDAO.getTpvDefault();
+		TpvsDTO tpvDefault = tpvsDAO.getTpvDefault(cine1.getId());
 		tpv.setId(tpvDefault.getId());
 		Evento evento = new Evento("Nombre", tipoEvento);
 		evento.setParTpv(tpv);

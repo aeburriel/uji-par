@@ -28,6 +28,9 @@ public class BaseDAOTest
     TarifasDAO tarifasDAO;
 
     @Autowired
+    private CinesDAO cinesDAO;
+
+    @Autowired
     private SalasDAO salasDao;
 
     @Autowired
@@ -62,16 +65,20 @@ public class BaseDAOTest
 
         tiposEventosDAO.addTipoEvento(tipoEvento);
 
-        TpvsDTO tpvDefault = tpvsDAO.getTpvDefault();
-        if (tpvDefault == null) {
-            tpvsDAO.addTpvDefault();
-            tpvDefault = tpvsDAO.getTpvDefault();
+        Cine cine = new Cine();
+        cine.setNombre("Cine");
+        cinesDAO.addCine(cine);
+
+        Tpv tpv = new Tpv();
+        if (tpvsDAO.getTpvDefault(cine.getId()) == null) {
+            tpv = addTpvDefault(cine);
         }
 
         Evento evento = new Evento();
         evento.setAsientosNumerados(true);
         evento.setParTipoEvento(tipoEvento);
-        evento.setParTpv(Tpv.tpvDTOToTpv(tpvDefault));
+        evento.setParTpv(tpv);
+        evento.setCine(cine);
         evento = eventosDao.addEvento(evento);
 
         Sala sala = new Sala();
@@ -101,6 +108,19 @@ public class BaseDAOTest
         sesion.setParPreciosSesions(Arrays.asList(precioSesion));
 
         return sesion;
+    }
+
+    private Tpv addTpvDefault(Cine cine) {
+        Tpv tpv = new Tpv();
+        tpv.setNombre("TPV Prueba");
+        TpvsDTO tpvDefecto = tpvsDAO.getTpvDefault(cine.getId());
+        if (tpvDefecto == null)
+            tpvsDAO.addTpv(tpv, cine.getId());
+
+        TpvsDTO tpvDefectoInsertado = tpvsDAO.getTpvDefault(cine.getId());
+        tpv.setId(tpvDefectoInsertado.getId());
+
+        return tpv;
     }
 
     protected Localizacion preparaLocalizacion(String codigoLocalizacion)

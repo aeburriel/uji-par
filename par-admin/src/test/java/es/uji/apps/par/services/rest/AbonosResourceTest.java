@@ -87,11 +87,11 @@ public class AbonosResourceTest extends BaseResourceTest
         return cine;
     }
 
-    public Tpv getTpv(){
+    public Tpv getTpv(Cine cine){
         Tpv tpv = new Tpv();
         tpv.setNombre("tpv");
 
-        tpvsDAO.addTpv(tpv, true);
+        tpv.setId(tpvsDAO.addTpv(tpv, cine.getId()).getId());
 
         return tpv;
     }
@@ -124,9 +124,7 @@ public class AbonosResourceTest extends BaseResourceTest
         Plantilla plantilla = new Plantilla("Prueba");
         plantilla.setSala(getSala(cine));
 
-        plantillasDAO.add(plantilla);
-
-        return plantilla;
+        return plantillasDAO.add(plantilla);
     }
 
     private Evento getEvento(Cine cine)
@@ -135,11 +133,9 @@ public class AbonosResourceTest extends BaseResourceTest
         evento.setCine(cine);
         evento.setTituloEs("Titulo");
         evento.setTituloVa("Titol");
-        evento.setParTpv(getTpv());
+        evento.setParTpv(getTpv(cine));
 
-        eventosDAO.addEvento(evento);
-
-        return evento;
+        return eventosDAO.addEvento(evento);
     }
 
     private Sesion getSesion(Plantilla plantilla, Cine cine, Usuario usuario) {
@@ -157,9 +153,7 @@ public class AbonosResourceTest extends BaseResourceTest
             sesion.setSala(plantilla.getSala());
         }
 
-        sesionesDAO.addSesion(sesion, usuario.getUsuario());
-
-        return sesion;
+        return sesionesDAO.addSesion(sesion, usuario.getUsuario());
     }
 
     @Override

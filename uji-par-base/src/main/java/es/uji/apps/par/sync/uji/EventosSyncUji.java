@@ -72,7 +72,7 @@ public class EventosSyncUji implements EventosSync {
             Cine cine = usersService.getUserCineByUserUID(userUID);
 
             evento = new EventoDTO();
-            evento.setParTpv(tpvsDAO.getTpvDefault());
+            evento.setParTpv(tpvsDAO.getTpvDefault(userUID));
             evento.setRssId(item.getContenidoId());
             evento.setParCine(Cine.cineToCineDTO(cine));
         } else {

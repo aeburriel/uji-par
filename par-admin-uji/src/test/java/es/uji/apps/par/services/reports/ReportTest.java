@@ -75,6 +75,8 @@ public class ReportTest {
 		cine = new Cine();
 		cine.setNombre("Cine Prueba");
 		cinesDAO.addCine(cine);
+
+		altaTpv();
 	}
 
 	@Transactional
@@ -92,19 +94,18 @@ public class ReportTest {
 		usuario.setNombre(nombre);
 		usuario.setMail(mail);
 		usuario.setUsuario(login);
-		usuariosDAO.addUser(usuario);
-		return usuario;
+		return usuariosDAO.addUser(usuario);
 	}
 
 	@Transactional
 	private void altaTpv() {
 		tpv = new Tpv();
 		tpv.setNombre("TPV Prueba");
-		TpvsDTO tpvDefecto = tpvsDAO.getTpvDefault();
+		TpvsDTO tpvDefecto = tpvsDAO.getTpvDefault(cine.getId());
 		if (tpvDefecto == null)
-			tpvsDAO.addTpv(tpv, true);
+			tpvsDAO.addTpv(tpv, cine.getId());
 
-		TpvsDTO tpvDefectoInsertado = tpvsDAO.getTpvDefault();
+		TpvsDTO tpvDefectoInsertado = tpvsDAO.getTpvDefault(cine.getId());
 		tpv.setId(tpvDefectoInsertado.getId());
 	}
 
@@ -114,7 +115,8 @@ public class ReportTest {
 		evento.setTituloEs("Nombre Evento Castellano");
 		evento.setTituloVa("Nombre Evento Valenciano");
 		evento.setParTpv(tpv);
-		eventosDAO.addEvento(evento);
+
+		evento = eventosDAO.addEvento(evento);
 	}
 
 	@Transactional
@@ -358,7 +360,6 @@ public class ReportTest {
 		Sala sala = altaSala("Sala 1");
 		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
 		altaRelacionSalaUsuario(sala, usuario);
-		altaTpv();
 		Plantilla plantilla = altaPlantilla(sala);
 		altaLocalizacion();
 		altaTarifa();
@@ -407,7 +408,6 @@ public class ReportTest {
 		Usuario usuario2 = altaUsuario("Nombre", "Mail", "login2");
 		altaRelacionSalaUsuario(sala, usuario);
 		altaRelacionSalaUsuario(salaDondeUsuario1NoTienePermiso, usuario2);
-		altaTpv();
 		Plantilla plantilla = altaPlantilla(sala);
 		Plantilla plantilla2 = altaPlantilla(salaDondeUsuario1NoTienePermiso);
 		altaLocalizacion();
@@ -430,7 +430,6 @@ public class ReportTest {
 		Assert.assertEquals("12:00", fechaSesionConDosCompras.toString().split(" ")[1]);
 		Object cantidadDeComprasDeSesionConDosCompras = excelServiceConDosCompras.getCellValue("E2");
 		Assert.assertEquals(2.0, cantidadDeComprasDeSesionConDosCompras);
-		
 		ExcelService excelServiceConUnaCompra = reportService.getExcelServiceTaquilla(sdf.format(cal.getTime()), sdf.format(compra.getFecha()),
 				new Locale("es"), usuario2.getUsuario());
 		Assert.assertEquals(2, excelServiceConUnaCompra.getTotalFilas());
@@ -450,7 +449,6 @@ public class ReportTest {
 		Usuario usuario2 = altaUsuario("Nombre", "Mail", "login2");
 		altaRelacionSalaUsuario(sala, usuario);
 		altaRelacionSalaUsuario(salaDondeUsuario1NoTienePermiso, usuario2);
-		altaTpv();
 		Plantilla plantilla = altaPlantilla(sala);
 		Plantilla plantilla2 = altaPlantilla(salaDondeUsuario1NoTienePermiso);
 		altaLocalizacion();
@@ -490,7 +488,6 @@ public class ReportTest {
 		Usuario usuario2 = altaUsuario("Nombre", "Mail", "login2");
 		altaRelacionSalaUsuario(sala, usuario);
 		altaRelacionSalaUsuario(salaDondeUsuario1NoTienePermiso, usuario2);
-		altaTpv();
 		Plantilla plantilla = altaPlantilla(sala);
 		Plantilla plantilla2 = altaPlantilla(salaDondeUsuario1NoTienePermiso);
 		altaLocalizacion();
@@ -529,7 +526,7 @@ public class ReportTest {
 		Usuario usuario2 = altaUsuario("Nombre", "Mail", "login2");
 		altaRelacionSalaUsuario(sala, usuario);
 		altaRelacionSalaUsuario(salaDondeUsuario1NoTienePermiso, usuario2);
-		altaTpv();
+		
 		Plantilla plantilla = altaPlantilla(sala);
 		Plantilla plantilla2 = altaPlantilla(salaDondeUsuario1NoTienePermiso);
 		altaLocalizacion();
@@ -565,7 +562,7 @@ public class ReportTest {
 		Usuario usuario2 = altaUsuario("Nombre", "Mail", "login2");
 		altaRelacionSalaUsuario(sala, usuario);
 		altaRelacionSalaUsuario(salaDondeUsuario1NoTienePermiso, usuario2);
-		altaTpv();
+		
 		Plantilla plantilla = altaPlantilla(sala);
 		Plantilla plantilla2 = altaPlantilla(salaDondeUsuario1NoTienePermiso);
 		altaLocalizacion();
@@ -601,7 +598,6 @@ public class ReportTest {
 		Usuario usuario2 = altaUsuario("Nombre", "Mail", "login2");
 		altaRelacionSalaUsuario(sala, usuario);
 		altaRelacionSalaUsuario(salaDondeUsuario1NoTienePermiso, usuario2);
-		altaTpv();
 		Plantilla plantilla = altaPlantilla(sala);
 		Plantilla plantilla2 = altaPlantilla(salaDondeUsuario1NoTienePermiso);
 		altaLocalizacion();
@@ -637,7 +633,6 @@ public class ReportTest {
 		Usuario usuario2 = altaUsuario("Nombre", "Mail", "login2");
 		altaRelacionSalaUsuario(sala, usuario);
 		altaRelacionSalaUsuario(salaDondeUsuario1NoTienePermiso, usuario2);
-		altaTpv();
 		Plantilla plantilla = altaPlantilla(sala);
 		Plantilla plantilla2 = altaPlantilla(salaDondeUsuario1NoTienePermiso);
 		altaLocalizacion();
@@ -674,7 +669,6 @@ public class ReportTest {
 		Usuario usuario2 = altaUsuario("Nombre", "Mail", "login2");
 		altaRelacionSalaUsuario(sala, usuario);
 		altaRelacionSalaUsuario(salaDondeUsuario1NoTienePermiso, usuario2);
-		altaTpv();
 		Plantilla plantilla = altaPlantilla(sala);
 		Plantilla plantilla2 = altaPlantilla(salaDondeUsuario1NoTienePermiso);
 		altaLocalizacion();

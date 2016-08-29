@@ -46,9 +46,6 @@ public class TpvsDTO {
     @Column(name="WSDL_URL")
     private String wsdlUrl;
 
-    @Column(name="DEFAULT_TPV")
-    private Boolean defaultTpv;
-
     @Column(name="CIF")
     private String cif;
 
@@ -58,6 +55,9 @@ public class TpvsDTO {
     //bi-directional many-to-one association to SesionDTO
     @OneToMany(mappedBy="parTpv")
     private List<EventoDTO> parEventos;
+
+    @OneToMany(mappedBy="tpv")
+    private List<TpvsCinesDTO> parTpvsCines;
 
     public long getId() {
         return id;
@@ -147,14 +147,6 @@ public class TpvsDTO {
         this.wsdlUrl = wsdlUrl;
     }
 
-    public Boolean getDefaultTpv() {
-        return defaultTpv;
-    }
-
-    public void setDefaultTpv(Boolean defaultTpv) {
-        this.defaultTpv = defaultTpv;
-    }
-
     public List<EventoDTO> getParEventos() {
         return parEventos;
     }
@@ -185,5 +177,15 @@ public class TpvsDTO {
 
     public void setSignatureMethod(String signatureMethod) {
         this.signatureMethod = signatureMethod;
+    }
+
+    public List<TpvsCinesDTO> getParTpvsCines()
+    {
+        return parTpvsCines;
+    }
+
+    public void setParTpvsCines(List<TpvsCinesDTO> parTpvsCines)
+    {
+        this.parTpvsCines = parTpvsCines;
     }
 }

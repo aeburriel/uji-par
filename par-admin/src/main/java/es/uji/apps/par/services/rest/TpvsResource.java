@@ -1,6 +1,7 @@
 package es.uji.apps.par.services.rest;
 
 import com.sun.jersey.api.core.InjectParam;
+import es.uji.apps.par.auth.AuthChecker;
 import es.uji.apps.par.model.Tpv;
 import es.uji.apps.par.services.TpvsService;
 
@@ -23,7 +24,9 @@ public class TpvsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@QueryParam("sort") String sort, @QueryParam("start") int start, @QueryParam("limit") @DefaultValue("1000") int limit)
     {
-        List<Tpv> tpvs = tpvsService.getTpvs(sort, start, limit);
+        String userUID = AuthChecker.getUserUID(currentRequest);
+
+        List<Tpv> tpvs = tpvsService.getTpvs(userUID, sort, start, limit);
 
         return Response.ok().entity(new RestResponse(true, tpvs, tpvs.size())).build();
     }

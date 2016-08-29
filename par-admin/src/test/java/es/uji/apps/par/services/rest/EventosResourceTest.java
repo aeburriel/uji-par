@@ -12,9 +12,11 @@ import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
 import com.sun.jersey.test.framework.WebAppDescriptor;
 import com.sun.jersey.test.framework.spi.container.TestContainerFactory;
 import com.sun.jersey.test.framework.spi.container.grizzly.web.GrizzlyWebTestContainerFactory;
+import es.uji.apps.par.dao.CinesDAO;
 import es.uji.apps.par.dao.EventosDAO;
 import es.uji.apps.par.dao.TpvsDAO;
 import es.uji.apps.par.db.TpvsDTO;
+import es.uji.apps.par.model.Cine;
 import es.uji.apps.par.model.Evento;
 import es.uji.apps.par.model.TipoEvento;
 import es.uji.apps.par.model.Tpv;
@@ -45,6 +47,9 @@ public class EventosResourceTest extends BaseResourceTest
 
     @Autowired
     TpvsDAO tpvsDAO;
+
+    @Autowired
+    CinesDAO cinesDAO;
 
     public EventosResourceTest()
     {
@@ -125,9 +130,13 @@ public class EventosResourceTest extends BaseResourceTest
     @Test
     @Transactional
     public void addEvento() {
+        Cine cine = new Cine();
+        cine.setNombre("Cine");
+        cinesDAO.addCine(cine);
+
         Tpv tpv = new Tpv();
-        if (tpvsDAO.getTpvDefault() == null) {
-            tpv = addTpvDefault();
+        if (tpvsDAO.getTpvDefault(cine.getId()) == null) {
+            tpv = addTpvDefault(cine);
         }
 
         TipoEvento parTipoEvento = addTipoEvento();
@@ -136,6 +145,7 @@ public class EventosResourceTest extends BaseResourceTest
         evento.setTituloEs("Nombre ES");
         evento.setTituloVa("Nombre CA");
         evento.setTipoEvento(parTipoEvento.getId());
+        evento.setCine(cine);
         evento.setParTpv(tpv);
 
         evento = eventosDAO.addEvento(evento);
@@ -147,8 +157,12 @@ public class EventosResourceTest extends BaseResourceTest
     @Test
     @Transactional
     public void addEventoSinTpv() {
-        if (tpvsDAO.getTpvDefault() == null) {
-            addTpvDefault();
+        Cine cine = new Cine();
+        cine.setNombre("Cine");
+        cinesDAO.addCine(cine);
+
+        if (tpvsDAO.getTpvDefault(cine.getId()) == null) {
+            addTpvDefault(cine);
         }
 
         TipoEvento parTipoEvento = addTipoEvento();
@@ -157,6 +171,7 @@ public class EventosResourceTest extends BaseResourceTest
         evento.setTituloEs("Nombre ES");
         evento.setTituloVa("Nombre CA");
         evento.setTipoEvento(parTipoEvento.getId());
+        evento.setCine(cine);
 
         evento = eventosDAO.addEvento(evento);
 
@@ -164,10 +179,17 @@ public class EventosResourceTest extends BaseResourceTest
         Assert.assertNotNull(evento.getParTpv());
     }
 
-    private Tpv addTpvDefault() {
-        tpvsDAO.addTpvDefault();
-        TpvsDTO tpvDto = tpvsDAO.getTpvDefault();
-        return new Tpv(tpvDto);
+    private Tpv addTpvDefault(Cine cine) {
+        Tpv tpv = new Tpv();
+        tpv.setNombre("TPV Prueba");
+        TpvsDTO tpvDefecto = tpvsDAO.getTpvDefault(cine.getId());
+        if (tpvDefecto == null)
+            tpvsDAO.addTpv(tpv, cine.getId());
+
+        TpvsDTO tpvDefectoInsertado = tpvsDAO.getTpvDefault(cine.getId());
+        tpv.setId(tpvDefectoInsertado.getId());
+
+        return tpv;
     }
 
     /*@Test

@@ -60,7 +60,7 @@ public class ActoGraduacion implements EventosTipoSync {
         log.info(String.format("RSS insertando nuevo evento: %s - \"%s\"", item.getContenidoId(), item.getTitle()));
 
         EventoDTO evento = new EventoDTO();
-        evento.setParTpv(tpvsDAO.getTpvDefault());
+        evento.setParTpv(tpvsDAO.getTpvDefault(cineDTO.getId()));
         evento.setAsientosNumerados(false);
         evento.setRssId(item.getContenidoId());
         evento.setParCine(cineDTO);

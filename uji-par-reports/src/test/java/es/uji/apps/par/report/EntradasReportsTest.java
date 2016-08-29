@@ -141,11 +141,11 @@ public class EntradasReportsTest {
 	private void altaTpv() {
 		tpv = new Tpv();
 		tpv.setNombre("TPV Prueba");
-		TpvsDTO tpvDefecto = tpvsDAO.getTpvDefault();
+		TpvsDTO tpvDefecto = tpvsDAO.getTpvDefault(cine.getId());
 		if (tpvDefecto == null)
-			tpvsDAO.addTpv(tpv, true);
+			tpvsDAO.addTpv(tpv, cine.getId());
 
-		TpvsDTO tpvDefectoInsertado = tpvsDAO.getTpvDefault();
+		TpvsDTO tpvDefectoInsertado = tpvsDAO.getTpvDefault(cine.getId());
 		tpv.setId(tpvDefectoInsertado.getId());
 	}
 

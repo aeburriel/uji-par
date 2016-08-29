@@ -29,6 +29,7 @@
     <class>es.uji.apps.par.db.UsuarioDTO</class>
     <class>es.uji.apps.par.db.SesionFormatoIdiomaICAADTO</class>
     <class>es.uji.apps.par.db.TpvsDTO</class>
+    <class>es.uji.apps.par.db.TpvsCinesDTO</class>
     <class>es.uji.apps.par.db.ReportDTO</class>
     <class>es.uji.apps.par.db.SalasUsuarioDTO</class>
 

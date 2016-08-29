@@ -15,9 +15,9 @@ public class TpvsService {
     @Autowired
     private TpvsDAO tpvsDao;
 
-    public List<Tpv> getTpvs(String sortParameter, int start, int limit) {
+    public List<Tpv> getTpvs(String userUID, String sortParameter, int start, int limit) {
         List<Tpv> tpvs = new ArrayList<Tpv>();
-        List<TpvsDTO> tpvsDto = tpvsDao.getTpvs(sortParameter, start, limit);
+        List<TpvsDTO> tpvsDto = tpvsDao.getTpvs(userUID, sortParameter, start, limit);
 
         for (TpvsDTO tpvDto : tpvsDto) {
             tpvs.add(new Tpv(tpvDto));

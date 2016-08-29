@@ -72,7 +72,6 @@ public class EventosSyncServiceUjiTest extends SyncBaseTest
         syncService.setTipo("uji");
 
         insertaTarifa();
-        insertaTpvDefault();
         insertaSala();
         insertaTiposEventos();
     }
@@ -115,11 +114,16 @@ public class EventosSyncServiceUjiTest extends SyncBaseTest
         usuariosDAO.addSalaUsuario(sala, usuario);
 
         insertaLocalizacion(sala);
+
+        insertaTpvDefault(cine);
     }
 
-    private void insertaTpvDefault()
+    private void insertaTpvDefault(Cine cine)
     {
-        tpvsDAO.addTpvDefault();
+        Tpv tpv = new Tpv();
+        tpv.setNombre("Test TPV");
+        if (tpvsDAO.getTpvDefault(cine.getId()) == null)
+            tpvsDAO.addTpv(tpv, cine.getId());
     }
 
     private void insertaTiposEventos()

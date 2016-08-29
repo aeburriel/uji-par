@@ -376,18 +376,12 @@ public class EventosDAO extends BaseDAO
         }
 
         TpvsDTO parTpv = new TpvsDTO();
-        if (configuration.isMultipleTpvEnabled())
-        {
-            if (evento.getParTpv() != null) {
-                parTpv.setId(evento.getParTpv().getId());
-            }
-            else
-            {
-                parTpv = tpvsDAO.getTpvDefault();
-            }
+        if (evento.getParTpv() != null) {
+            parTpv.setId(evento.getParTpv().getId());
         }
-        else {
-            parTpv = tpvsDAO.getTpvDefault();
+        else
+        {
+            parTpv = tpvsDAO.getTpvDefault(evento.getCine().getId());
         }
         eventoDTO.setParTpv(parTpv);
 

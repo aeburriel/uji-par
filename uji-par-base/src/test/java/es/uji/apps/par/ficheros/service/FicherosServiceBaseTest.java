@@ -65,6 +65,7 @@ public class FicherosServiceBaseTest
     protected void setup() throws PrecioRepetidoException {
 		usuario = creaUsuario();
         cine = creaCine();
+		tpv = creaTpv();
         localizacion = creaLocalizacion("Platea");
         sala = creaSala("567", "Sala 1");
 		addSalaUsuario(sala, usuario);
@@ -93,11 +94,11 @@ public class FicherosServiceBaseTest
 	private Tpv creaTpv() {
 		tpv = new Tpv();
 		tpv.setNombre("TPV Prueba");
-		TpvsDTO tpvDefecto = tpvsDAO.getTpvDefault();
+		TpvsDTO tpvDefecto = tpvsDAO.getTpvDefault(cine.getId());
 		if (tpvDefecto == null)
-			tpvsDAO.addTpv(tpv, true);
+			tpvsDAO.addTpv(tpv, cine.getId());
 
-		TpvsDTO tpvDefectoInsertado = tpvsDAO.getTpvDefault();
+		TpvsDTO tpvDefectoInsertado = tpvsDAO.getTpvDefault(cine.getId());
 		tpv.setId(tpvDefectoInsertado.getId());
 		return tpv;
 	}
@@ -171,7 +172,6 @@ public class FicherosServiceBaseTest
     protected Evento creaEvento(TipoEvento tipoEvento, String expediente, String titulo, String codigoDistribuidora,
             String nombreDistribuidora, String vo, String subtitulos)
     {
-		tpv = creaTpv();
         Evento evento = new Evento();
         evento.setTipoEvento(tipoEvento.getId());
         evento.setExpediente(expediente);
@@ -182,6 +182,7 @@ public class FicherosServiceBaseTest
         evento.setSubtitulos(subtitulos);
 		evento.setParTpv(tpv);
 		evento.setFormato("3");
+		evento.setCine(cine);
 
         eventosDAO.addEvento(evento);
 

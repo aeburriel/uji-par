@@ -63,6 +63,7 @@ public class SesionesDAOTest
 
     UsuarioDTO usuarioConCine1;
     UsuarioDTO usuarioConCine2;
+    CineDTO cine1;
     SalaDTO sala1;
     EventoDTO evento1;
     EventoDTO evento2;
@@ -89,7 +90,7 @@ public class SesionesDAOTest
         //   -     ->  null -> Evento4 -> Sesion6 (Sala3)
         //   -     ->  null -> Evento4 -> Sesion7 (Sala3)
 
-        CineDTO cine1 = new CineBuilder("Cine 1")
+        cine1 = new CineBuilder("Cine 1")
                 .build(entityManager);
 
         TipoEventoDTO tipoEvento = new TipoEventoBuilder("tipo", "tipo", false, cine1)
@@ -161,10 +162,10 @@ public class SesionesDAOTest
 
 		Tpv tpv = new Tpv();
 		tpv.setNombre("Test TPV");
-		if (tpvsDAO.getTpvDefault() == null)
-			tpvsDAO.addTpv(tpv, true);
+		if (tpvsDAO.getTpvDefault(cine1.getId()) == null)
+			tpvsDAO.addTpv(tpv, cine1.getId());
 
-		TpvsDTO tpvDefault = tpvsDAO.getTpvDefault();
+		TpvsDTO tpvDefault = tpvsDAO.getTpvDefault(cine1.getId());
 		tpv.setId(tpvDefault.getId());
     	Evento evento = new Evento("Evento", tipoEvento);
 		evento.setParTpv(tpv);
