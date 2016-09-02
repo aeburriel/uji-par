@@ -353,7 +353,8 @@ public class ReportService {
 		List<Object[]> comprasTpv = onlyOnline ? comprasDAO.getComprasTpvOnline(fechaInicio, fechaFin, userUID) : comprasDAO.getComprasTpv(fechaInicio, fechaFin, userUID);
 		List<InformeModelReport> compras = objectsSesionesToInformesTpv(comprasTpv);
 
-		informe.genera(getSpanishStringDateFromBBDDString(fechaInicio), getSpanishStringDateFromBBDDString(fechaFin),
+		String title = onlyOnline ? ResourceProperties.getProperty(locale, "informeTaquillaTpvSubtotales.tituloCabeceraOnline") : ResourceProperties.getProperty(locale, "informeTaquillaTpvSubtotales.tituloCabecera");
+		informe.genera(title, getSpanishStringDateFromBBDDString(fechaInicio), getSpanishStringDateFromBBDDString(fechaFin),
 				compras, null, configuration.getCargoInformeEfectivo(), configuration.getFirmanteInformeEfectivo());
 		return informe;
 	}

@@ -265,12 +265,13 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
 
     }
 
-    public void genera(String inicio, String fin,
-                       List<InformeModelReport> compras, List<InformeAbonoReport> abonos, String cargoInformeEfectivo,
-                       String firmanteInformeEfectivo) throws SinIvaException {
-        // TODO Auto-generated method stub
+	public void genera(String inicio, String fin, List<InformeModelReport> compras, List<InformeAbonoReport> abonos, String cargoInformeEfectivo, String firmanteInformeEfectivo) throws SinIvaException {
+		genera(null, inicio, fin, compras, abonos, cargoInformeEfectivo, firmanteInformeEfectivo);
+	}
 
-    }
+	public void genera(String titulo, String inicio, String fin, List<InformeModelReport> compras, List<InformeAbonoReport> abonos, String cargoInformeEfectivo, String firmanteInformeEfectivo) throws SinIvaException {
+
+	}
 
     public void genera(String cargo, String firmante, List<InformeSesion> informesSesion, Cine cine, boolean printSesion) throws SinIvaException {
         // TODO Auto-generated method stub

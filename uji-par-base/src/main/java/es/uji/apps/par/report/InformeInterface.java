@@ -19,6 +19,8 @@ public interface InformeInterface {
             BigDecimal totalTaquillaEfectivo, BigDecimal totalOnline);
 	public void genera(String inicio, String fin, List<InformeModelReport> compras, List<InformeAbonoReport> abonos, String cargoInformeEfectivo,
     		String firmanteInformeEfectivo) throws SinIvaException;
+	public void genera(String titulo, String inicio, String fin, List<InformeModelReport> compras, List<InformeAbonoReport> abonos, String cargoInformeEfectivo,
+			String firmanteInformeEfectivo) throws SinIvaException;
 	public void genera(String cargo, String firmante, List<InformeSesion> informesSesion, Cine cine, boolean printSesion) throws SinIvaException;
 	public void genera(String inicio, String fin, List<InformeModelReport> compras) throws SinIvaException;
     public void genera(long sesionId, String userUID) throws SinIvaException;
