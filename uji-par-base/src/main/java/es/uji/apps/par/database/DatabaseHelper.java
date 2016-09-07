@@ -25,4 +25,6 @@ public interface DatabaseHelper
     public String toInteger(String columna);
 
 	public String toDate();
+
+    public String isEmptyString(String columna);
 }

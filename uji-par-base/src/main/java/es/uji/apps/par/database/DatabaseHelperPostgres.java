@@ -100,4 +100,10 @@ public class DatabaseHelperPostgres implements DatabaseHelper
 	public String toDate() {
 		return "TO_TIMESTAMP";
 	}
+
+	@Override
+	public String isEmptyString(String columna)
+	{
+		return String.format("%s <> ''", columna);
+	}
 }

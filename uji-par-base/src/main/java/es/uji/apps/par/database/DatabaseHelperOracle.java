@@ -1,8 +1,8 @@
 package es.uji.apps.par.database;
 
-import java.math.BigDecimal;
-
 import org.apache.commons.lang.StringUtils;
+
+import java.math.BigDecimal;
 
 public class DatabaseHelperOracle implements DatabaseHelper
 {
@@ -82,5 +82,11 @@ public class DatabaseHelperOracle implements DatabaseHelper
 	@Override
 	public String toDate() {
 		return "TO_DATE";
+	}
+
+	@Override
+	public String isEmptyString(String columna)
+	{
+		return String.format("LENGTH(%s) > 0", columna);
 	}
 }

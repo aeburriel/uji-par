@@ -610,9 +610,9 @@ public class ComprasDAO extends BaseDAO {
 	}
 
 	private String getSQLCompraIsTPV(boolean contarOnline) {
-		String sql = "and ((c.codigo_pago_tarjeta is not null and c.codigo_pago_tarjeta <> '') "
-				+ "or (c.codigo_pago_pasarela is not null and c.codigo_pago_pasarela <> '') "
-				+ "or (c.referencia_pago is not null and c.referencia_pago <> '') ";
+		String sql = "and ((c.codigo_pago_tarjeta is not null and " + dbHelper.isEmptyString("c.codigo_pago_tarjeta") + ") "
+				+ "or (c.codigo_pago_pasarela is not null and " + dbHelper.isEmptyString("c.codigo_pago_pasarela") + ") "
+				+ "or (c.referencia_pago is not null and " + dbHelper.isEmptyString("c.referencia_pago") + ") ";
 		sql += (contarOnline) ? "or c.taquilla = " + dbHelper.falseString() + ") " : ") ";
 		return sql;
 	}
@@ -651,7 +651,7 @@ public class ComprasDAO extends BaseDAO {
 				+ "and sala.id = s.sala_id and u.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = u.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
 				+ "and (c.caducada is null or c.caducada = " + dbHelper.falseString() + ") "
-				+ (onlyOnline ? getSQLCompraIsTPVOnline() : getSQLCompraIsTPV(true))
+				+ (onlyOnline ? getSQLCompraIsTPVOnline() : getSQLCompraIsTPV(false))
 				+ "and f.id = " + dbHelper.toInteger("b.tipo") + " "
 				+ "group by c.sesion_id, e.titulo_es, b.tipo, s.fecha_celebracion, e.porcentaje_iva, "
 				+ dbHelper.trunc("c.fecha", formato) + ", f.nombre "

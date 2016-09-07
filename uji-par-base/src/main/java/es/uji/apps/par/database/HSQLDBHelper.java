@@ -70,4 +70,10 @@ public class HSQLDBHelper implements DatabaseHelper
 	public String toDate() {
 		return "TO_DATE";
 	}
+
+	@Override
+	public String isEmptyString(String columna)
+	{
+		return String.format("%s <> ''", columna);
+	}
 }

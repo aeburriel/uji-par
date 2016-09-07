@@ -54,7 +54,7 @@ public class TipoInforme {
 				"\"nombreCA\":\"PDF de taquilla\",\"nombreES\":\"PDF de taquilla\", \"prefix\": \"taquilla/\", " +
 				"\"suffix\": \"/pdf\"},{\"id\":\"pdfEfectiu\",\"nombreCA\":\"PDF de taquilla en efectiu\"," +
 				"\"nombreES\":\"PDF de taquilla en efectivo\", \"prefix\": \"taquilla/\", \"suffix\": \"/efectivo/pdf\"}," +
-				"{\"id\":\"pdfTpv\",\"nombreCA\":\"PDF de TPVs\",\"nombreES\":\"PDF de TPVs\", " +
+				"{\"id\":\"pdfTpv\",\"nombreCA\":\"PDF de TPVs taquilla\",\"nombreES\":\"PDF de TPVs taquilla\", " +
 				"\"prefix\": \"taquilla/\", \"suffix\": \"/tpv/pdf\"}, " +
 				"{\"id\":\"pdfTpvOnline\",\"nombreCA\":\"PDF de TPVs online\",\"nombreES\":\"PDF de TPVs online\", " +
 				"\"prefix\": \"taquilla/\", \"suffix\": \"/tpv/online/pdf\"}, " +

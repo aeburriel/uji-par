@@ -191,7 +191,7 @@ public class ReportResource extends BaseResource {
         }
 
         return Response.ok(ostream.toByteArray())
-                .header("Content-Disposition", "attachment; filename =\"informeTaquilla " + fechaInicio + "-" + fechaFin + ".pdf\"")
+                .header("Content-Disposition", "attachment; filename =\"informeTPVTaquilla " + fechaInicio + "-" + fechaFin + ".pdf\"")
                 .type("application/pdf").build();
     }
 
@@ -213,7 +213,7 @@ public class ReportResource extends BaseResource {
 		}
 
 		return Response.ok(ostream.toByteArray())
-				.header("Content-Disposition", "attachment; filename =\"informeOnline " + fechaInicio + "-" + fechaFin + ".pdf\"")
+				.header("Content-Disposition", "attachment; filename =\"informeTPVOnline " + fechaInicio + "-" + fechaFin + ".pdf\"")
 				.type("application/pdf").build();
 	}
 
