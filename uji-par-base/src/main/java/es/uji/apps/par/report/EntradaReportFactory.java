@@ -11,6 +11,8 @@ public class EntradaReportFactory
 	public static final String TIPO_INFORME_PDF_TAQUILLA_TPV_SUBTOTALES = "pdfTpv";
 	public static final String TIPO_INFORME_PDF_EVENTOS = "pdfSGAE";
 	public static final String TIPO_INFORME_PDF_SESIONES = "pdfSesion";
+	public static final String TIPO_INFORME_PDF_SESIONES_NO_ANULADAS = "pdfSesionNoAnuladas";
+
 
 	public static EntradaReportTaquillaInterface newInstanceTaquilla(String clase)
     {

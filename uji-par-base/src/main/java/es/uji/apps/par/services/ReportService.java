@@ -433,21 +433,21 @@ public class ReportService {
 		//informeSesionReport = EntradaReportFactory.newInstanceInformeSesionReport(configuration);
 	}
 
-	public void getPdfSesion(long sesionId, ByteArrayOutputStream bos, Locale locale, String userUID, String logoReport) throws SinIvaException,
+	public void getPdfSesion(long sesionId, ByteArrayOutputStream bos, Locale locale, String userUID, String logoReport, boolean anuladas) throws SinIvaException,
 			ReportSerializationException, IOException {
 		Sesion sesion = new Sesion(new Long(sesionId).intValue());
-		InformeInterface informe = generaYRellenaPDFSesiones(Arrays.asList(sesion), locale, userUID, logoReport);
+		InformeInterface informe = generaYRellenaPDFSesiones(Arrays.asList(sesion), locale, userUID, logoReport, anuladas);
 		informe.serialize(bos);
 	}
 
-	public void getPdfSesiones(List<Sesion> sesiones, ByteArrayOutputStream bos, Locale locale, String userUID, String logoReport) throws
+	public void getPdfSesiones(List<Sesion> sesiones, ByteArrayOutputStream bos, Locale locale, String userUID, String logoReport, boolean anuladas) throws
 			SinIvaException, ReportSerializationException, IOException {
-		InformeInterface informe = generaYRellenaPDFSesiones(sesiones, locale, userUID, logoReport);
+		InformeInterface informe = generaYRellenaPDFSesiones(sesiones, locale, userUID, logoReport, anuladas);
 		informe.serialize(bos);
 	}
 
-	public InformeInterface generaYRellenaPDFSesiones(List<Sesion> sesiones, Locale locale, String userUID, String logoReport) {
-		String className = usuariosDAO.getReportClassNameForUserAndType(userUID, EntradaReportFactory.TIPO_INFORME_PDF_SESIONES);
+	public InformeInterface generaYRellenaPDFSesiones(List<Sesion> sesiones, Locale locale, String userUID, String logoReport, boolean anuladas) {
+		String className = usuariosDAO.getReportClassNameForUserAndType(userUID, anuladas ? EntradaReportFactory.TIPO_INFORME_PDF_SESIONES : EntradaReportFactory.TIPO_INFORME_PDF_SESIONES_NO_ANULADAS);
 		InformeInterface informeSesionReport = EntradaReportFactory.newInstanceInformeSesionReport(className);
 		InformeInterface informe = informeSesionReport.create(locale, configuration, logoReport);
 		List<InformeSesion> informesSesion = new ArrayList<InformeSesion>();

@@ -82,18 +82,18 @@ Ext.define('Paranimf.controller.Informes', {
          console.log("no entra");
    },
 
-   generarInformeSesion: function() {
+   generarInformeSesion: function(anuladas) {
       var idsSelected = this.getGridSesionesInformes().getSelectedColumnValues("id");
       if (idsSelected && idsSelected.length == 1) {
-         this.generatePdfSesion(idsSelected[0]);
+         this.generatePdfSesion(idsSelected[0], anuladas);
       } else
          alert(UI.i18n.message.selectRow);
    },
 
-   generarInformeEvento: function() {
+   generarInformeEvento: function(anuladas) {
       var idsSelected = this.getGridSesionesInformes().getSelectedColumnValues("evento");
       if (idsSelected && idsSelected.length == 1) {
-         this.generatePdfEvento(idsSelected[0].id);
+         this.generatePdfEvento(idsSelected[0].id, anuladas);
       } else
          alert(UI.i18n.message.selectRow);
    },
@@ -111,10 +111,16 @@ Ext.define('Paranimf.controller.Informes', {
       var idSelected = this.getPanelInformesCombo().getValue();
       if (idSelected) {
          if (idSelected === 'informeSesion') {
-            this.generarInformeSesion();
+            this.generarInformeSesion(false);
+         }
+         else if (idSelected === 'informeSesionAnuladas') {
+            this.generarInformeSesion(true);
          }
          else if (idSelected === 'informeEventos') {
-            this.generarInformeEvento();
+            this.generarInformeEvento(false);
+         }
+         else if (idSelected === 'informeEventosAnuladas') {
+            this.generarInformeEvento(true);
          }
          else {
             this.generarInformeTipo(idSelected);
@@ -154,20 +160,20 @@ Ext.define('Paranimf.controller.Informes', {
       form.submit();
    }, 
 
-   generatePdfSesion: function(idSesion) {
+   generatePdfSesion: function(idSesion, anuladas) {
       var form = document.createElement("form");
       form.setAttribute("method", "post");
-      form.setAttribute("action", urlPrefix + 'report/sesion/' + idSesion + '/pdf');
+      form.setAttribute("action", urlPrefix + 'report/sesion/' + idSesion + '/pdf' + (anuladas ? '/anuladas' : ''));
       form.setAttribute("target", "_blank");
 
       document.body.appendChild(form);
       form.submit();      
    },
 
-   generatePdfEvento: function(idEvento) {
+   generatePdfEvento: function(idEvento, anuladas) {
       var form = document.createElement("form");
       form.setAttribute("method", "post");
-      form.setAttribute("action", urlPrefix + 'report/evento/' + idEvento + '/pdf');
+      form.setAttribute("action", urlPrefix + 'report/evento/' + idEvento + '/pdf' + (anuladas ? '/anuladas' : ''));
       form.setAttribute("target", "_blank");
 
       document.body.appendChild(form);
