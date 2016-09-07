@@ -87,7 +87,7 @@ public class ReportResource extends BaseResource {
         Sesion sesion = sesionesService.getSesion(idSesion, userUID);
         String fileName = "informeSesion " + DateUtils.dateToSpanishStringWithHour(sesion.getFechaCelebracion()) + ".pdf";
 
-        reportService.getPdfSesion(idSesion, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), false);
+        reportService.getPdfSesion(idSesion, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), true);
 
         return Response.ok(ostream.toByteArray())
                 .header("Content-Disposition", "attachment; filename =\"" + fileName + "\"")
@@ -111,7 +111,7 @@ public class ReportResource extends BaseResource {
         });
         String fileName = "informeEvento-" + idEvento + ".pdf";
 
-        reportService.getPdfSesiones(sesiones, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), false);
+        reportService.getPdfSesiones(sesiones, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), true);
 
         return Response.ok(ostream.toByteArray())
                 .header("Content-Disposition", "attachment; filename =\"" + fileName + "\"")
@@ -119,7 +119,7 @@ public class ReportResource extends BaseResource {
     }
 
 	@POST
-	@Path("sesion/{idSesion}/pdf/anuladas")
+	@Path("sesion/{idSesion}/pdf/noanuladas")
 	@Produces("application/pdf")
 	public Response generatePdfSesionAnuladas(@PathParam("idSesion") long idSesion) throws TranscoderException, IOException,
 			ReportSerializationException, ParseException, SinIvaException {
@@ -128,7 +128,7 @@ public class ReportResource extends BaseResource {
 		Sesion sesion = sesionesService.getSesion(idSesion, userUID);
 		String fileName = "informeSesion " + DateUtils.dateToSpanishStringWithHour(sesion.getFechaCelebracion()) + ".pdf";
 
-		reportService.getPdfSesion(idSesion, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), true);
+		reportService.getPdfSesion(idSesion, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), false);
 
 		return Response.ok(ostream.toByteArray())
 				.header("Content-Disposition", "attachment; filename =\"" + fileName + "\"")
@@ -136,7 +136,7 @@ public class ReportResource extends BaseResource {
 	}
 
 	@POST
-	@Path("evento/{idEvento}/pdf/anuladas")
+	@Path("evento/{idEvento}/pdf/noanuladas")
 	@Produces("application/pdf")
 	public Response generatePdfEventoAnuladas(@PathParam("idEvento") long idEvento) throws TranscoderException, IOException,
 			ReportSerializationException, ParseException, SinIvaException {
@@ -152,7 +152,7 @@ public class ReportResource extends BaseResource {
 		});
 		String fileName = "informeEvento-" + idEvento + ".pdf";
 
-		reportService.getPdfSesiones(sesiones, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), true);
+		reportService.getPdfSesiones(sesiones, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), false);
 
 		return Response.ok(ostream.toByteArray())
 				.header("Content-Disposition", "attachment; filename =\"" + fileName + "\"")

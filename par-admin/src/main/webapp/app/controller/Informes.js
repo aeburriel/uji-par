@@ -111,16 +111,16 @@ Ext.define('Paranimf.controller.Informes', {
       var idSelected = this.getPanelInformesCombo().getValue();
       if (idSelected) {
          if (idSelected === 'informeSesion') {
-            this.generarInformeSesion(false);
-         }
-         else if (idSelected === 'informeSesionAnuladas') {
             this.generarInformeSesion(true);
          }
-         else if (idSelected === 'informeEventos') {
-            this.generarInformeEvento(false);
+         else if (idSelected === 'informeSesionNoAnuladas') {
+            this.generarInformeSesion(false);
          }
-         else if (idSelected === 'informeEventosAnuladas') {
+         else if (idSelected === 'informeEventos') {
             this.generarInformeEvento(true);
+         }
+         else if (idSelected === 'informeEventosNoAnuladas') {
+            this.generarInformeEvento(false);
          }
          else {
             this.generarInformeTipo(idSelected);
@@ -163,7 +163,7 @@ Ext.define('Paranimf.controller.Informes', {
    generatePdfSesion: function(idSesion, anuladas) {
       var form = document.createElement("form");
       form.setAttribute("method", "post");
-      form.setAttribute("action", urlPrefix + 'report/sesion/' + idSesion + '/pdf' + (anuladas ? '/anuladas' : ''));
+      form.setAttribute("action", urlPrefix + 'report/sesion/' + idSesion + '/pdf' + (anuladas ? '' : '/noanuladas'));
       form.setAttribute("target", "_blank");
 
       document.body.appendChild(form);
@@ -173,7 +173,7 @@ Ext.define('Paranimf.controller.Informes', {
    generatePdfEvento: function(idEvento, anuladas) {
       var form = document.createElement("form");
       form.setAttribute("method", "post");
-      form.setAttribute("action", urlPrefix + 'report/evento/' + idEvento + '/pdf' + (anuladas ? '/anuladas' : ''));
+      form.setAttribute("action", urlPrefix + 'report/evento/' + idEvento + '/pdf' + (anuladas ? '' : '/noanuladas'));
       form.setAttribute("target", "_blank");
 
       document.body.appendChild(form);
