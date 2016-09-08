@@ -102,7 +102,6 @@ public class InformeSesionNoAnuladasReport extends Report implements InformeInte
     private BlockContainer getDatosCine(Cine cine) {
 		BlockContainer bc = new BlockContainer();
 		bc.getMarkerOrBlockOrBlockContainer().add(getCineBlock(cine.getNombre()));
-		bc.getMarkerOrBlockOrBlockContainer().add(getCineBlock(cine.getCodigo()));
 		bc.getMarkerOrBlockOrBlockContainer().add(getCineBlock(cine.getDireccion()));
 		bc.getMarkerOrBlockOrBlockContainer().add(getCineBlock(cine.getNombreMunicipio() + " - " + cine.getCp()));
 		return bc;
