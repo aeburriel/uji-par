@@ -85,7 +85,7 @@ public class DatabaseHelperOracle implements DatabaseHelper
 	}
 
 	@Override
-	public String isEmptyString(String columna)
+	public String isNotEmptyString(String columna)
 	{
 		return String.format("LENGTH(%s) > 0", columna);
 	}

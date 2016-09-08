@@ -72,7 +72,7 @@ public class HSQLDBHelper implements DatabaseHelper
 	}
 
 	@Override
-	public String isEmptyString(String columna)
+	public String isNotEmptyString(String columna)
 	{
 		return String.format("%s <> ''", columna);
 	}
