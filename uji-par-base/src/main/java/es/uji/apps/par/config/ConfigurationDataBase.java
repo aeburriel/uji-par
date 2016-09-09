@@ -80,4 +80,9 @@ public class ConfigurationDataBase implements ConfigurationSelector
 
 		return cine.getLogoReport();
 	}
+
+	public String getApiKey()
+	{
+		return usuariosDAO.getApiKeyByServerName(this.currentRequest.getServerName());
+	}
 }

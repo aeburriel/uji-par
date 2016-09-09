@@ -47,7 +47,6 @@ public class Configuration
     private static final String SYNC_HORAS_INICIO_VENTA_ONLINE = "uji.sync.horasInicioVentaOnlineTrasCreacion";
 	private static final String BARCODE_WIDTH_HEIGHT = "uji.reports.barcodeWidthHeight";
     private static final String ENTRADA_ID = "uji.reports.entradaId";
-	private static final String API_KEY = "api.key";
     private static final String TPV = "uji.tpv";
 	private static final String TPV_CURRENCY = "uji.tpv.currency";
 	private static final String TPV_CODE = "uji.tpv.code";
@@ -332,10 +331,6 @@ public class Configuration
 
 	public String getBarcodeWidthHeight() {
 		return getProperty(BARCODE_WIDTH_HEIGHT);
-	}
-
-	public String getApiKey() {
-		return getProperty(API_KEY);
 	}
 
     public String getTpvLangCaCode() {

@@ -69,6 +69,9 @@ public class CineDTO implements Serializable {
 	@Column(name = "URL_PIE_ENTRADA")
 	private String urlPieEntrada;
 
+	@Column(name = "API_KEY")
+	private String apiKey;
+
 	@OneToMany(mappedBy = "parCine", fetch=FetchType.LAZY)
 	private List<SalaDTO> parSalas;
 	
@@ -93,7 +96,7 @@ public class CineDTO implements Serializable {
 	
 	public CineDTO(String codigo, String nombre, String cif, String direccion,
             String codigoMunicipio, String nombreMunicipio, String cp, String empresa, String codigoRegistro,
-            String telefono, BigDecimal iva, String urlPublic, String urlPrivacidad, String urlComoLlegar, String urlPieEntrada, String mailFrom, String logoReport)
+            String telefono, BigDecimal iva, String urlPublic, String urlPrivacidad, String urlComoLlegar, String urlPieEntrada, String mailFrom, String logoReport, String apiKey)
     {
         this.codigo = codigo;
         this.nombre = nombre;
@@ -112,6 +115,7 @@ public class CineDTO implements Serializable {
 		this.urlPieEntrada = urlPieEntrada;
 		this.mailFrom = mailFrom;
 		this.logoReport = logoReport;
+		this.apiKey = apiKey;
     }
 
 	public CineDTO(long id) {
@@ -349,5 +353,15 @@ public class CineDTO implements Serializable {
 	public void setParTpvsCines(List<TpvsCinesDTO> parTpvsCines)
 	{
 		this.parTpvsCines = parTpvsCines;
+	}
+
+	public String getApiKey()
+	{
+		return apiKey;
+	}
+
+	public void setApiKey(String apiKey)
+	{
+		this.apiKey = apiKey;
 	}
 }

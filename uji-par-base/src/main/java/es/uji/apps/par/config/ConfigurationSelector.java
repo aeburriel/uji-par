@@ -11,4 +11,5 @@ public interface ConfigurationSelector
 	String getUrlCondicionesPrivacidad();
 	String getUrlPieEntrada();
 	String getLogoReport();
+	String getApiKey();
 }

@@ -144,15 +144,27 @@ public class UsuariosDAO extends BaseDAO
 
 	public Cine getUserCineByServerName(String serverName)
 	{
+		List<CineDTO> cines = getCineDTOByServerName(serverName);
+
+		return Cine.cineDTOToCine(cines.get(0));
+	}
+
+	public String getApiKeyByServerName(String serverName)
+	{
+		List<CineDTO> cines = getCineDTOByServerName(serverName);
+
+		return cines.get(0).getApiKey();
+	}
+
+	private List<CineDTO> getCineDTOByServerName(String serverName)
+	{
 		JPAQuery query = new JPAQuery(entityManager);
 		QUsuarioDTO qUsuarioDTO = QUsuarioDTO.usuarioDTO;
 		QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
 		QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
 		QCineDTO qCineDTO = QCineDTO.cineDTO;
 
-		List<CineDTO> cines = query.from(qUsuarioDTO).join(qUsuarioDTO.parSalasUsuario, qSalasUsuarioDTO).join(qSalasUsuarioDTO.parSala, qSalaDTO).join(qSalaDTO.parCine, qCineDTO).where(qUserDTO.url.eq(serverName)).list(qCineDTO);
-
-		return Cine.cineDTOToCine(cines.get(0));
+		return query.from(qUsuarioDTO).join(qUsuarioDTO.parSalasUsuario, qSalasUsuarioDTO).join(qSalasUsuarioDTO.parSala, qSalaDTO).join(qSalaDTO.parCine, qCineDTO).where(qUserDTO.url.eq(serverName)).list(qCineDTO);
 	}
 
 	public Cine getUserCineByUserUID(String userUID)

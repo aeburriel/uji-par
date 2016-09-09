@@ -120,10 +120,10 @@ public class BaseResource
 
     protected boolean correctApiKey(HttpServletRequest request)
     {
-        String key = request.getParameter("key");
+        String requestApiKey = request.getParameter("key");
+        String userApiKey = configurationSelector.getApiKey();
 
-		//String API_KEY = "kajshdka234hsdoiuqhiu918092";
-        return configuration.getApiKey().equals(key);
+        return userApiKey.equals(requestApiKey);
     }
 
     protected Response apiAccessDenied()

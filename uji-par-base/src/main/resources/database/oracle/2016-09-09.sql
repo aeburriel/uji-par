@@ -1,0 +1,8 @@
+ALTER TABLE PAR_CINES ADD (
+"API_KEY" VARCHAR2(255)
+);
+
+-- Insertamos las diferentes API keys para cada cine
+-- ALTER TABLE PAR_CINES MODIFY API_KEY DEFAULT NULL NOT NULL;
+
+INSERT INTO par_version_bbdd (VERSION) VALUES ('2016-09-09.SQL');
