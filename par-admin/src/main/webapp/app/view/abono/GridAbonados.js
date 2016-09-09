@@ -6,6 +6,13 @@ Ext.define('Paranimf.view.abono.GridAbonados', {
 
    title: UI.i18n.gridTitle.abonados,
 
+    dockedItems: [{
+        xtype: 'pagingtoolbar',
+        store: 'Abonados',
+        dock: 'bottom',
+        displayInfo: true
+    }],
+
    initComponent: function() {
 
     this.columns = [{
