@@ -5,7 +5,7 @@ Ext.define('Paranimf.store.PreciosSesion', {
    sorters: ['parLocalizacione'],
    autoLoad: false,
    autoSync: false,
-   pageSize: 20,
+   pageSize: 100,
    remoteSort: true,
 
    proxy: {
