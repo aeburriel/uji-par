@@ -860,6 +860,7 @@ public class ComprasDAO extends BaseDAO {
 				.set(qCompraDTO.caducada, false)
 				.set(qCompraDTO.anulada, false)
 				.set(qCompraDTO.referenciaPago, recibo)
+				.set(qCompraDTO.fecha, new Timestamp(new Date().getTime()))
 				.where(qCompraDTO.id.eq(idCompraReserva).and(
 						qCompraDTO.parSesion.id.eq(sesionId).and(
 								qCompraDTO.reserva.eq(true)))).execute();
