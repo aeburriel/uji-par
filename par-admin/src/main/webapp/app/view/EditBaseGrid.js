@@ -57,20 +57,50 @@ Ext.define('Paranimf.view.EditBaseGrid', {
       });
    },
 
-   createPercentageModalWindow: function(xtype, percentageWidth, percentageHeight, title, autoScrollable) {
+   createPercentageModalWindow: function(xtype, percentageWidth, percentageHeight, title, autoScrollable, callback) {
       var viewport = Ext.ComponentQuery.query('viewport')[0];
       percentageWidth = (percentageWidth)?viewport.width*percentageWidth:viewport.width*0.8;
       percentageHeight = (percentageHeight)?viewport.height*percentageHeight:'auto';
       autoScrollable = (autoScrollable != undefined)?autoScrollable:true;
-      return Ext.create('Paranimf.view.EditModalWindow', {
-         title: (title)?title:this.title,
-         items: [{
-            autoScroll: autoScrollable,
-            xtype: xtype,
-            width: percentageWidth,
-            height: percentageHeight
-         }]
-      });
+
+      if (callback) {
+         return Ext.create('Paranimf.view.EditModalWindow', {
+            title: (title)?title:this.title,
+            items: [{
+               autoScroll: autoScrollable,
+               xtype: xtype,
+               width: percentageWidth,
+               height: percentageHeight,
+               buttons: [{
+                  xtype: 'button',
+                  text: UI.i18n.button.save,
+                  action: 'save',
+                  hidden: (readOnlyUser == undefined)?false:readOnlyUser,
+                  handler: function() {
+                     callback();
+                  }
+               }, {
+                  xtype: 'button',
+                  text: UI.i18n.button.cancel,
+                  action: 'cancel',
+                  handler: function() {
+                     this.up('window').close();
+                  }
+               }]
+            }]
+         });
+      }
+      else {
+         return Ext.create('Paranimf.view.EditModalWindow', {
+            title: (title) ? title : this.title,
+            items: [{
+               autoScroll: autoScrollable,
+               xtype: xtype,
+               width: percentageWidth,
+               height: percentageHeight
+            }]
+         });
+      }
    },
 
    toJSON: function() {

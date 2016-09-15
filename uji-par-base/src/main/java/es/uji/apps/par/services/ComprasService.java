@@ -7,6 +7,7 @@ import es.uji.apps.par.dao.ButacasDAO;
 import es.uji.apps.par.dao.ComprasDAO;
 import es.uji.apps.par.dao.SesionesDAO;
 import es.uji.apps.par.db.AbonadoDTO;
+import es.uji.apps.par.db.ButacaDTO;
 import es.uji.apps.par.db.CompraDTO;
 import es.uji.apps.par.db.SesionDTO;
 import es.uji.apps.par.exceptions.*;
@@ -449,6 +450,42 @@ public class ComprasService
             butacasDAO.asignarIdEntrada(idCompraReserva);
         }
 	}
+
+    @Transactional
+    public void passarButacasACompra(Long sesionId, Long idCompraReserva, String recibo, List<Long> idsButacas, String language, String userUID) {
+        CompraDTO compra = comprasDAO.getCompraById(idCompraReserva);
+
+        List<ButacaDTO> butacasReserva = new ArrayList<>();
+        List<ButacaDTO> butacasCompra = new ArrayList<>();
+        for (ButacaDTO butacaDTO : compra.getParButacas())
+        {
+            if (idsButacas.contains(butacaDTO.getId()))
+            {
+                butacasReserva.add(butacaDTO);
+            }
+            else {
+                butacasCompra.add(butacaDTO);
+            }
+        }
+
+        if (butacasReserva.size() > 0)
+        {
+            if (butacasCompra.size() > 0)
+            {
+                anularButacas(idsButacas);
+                List<Butaca> butacas = Butaca.butacasDTOToButacas(butacasReserva, configuration.isIdEntrada(), language);
+                for (Butaca butaca : butacas)
+                {
+                    butaca.setId(0);
+                }
+                ResultadoCompra resultadoCompra = registraCompraTaquilla(sesionId, butacas, userUID);
+                marcarPagadaConReferenciaDePago(resultadoCompra.getId(), recibo);
+            }
+            else {
+                passarACompra(sesionId, idCompraReserva, recibo);
+            }
+        }
+    }
 
     @Transactional
     public void actualizaDatosAbonado(Abonado abonado) {

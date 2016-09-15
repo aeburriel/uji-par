@@ -22,7 +22,9 @@ import java.util.Locale;
 
 @Path("compra")
 public class CompraResource extends BaseResource {
-    
+
+	final String TARJETA_OFFLINE = "tarjetaoffline";
+
 	@InjectParam
 	private ComprasService comprasService;
 
@@ -134,13 +136,38 @@ public class CompraResource extends BaseResource {
 			("recibo") String recibo, @QueryParam("tipopago") String tipoPago) {
 		AuthChecker.canWrite(currentRequest);
 
-		if (tipoPago != null && tipoPago.trim().toLowerCase().equals("tarjetaoffline"))
-			recibo = recibo;
-		else
+		if (!isTipoPagoTarjetaOffline(tipoPago))
+		{
 			recibo = "";
+		}
 
 		comprasService.passarACompra(sesionId, idCompraReserva, recibo);
 		return Response.ok().build();
+	}
+
+	@PUT
+	@Path("{idSesion}/butacapassaracompra/{idCompra}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response passarButacasACompra(@PathParam("idSesion") Long sesionId, @PathParam("idCompra") Long idCompraReserva, @QueryParam
+			("recibo") String recibo, @QueryParam("tipopago") String tipoPago, List<Long> idsButacas) {
+		AuthChecker.canWrite(currentRequest);
+		String userUID = AuthChecker.getUserUID(currentRequest);
+
+		if (!isTipoPagoTarjetaOffline(tipoPago))
+		{
+			recibo = "";
+		}
+
+		Locale locale = getLocale();
+		String language = locale.getLanguage();
+
+		comprasService.passarButacasACompra(sesionId, idCompraReserva, recibo, idsButacas, language, userUID);
+		return Response.ok().build();
+	}
+
+	private boolean isTipoPagoTarjetaOffline(String tipoPago)
+	{
+		return tipoPago != null && tipoPago.trim().toLowerCase().equals(TARJETA_OFFLINE);
 	}
 
 	@PUT

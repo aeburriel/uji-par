@@ -14,6 +14,9 @@ Ext.define('Paranimf.view.compra.GridDetalleCompras', {
   }, {
     action: 'cambiar',
     text: UI.i18n.button.cambiarButaca
+  }, {
+    action: 'passButacaToCompra',
+    text: UI.i18n.button.comprarButacaReservada
   }],
    
   dockedItems: [{
@@ -70,5 +73,9 @@ Ext.define('Paranimf.view.compra.GridDetalleCompras', {
     }];
    
     this.callParent(arguments);
-   }
+   },
+
+  showFormasDePagoWindow: function(callback) {
+    this.createPercentageModalWindow('formFormasDePago', undefined, undefined, UI.i18n.formTitle.formasPago, false, callback).show();
+  }
 });

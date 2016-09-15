@@ -142,6 +142,10 @@ Ext.define('Paranimf.controller.ComprasReservas', {
         click: this.anularButacas
       },
 
+      'gridDetalleCompras button[action=passButacaToCompra]': {
+        click: this.passarButacaReservaACompra
+      },
+
       'panelCompras button[action=search]': {
         click: this.buscarCompra
       },
@@ -156,10 +160,6 @@ Ext.define('Paranimf.controller.ComprasReservas', {
 
       'formCambiaButaca button[action=save]': {
         click: this.saveCambiaButaca
-      },
-
-      'formFormasDePago button[action=save]': {
-        click: this.doPassarReservaACompra
       },
 
       'formFormasDePago combobox[name=tipoPago]': {
@@ -264,8 +264,28 @@ Ext.define('Paranimf.controller.ComprasReservas', {
     else {
       var selectedRecord = this.getGridCompras().getSelectedRecord();
       
-      if (selectedRecord.data.reserva == true)
-        this.getGridCompras().showFormasDePagoWindow();
+      if (selectedRecord.data.reserva == true) {
+        var self = this;
+        this.getGridDetalleCompras().showFormasDePagoWindow(function () {
+          self.doPassarReservaACompra()
+        });
+      }
+    }
+  },
+
+  passarButacaReservaACompra: function() {
+    if (!this.getGridCompras().hasRowSelected() || !this.getGridDetalleCompras().hasRowSelected())
+      alert(UI.i18n.message.selectRow);
+    else {
+      var selectedRecord = this.getGridCompras().getSelectedRecord();
+
+      if (selectedRecord.data.reserva == true) {
+        var self = this;
+        this.getGridDetalleCompras().showFormasDePagoWindow(function () {
+          var idsButacas = self.getGridDetalleCompras().getSelectedColumnIds();
+          self.doPassarReservaACompra(idsButacas)
+        });
+      }
     }
   },
 
@@ -277,7 +297,7 @@ Ext.define('Paranimf.controller.ComprasReservas', {
       this.getTxtReciboPago().hide();
   },
 
-  doPassarReservaACompra: function() {
+  doPassarReservaACompra: function(idsButacas) {
     var tipoPago = this.getComboTipoPago().value;
     var txtRecibo = this.getTxtReciboPago().value;
 
@@ -295,16 +315,33 @@ Ext.define('Paranimf.controller.ComprasReservas', {
             var me = this;
             this.getGridCompras().setLoading(UI.i18n.message.loading);
 
+            var urlPath = "passaracompra";
+            if (idsButacas) {
+              this.getGridDetalleCompras().setLoading(UI.i18n.message.loading);
+              urlPath = "butacapassaracompra";
+            }
+
             Ext.Ajax.request({
-              url : urlPrefix + 'compra/' + idSesion + '/passaracompra/' + idCompra + '?tipopago=' + tipoPago + '&recibo=' + txtRecibo,
+              url : urlPrefix + 'compra/' + idSesion + '/' + urlPath + '/' + idCompra + '?tipopago=' + tipoPago + '&recibo=' + txtRecibo,
+              jsonData: idsButacas,
               method: 'PUT',
               success: function (response) {
                 me.setStoreCompras();
                 me.getGridCompras().setLoading(false);
                 me.getGridCompras().deseleccionar();
                 me.getGridCompras().getStore().load();
+
+                if (idsButacas) {
+                  me.getGridDetalleCompras().setLoading(false);
+                  me.getGridDetalleCompras().deseleccionar();
+                  me.getGridDetalleCompras().getStore().removeAll();
+                }
+
                 me.getFormFormasDePago().up('window').close();
               }, failure: function (response) {
+                if (idsButacas) {
+                  me.getGridDetalleCompras().setLoading(false);
+                }
                 me.getGridCompras().setLoading(false);
                 var resp = Ext.JSON.decode(response.responseText, true);
                 
