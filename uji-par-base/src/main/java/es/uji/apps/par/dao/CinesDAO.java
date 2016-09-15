@@ -1,14 +1,12 @@
 package es.uji.apps.par.dao;
 
-import java.util.List;
-
+import com.mysema.query.jpa.impl.JPAQuery;
 import es.uji.apps.par.db.*;
+import es.uji.apps.par.model.Cine;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.mysema.query.jpa.impl.JPAQuery;
-
-import es.uji.apps.par.model.Cine;
+import java.util.List;
 
 @Repository
 public class CinesDAO extends BaseDAO
@@ -32,9 +30,10 @@ public class CinesDAO extends BaseDAO
 		QUsuarioDTO qUsuarioDTO = QUsuarioDTO.usuarioDTO;
 
 		return query.from(qCineDTO)
-				.leftJoin(qCineDTO.parSalas, qSalaDTO)
-				.leftJoin(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
-				.leftJoin(qSalasUsuarioDTO.parUsuario, qUsuarioDTO).on(qUsuarioDTO.usuario.eq(userUID))
+				.join(qCineDTO.parSalas, qSalaDTO)
+				.join(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+				.join(qSalasUsuarioDTO.parUsuario, qUsuarioDTO)
+				.where(qUsuarioDTO.usuario.eq(userUID))
 				.list(qCineDTO);
 	}
 
