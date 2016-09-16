@@ -32,6 +32,12 @@ Ext.application({
    controllers: controllers,
 
    launch: function() {
+       var cp = Ext.create('Ext.state.CookieProvider', {
+           expires: new Date(new Date().getTime()+(1000*60*60*24*365))
+       });
+
+       Ext.state.Manager.setProvider(cp);
+
       Ext.create('Ext.container.Viewport', {
          layout: 'border',
          defaults: {

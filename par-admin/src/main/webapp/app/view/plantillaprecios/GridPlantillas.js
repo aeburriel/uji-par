@@ -3,6 +3,7 @@ Ext.define('Paranimf.view.plantillaprecios.GridPlantillas', {
 
    alias: 'widget.gridPlantillas',
    store: 'PlantillasPreciosEditables',
+    stateId: 'gridPlantillas',
 
    title: UI.i18n.gridTitle.plantillasprecios,
 

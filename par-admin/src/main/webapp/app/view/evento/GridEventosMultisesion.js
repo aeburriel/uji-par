@@ -4,6 +4,7 @@ Ext.define('Paranimf.view.evento.GridEventosMultisesion', {
    alias: 'widget.gridEventosMultisesion',
    store: 'EventosMultisesion',
    title: UI.i18n.gridTitle.multisesion,
+    stateId: 'gridEventosMultisesion',
 
    tbar: [{
       xtype: 'button',

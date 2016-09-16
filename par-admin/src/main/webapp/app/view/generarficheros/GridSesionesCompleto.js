@@ -3,6 +3,7 @@ Ext.define('Paranimf.view.generarficheros.GridSesionesCompleto', {
 
    alias: 'widget.gridSesionesCompleto',
    store: 'SesionesFicheros',
+    stateId: 'gridSesionesCompleto',
 
    title: UI.i18n.gridTitle.sesionesICAA,
    tbar: [{

@@ -5,6 +5,7 @@ Ext.define('Paranimf.view.compra.GridSesionesComprasReservas', {
   store: 'SesionesTaquillaAll',
 
   title: UI.i18n.gridTitle.sesionesCompras,
+    stateId: 'gridSesionesComprasReservas',
 
   dockedItems: [{
     xtype: 'pagingtoolbar',

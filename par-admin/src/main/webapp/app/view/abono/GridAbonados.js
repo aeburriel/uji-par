@@ -5,6 +5,7 @@ Ext.define('Paranimf.view.abono.GridAbonados', {
    store: 'Abonados',
 
    title: UI.i18n.gridTitle.abonados,
+    stateId: 'gridAbonados',
 
     dockedItems: [{
         xtype: 'pagingtoolbar',

@@ -3,6 +3,7 @@ Ext.define('Paranimf.view.informes.GridSesionesInformes', {
 
   alias: 'widget.gridSesionesInformes',
   store: 'SesionesInformes',
+    stateId: 'gridSesionesInformes',
 
   title: UI.i18n.gridTitle.informeSessions,
   tbar: [{

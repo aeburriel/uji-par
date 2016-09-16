@@ -3,6 +3,7 @@ Ext.define('Paranimf.view.usuario.GridUsuarios', {
 
    alias: 'widget.gridUsuarios',
    store: 'Usuarios',
+    stateId: 'gridUsuarios',
 
    title: UI.i18n.gridTitle.user,
 

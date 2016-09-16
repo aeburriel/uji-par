@@ -3,6 +3,7 @@ Ext.define('Paranimf.view.evento.GridEventos', {
 
    alias: 'widget.gridEventos',
    store: 'Eventos',
+    stateId: 'gridEventos',
 
    title: UI.i18n.gridTitle.eventos,
 

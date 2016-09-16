@@ -4,6 +4,7 @@ Ext.define('Paranimf.view.compra.GridCompras', {
    alias: 'widget.gridCompras',
    store: 'Compras',
    title: UI.i18n.gridTitle.comprasReservasHechas,
+    stateId: 'gridCompras',
 
   tbar:[{
     action: 'anular',

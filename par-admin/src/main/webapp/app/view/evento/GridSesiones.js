@@ -5,6 +5,7 @@ Ext.define('Paranimf.view.evento.GridSesiones', {
    store: 'Sesiones',
 
    title: UI.i18n.gridTitle.sesiones,
+    stateId: 'gridSesiones',
 
    dockedItems: [{
      xtype: 'pagingtoolbar',

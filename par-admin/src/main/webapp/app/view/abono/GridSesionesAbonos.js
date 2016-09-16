@@ -5,6 +5,7 @@ Ext.define('Paranimf.view.abono.GridSesionesAbonos', {
    store: 'SesionesAbono',
 
    title: UI.i18n.gridTitle.sesiones,
+    stateId: 'gridSesionesAbonos',
 
    tbar: [{
       xtype: 'button',

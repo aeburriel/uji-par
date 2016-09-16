@@ -3,6 +3,7 @@ Ext.define('Paranimf.view.taquilla.GridSesionesTaquilla', {
 
    alias: 'widget.gridSesionesTaquilla',
    store: 'SesionesTaquilla',
+    stateId: 'gridSesionesTaquilla',
 
    title: UI.i18n.gridTitle.sesionesCompras,
 

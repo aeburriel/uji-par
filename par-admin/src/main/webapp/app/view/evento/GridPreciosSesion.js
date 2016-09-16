@@ -3,6 +3,7 @@ Ext.define('Paranimf.view.evento.GridPreciosSesion', {
 
    alias: 'widget.gridPreciosSesion',
    store: 'PreciosSesion',
+    stateId: 'gridPreciosSesion',
 
    title: UI.i18n.gridTitle.precios,
 

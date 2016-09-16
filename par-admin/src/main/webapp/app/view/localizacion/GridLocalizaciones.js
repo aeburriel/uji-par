@@ -3,6 +3,7 @@ Ext.define('Paranimf.view.localizacion.GridLocalizaciones', {
 
    alias: 'widget.gridLocalizaciones',
    store: 'Localizaciones',
+    stateId: 'gridLocalizaciones',
 
    title: UI.i18n.gridTitle.localizaciones,
 

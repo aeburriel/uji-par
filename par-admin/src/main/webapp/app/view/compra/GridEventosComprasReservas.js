@@ -4,6 +4,7 @@ Ext.define('Paranimf.view.compra.GridEventosComprasReservas', {
   alias: 'widget.gridEventosComprasReservas',
   store: 'EventosTaquillaAll',
   autoScroll: true,
+    stateId: 'gridEventosComprasReservas',
 
   title: UI.i18n.gridTitle.eventosCompras,
 

@@ -5,6 +5,7 @@ Ext.define('Paranimf.view.cliente.GridClientes', {
    store: 'Clientes',
 
    title: UI.i18n.gridTitle.client,
+    stateId: 'gridClientes',
 
    dockedItems: [{
      xtype: 'pagingtoolbar',

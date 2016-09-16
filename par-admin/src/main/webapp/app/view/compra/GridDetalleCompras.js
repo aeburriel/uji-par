@@ -7,6 +7,7 @@ Ext.define('Paranimf.view.compra.GridDetalleCompras', {
   selModel: {
       mode: 'MULTI'
   },
+    stateId: 'gridDetalleCompras',
 
   tbar:[{
     action: 'anular',
