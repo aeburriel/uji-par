@@ -12,4 +12,6 @@ public interface ConfigurationSelector
 	String getUrlPieEntrada();
 	String getLogoReport();
 	String getApiKey();
+
+	boolean showButacasHanEntradoEnDistintoColor();
 }

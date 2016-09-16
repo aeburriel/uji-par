@@ -31,6 +31,7 @@ public class Cine implements Serializable
     private String urlPieEntrada;
     private String mailFrom;
     private String logoReport;
+	private Boolean showButacasQueHanEntradoEnDistintoColor;
 
     public Cine()
     {
@@ -100,6 +101,7 @@ public class Cine implements Serializable
         cine.setUrlPieEntrada(cineDTO.getUrlPieEntrada());
         cine.setMailFrom(cineDTO.getMailFrom());
         cine.setLogoReport(cineDTO.getLogoReport());
+		cine.setShowButacasQueHanEntradoEnDistintoColor(cineDTO.getShowButacasQueHanEntradoEnDistintoColor());
 
         return cine;
     }
@@ -291,4 +293,12 @@ public class Cine implements Serializable
     	if (codi.length() != 3)
             throw new RegistroSerializaException(GeneralPARException.FORMATO_CODIGO_CINE_INCORRECTO_CODE);
     }
+
+	public Boolean getShowButacasQueHanEntradoEnDistintoColor() {
+		return showButacasQueHanEntradoEnDistintoColor;
+	}
+
+	public void setShowButacasQueHanEntradoEnDistintoColor(Boolean showButacasQueHanEntradoEnDistintoColor) {
+		this.showButacasQueHanEntradoEnDistintoColor = showButacasQueHanEntradoEnDistintoColor;
+	}
 }

@@ -85,4 +85,12 @@ public class ConfigurationDataBase implements ConfigurationSelector
 	{
 		return usuariosDAO.getApiKeyByServerName(this.currentRequest.getServerName());
 	}
+
+	@Override
+	public boolean showButacasHanEntradoEnDistintoColor() {
+		Cine cine = usuariosDAO.getUserCineByServerName(this.currentRequest.getServerName());
+
+		return (cine.getShowButacasQueHanEntradoEnDistintoColor() != null && cine.getShowButacasQueHanEntradoEnDistintoColor()) ?
+				true : false;
+	}
 }

@@ -72,6 +72,9 @@ public class CineDTO implements Serializable {
 	@Column(name = "API_KEY")
 	private String apiKey;
 
+	@Column(name = "BUTACASENTRADOENDISTINTOCOLOR")
+	private Boolean showButacasQueHanEntradoEnDistintoColor;
+
 	@OneToMany(mappedBy = "parCine", fetch=FetchType.LAZY)
 	private List<SalaDTO> parSalas;
 	
@@ -363,5 +366,13 @@ public class CineDTO implements Serializable {
 	public void setApiKey(String apiKey)
 	{
 		this.apiKey = apiKey;
+	}
+
+	public Boolean getShowButacasQueHanEntradoEnDistintoColor() {
+		return showButacasQueHanEntradoEnDistintoColor;
+	}
+
+	public void setShowButacasQueHanEntradoEnDistintoColor(Boolean showButacasQueHanEntradoEnDistintoColor) {
+		this.showButacasQueHanEntradoEnDistintoColor = showButacasQueHanEntradoEnDistintoColor;
 	}
 }

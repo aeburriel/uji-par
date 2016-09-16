@@ -22,6 +22,7 @@ public class ConfigurationProperties implements ConfigurationSelector
 	private static final String API_KEY = "api.key";
 
 	private static final Logger log = LoggerFactory.getLogger(ConfigurationProperties.class);
+	private static final String SHOW_BUTACAS_QUE_HAN_ENTRADO_EN_DISTINTO_COLOR = "uji.par.showButacasQueHanEntradoEnDistintoColor";
 
 	private Properties properties;
 
@@ -113,5 +114,12 @@ public class ConfigurationProperties implements ConfigurationSelector
 	public String getApiKey()
 	{
 		return getProperty(API_KEY);
+	}
+
+	@Override
+	public boolean showButacasHanEntradoEnDistintoColor() {
+		String showButacasQueHanEntradoEnDistintoColor = getNoObligatoryProperty(SHOW_BUTACAS_QUE_HAN_ENTRADO_EN_DISTINTO_COLOR);
+		return (showButacasQueHanEntradoEnDistintoColor != null && showButacasQueHanEntradoEnDistintoColor.toLowerCase().equals
+				("true")) ? true : false;
 	}
 }

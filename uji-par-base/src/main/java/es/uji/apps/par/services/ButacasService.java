@@ -3,6 +3,7 @@ package es.uji.apps.par.services;
 import com.mysema.query.Tuple;
 import es.uji.apps.par.comparator.ButacaComparator;
 import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.config.ConfigurationSelector;
 import es.uji.apps.par.dao.ButacasDAO;
 import es.uji.apps.par.dao.LocalizacionesDAO;
 import es.uji.apps.par.db.ButacaDTO;
@@ -34,6 +35,9 @@ public class ButacasService
 	@Autowired
 	Configuration configuration;
 
+	@Autowired
+	ConfigurationSelector configurationSelector;
+
     public ButacaDTO getButaca(long idButaca)
     {
         return butacasDAO.getButaca(idButaca);
@@ -64,7 +68,8 @@ public class ButacasService
                     String key = String.format("%s_%s_%s", butaca.getParLocalizacion().getCodigo(),
                             butaca.getFila(), butaca.getNumero());
 
-                    String value = "mapaOcupada";
+                    String value = (configurationSelector.showButacasHanEntradoEnDistintoColor() && butaca.getPresentada() !=
+							null) ? "mapaPresentada" : "mapaOcupada";
                     if (mostrarReservadas && esReserva(butaca))
                         value = "mapaReservada";
 
