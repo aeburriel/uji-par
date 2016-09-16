@@ -352,4 +352,24 @@ public class EventosResource extends BaseResource {
             return Response.noContent().build();
         }
     }
+
+	@GET
+	@Path("condicionesprivacidad")
+	@Produces(MediaType.TEXT_HTML)
+	public Template getCondicionesPrivacidad(@QueryParam("lang") String lang) throws ParseException {
+		Cine cine = usersService.getUserCineByServerName(currentRequest.getServerName());
+		lang = (lang == null || lang.toLowerCase().trim().equals("")) ? "es": lang;
+		String language = getLocale(lang).getLanguage();
+
+		Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + cine.getCodigo() + "/condicionesPrivacidad", getLocale()
+				, APP);
+
+		String url = currentRequest.getRequestURL().toString();
+
+		template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(getBaseUrlPublic(), url, language.toString(),
+				configurationSelector.getHtmlTitle()));
+		template.put("baseUrl", getBaseUrlPublic());
+
+		return template;
+	}
 }
