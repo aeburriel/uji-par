@@ -69,7 +69,7 @@ public class ButacasService
                             butaca.getFila(), butaca.getNumero());
 
                     String value = (configurationSelector.showButacasHanEntradoEnDistintoColor() && butaca.getPresentada() !=
-							null) ? "mapaPresentada" : "mapaOcupada";
+							null && mostrarReservadas) ? "mapaPresentada" : "mapaOcupada";
                     if (mostrarReservadas && esReserva(butaca))
                         value = "mapaReservada";
 
