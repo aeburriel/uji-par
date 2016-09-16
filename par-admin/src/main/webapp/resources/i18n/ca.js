@@ -225,7 +225,7 @@ UI =
             "anularEntrada": "Anul·lar entrada individual",
             "cambiarButaca": "Canviar butaca",
             "buscar": "Cercar",
-            "comprarButacaReservada": "Comprar butaques reservades seleccionades",
+            "comprarButacaReservada": "Passar a compra les butaques reservades seleccionades",
             "generateExcelTaquilla": "Excel de taquilla",
             "generateExcelEvento": "Excel dels espectacles",
             "generatePdfTaquilla": "PDF de taquilla",

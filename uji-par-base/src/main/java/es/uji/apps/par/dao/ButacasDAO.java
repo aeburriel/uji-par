@@ -370,4 +370,10 @@ public class ButacasDAO extends BaseDAO
 		JPAQuery query = new JPAQuery(entityManager);
 		return query.from(qButacaDTO).where(qButacaDTO.parCompra.id.eq(idCompra)).list(qButacaDTO.id);
 	}
+
+	@Transactional
+	public void borraButaca(Long idButaca) {
+		JPADeleteClause deleteClause = new JPADeleteClause(entityManager, qButacaDTO);
+		deleteClause.where(qButacaDTO.id.eq(idButaca)).execute();
+	}
 }

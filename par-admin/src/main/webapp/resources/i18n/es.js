@@ -202,7 +202,7 @@ UI =
             "passToCompra": "Pasar reserva a compra",
             "reservar": "Reservar",
             "anular": "Anular compra o reserva",
-            "comprarButacaReservada": "Comprar butacas reservadas seleccionadas",
+            "comprarButacaReservada": "Pasar a compra las butacas reservadas seleccionadas",
             "deactivateBooking": "Bloquear para reservas",
             "cancel": "Cancelar",
             "close": "Cerrar",
