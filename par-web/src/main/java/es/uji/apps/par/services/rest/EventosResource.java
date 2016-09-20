@@ -246,6 +246,7 @@ public class EventosResource extends BaseResource {
             datos.put("texto", getFechaSesion(sesion));
 
             datos.put("id", sesion.getId());
+            datos.put("sala", sesion.getSala().getNombre());
             datos.put("enPlazoVentaInternet", sesion.getEnPlazoVentaInternet());
             datos.put("canalInternet", databaseHelper.booleanToNumber(sesion.getCanalInternet()));
             datos.put("fechaInicioVentaOnline", sesion.getFechaInicioVentaOnline());
