@@ -437,8 +437,16 @@ public class ComprasService
 	@Transactional
     public void anularButacas(List<Long> idsButacas) throws IncidenciaNotFoundException {
 	    for (Long idButaca: idsButacas)
-	    	butacasDAO.anularButaca(idButaca);
-	}
+        {
+            butacasDAO.anularButaca(idButaca);
+        }
+
+        List<Long> comprasConTodasButacasAnuladas = butacasDAO.getComprasConTodasButacasAnuladas(idsButacas);
+        for (Long comprasConTodasButacasAnulada : comprasConTodasButacasAnuladas)
+        {
+            anularCompraReserva(comprasConTodasButacasAnulada);
+        }
+    }
 
     public void rellenaCodigoPagoPasarela(long idCompra, String recibo) {
         comprasDAO.rellenaCodigoPagoPasarela(idCompra, recibo);
@@ -472,7 +480,7 @@ public class ComprasService
         {
             if (butacasCompra.size() > 0)
             {
-                eliminarButacas(idsButacas);
+                anularButacas(idsButacas);
                 List<Butaca> butacas = Butaca.butacasDTOToButacas(butacasReserva, configuration.isIdEntrada(), language);
                 for (Butaca butaca : butacas)
                 {
@@ -486,12 +494,6 @@ public class ComprasService
             }
         }
     }
-
-	@Transactional
-	public void eliminarButacas(List<Long> idsButacas) throws IncidenciaNotFoundException {
-		for (Long idButaca: idsButacas)
-			butacasDAO.borraButaca(idButaca);
-	}
 
 	@Transactional
     public void actualizaDatosAbonado(Abonado abonado) {

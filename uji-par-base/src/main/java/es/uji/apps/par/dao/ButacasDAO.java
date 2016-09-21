@@ -376,4 +376,31 @@ public class ButacasDAO extends BaseDAO
 		JPADeleteClause deleteClause = new JPADeleteClause(entityManager, qButacaDTO);
 		deleteClause.where(qButacaDTO.id.eq(idButaca)).execute();
 	}
+
+	@Transactional
+	public List<Long> getComprasConTodasButacasAnuladas(List<Long> idsButacas)
+	{
+		QButacaDTO qButacaDTO =  QButacaDTO.butacaDTO;
+		QButacaDTO qButacaDTO1 = new QButacaDTO("qButacaDTO1");
+		QButacaDTO qButacaDTO2 = new QButacaDTO("qButacaDTO2");
+		QCompraDTO qCompraDTO = QCompraDTO.compraDTO;
+
+		JPAQuery query = new JPAQuery(entityManager);
+
+		List<Long> comprasConButacas =  new JPAQuery(entityManager).from(qButacaDTO1)
+				.where(qButacaDTO1.id.in(idsButacas)).distinct().list(qButacaDTO1.parCompra.id);
+
+		List<Long> comprasConEntradasNoAnuladas =  new JPAQuery(entityManager).from(qButacaDTO2)
+				.where(qButacaDTO2.parCompra.id.in(comprasConButacas)
+				.and(qButacaDTO2.anulada.eq(false))).distinct().list(qButacaDTO2.parCompra.id);
+
+		if (comprasConEntradasNoAnuladas == null || comprasConEntradasNoAnuladas.size() == 0)
+		{
+			return comprasConButacas;
+		}
+		else
+		{
+			return query.from(qCompraDTO).join(qCompraDTO.parButacas, qButacaDTO).where(qButacaDTO.id.in(idsButacas).and(qCompraDTO.id.notIn(comprasConEntradasNoAnuladas))).distinct().list(qCompraDTO.id);
+		}
+	}
 }
