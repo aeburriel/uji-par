@@ -187,7 +187,6 @@ public class EventosResource
                 .build();
     }
 
-    //@Produces(MediaType.APPLICATION_JSON)
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces({"text/html"})
