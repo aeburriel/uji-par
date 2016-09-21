@@ -4,6 +4,7 @@ import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.dao.MailDAO;
 import es.uji.apps.par.services.EntradasService;
 import es.uji.apps.par.services.MailInterface;
+import es.uji.apps.par.services.UsersService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class EnviaMails
 	
 	@Autowired
 	EntradasService entradasService;
+
+	@Autowired
+	UsersService usersService;
 
 	@Autowired
 	Configuration configuration;
@@ -40,6 +44,6 @@ public class EnviaMails
         log.info("Inicializamos envío de mails");
 
 		MailInterface mailInterface = newInstanceMailSender();
-		mailInterface.enviaPendientes(mailDAO, entradasService, configuration);
+		mailInterface.enviaPendientes(mailDAO, entradasService, usersService, configuration);
     }
 }

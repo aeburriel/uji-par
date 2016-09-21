@@ -3,6 +3,7 @@ package es.uji.apps.par.services;
 import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.dao.MailDAO;
 import es.uji.apps.par.db.MailDTO;
+import es.uji.apps.par.model.Usuario;
 import es.uji.apps.par.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.io.ByteArrayOutputStream;
+import java.net.URI;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -91,14 +93,18 @@ public class JavaMailService implements MailInterface
             
             
     private void enviaMailMultipart(String de, String para, String titulo, String texto, String uuid, String urlPublicSinHTTPS, String urlPieEntrada,
-    		EntradasService entradasService, Configuration configuration) throws MessagingException {
+    		EntradasService entradasService, Configuration configuration, UsersService usersService) throws MessagingException {
     	try {
 			if (uuid == null) {
 				log.error("UUID nulo en el método enviaMailMultipart");
 				throw new NullPointerException();
 			}
+
+			URI uri = new URI(urlPublicSinHTTPS);
+			Usuario user = usersService.getUserByServerName(uri.getHost());
+
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			entradasService.generaEntrada(uuid, baos, configuration.getAdminLogin().get(0), urlPublicSinHTTPS, urlPieEntrada);
+			entradasService.generaEntrada(uuid, baos, user.getUsuario(), urlPublicSinHTTPS, urlPieEntrada);
 			Message message = createMailMessage(de, para, titulo, configuration);
 			Multipart multipart = new MimeMultipart();
 			BodyPart messageBodyPart = new MimeBodyPart();
@@ -143,7 +149,7 @@ public class JavaMailService implements MailInterface
     }
 
     //al llamarse desde el job de quartz, no se inyecta el mailDAO, ni el service y lo enviamos desde la interfaz
-    public synchronized void enviaPendientes(MailDAO mailDAO, EntradasService entradasService, Configuration configuration) throws MessagingException {
+    public synchronized void enviaPendientes(MailDAO mailDAO, EntradasService entradasService, UsersService usersService, Configuration configuration) throws MessagingException {
     	if (configuration.getEnviarMailsEntradas() == null || configuration.getEnviarMailsEntradas().equals("true")) {
 	        log.info("** - Enviando mails pendientes desde JavaMailService...");
 	
@@ -151,16 +157,9 @@ public class JavaMailService implements MailInterface
 	
 	        for (MailDTO mail : mails)
 	        {
-	        	enviaMailMultipart(mail.getDe(), mail.getPara(), mail.getTitulo(), mail.getTexto(), mail.getUuid(), Utils.sinHTTPS(mail.getUrlPublic()), mail.getUrlPieEntrada(), entradasService, configuration);
+	        	enviaMailMultipart(mail.getDe(), mail.getPara(), mail.getTitulo(), mail.getTexto(), mail.getUuid(), Utils.sinHTTPS(mail.getUrlPublic()), mail.getUrlPieEntrada(), entradasService, configuration, usersService);
 	            mailDAO.marcaEnviado(mail.getId());
 	        }
     	}
-    }
-    
-    public static void main(String[] args) throws MessagingException
-    {
-    	JavaMailService mail = new JavaMailService();
-
-        mail.enviaMailMultipart("no_reply@wifi.benicassim.es", "debug@wifi.benicassim.es", "Esto es el cuerpo", "Hola que tal!", "uuid", "url", "urlPieEntrada", null, mail.configuration);
     }
 }
