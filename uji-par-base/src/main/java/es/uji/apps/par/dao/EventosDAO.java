@@ -142,7 +142,7 @@ public class EventosDAO extends BaseDAO
                 " e.RETENCION_SGAE as retencionsgae, e.IVA_SGAE as ivasgae, e.PORCENTAJE_IVA as porcentajeiva, " +
                 " e.RSS_ID as rssid, (select min(s.FECHA_CELEBRACION) from PAR_SESIONES s where e.id=s.EVENTO_ID) as fechaPrimeraSesion, " +
                 " e.EXPEDIENTE, e.COD_DISTRI, e.NOM_DISTRI, e.NACIONALIDAD, e.VO, e.METRAJE, e.SUBTITULOS, t.exportar_icaa, e.formato, " +
-                " (select count(*) from par_eventos_multisesion pem where pem.evento_id = e.id), tp.ID as tpv, tp.NOMBRE as tpvNombre, e.PROMOTOR, e.NIF_PROMOTOR, e.IMAGEN_PUBLI_SRC as imagenPublisrc, e.IMAGEN_PUBLI_CONTENT_TYPE " +
+                " (select count(*) from par_eventos_multisesion pem where pem.evento_id = e.id), tp.ID as tpv, tp.NOMBRE as tpvNombre, e.PROMOTOR, e.NIF_PROMOTOR, e.IMAGEN_PUBLI_SRC as imagenPublisrc, e.IMAGEN_PUBLI_CONTENT_TYPE, e.INTERPRETES_ES, e.INTERPRETES_VA " +
                 " from PAR_EVENTOS e left outer join PAR_CINES c on e.CINE_ID = c.id left outer join PAR_SALAS sa on sa.CINE_ID=c.id left outer join PAR_SALAS_USUARIOS sau on sa.id=sau.SALA_ID "
                 + "left outer join PAR_USUARIOS u on u.id=sau.USUARIO_ID "
                 + "left outer join PAR_SESIONES s on e.id=s.EVENTO_ID inner join PAR_TIPOS_EVENTO t on e.TIPO_EVENTO_ID=t"
@@ -260,6 +260,9 @@ public class EventosDAO extends BaseDAO
 
         evento.setImagenPubliSrc((String) array[40]);
         evento.setImagenPubliContentType((String) array[41]);
+
+        evento.setInterpretesEs((String) array[42]);
+        evento.setInterpretesVa((String) array[43]);
 
         return evento;
     }
@@ -433,6 +436,8 @@ public class EventosDAO extends BaseDAO
         eventoDTO.setDescripcionVa(evento.getDescripcionVa());
         eventoDTO.setComentariosEs(evento.getComentariosEs());
         eventoDTO.setComentariosVa(evento.getComentariosVa());
+        eventoDTO.setCompanyiaEs(evento.getCompanyiaEs());
+        eventoDTO.setCompanyiaVa(evento.getCompanyiaVa());
         eventoDTO.setInterpretesEs(evento.getInterpretesEs());
         eventoDTO.setInterpretesVa(evento.getInterpretesVa());
         eventoDTO.setDuracionEs(evento.getDuracionEs());
