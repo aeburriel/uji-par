@@ -5,6 +5,7 @@ public interface ConfigurationSelector
 	String getUrlPublic();
 	String getUrlPublicSinHTTPS();
 	String getUrlPublicLimpio();
+	String getUrlAdmin();
 	String getHtmlTitle();
 	String getMailFrom();
 	String getUrlComoLlegar();
@@ -12,6 +13,5 @@ public interface ConfigurationSelector
 	String getUrlPieEntrada();
 	String getLogoReport();
 	String getApiKey();
-
 	boolean showButacasHanEntradoEnDistintoColor();
 }

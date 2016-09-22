@@ -13,6 +13,7 @@ public class ConfigurationProperties implements ConfigurationSelector
 	private static final String URL_PUBLIC = "uji.par.urlPublic";
 	private static final String URL_PUBLIC_SIN_HTTPS = "uji.par.urlPublicSinHTTPS";
 	private static final String URL_PUBLIC_LIMPIO = "uji.par.urlPublicLimpio";
+	private static final String URL_ADMIN = "uji.par.urlAdmin";
 	private static final String HTML_TITLE = "uji.par.htmltitle";
 	private static final String COMO_LLEGAR = "uji.par.urlComoLlegar";
 	private static final String URL_CONDICIONES_PRIVACIDAD = "uji.par.urlCondicionesPrivacidad";
@@ -79,6 +80,11 @@ public class ConfigurationProperties implements ConfigurationSelector
 	public String getUrlPublicLimpio()
 	{
 		return getNoObligatoryProperty(URL_PUBLIC_LIMPIO);
+	}
+
+	public String getUrlAdmin()
+	{
+		return getProperty(URL_ADMIN);
 	}
 
 	public String getHtmlTitle()

@@ -3,6 +3,7 @@ package es.uji.apps.par.config;
 import es.uji.apps.par.dao.UsuariosDAO;
 import es.uji.apps.par.model.Cine;
 import es.uji.apps.par.utils.Utils;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +38,11 @@ public class ConfigurationDataBase implements ConfigurationSelector
 	public String getUrlPublicLimpio()
 	{
 		return getUrlPublic();
+	}
+
+	public String getUrlAdmin()
+	{
+		throw new NotImplementedException("getUrlAdmin");
 	}
 
 	public String getHtmlTitle()
