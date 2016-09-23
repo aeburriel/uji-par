@@ -119,3 +119,50 @@ input[type=text] {
 .localizacion_anfiteatro {
 	margin-bottom: 7px;
 }
+
+.minimapa {
+	border: solid 1px white;
+	position:absolute;
+	height:14px;
+	width:9px;
+	cursor: pointer;
+}
+.mapa {
+	border: solid 1px white;
+	position:absolute;
+	height:20px;
+	width:19px;
+	border-top-left-radius: 28px;
+	border-top-right-radius: 28px;
+	cursor: pointer;
+}
+.mapaTexto {
+	height: 17px;
+	width: 17px;
+	border-radius: 50%;
+	font-size: 10px !important;
+	line-height: 17px !important;
+	background-color: #E1DDD1;
+}
+.mapaLibre {
+	background-color: #E1DDD1;
+}
+.mapaOcupada {
+	background-color: #746B5A;
+}
+.mapaPresentada {
+	background-color: #3dff00;
+}
+.mapaSeleccionada {
+	background-color: #D54D12;
+}
+.mapaReservada {
+	background-color: #746B5A;
+}
+
+div[id^=localizacion] {
+	display: none;
+}
+
+.miniarea{
+}
