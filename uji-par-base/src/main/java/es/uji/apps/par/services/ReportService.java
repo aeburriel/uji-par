@@ -229,6 +229,7 @@ public class ReportService {
 		return excelService;
 	}
 
+	synchronized
 	public void getPdfTaquilla(String fechaInicio, String fechaFin, OutputStream bos, Locale locale, String userUID, String logoReport) throws
 			ReportSerializationException, ParseException {
 		InformeInterface informe = generaYRellenaInformePDFTaquilla(fechaInicio, fechaFin, locale, userUID, logoReport);
@@ -297,6 +298,7 @@ public class ReportService {
 		return DateUtils.dateToSpanishString(dt);
 	}
 
+	synchronized
 	public void getPdfEfectivo(String fechaInicio, String fechaFin,	OutputStream bos, Locale locale, String userUID, String logoReport) throws
 			ReportSerializationException, ParseException, SinIvaException {
 		InformeInterface informe = generaYRellenaInformePDFEfectivo(fechaInicio, fechaFin, locale, userUID, logoReport);
@@ -321,12 +323,14 @@ public class ReportService {
 		return informe;
 	}
 
+	synchronized
 	public void getPdfTpvSubtotales(String fechaInicio, String fechaFin, OutputStream bos, Locale locale, String userUID, String logoReport) throws
 			ReportSerializationException, ParseException, SinIvaException {
 		InformeInterface informe = generaYRellenaInformePDFTaquillaTPVSubtotales(fechaInicio, fechaFin, locale, userUID, logoReport);
 		informe.serialize(bos);
 	}
 
+	synchronized
 	public void getPdfTpvOnlineSubtotales(String fechaInicio, String fechaFin, OutputStream bos, Locale locale, String userUID, String logoReport) throws
 			ReportSerializationException, ParseException, SinIvaException {
 		InformeInterface informe = generaYRellenaInformePDFOnlineTPVSubtotales(fechaInicio, fechaFin, locale, userUID, logoReport);
@@ -359,6 +363,7 @@ public class ReportService {
 		return informe;
 	}
 
+	synchronized
 	public void getPdfEventos(String fechaInicio, String fechaFin, OutputStream bos, Locale locale, String userUID, String logoReport) throws
 			ReportSerializationException, ParseException, SinIvaException {
 		InformeInterface informe = generaYRellenaInformePDFEventos(fechaInicio, fechaFin, locale, userUID, logoReport);
@@ -433,6 +438,7 @@ public class ReportService {
 		//informeSesionReport = EntradaReportFactory.newInstanceInformeSesionReport(configuration);
 	}
 
+	synchronized
 	public void getPdfSesion(long sesionId, ByteArrayOutputStream bos, Locale locale, String userUID, String logoReport, boolean anuladas) throws SinIvaException,
 			ReportSerializationException, IOException {
 		Sesion sesion = new Sesion(new Long(sesionId).intValue());
@@ -440,6 +446,7 @@ public class ReportService {
 		informe.serialize(bos);
 	}
 
+	synchronized
 	public void getPdfSesiones(List<Sesion> sesiones, ByteArrayOutputStream bos, Locale locale, String userUID, String logoReport, boolean anuladas) throws
 			SinIvaException, ReportSerializationException, IOException {
 		InformeInterface informe = generaYRellenaPDFSesiones(sesiones, locale, userUID, logoReport, anuladas);
@@ -465,6 +472,7 @@ public class ReportService {
 		return informe;
 	}
 
+	synchronized
 	public void getPdf(long sesionId, ByteArrayOutputStream bos, String tipo, Locale locale, String userUID, String logoReport) throws SinIvaException,
 			ReportSerializationException, IOException {
         informeReport = EntradaReportFactory.newInstanceInformeReport(tipo, configuration);
@@ -504,6 +512,7 @@ public class ReportService {
 		return informeSesion;
 	}
 
+	synchronized
 	public void getPdfPorFechas(String fechaInicio, String fechaFin, String tipo, ByteArrayOutputStream ostream, Locale locale,
 			String userUID, String logoReport) throws ReportSerializationException, ParseException {
 		informeReport = EntradaReportFactory.newInstanceInformeReport(tipo, configuration);

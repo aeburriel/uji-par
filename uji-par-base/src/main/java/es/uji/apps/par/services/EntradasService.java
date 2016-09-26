@@ -51,6 +51,7 @@ public class EntradasService {
     private static EntradaReportTaquillaInterface entradaTaquillaReport;
     private static EntradaReportOnlineInterface entradaOnlineReport;
 
+	synchronized
     public void generaEntrada(String uuidCompra, OutputStream outputStream, String userUID, String urlPublicSinHTTPS, String urlPieEntrada) throws ReportSerializationException {
 		try {
 			EntradaReportOnlineInterface entrada = generaEntradaOnlineYRellena(uuidCompra, userUID, urlPublicSinHTTPS, urlPieEntrada);
@@ -81,6 +82,7 @@ public class EntradasService {
 		return entrada;
 	}
 
+	synchronized
 	public void generaEntradaTaquilla(String uuidCompra, OutputStream outputStream, String userUID, String urlPublicSinHTTPS) throws ReportSerializationException, SAXException, IOException {
 		EntradaReportTaquillaInterface entrada = generaEntradaTaquillaYRellena(uuidCompra, userUID, urlPublicSinHTTPS);
         entrada.serialize(outputStream);
