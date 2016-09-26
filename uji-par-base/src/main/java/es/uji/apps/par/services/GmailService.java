@@ -60,8 +60,16 @@ public class GmailService implements MailInterface
     private Message createMailMessage(String de, String para, String titulo, final Configuration configuration) throws MessagingException
     {
 		Properties props = new Properties();
-		props.put("mail.smtps.host", configuration.getMailHost());
-		props.put("mail.smtps.auth", "true");
+
+		props.put("mail.transport.protocol", "smtp");
+		props.put("mail.smtp.host", configuration.getMailHost());
+		props.put("mail.smtp.port", "465");
+		props.put("mail.smtp.ssl.enable", true);
+		props.put("mail.smtp.socketFactory.port", "465");
+		props.put("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");
+		props.put("mail.smtp.socketFactory.fallback", "false");
+		props.put("mail.smtp.quitwait", "false");
+		props.put("mail.smtp.auth", "true");
 
 		Authenticator auth = null;
 		if (configuration.getMailPassword() != null && configuration.getMailUsername() != null)
