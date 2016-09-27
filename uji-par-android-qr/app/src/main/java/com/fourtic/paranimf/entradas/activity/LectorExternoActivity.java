@@ -76,6 +76,7 @@ public class LectorExternoActivity extends BaseNormalActivity
                 if (end)
                 {
                     inputResult = inputResult.substring(0, Math.max(inputResult.length() - 1, 0));
+                    inputResult = inputResult.replaceAll("/", "-");
                     Intent result = new Intent(inputResult, null);
                     setResult(Activity.RESULT_OK, result);
                     finish();
