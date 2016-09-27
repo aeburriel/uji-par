@@ -90,7 +90,7 @@ public class EntradasResource extends BaseResource {
                 return paginaSeleccionEntradasNoNumeradas(sesionId, null, user.getUsuario());
             }
         } else
-            return paginaFueraDePlazo();
+            return paginaFueraDePlazo(sesionId, user.getUsuario());
     }
 
     private Response paginaSeleccionEntradasNumeradas(long sesionId, List<Butaca> butacasSeleccionadas,
@@ -100,7 +100,7 @@ public class EntradasResource extends BaseResource {
         String url = currentRequest.getRequestURL().toString();
 
         if (!sesion.getEnPlazoVentaInternet())
-            return paginaFueraDePlazo();
+            return paginaFueraDePlazo(sesionId, userUID);
 
         Evento evento = sesion.getEvento();
 
@@ -169,7 +169,7 @@ public class EntradasResource extends BaseResource {
         String urlBase = getBaseUrlPublic();
 
         if (!sesion.getEnPlazoVentaInternet())
-            return paginaFueraDePlazo();
+            return paginaFueraDePlazo(sesionId, userUID);
 
         Evento evento = sesion.getEvento();
 
@@ -276,7 +276,7 @@ public class EntradasResource extends BaseResource {
             resultadoCompra = comprasService.realizaCompraInternet(sesionId, butacasSeleccionadas, uuidCompra, userUID);
         } catch (FueraDePlazoVentaInternetException e) {
             log.error("Fuera de plazo", e);
-            return paginaFueraDePlazo();
+            return paginaFueraDePlazo(sesionId, userUID);
         } catch (ButacaOcupadaException e) {
             String error = ResourceProperties.getProperty(getLocale(), "error.seleccionEntradas.ocupadas");
             return paginaSeleccionEntradasNumeradas(sesionId, butacasSeleccionadas, null, error, userUID);
@@ -324,7 +324,7 @@ public class EntradasResource extends BaseResource {
             resultadoCompra = comprasService.realizaCompraInternet(sesionId, butacasSeleccionadas, uuidCompra, userUID);
         } catch (FueraDePlazoVentaInternetException e) {
             log.error("Fuera de plazo", e);
-            return paginaFueraDePlazo();
+            return paginaFueraDePlazo(sesionId, userUID);
         } catch (ButacaOcupadaException e) {
             String error = ResourceProperties.getProperty(getLocale(), "error.seleccionEntradas.ocupadas");
             return paginaSeleccionEntradasNoNumeradas(sesionId, error, userUID);
@@ -635,11 +635,13 @@ public class EntradasResource extends BaseResource {
         return template;
     }
 
-    private Response paginaFueraDePlazo() throws Exception {
+    private Response paginaFueraDePlazo(Long sesionId, String userUID) throws Exception {
+        Sesion sesion = sesionesService.getSesion(sesionId, userUID);
+
         Locale locale = getLocale();
         String language = locale.getLanguage();
 
-        Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "compraFinalizada", locale, APP);
+        Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + sesion.getSala().getCine().getCodigo() + "compraFinalizada", locale, APP);
         String urlBase = getBaseUrlPublic();
         String url = currentRequest.getRequestURL().toString();
         template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(urlBase, url, language.toString(), configurationSelector.getHtmlTitle()));
