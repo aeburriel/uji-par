@@ -9,7 +9,7 @@ Ext.define('Paranimf.view.EditBaseGrid', {
       enableTextSelection: true
    },
 
-    stateful: true,
+    stateful: false,
 
    tbar: [{
       xtype: 'button',
