@@ -537,14 +537,17 @@ public class EventosDAO extends BaseDAO
 
         JPAQuery query = new JPAQuery(entityManager);
 
-        return query
-                .from(qEventoDTO)
+        List<EventoDTO> list = query.from(qEventoDTO)
                 .leftJoin(qEventoDTO.parCine, qCineDTO)
                 .leftJoin(qCineDTO.parSalas, qSalaDTO)
                 .leftJoin(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
                 .leftJoin(qSalasUsuarioDTO.parUsuario, qUsuarioDTO)
-                .where((qUsuarioDTO.usuario.eq(userUID).or(qCineDTO.isNull())).and(qEventoDTO.id.eq(eventoId)))
-                .uniqueResult(qEventoDTO);
+                .where((qUsuarioDTO.usuario.eq(userUID)
+                        .or(qCineDTO.isNull()))
+                        .and(qEventoDTO.id.eq(eventoId)))
+                .list(qEventoDTO);
+
+        return list.get(0);
     }
 
     @Transactional
@@ -568,10 +571,8 @@ public class EventosDAO extends BaseDAO
 
         if (eventos.size() == 0)
             return null;
-        else if (eventos.size() == 1)
-            return eventos.get(0);
         else
-            throw new RuntimeException("Hay varios eventos con el mismo RSS_ID");
+            return eventos.get(0);
     }
 
     @Transactional
