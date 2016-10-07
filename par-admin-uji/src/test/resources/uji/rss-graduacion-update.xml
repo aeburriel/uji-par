@@ -1,0 +1,37 @@
+<rss version="2.0" xmlns:crm-general="http://www.uji.es/namespaces/rss#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel>
+        <title>Universitat Jaume I CRM</title>
+        <link>http://www.uji.es/crm/</link>
+        <description>Canal RSS Universitat Jaume I CRM</description>
+        <language>es-es</language>
+        <copyright>(c) 2013 Universitat Jaume I</copyright>
+        <dc:language>es-es</dc:language>
+        <dc:rights>(c) 2013 Universitat Jaume I</dc:rights>
+        <item>
+            <enclosure type="image/png" url="http://ujiapps.uji.es/ade/rest/storage/MKU6P2AVUII5618R7JHAC9T8Y3ERY2TR"/>
+            <pubDate>Fri, 16 Oct 2015 19:30:00 GMT</pubDate>
+            <dc:date>2015-10-16T19:00:00Z</dc:date>
+            <crm-metadato:tipo xmlns:crm-metadato="http://www.uji.es/namespaces/rss#">ActoGraduacion</crm-metadato:tipo>
+            <crm-metadato:seientsnumerats xmlns:crm-metadato="http://www.uji.es/namespaces/rss#">no</crm-metadato:seientsnumerats>
+            <crm-general:contenido>Acte de Graduació de la Facultat de Ciències Jurídiques i Econòmiques (Jurídic)</crm-general:contenido>
+            <crm-general:duracio>0</crm-general:duracio>
+            <crm-general:titulo>Acte de Graduació de la Facultat de Ciències Jurídiques i Econòmiques (Jurídic)</crm-general:titulo>
+            <crm-general:resumen>Acte de Graduació de la Facultat de Ciències Jurídiques i Econòmiques (Jurídic)</crm-general:resumen>
+            <crm-general:contenidoId>2508948</crm-general:contenidoId>
+            <crm-general:apertura>18:00</crm-general:apertura>
+        </item>
+        <item>
+            <enclosure type="image/png" url="http://ujiapps.uji.es/ade/rest/storage/K2GO2VC7VSM86GN2AJ6LFH7AL3YXMDBH"/>
+            <pubDate>Fri, 16 Oct 2015 18:00:00 GMT</pubDate>
+            <dc:date>2015-10-16T18:00:00Z</dc:date>
+            <crm-metadato:tipo xmlns:crm-metadato="http://www.uji.es/namespaces/rss#">ActoGraduacion</crm-metadato:tipo>
+            <crm-metadato:seientsnumerats xmlns:crm-metadato="http://www.uji.es/namespaces/rss#">no</crm-metadato:seientsnumerats>
+            <crm-general:contenido>Acte de Graduació de la Facultat de Ciències Jurídiques i Econòmiques (Econòmic)</crm-general:contenido>
+            <crm-general:duracio>0</crm-general:duracio>
+            <crm-general:titulo>Acte de Graduació de la Facultat de Ciències Jurídiques i Econòmiques (Econòmic)</crm-general:titulo>
+            <crm-general:resumen>Acte de Graduació de la Facultat de Ciències Jurídiques i Econòmiques (Econòmic)</crm-general:resumen>
+            <crm-general:contenidoId>2508947</crm-general:contenidoId>
+            <crm-general:apertura>17:30</crm-general:apertura>
+        </item>
+    </channel>
+</rss>
