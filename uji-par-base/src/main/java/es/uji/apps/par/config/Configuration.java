@@ -40,6 +40,8 @@ public class Configuration
     private static final String USER_READONLY_LOGIN = "uji.par.auth.readonly.login";
     private static final String USER_READONLY_PASSWORD = "uji.par.auth.readonly.password";    
     private static final String JDBC_URL = "uji.db.jdbcUrl";
+    private static final String DB_USER = "uji.db.username";
+    private static final String DB_PASS = "uji.db.password";
     private static final String SYNC_TIPO = "uji.sync.lugar";
     public static final String SYNC_URL_TIPO = "uji.sync.rss";
     public static final String SYNC_TOKEN = "uji.sync.token";
@@ -387,6 +389,14 @@ public class Configuration
 
 	public String getCodigoBuzon() {
 		return getProperty(CODIGO_BUZON);
+	}
+
+	public String getDBUser() {
+		return getProperty(DB_USER);
+	}
+
+	public String getDBPassword() {
+		return getProperty(DB_PASS);
 	}
 
 	public String getActiveDirectoryIP() {
