@@ -136,9 +136,9 @@ INSERT INTO PAR_REPORTS("id", sala_id, tipo, clase) values (5, 1, 'pdfTpv', 'es.
 INSERT INTO PAR_REPORTS("id", sala_id, tipo, clase) values (6, 1, 'pdfSGAE', 'es.uji.apps.par.report.InformeEventosReport');
 INSERT INTO PAR_REPORTS("id", sala_id, tipo, clase) values (7, 1, 'pdfSesion', 'es.uji.apps.par.report.InformeSesionReport');
 
-INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (1, 'Administració de l''ajuntament d''Almassora', 'admin', 'entrades@almassora.es', NULL);
+INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (1, 'Administracio de l''ajuntament d''Almassora', 'admin', 'entrades@almassora.es', NULL);
 INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (2, 'Eulen', 'eulen', 'mcvera@eulen.com', NULL);
-INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (3, 'Gestió entrades Almassora', 'gestio', 'entrades@almassora.es', NULL);
+INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (3, 'Gestio entrades Almassora', 'gestio', 'entrades@almassora.es', NULL);
 INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (4, 'Public', 'public', 'entrades@almassora.es', 'entrades.almassora.es');
 
 INSERT INTO PAR_SALAS_USUARIOS ("id", USUARIO_ID, SALA_ID) VALUES (1, 1, 1);
