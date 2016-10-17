@@ -1,26 +1,18 @@
 package es.uji.apps.par.auth;
 
-import java.io.IOException;
-import java.util.regex.Pattern;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Context;
-
+import es.uji.apps.par.services.UJIPerfilesService;
+import es.uji.commons.sso.AccessManager;
+import es.uji.commons.sso.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import es.uji.apps.par.services.UJIPerfilesService;
-import es.uji.commons.sso.AccessManager;
-import es.uji.commons.sso.User;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Context;
+import java.io.IOException;
+import java.util.regex.Pattern;
 
 public class AuthFilterSSOUji implements Filter
 {
@@ -80,7 +72,7 @@ public class AuthFilterSSOUji implements Filter
         boolean isUserValid = false;
 
         if (sRequest.getSession().getAttribute("user") == null) {
-            sRequest.getSession().setAttribute("user", user);
+            sRequest.getSession().setAttribute("user", user.getName());
             isUserValid = ujiPerfilesService.hasPerfil("ADMIN", user.getId());
             sRequest.getSession().setAttribute("isUserValid", isUserValid);
         } else {
