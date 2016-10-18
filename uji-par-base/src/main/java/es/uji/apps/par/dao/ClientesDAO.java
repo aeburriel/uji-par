@@ -1,12 +1,15 @@
 package es.uji.apps.par.dao;
 
+import com.google.common.collect.Lists;
 import com.mysema.query.Tuple;
 import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.types.expr.BooleanExpression;
 import es.uji.apps.par.db.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Repository
@@ -64,8 +67,12 @@ public class ClientesDAO extends BaseDAO {
                 .list(qCompraDTO.id.max());
 
         if (ids != null && ids.size() > 0) {
+            Iterator<List<Long>> iterator = Lists.partition(ids, 1000).iterator();
+            BooleanExpression whereStatement = qCompraDTO.id.in(iterator.next());
+            while (iterator.hasNext()) whereStatement = whereStatement.or(qCompraDTO.id.in(iterator.next()));
+
             return query.from(qCompraDTO)
-                    .where(qCompraDTO.id.in(ids));
+                    .where(whereStatement);
         }
         else {
             return null;
