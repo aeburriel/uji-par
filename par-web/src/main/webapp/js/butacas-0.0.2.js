@@ -313,6 +313,9 @@ Butacas = (function() {
 	function muestraMinimapa() {
 		$('div[id^=localizacion_]').hide();
 		$('div[class=miniarea]').show();
+		$('html,body').animate({
+			scrollTop: $("#divButacas").offset().top
+		});
 	}
 	
 	$(document).ready(function() {
