@@ -103,13 +103,13 @@ SET
   URL_PRIVACIDAD  = 'http://www.uji.es/CA/organs/sg/polgen.thtml',
   URL_COMO_LLEGAR = 'http://www.uji.es/bin/asc/paranimf/comarrib.pdf',
   MAIL_FROM       = 'no_reply@uji.es',
-  URL_PIE_ENTRADA = 'http://ujiapps.uji.es/cultura/paranimf/publicitat/publi.jpg',
+  URL_PIE_ENTRADA = 'http://ujiapps.uji.es/serveis/scp/disseny/publicitat/paranimf/publi.jpg',
   LOGO_REPORT     = 'uji_logo_color.png';
 
 UPDATE PAR_MAILS
 SET
   URL_PUBLIC      = 'http://ujiapps.uji.es/par-public',
-  URL_PIE_ENTRADA = 'http://ujiapps.uji.es/cultura/paranimf/publicitat/publi.jpg';
+  URL_PIE_ENTRADA = 'http://ujiapps.uji.es/serveis/scp/disseny/publicitat/paranimf/publi.jpg';
 
 ALTER TABLE PAR_CINES MODIFY URL_PUBLIC DEFAULT NULL NOT NULL;
 ALTER TABLE PAR_CINES MODIFY URL_PRIVACIDAD DEFAULT NULL NOT NULL;
@@ -128,7 +128,7 @@ ALTER TABLE PAR_CINES ADD (
 
 UPDATE PAR_CINES
 SET
-  API_KEY = 'kajshdka4lñosdfl2_$';
+  API_KEY = 'kajshdka4losdfl2_$';
 
 INSERT INTO par_version_bbdd (VERSION) VALUES ('2016-09-09.SQL');
 
@@ -153,14 +153,16 @@ INSERT INTO PAR_REPORTS("id", sala_id, tipo, clase) values (5, 1, 'pdfTpv', 'es.
 INSERT INTO PAR_REPORTS("id", sala_id, tipo, clase) values (6, 1, 'pdfSGAE', 'es.uji.apps.par.report.InformeEventosReport');
 INSERT INTO PAR_REPORTS("id", sala_id, tipo, clase) values (7, 1, 'pdfSesion', 'es.uji.apps.par.report.InformeSesionReport');
 
-INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (1, 'Administración del Paranimf - UJI', 'dobon', 'info@4tic.com', NULL);
-INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (2, 'Administración del Paranimf - UJI', 'al204488', 'info@4tic.com', NULL);
-INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (3, 'Administración del Paranimf - UJI', 'palos', 'info@4tic.com', NULL);
-INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (4, 'Administración del Paranimf - UJI', 'victor.viciano', 'info@4tic.com', NULL);
-INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (5, 'Administración del Paranimf - UJI', 'al081561', 'info@4tic.com', NULL);
-INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (6, 'Administración del Paranimf - UJI', 'nmanero', 'info@4tic.com', NULL);
-INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (7, 'Administración del Paranimf - UJI', 'borillo', 'info@4tic.com', NULL);
-INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (8, 'Public', 'public', 'info@4tic.com', 'ujiapps.uji.es');
+INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (1, 'palos', 'palos', 'palos@uji.es', NULL);
+INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (2, 'al204488', 'al204488', 'al204488@uji.es', NULL);
+INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (3, 'dobon', 'dobon', 'dobon@uji.es', NULL);
+INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (4, 'Ricardo Borillo', 'borillo', 'borillo@uji.es', NULL);
+INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (5, 'Nicolás Manero', 'nmanero', 'nmanero@uji.es', NULL);
+INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (6, 'vicianov', 'vicianov', 'vicianov@uji.es', NULL);
+INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (7, 'claramun', 'claramun', 'claramun@uji.es', NULL);
+INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (8, 'Sergio Gragera', 'al081561', 'al081561@uji.es', NULL);
+INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (9, 'mcerisue', 'mcerisue', 'mcerisue@uji.es', NULL);
+INSERT INTO PAR_USUARIOS (ID, NOMBRE, USUARIO, MAIL, URL) VALUES (10, 'Public', 'public', 'info@4tic.com', 'ujiapps.uji.es');
 
 INSERT INTO PAR_SALAS_USUARIOS ("id", USUARIO_ID, SALA_ID) VALUES (1, 1, 1);
 INSERT INTO PAR_SALAS_USUARIOS ("id", USUARIO_ID, SALA_ID) VALUES (2, 2, 1);
@@ -170,5 +172,7 @@ INSERT INTO PAR_SALAS_USUARIOS ("id", USUARIO_ID, SALA_ID) VALUES (5, 5, 1);
 INSERT INTO PAR_SALAS_USUARIOS ("id", USUARIO_ID, SALA_ID) VALUES (6, 6, 1);
 INSERT INTO PAR_SALAS_USUARIOS ("id", USUARIO_ID, SALA_ID) VALUES (7, 7, 1);
 INSERT INTO PAR_SALAS_USUARIOS ("id", USUARIO_ID, SALA_ID) VALUES (8, 8, 1);
+INSERT INTO PAR_SALAS_USUARIOS ("id", USUARIO_ID, SALA_ID) VALUES (9, 9, 1);
+INSERT INTO PAR_SALAS_USUARIOS ("id", USUARIO_ID, SALA_ID) VALUES (10, 10, 1);
 
 INSERT INTO PAR_TPVS_CINES (ID, TPV_ID, CINE_ID) VALUES (1, 1, 1);
