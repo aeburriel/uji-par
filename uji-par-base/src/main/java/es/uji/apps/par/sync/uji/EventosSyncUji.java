@@ -48,6 +48,7 @@ public class EventosSyncUji implements EventosSync {
         rssParser = new RssParser();
     }
 
+    @Override
     public void sync(InputStream rssInputStream, String userUID) throws JAXBException, IOException, InstantiationException, IllegalAccessException {
         Rss rss = rssParser.parse(rssInputStream);
 

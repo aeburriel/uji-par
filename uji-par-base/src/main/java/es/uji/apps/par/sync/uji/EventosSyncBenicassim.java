@@ -68,6 +68,7 @@ public class EventosSyncBenicassim implements EventosSync
 	@Autowired
 	Configuration configuration;
 
+	@Override
     public void sync(InputStream rssInputStream, String userUID) throws JAXBException, MalformedURLException, IOException, ParseException
     {
         Rss rss = rssParser.parse(rssInputStream);

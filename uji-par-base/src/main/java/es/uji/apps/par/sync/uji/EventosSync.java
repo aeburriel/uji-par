@@ -7,5 +7,5 @@ import java.text.ParseException;
 
 public interface EventosSync
 {
-    public void sync(InputStream rssInputStream, String userUID) throws JAXBException, IOException, ParseException, InstantiationException, IllegalAccessException;
+    void sync(InputStream rssInputStream, String userUID) throws JAXBException, IOException, ParseException, InstantiationException, IllegalAccessException;
 }
