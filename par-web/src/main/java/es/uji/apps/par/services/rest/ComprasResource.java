@@ -41,7 +41,7 @@ public class ComprasResource extends BaseResource
                 .header("Cache-Control", "no-cache, no-store, must-revalidate")
                 .header("Pragma", "no-cache")
                 .header("Expires", "0")
-                .header("Content-Disposition","attachment; filename =\"entrada_ " + uuidCompra + ".pdf\"")
+                .header("Content-Disposition","attachment; filename =\"entrada_" + uuidCompra + ".pdf\"")
                 .build();
 
         return response;
