@@ -1,35 +1,22 @@
 package com.tgerm.log4j.appender;
 
+import ch.qos.logback.classic.net.SMTPAppender;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.helpers.CyclicBuffer;
+import com.sun.mail.smtp.SMTPTransport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.mail.*;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
 import java.io.FileInputStream;
 import java.util.Date;
 import java.util.Properties;
 
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMultipart;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.classic.net.SMTPAppender;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.helpers.CyclicBuffer;
-
-import com.sun.mail.smtp.SMTPTransport;
-
-import es.uji.apps.par.config.Configuration;
-
 public class GmailSMTPAppender extends SMTPAppender
 {
 	private static final Logger log = LoggerFactory.getLogger(GmailSMTPAppender.class);
-    /**
-     * Cached session for later use i.e. while sending emails
-     */
     protected Session session;
 	private boolean enviarMailsError;
 
