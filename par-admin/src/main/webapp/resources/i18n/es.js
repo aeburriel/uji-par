@@ -218,7 +218,7 @@ UI =
             "pagar": "Pagar",
             "eliminarImagen": "Borrar imagen - NO SE PUEDE CANCELAR",
             "eliminarImagenPubli": "Borrar imagen de publicidad - NO SE PUEDE CANCELAR",
-            "verEntrada": "Imprimir entrada",
+            "verEntrada": "Ver entrada",
             "generateExcelEvento": "Excel de los eventos",
             "anularPrevia": "Anular compra previa",
             "anularEntrada": "Anular entrada individual",
@@ -227,7 +227,7 @@ UI =
             "generatePdfTpvOnline": "PDF de TPV online",
             "saveFileICAA": "Generar fichero para el ICAA",
             "reply": "Responder",
-            "printEntradaDirectamente": "Imprimir directamente",
+            "printEntradaDirectamente": "Imprimir entrada",
             "generarInformeSesion": "Generar informe de la sesión",
             "verCompras": "Ver compras/reservas",
             "activateBooking": "Permitir reservas",
@@ -437,7 +437,8 @@ UI =
             "nameMulti": "Nombre",
             "reserva": "Reserva",
             "title_va": "Títol",
-            "ventaRetrasada": "Mostrar eventos acabados para introducir ventas manuales retrasadas"
+            "ventaRetrasada": "Mostrar eventos acabados para introducir ventas manuales retrasadas",
+            "eventosAcabados": "Mostrar eventos acabados"
         },
         "legends": {
             "entradesPlatea2": "Entradas PLATEA NIVEL 2",

@@ -217,7 +217,7 @@ UI =
             "anterior": "&laquo; Anterior",
             "siguiente": "Següent &raquo;",
             "anularPrevia": "Anul·lar compra prèvia",
-            "verEntrada": "Imprimir entrada",
+            "verEntrada": "Ver entrada",
             "reservar": "Reservar",
             "verCompras": "Veure compres/reserves",
             "anular": "Anul·lar compra o reserva",
@@ -236,7 +236,7 @@ UI =
             "saveFileICAA": "Generar fitxer per a l'ICAA",
             "marcarComoEnviados": "Marcar com a enviades a l'ICAA",
             "setIncidencia": "Ficar incidència",
-            "printEntradaDirectamente": "Imprimir directament",
+            "printEntradaDirectamente": "Imprimir entrada",
             "filtrarSessions": "Veure sessions d'aquestes dates",
             "generarInformeSesion": "Generar informe de la sessió",
             "generarInformeEvento": "Generar informe de l'espectacle",
@@ -443,7 +443,8 @@ UI =
             "incidenciaCodigo": "Codi d'incidència",
             "incidencia": "Incidència",
             "selectIncidencia": "Seleccione la incidència",
-            "ventaRetrasada": "Mostrar espectacles acabats per a introduir vendes manuals retrasades"
+            "ventaRetrasada": "Mostrar espectacles acabats per a introduir vendes manuals retrasades",
+            "eventosAcabados": "Mostrar espectacles acabats"
         },
         "legends": {
             "entradesAmfiteatre": "Entrades AMFITEATRE",

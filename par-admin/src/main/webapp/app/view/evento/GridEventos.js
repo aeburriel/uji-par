@@ -7,13 +7,13 @@ Ext.define('Paranimf.view.evento.GridEventos', {
 
    title: UI.i18n.gridTitle.eventos,
 
-   /*
    tbar: [{
-      xtype: 'button',
-      text: UI.i18n.button.edit,
-      action: 'edit'
+     xtype: 'checkbox',
+     fieldLabel: UI.i18n.field.eventosAcabados,
+     name: 'mostrarTodos',
+     labelWidth: 180,
+     labelAlign: 'right'
    }],
-   */
 
    dockedItems: [{
      xtype: 'pagingtoolbar',

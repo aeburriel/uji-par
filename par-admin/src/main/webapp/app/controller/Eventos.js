@@ -104,9 +104,13 @@ Ext.define('Paranimf.controller.Eventos', {
    }, {
       ref: 'jsonEventosMultisesion',
       selector: 'formEventos hiddenfield[name=jsonEventosMultisesion]'
+   }, {
+      ref: 'checkMostrarTodosEventos',
+      selector: 'gridEventos checkbox[name=mostrarTodos]'
    }],
 
    init: function() {
+      this._allEventosShown = false;
       this.control({
 
          'gridEventos button[action=add]': {
@@ -222,8 +226,22 @@ Ext.define('Paranimf.controller.Eventos', {
 
          'formPeliculaMultisesion button[action=save]': {
             click: this.addPeliculaMultisesion
+         },
+
+         'gridEventos checkbox[name=mostrarTodos]': {
+            change: this.showHideTodosEventos
          }
       });
+   },
+
+   showHideTodosEventos: function () {
+      if (this.getCheckMostrarTodosEventos().checked) {
+         this._allEventosShown = true;
+      }
+
+      var url = (this.getCheckMostrarTodosEventos().checked) ? urlPrefix + 'evento' : urlPrefix + 'evento?activos=true';
+      this.getGridEventos().store.proxy.url = url;
+      this.recargaStore();
    },
 
    actualizaHoraApertura: function(obj, newValue, oldValue) {
@@ -528,8 +546,10 @@ Ext.define('Paranimf.controller.Eventos', {
    },
 
    recargaStore: function(comp, opts) {
-      console.log("RECARGA STORE EVENTOS");
-      this.getGridEventos().recargaStore();
+      this.getGridEventos().deseleccionar();
+      this.getGridSesiones().store.proxy.url = urlPrefix + 'evento/-1/sesiones';
+      this.getGridSesiones().store.loadPage(1);
+      this.getGridEventos().store.loadPage(1);
    },
 
    addEvento: function(button, event, opts) {
@@ -590,8 +610,11 @@ Ext.define('Paranimf.controller.Eventos', {
       if (record[0]) {
          var storeSesiones = this.getGridSesiones().getStore();
          var eventoId = record[0].get("id");
+         var url = urlPrefix + 'evento/' + eventoId + '/sesiones';
 
-         storeSesiones.getProxy().url = urlPrefix + 'evento/' + eventoId + '/sesiones';
+         if (!this._allEventosShown)
+            url += '?activos=true';
+         storeSesiones.getProxy().url = url;
          storeSesiones.load();
       }
    },

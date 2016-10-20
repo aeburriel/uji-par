@@ -13,7 +13,7 @@ Ext.define('Paranimf.store.Eventos', {
 
    proxy: {
       type: 'rest',
-      url: urlPrefix + 'evento',
+      url: urlPrefix + 'evento?activos=true',
       reader: {
          type: 'json',
          root: 'data',

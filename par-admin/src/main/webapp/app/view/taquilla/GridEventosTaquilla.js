@@ -11,7 +11,7 @@ Ext.define('Paranimf.view.taquilla.GridEventosTaquilla', {
       xtype: 'checkbox',
       fieldLabel: UI.i18n.field.ventaRetrasada,
       name: 'mostrarTodos',
-      labelWidth: 380,
+      labelWidth: 410,
       labelAlign: 'right'
    }],
 
