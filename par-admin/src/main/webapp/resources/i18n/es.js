@@ -228,6 +228,7 @@ UI =
             "saveFileICAA": "Generar fichero para el ICAA",
             "reply": "Responder",
             "printEntradaDirectamente": "Imprimir entrada",
+            "continuarCompra": "Continuar comprando",
             "generarInformeSesion": "Generar informe de la sesión",
             "verCompras": "Ver compras/reservas",
             "activateBooking": "Permitir reservas",

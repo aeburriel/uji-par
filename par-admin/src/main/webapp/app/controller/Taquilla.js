@@ -44,6 +44,14 @@ Ext.define('Paranimf.controller.Taquilla', {
             selector: 'formComprar button[name=verEntrada]'
         },
         {
+            ref: 'printEntradaDirectamente',
+            selector: 'formComprar button[name=printEntradaDirectamente]'
+        },
+        {
+            ref: 'continuarCompra',
+            selector: 'formComprar button[name=continuarCompra]'
+        },
+        {
             ref: 'botonPagar',
             selector: 'formComprar #pagar'
         },
@@ -174,6 +182,12 @@ Ext.define('Paranimf.controller.Taquilla', {
             'formComprar button[name=verEntrada]': {
                 click: this.verEntrada
             },
+            'formComprar button[name=printEntradaDirectamente]': {
+                click: this.imprimirEntrada
+            },
+            'formComprar button[name=continuarCompra]': {
+                click: this.continuarCompra
+            },
             'panelSeleccionarNoNumeradas': {
                 afterrender: this.panelSeleccionarNoNumeradasCreado
             },
@@ -217,7 +231,6 @@ Ext.define('Paranimf.controller.Taquilla', {
         if (doRecargar) {
             var url = (this.getCheckMostrarTodosEventos().checked) ? urlPrefix + 'evento' : urlPrefix + 'evento?activos=true';
             this.getGridEventosTaquilla().store.proxy.url = url;
-            this.getGridEventosTaquilla().store.loadPage(1);
             this.recargaStore();
         }
     },
@@ -715,16 +728,31 @@ Ext.define('Paranimf.controller.Taquilla', {
 
     muestraEnlacePdf: function () {
         this.getVerEntrada().show();
+
+        var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+        if (!isFirefox)
+            this.getPrintEntradaDirectamente().show();
     },
 
     verEntrada: function () {
+        this.getContinuarCompra().show();
+
+        var href = urlPrefix + 'compra/' + this.uuidCompra + '/pdftaquilla';
+        this.windowEntrada = window.open(href, 'Imprimir entrada');
+    },
+
+    imprimirEntrada: function () {
+        this.getContinuarCompra().show();
+
+        printJS({printable: urlPrefix + 'compra/'  + this.uuidCompra + '/pdftaquilla'});
+    },
+
+    continuarCompra: function () {
         this.getFormComprar().up('window').close();
         this.comprar();
 
         if (this.windowEntrada != null)
             this.windowEntrada.close();
-        var href = urlPrefix + 'compra/' + this.uuidCompra + '/pdftaquilla';
-        this.windowEntrada = window.open(href, 'Imprimir entrada');
     },
 
     guardarDatosCompraPrevia: function () {
@@ -891,7 +919,7 @@ Ext.define('Paranimf.controller.Taquilla', {
 
         // Llamamos al iframe de butacas para que nos pase las butacas seleccionadas
         pm({
-            target: window.frames[1],
+            target: window.frames[window.frames.length - 1],
             type: 'butacas',
             data: {},
             success: function (butacas) {
@@ -921,8 +949,7 @@ Ext.define('Paranimf.controller.Taquilla', {
         this.getGridEventosTaquilla().deseleccionar();
         this.getGridSesionesTaquilla().store.proxy.url = urlPrefix + 'evento/-1/sesiones';
         this.getGridSesionesTaquilla().store.loadPage(1);
-        this.getGridSesionesTaquilla().recargaStore();
-        this.getGridEventosTaquilla().recargaStore();
+        this.getGridEventosTaquilla().store.loadPage(1);
     },
 
     loadSesiones: function (selectionModel, record) {

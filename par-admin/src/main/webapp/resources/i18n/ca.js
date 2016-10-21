@@ -237,6 +237,7 @@ UI =
             "marcarComoEnviados": "Marcar com a enviades a l'ICAA",
             "setIncidencia": "Ficar incidència",
             "printEntradaDirectamente": "Imprimir entrada",
+            "continuarCompra": "Continuar comprant",
             "filtrarSessions": "Veure sessions d'aquestes dates",
             "generarInformeSesion": "Generar informe de la sessió",
             "generarInformeEvento": "Generar informe de l'espectacle",

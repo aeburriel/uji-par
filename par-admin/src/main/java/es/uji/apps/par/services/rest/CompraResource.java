@@ -8,6 +8,8 @@ import es.uji.apps.par.model.CompraAbonado;
 import es.uji.apps.par.model.DisponiblesLocalizacion;
 import es.uji.apps.par.model.ResultadoCompra;
 import es.uji.apps.par.services.*;
+import es.uji.commons.web.template.HTMLTemplate;
+import es.uji.commons.web.template.Template;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
@@ -317,6 +319,20 @@ public class CompraResource extends BaseResource {
 				.entity(new RestResponse(true, butacasService.getButacasCompra(
 						idCompra, sort, start, limit, language), butacasService
 						.getTotalButacasCompra(idCompra))).build();
+	}
+
+	@GET
+	@Path("{id}/print/{pdfType}")
+	@Produces(MediaType.TEXT_HTML)
+	public Template imprimeEntrada(@PathParam("id") String uuidCompra, @PathParam("pdfType") String pdfType)
+	{
+		Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "print", getLocale(), APP);
+
+		template.put("urlAdmin", configurationSelector.getUrlAdmin());
+		template.put("uuid", uuidCompra);
+		template.put("pdfType", pdfType);
+
+		return template;
 	}
 
 	@GET

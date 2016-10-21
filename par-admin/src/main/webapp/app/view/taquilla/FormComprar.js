@@ -145,13 +145,19 @@ Ext.define('Paranimf.view.taquilla.FormComprar', {
 								scale: 'large',
 								text: UI.i18n.button.verEntrada,
 								hidden: true
-						    }/*, {
+						    }, {
 					    	 	xtype: 'button',
 						    	name: 'printEntradaDirectamente',
 								scale: 'large',
 								text: UI.i18n.button.printEntradaDirectamente,
 								hidden: true
-						    }*/
+						    }, {
+								xtype: 'button',
+								name: 'continuarCompra',
+								scale: 'large',
+								text: UI.i18n.button.continuarCompra,
+								hidden: true
+							}
 				     	]},
 		       	        {
 		       	        	name: 'panelReservar',

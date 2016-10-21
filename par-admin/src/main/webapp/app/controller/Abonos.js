@@ -463,7 +463,7 @@ Ext.define('Paranimf.controller.Abonos', {
       var me = this;
       
       pm({
-        target: window.frames[1],
+        target: window.frames[window.frames.length - 1],
         type: 'butacas',
         data: {},
         success: function(butacas){
