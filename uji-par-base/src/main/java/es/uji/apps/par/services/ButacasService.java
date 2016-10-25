@@ -13,6 +13,7 @@ import es.uji.apps.par.db.TarifaDTO;
 import es.uji.apps.par.exceptions.ButacaOcupadaException;
 import es.uji.apps.par.i18n.ResourceProperties;
 import es.uji.apps.par.model.Butaca;
+import es.uji.apps.par.model.Compra;
 import es.uji.apps.par.model.DisponiblesLocalizacion;
 import es.uji.apps.par.model.Localizacion;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,6 +112,19 @@ public class ButacasService
         }
 
         return ocupadas;
+    }
+
+    public Compra getCompra(long sesionId, String localizacion, String fila, String butaca)
+    {
+        CompraDTO compraDTO = butacasDAO.getCompra(sesionId, localizacion, fila, butaca);
+
+        if (compraDTO != null) {
+            Compra compra = Compra.compraDTOtoCompra(compraDTO);
+            compra.setParButacas(getButacasCompra(compra.getId(), "", 0, Integer.MAX_VALUE, ""));
+            return compra;
+        }
+
+        return null;
     }
     
     public List<DisponiblesLocalizacion> getDisponiblesNoNumerada(long idSesion)

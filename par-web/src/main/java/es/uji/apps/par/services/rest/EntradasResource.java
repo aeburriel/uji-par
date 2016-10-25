@@ -662,6 +662,15 @@ public class EntradasResource extends BaseResource {
     }
 
     @GET
+    @Path("{id}/compra/{fila}/{butaca}/{localizacion}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Compra getCompra(@PathParam("id") long idSesion, @PathParam("fila") String fila, @PathParam("butaca") String butaca,
+            @PathParam("localizacion") String localizacion) throws Exception {
+        return butacasService.getCompra(idSesion, localizacion, fila, butaca);
+    }
+
+    @GET
     @Path("{id}/precios")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPreciosSesion(@PathParam("id") Long sesionId)

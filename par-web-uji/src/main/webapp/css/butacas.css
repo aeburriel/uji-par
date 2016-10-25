@@ -133,6 +133,9 @@ input[type=text] {
 	width:19px;
 	font-size: 12px !important;
 }
+.accionCompra {
+	background-color: #6C809D !important;
+}
 .mapaLibre {
     background-color: #51D7E0;;
 }
@@ -166,4 +169,17 @@ div[id^=localizacion] {
 }
 
 .miniarea{
+}
+
+.button-tooltip-primary {
+	background-color: #6C809D;
+	color: #E6E1CE;
+	-webkit-border-radius: 3px !important;
+	-moz-border-radius: 3px !important;
+	-ms-border-radius: 3px !important;
+	-o-border-radius: 3px !important;
+	border-radius: 10px !important;
+	width: 100% !important;
+	padding: 6px;
+	margin: 2px;
 }
