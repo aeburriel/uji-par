@@ -1,6 +1,6 @@
 .mapaReservada {
-   background-color: rgb(0,0,240);
+   background-color: rgb(0,0,240) !important;
 }
 .mapaReservada.discap {
-	background-image: url('images/discapReservada.png');
+	background-image: url('images/discapReservada.png') !important;
 }
