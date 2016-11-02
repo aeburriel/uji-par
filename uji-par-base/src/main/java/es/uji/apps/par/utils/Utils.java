@@ -166,6 +166,6 @@ public class Utils
 
 	public static String sinUnicodes(String text)
 	{
-		return text.replaceAll("\\u2028", "");
+		return text != null ? text.replaceAll("\\u2028", "") : null;
 	}
 }
