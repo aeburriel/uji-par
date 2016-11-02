@@ -7,14 +7,6 @@ Ext.define('Paranimf.view.evento.GridEventos', {
 
    title: UI.i18n.gridTitle.eventos,
 
-   tbar: [{
-     xtype: 'checkbox',
-     fieldLabel: UI.i18n.field.eventosAcabados,
-     name: 'mostrarTodos',
-     labelWidth: 180,
-     labelAlign: 'right'
-   }],
-
    dockedItems: [{
      xtype: 'pagingtoolbar',
      store: 'Eventos',
@@ -23,6 +15,14 @@ Ext.define('Paranimf.view.evento.GridEventos', {
    }],
 
    initComponent: function() {
+
+       this.tbar.push({
+           xtype: 'checkbox',
+           fieldLabel: UI.i18n.field.eventosAcabados,
+           name: 'mostrarTodos',
+           labelWidth: 180,
+           labelAlign: 'right'
+       });
 
       this.columns = [{
         dataIndex: 'id',

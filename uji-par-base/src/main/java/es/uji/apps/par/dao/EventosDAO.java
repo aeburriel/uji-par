@@ -18,6 +18,7 @@ import es.uji.apps.par.db.*;
 import es.uji.apps.par.exceptions.CampoRequeridoException;
 import es.uji.apps.par.model.*;
 import es.uji.apps.par.utils.DateUtils;
+import es.uji.apps.par.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -194,8 +195,8 @@ public class EventosDAO extends BaseDAO
         evento.setCompanyiaEs((String)array[4]);
         evento.setCompanyiaVa((String)array[5]);
 
-        evento.setDescripcionEs((String)array[6]);
-        evento.setDescripcionVa((String)array[7]);
+        evento.setDescripcionEs(Utils.sinUnicodes((String) array[6]));
+        evento.setDescripcionVa(Utils.sinUnicodes((String)array[7]));
 
         evento.setDuracionEs((String)array[8]);
         evento.setDuracionVa((String)array[9]);

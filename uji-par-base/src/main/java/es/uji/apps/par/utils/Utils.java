@@ -163,4 +163,9 @@ public class Utils
 	{
 		return url.replaceFirst("^https://", "http://");
 	}
+
+	public static String sinUnicodes(String text)
+	{
+		return text.replaceAll("\\u2028", "");
+	}
 }

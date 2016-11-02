@@ -1,17 +1,13 @@
 package es.uji.apps.par.services.rest.crm;
 
 import com.sun.jersey.api.core.InjectParam;
-import es.uji.apps.par.auth.AuthChecker;
 import es.uji.apps.par.exceptions.ButacaOcupadaException;
 import es.uji.apps.par.exceptions.CompraSinButacasException;
 import es.uji.apps.par.exceptions.NoHayButacasLibresException;
 import es.uji.apps.par.exceptions.ResponseMessage;
 import es.uji.apps.par.model.*;
 import es.uji.apps.par.report.EntradaReportFactory;
-import es.uji.apps.par.services.ButacasService;
-import es.uji.apps.par.services.ComprasService;
-import es.uji.apps.par.services.EntradasService;
-import es.uji.apps.par.services.SesionesService;
+import es.uji.apps.par.services.*;
 import es.uji.apps.par.services.rest.BaseResource;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +32,9 @@ public class CrmResource extends BaseResource {
     @InjectParam
     private ButacasService butacasService;
 
+    @InjectParam
+    private UsersService usersService;
+
     @Context
     HttpServletRequest currentRequest;
 
@@ -44,7 +43,7 @@ public class CrmResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response compraEntrada(@PathParam("id") String rssId, @QueryParam("entradas") int numeroEntradas, @QueryParam("email") String email, @QueryParam("nombre") String nombre, @QueryParam("apellidos") String apellidos)
     {
-        String userUID = AuthChecker.getUserUID(currentRequest);
+        Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
 
         if (email == null) {
             return errorResponse("error.datosComprador.email");
@@ -59,7 +58,7 @@ public class CrmResource extends BaseResource {
             return errorResponse("error.compraSinButacas");
         }
 
-        List<Sesion> sesiones = sesionesService.getSesionesPorRssId(rssId, userUID);
+        List<Sesion> sesiones = sesionesService.getSesionesPorRssId(rssId, user.getUsuario());
         if (sesiones != null && sesiones.size() == 1) {
             Sesion sesion = sesiones.get(0);
 
@@ -100,7 +99,7 @@ public class CrmResource extends BaseResource {
                 }
 
                 try {
-                    ResultadoCompra resultadoCompra = comprasService.registraCompra(sesion.getId(), butacasSeleccionadas, true, BigDecimal.ZERO, email, nombre, apellidos, userUID);
+                    ResultadoCompra resultadoCompra = comprasService.registraCompra(sesion.getId(), butacasSeleccionadas, true, BigDecimal.ZERO, email, nombre, apellidos, user.getUsuario());
 
                     if (resultadoCompra.getCorrecta()) {
                         comprasService.marcaPagada(resultadoCompra.getId());
@@ -133,9 +132,9 @@ public class CrmResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response muestraCompras(@PathParam("id") String rssId)
     {
-        String userUID = AuthChecker.getUserUID(currentRequest);
+        Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
 
-        List<Sesion> sesiones = sesionesService.getSesionesPorRssId(rssId, userUID);
+        List<Sesion> sesiones = sesionesService.getSesionesPorRssId(rssId, user.getUsuario());
         if (sesiones != null && sesiones.size() == 1) {
             Sesion sesion = sesiones.get(0);
 
