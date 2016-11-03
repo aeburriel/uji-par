@@ -395,6 +395,8 @@ UI =
             "tipoPago": "Pagament",
             "metalico": "Metàl·lic",
             "tarjeta": "Targeta",
+            "tarjetaoffline": "Targeta Offline",
+            "transferencia": "Transferència",
             "total": "Total",
             "normal": "Normal",
             "disponibles":"Disponibles",

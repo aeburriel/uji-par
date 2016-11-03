@@ -548,6 +548,8 @@ Ext.define('Paranimf.controller.Taquilla', {
                 }
                 else if (tipoPago == 'tarjetaOffline')
                     me.marcaPagada(me.idCompra, me.getReferenciaDePago().getValue().trim());
+                else if (tipoPago == 'transferencia')
+                    me.marcaPagada(me.idCompra);
 
             }, failure: function (response) {
                 me.getFormComprar().setLoading(false);
@@ -1011,8 +1013,10 @@ Ext.define('Paranimf.controller.Taquilla', {
     marcaPagada: function (idCompra, referenciaDePago) {
         var me = this;
 
+        var tipoPago = Ext.getCmp('tipoPago').value;
+
         Ext.Ajax.request({
-            url: urlPrefix + 'compra/' + idCompra + '/pagada' + (referenciaDePago != undefined ? "?referencia=" +
+            url: urlPrefix + 'compra/' + idCompra + '/pagada?tipopago=' + tipoPago + (referenciaDePago != undefined ? "&referencia=" +
             referenciaDePago : ""),
             method: 'POST',
             success: function (response) {

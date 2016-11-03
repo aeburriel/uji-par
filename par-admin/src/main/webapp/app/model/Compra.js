@@ -12,6 +12,7 @@ Ext.define('Paranimf.model.Compra', {
       'taquilla',
       'telefono',
       'importe',
+      'tipo',
       'anulada',
       'caducada',
       'uuid',

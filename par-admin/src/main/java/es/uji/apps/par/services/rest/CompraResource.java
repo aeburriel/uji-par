@@ -2,6 +2,7 @@ package es.uji.apps.par.services.rest;
 
 import com.sun.jersey.api.core.InjectParam;
 import es.uji.apps.par.auth.AuthChecker;
+import es.uji.apps.par.enums.TipoPago;
 import es.uji.apps.par.exceptions.*;
 import es.uji.apps.par.model.Butaca;
 import es.uji.apps.par.model.CompraAbonado;
@@ -23,10 +24,8 @@ import java.util.List;
 import java.util.Locale;
 
 @Path("compra")
-public class CompraResource extends BaseResource {
-
-	final String TARJETA_OFFLINE = "tarjetaoffline";
-
+public class CompraResource extends BaseResource
+{
 	@InjectParam
 	private ComprasService comprasService;
 
@@ -48,27 +47,31 @@ public class CompraResource extends BaseResource {
 	@POST
 	@Path("{idCompra}/pagada")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void marcaPagada(@PathParam("idCompra") Long idCompra, @QueryParam("referencia") String referenciaDePago)
+	public void marcaPagada(@PathParam("idCompra") Long idCompra, @QueryParam("referencia") String referenciaDePago, @QueryParam("tipopago") String tipoPago)
 	{
 		AuthChecker.canWrite(currentRequest);
 
-		if (referenciaDePago != null)
+		if (isTipoPagoTarjetaOffline(tipoPago))
 			comprasService.marcarPagadaConReferenciaDePago(idCompra, referenciaDePago);
+		else if (isTipoPagoTransferencia(tipoPago))
+			comprasService.marcaPagada(idCompra, TipoPago.TRANSFERENCIA);
 		else
-			comprasService.marcaPagada(idCompra);
+			comprasService.marcaPagada(idCompra, TipoPago.METALICO);
 	}
 
     @POST
     @Path("{idAbonado}/pagada/abonado")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void marcaAbonadoPagada(@PathParam("idAbonado") Long idAbonado, @QueryParam("referencia") String referenciaDePago)
+    public void marcaAbonadoPagada(@PathParam("idAbonado") Long idAbonado, @QueryParam("referencia") String referenciaDePago, @QueryParam("tipopago") String tipoPago)
     {
         AuthChecker.canWrite(currentRequest);
 
-        if (referenciaDePago != null)
+		if (isTipoPagoTarjetaOffline(tipoPago))
             comprasService.marcarAbonadoPagadoConReferenciaDePago(idAbonado, referenciaDePago);
-        else
-            comprasService.marcaAbonadoPagado(idAbonado);
+		else if (isTipoPagoTransferencia(tipoPago))
+			comprasService.marcaAbonadoPagado(idAbonado, TipoPago.TRANSFERENCIA);
+		else
+			comprasService.marcaAbonadoPagado(idAbonado, TipoPago.METALICO);
     }
 	
 	@GET
@@ -143,7 +146,7 @@ public class CompraResource extends BaseResource {
 			recibo = "";
 		}
 
-		comprasService.passarACompra(sesionId, idCompraReserva, recibo);
+		comprasService.passarACompra(sesionId, idCompraReserva, tipoPago, recibo);
 		return Response.ok().build();
 	}
 
@@ -163,13 +166,18 @@ public class CompraResource extends BaseResource {
 		Locale locale = getLocale();
 		String language = locale.getLanguage();
 
-		comprasService.passarButacasACompra(sesionId, idCompraReserva, recibo, idsButacas, language, userUID);
+		comprasService.passarButacasACompra(sesionId, idCompraReserva, recibo, tipoPago, idsButacas, language, userUID);
 		return Response.ok().build();
 	}
 
 	private boolean isTipoPagoTarjetaOffline(String tipoPago)
 	{
-		return tipoPago != null && tipoPago.trim().toLowerCase().equals(TARJETA_OFFLINE);
+		return tipoPago != null && tipoPago.trim().toLowerCase().equals(TipoPago.TARJETAOFFLINE.toString().toLowerCase());
+	}
+
+	private boolean isTipoPagoTransferencia(String tipoPago)
+	{
+		return tipoPago != null && tipoPago.trim().toLowerCase().equals(TipoPago.TRANSFERENCIA.toString().toLowerCase());
 	}
 
 	@PUT

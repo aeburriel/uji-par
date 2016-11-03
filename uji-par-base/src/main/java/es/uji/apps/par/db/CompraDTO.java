@@ -1,5 +1,6 @@
 package es.uji.apps.par.db;
 
+import es.uji.apps.par.enums.TipoPago;
 import es.uji.apps.par.model.Abonado;
 
 import javax.persistence.*;
@@ -62,6 +63,9 @@ public class CompraDTO implements Serializable {
 	
 	@Column(name = "REFERENCIA_PAGO")
 	private String referenciaPago;
+
+	@Column(name = "TIPO")
+	private String tipoPago;
 	
     @ManyToOne
     @JoinColumn(name="SESION_ID")
@@ -380,8 +384,17 @@ public class CompraDTO implements Serializable {
 		this.referenciaPago = referenciaPago;
 	}
 
+	public String getTipoPago()
+	{
+		return tipoPago;
+	}
 
-    public AbonadoDTO getParAbonado() {
+	public void setTipoPago(String tipoPago)
+	{
+		this.tipoPago = tipoPago;
+	}
+
+	public AbonadoDTO getParAbonado() {
         return parAbonado;
     }
 
@@ -396,7 +409,7 @@ public class CompraDTO implements Serializable {
 		compra.setUuid(res.getString("uuid"));
 		compra.setEmail(res.getString("email"));
         compra.setPagada(res.getBoolean("pagada"));
-		
+
 		return compra;
 	}
 }

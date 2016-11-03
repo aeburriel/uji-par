@@ -3,6 +3,7 @@ package es.uji.apps.par.ficheros.service;
 import es.uji.apps.par.dao.*;
 import es.uji.apps.par.db.TarifaDTO;
 import es.uji.apps.par.db.TpvsDTO;
+import es.uji.apps.par.enums.TipoPago;
 import es.uji.apps.par.exceptions.*;
 import es.uji.apps.par.model.*;
 import es.uji.apps.par.services.ComprasService;
@@ -116,7 +117,7 @@ public class FicherosServiceBaseTest
 	protected void registraCompra(Sesion sesion1, String userUID, Butaca... butacas) throws NoHayButacasLibresException,
 			ButacaOcupadaException, CompraSinButacasException, IncidenciaNotFoundException {
         ResultadoCompra resultado1 = comprasService.registraCompraTaquilla(sesion1.getId(), Arrays.asList(butacas), userUID);
-        comprasService.marcaPagada(resultado1.getId());
+        comprasService.marcaPagada(resultado1.getId(), TipoPago.METALICO);
     }
 
     protected Sesion creaSesion(Sala sala, Evento evento, String fecha, String hora, String userUID) throws ParseException

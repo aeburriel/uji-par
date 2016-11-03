@@ -3,6 +3,7 @@ package es.uji.apps.par.services.reports;
 import es.uji.apps.fopreports.serialization.ReportSerializationException;
 import es.uji.apps.par.dao.*;
 import es.uji.apps.par.db.*;
+import es.uji.apps.par.enums.TipoPago;
 import es.uji.apps.par.model.*;
 import es.uji.apps.par.report.EntradaReportFactory;
 import es.uji.apps.par.report.InformeInterface;
@@ -186,6 +187,7 @@ public class ReportTest {
 		BigDecimal importe = new BigDecimal(1);
 		CompraDTO compraDTO = comprasDAO.insertaCompra(sesion.getId(), Calendar.getInstance().getTime(), taquilla, importe, usuario.getUsuario());
 		compraDTO.setPagada(true);
+		compraDTO.setTipoPago(TipoPago.METALICO);
 		Butaca butaca = new Butaca();
 		butaca.setFila(fila);
 		butaca.setNumero(asiento);

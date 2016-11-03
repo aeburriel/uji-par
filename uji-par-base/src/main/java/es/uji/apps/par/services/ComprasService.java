@@ -10,6 +10,7 @@ import es.uji.apps.par.db.AbonadoDTO;
 import es.uji.apps.par.db.ButacaDTO;
 import es.uji.apps.par.db.CompraDTO;
 import es.uji.apps.par.db.SesionDTO;
+import es.uji.apps.par.enums.TipoPago;
 import es.uji.apps.par.exceptions.*;
 import es.uji.apps.par.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -236,9 +237,9 @@ public class ComprasService
     }
 
     @Transactional
-    public void marcaPagada(long idCompra)
+    public void marcaPagada(long idCompra, TipoPago tipoPago)
     {
-        comprasDAO.marcarPagada(idCompra);
+        comprasDAO.marcarPagada(idCompra, tipoPago);
         if (configuration.isIdEntrada()) {
             butacasDAO.asignarIdEntrada(idCompra);
         }
@@ -254,11 +255,11 @@ public class ComprasService
 	}
 
     @Transactional
-    public void marcaAbonadoPagado(long idAbonado)
+    public void marcaAbonadoPagado(long idAbonado, TipoPago tipoPago)
     {
         AbonadoDTO abonado = abonadosDAO.getAbonado(idAbonado);
         for (CompraDTO compra : abonado.getParCompras()) {
-            comprasDAO.marcarPagada(compra.getId());
+            comprasDAO.marcarPagada(compra.getId(), tipoPago);
             if (configuration.isIdEntrada()) {
                 butacasDAO.asignarIdEntrada(compra.getId());
             }
@@ -371,6 +372,7 @@ public class ComprasService
             compraDTO.setTaquilla(tupleCompra.get(23, Boolean.class));
             compraDTO.setTelefono(tupleCompra.get(24, String.class));
             compraDTO.setUuid(tupleCompra.get(25, String.class));
+            compraDTO.setTipoPago(tupleCompra.get(26, String.class));
 
         	BigDecimal importe = tupla.get(1, BigDecimal.class);
         	compraDTO.setImporte(importe);
@@ -452,15 +454,15 @@ public class ComprasService
         comprasDAO.rellenaCodigoPagoPasarela(idCompra, recibo);
     }
 
-	public void passarACompra(Long sesionId, Long idCompraReserva, String recibo) {
-		comprasDAO.passarACompra(sesionId, idCompraReserva, recibo);
+	public void passarACompra(Long sesionId, Long idCompraReserva, String recibo, String tipoPago) {
+		comprasDAO.passarACompra(sesionId, idCompraReserva, recibo, tipoPago);
         if (configuration.isIdEntrada()) {
             butacasDAO.asignarIdEntrada(idCompraReserva);
         }
 	}
 
     @Transactional
-    public void passarButacasACompra(Long sesionId, Long idCompraReserva, String recibo, List<Long> idsButacas, String language, String userUID) {
+    public void passarButacasACompra(Long sesionId, Long idCompraReserva, String recibo, String tipoPago, List<Long> idsButacas, String language, String userUID) {
         CompraDTO compra = comprasDAO.getCompraById(idCompraReserva);
 
         List<ButacaDTO> butacasReserva = new ArrayList<>();
@@ -490,7 +492,7 @@ public class ComprasService
                 marcarPagadaConReferenciaDePago(resultadoCompra.getId(), recibo);
             }
             else {
-                passarACompra(sesionId, idCompraReserva, recibo);
+                passarACompra(sesionId, idCompraReserva, recibo, tipoPago);
             }
         }
     }

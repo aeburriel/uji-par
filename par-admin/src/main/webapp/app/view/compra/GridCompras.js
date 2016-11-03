@@ -106,6 +106,15 @@ Ext.define('Paranimf.view.compra.GridCompras', {
       renderer: function(val) {
         return (val == 0)?'':val.toFixed(2) + '€';
       }
+    }, {
+      align: 'center',
+      dataIndex: 'tipo',
+      flex: 2,
+      hidden: true,
+      text: UI.i18n.formTitle.formasPago,
+      renderer: function(val) {
+        return val != null ? UI.i18n.field[val.toLowerCase()] : '';
+      }
     },{
       align: 'center',
       dataIndex: 'taquilla',

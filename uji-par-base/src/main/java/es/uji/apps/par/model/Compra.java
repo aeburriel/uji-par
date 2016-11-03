@@ -1,11 +1,10 @@
 package es.uji.apps.par.model;
 
-import java.util.Date;
-import java.util.List;
+import es.uji.apps.par.db.CompraDTO;
 
 import javax.xml.bind.annotation.XmlRootElement;
-
-import es.uji.apps.par.db.CompraDTO;
+import java.util.Date;
+import java.util.List;
 
 @XmlRootElement
 public class Compra
@@ -25,6 +24,7 @@ public class Compra
     private Date desde;
     private Date hasta;
     private String uuid;
+	private String tipo;
     private String observacionesReserva;
     private boolean caducada;
     private String idDevolucion;
@@ -42,6 +42,7 @@ public class Compra
         this.setTaquilla(compraDTO.getTaquilla());
         this.setImporte(compraDTO.getImporte().floatValue());
         this.setUuid(compraDTO.getUuid());
+		this.setTipo(compraDTO.getTipoPago());
         if (compraDTO.getAnulada() != null)
         	this.setAnulada(compraDTO.getAnulada());
         
@@ -228,4 +229,14 @@ public class Compra
     public void setIdDevolucion(String idDevolucion) {
         this.idDevolucion = idDevolucion;
     }
+
+	public String getTipo()
+	{
+		return tipo;
+	}
+
+	public void setTipo(String tipo)
+	{
+		this.tipo = tipo;
+	}
 }

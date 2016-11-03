@@ -1,6 +1,7 @@
 package es.uji.apps.par.builders;
 
 import es.uji.apps.par.db.*;
+import es.uji.apps.par.enums.TipoPago;
 
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
@@ -42,6 +43,7 @@ public class SesionBuilder
 		compraDTO.setAnulada(false);
 		compraDTO.setCaducada(false);
 		compraDTO.setPagada(true);
+		compraDTO.setTipoPago(TipoPago.METALICO.toString());
 		compraDTO.setReserva(false);
 		compraDTO.setImporte(importe);
 		compraDTO.setInfoPeriodica(true);

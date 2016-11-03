@@ -11,6 +11,7 @@ import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.database.DatabaseHelper;
 import es.uji.apps.par.database.DatabaseHelperFactory;
 import es.uji.apps.par.db.*;
+import es.uji.apps.par.enums.TipoPago;
 import es.uji.apps.par.exceptions.ButacaOcupadaAlActivarException;
 import es.uji.apps.par.exceptions.IncidenciaNotFoundException;
 import es.uji.apps.par.ficheros.registros.TipoIncidencia;
@@ -160,10 +161,11 @@ public class ComprasDAO extends BaseDAO {
 	}
 
 	@Transactional
-	public void marcarPagada(Long idCompra) {
+	public void marcarPagada(Long idCompra, TipoPago tipoPago) {
 		CompraDTO compra = getCompraById(idCompra);
 
 		compra.setPagada(true);
+		compra.setTipoPago(tipoPago.toString());
 
 		entityManager.persist(compra);
 	}
@@ -174,6 +176,7 @@ public class ComprasDAO extends BaseDAO {
 
 		compra.setPagada(true);
 		compra.setReferenciaPago(referenciaPago);
+		compra.setTipoPago(TipoPago.TARJETAOFFLINE.toString());
 
 		entityManager.persist(compra);
 	}
@@ -184,6 +187,7 @@ public class ComprasDAO extends BaseDAO {
 
 		compra.setPagada(true);
 		compra.setReciboPinpad(reciboPinpad);
+		compra.setTipoPago(TipoPago.TARJETA.toString());
 
 		entityManager.persist(compra);
 	}
@@ -195,6 +199,7 @@ public class ComprasDAO extends BaseDAO {
         for (CompraDTO compra : abonado.getParCompras()) {
             compra.setPagada(true);
             compra.setReciboPinpad(reciboPinpad);
+			compra.setTipoPago(TipoPago.TARJETA.toString());
 
             entityManager.persist(compra);
         }
@@ -204,8 +209,9 @@ public class ComprasDAO extends BaseDAO {
 	public void marcarPagadaPasarela(Long idCompra, String codigoPago) {
 		CompraDTO compra = getCompraById(idCompra);
 
-		compra.setCodigoPagoPasarela(codigoPago);
 		compra.setPagada(true);
+		compra.setCodigoPagoPasarela(codigoPago);
+		compra.setTipoPago(TipoPago.TARJETA.toString());
 
 		entityManager.persist(compra);
 	}
@@ -338,7 +344,8 @@ public class ComprasDAO extends BaseDAO {
                 qCompraDTO.reciboPinpad,
                 qCompraDTO.referenciaPago, qCompraDTO.reserva,
                 qCompraDTO.taquilla, qCompraDTO.telefono,
-                qCompraDTO.uuid);
+                qCompraDTO.uuid,
+				qCompraDTO.tipoPago);
     }
 
 	@Transactional
@@ -850,7 +857,7 @@ public class ComprasDAO extends BaseDAO {
 	}
 
 	@Transactional
-	public void passarACompra(Long sesionId, Long idCompraReserva, String recibo) {
+	public void passarACompra(Long sesionId, Long idCompraReserva, String recibo, String tipoPago) {
 		QCompraDTO qCompraDTO = QCompraDTO.compraDTO;
 		JPAUpdateClause updateC = new JPAUpdateClause(entityManager, qCompraDTO);
 		updateC.set(qCompraDTO.reserva, false)
@@ -861,6 +868,7 @@ public class ComprasDAO extends BaseDAO {
 				.set(qCompraDTO.anulada, false)
 				.set(qCompraDTO.referenciaPago, recibo)
 				.set(qCompraDTO.fecha, new Timestamp(new Date().getTime()))
+				.set(qCompraDTO.tipoPago, tipoPago)
 				.where(qCompraDTO.id.eq(idCompraReserva).and(
 						qCompraDTO.parSesion.id.eq(sesionId).and(
 								qCompraDTO.reserva.eq(true)))).execute();

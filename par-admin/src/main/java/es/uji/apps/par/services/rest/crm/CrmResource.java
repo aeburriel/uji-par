@@ -1,6 +1,7 @@
 package es.uji.apps.par.services.rest.crm;
 
 import com.sun.jersey.api.core.InjectParam;
+import es.uji.apps.par.enums.TipoPago;
 import es.uji.apps.par.exceptions.ButacaOcupadaException;
 import es.uji.apps.par.exceptions.CompraSinButacasException;
 import es.uji.apps.par.exceptions.NoHayButacasLibresException;
@@ -102,7 +103,7 @@ public class CrmResource extends BaseResource {
                     ResultadoCompra resultadoCompra = comprasService.registraCompra(sesion.getId(), butacasSeleccionadas, true, BigDecimal.ZERO, email, nombre, apellidos, user.getUsuario());
 
                     if (resultadoCompra.getCorrecta()) {
-                        comprasService.marcaPagada(resultadoCompra.getId());
+                        comprasService.marcaPagada(resultadoCompra.getId(), TipoPago.METALICO);
                         String urlPdf = configurationSelector.getUrlPublic() + "/rest/compra/" + resultadoCompra.getUuid() + "/pdf";
                         return Response.ok(new ResponseMessage(true, urlPdf)).build();
                     }

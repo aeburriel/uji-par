@@ -407,6 +407,8 @@ UI =
             "fila": "Fila del asiento",
             "tituloMulti": "Título",
             "tarjeta": "Tarjeta",
+            "tarjetaoffline": "Tarjeta Offline",
+            "transferencia": "Transferencia",
             "idTarifa": "Identificador de la tarifa",
             "importe": "Importe",
             "envioRetrasado": "Envío retrasado",

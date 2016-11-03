@@ -193,7 +193,8 @@ public class Configuration
     {
     	List<String> payModesJs = new ArrayList<String>(Arrays.asList("['metalico', '" + ResourceProperties.getProperty(locale, "paymode.metalico") + "']",
     	         "['tarjeta', '" + ResourceProperties.getProperty(locale, "paymode.tarjeta") + "']",
-    	         "['tarjetaOffline', '" + ResourceProperties.getProperty(locale, "paymode.tarjetaOffline") + "']"));
+    	         "['tarjetaOffline', '" + ResourceProperties.getProperty(locale, "paymode.tarjetaOffline") + "']",
+				 "['transferencia', '" + ResourceProperties.getProperty(locale, "paymode.transferencia") + "']"));
     	
     	List<String> modes = Arrays.asList(getProperty(PAY_MODES).split(PROPERTIES_SEPARATOR));
     	List<String> payModes = new ArrayList<String>();
