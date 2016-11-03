@@ -14,7 +14,8 @@ public class AuthChecker
         }
     }
 
-	public static String getUserUID(HttpServletRequest request) {
+	public static String getUserUID(HttpServletRequest request)
+	{
 		return (String) request.getSession().getAttribute(Authenticator.USER_ATTRIBUTE);
 	}
 }
