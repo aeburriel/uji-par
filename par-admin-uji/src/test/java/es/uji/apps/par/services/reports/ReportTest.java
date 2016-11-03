@@ -187,7 +187,7 @@ public class ReportTest {
 		BigDecimal importe = new BigDecimal(1);
 		CompraDTO compraDTO = comprasDAO.insertaCompra(sesion.getId(), Calendar.getInstance().getTime(), taquilla, importe, usuario.getUsuario());
 		compraDTO.setPagada(true);
-		compraDTO.setTipoPago(TipoPago.METALICO);
+		compraDTO.setTipoPago(TipoPago.METALICO.toString());
 		Butaca butaca = new Butaca();
 		butaca.setFila(fila);
 		butaca.setNumero(asiento);
