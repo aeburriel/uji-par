@@ -83,5 +83,4 @@ public class DatosButaca
     {
         this.yIni = yIni;
     }
-
 }
