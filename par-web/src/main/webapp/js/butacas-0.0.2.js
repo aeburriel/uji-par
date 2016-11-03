@@ -259,6 +259,7 @@ Butacas = (function () {
                     refrescaEstadoButacas();
 
                     if (found) {
+                        tooltip.hide();
                         tooltip.ajax(
                             butaca.localizacion + "-" + butaca.fila + "-" + butaca.numero,
                             baseUrl + "/rest/entrada/" + sesion + '/compra/' + butaca.fila + '/' + butaca.numero + '/' + butaca.localizacion,
