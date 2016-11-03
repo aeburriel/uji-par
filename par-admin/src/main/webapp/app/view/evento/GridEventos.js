@@ -1,11 +1,33 @@
 Ext.define('Paranimf.view.evento.GridEventos', {
-   extend: 'Paranimf.view.EditBaseGrid',
+    extend: 'Paranimf.view.EditBaseGrid',
 
-   alias: 'widget.gridEventos',
-   store: 'Eventos',
+    alias: 'widget.gridEventos',
+    store: 'Eventos',
     stateId: 'gridEventos',
 
-   title: UI.i18n.gridTitle.eventos,
+    title: UI.i18n.gridTitle.eventos,
+
+    tbar: [{
+        xtype: 'button',
+        text: UI.i18n.button.add,
+        action: 'add',
+        hidden: (readOnlyUser == undefined)?false:readOnlyUser
+    }, {
+        xtype: 'button',
+        text: (readOnlyUser == undefined || readOnlyUser == false)?UI.i18n.button.edit:UI.i18n.button.ver,
+        action: 'edit'
+    }, {
+        xtype: 'button',
+        text: UI.i18n.button.del,
+        action: 'del',
+        hidden: (readOnlyUser == undefined)?false:readOnlyUser
+    }, {
+        xtype: 'checkbox',
+        fieldLabel: UI.i18n.field.eventosAcabados,
+        name: 'mostrarTodos',
+        labelWidth: 180,
+        labelAlign: 'right'
+    }],
 
    dockedItems: [{
      xtype: 'pagingtoolbar',
@@ -15,14 +37,6 @@ Ext.define('Paranimf.view.evento.GridEventos', {
    }],
 
    initComponent: function() {
-
-       this.tbar.push({
-           xtype: 'checkbox',
-           fieldLabel: UI.i18n.field.eventosAcabados,
-           name: 'mostrarTodos',
-           labelWidth: 180,
-           labelAlign: 'right'
-       });
 
       this.columns = [{
         dataIndex: 'id',
