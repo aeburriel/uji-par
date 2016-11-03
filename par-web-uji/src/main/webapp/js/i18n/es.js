@@ -13,7 +13,10 @@ UI =
             "tipoDescuento": "Descuento",
             "tipoInvitacion": "Invitación",
             "tipoAulaTeatro": "Aula de teatro",
-            "totalEntradas": "Total compra (IVA incl.): "
+            "totalEntradas": "Total compra (IVA incl.): ",
+            "precioButaca": "Butaca:",
+            "precioCompra": "Compra:",
+            "observaciones": "Observaciones:"
         },
         "error": {
             "preuNoIntroduit": "Esta localitzación no tiene el precio asignado para esta sesión y por tanto, no está disponible",
@@ -24,7 +27,8 @@ UI =
             "anulaCompra": "Anular compra",
             "anulaButaca": "Anula butaca",
             "pasarACompra": "Pasar a compra",
-            "pasarButacaACompra": "Pasar butaca a compra"
+            "pasarButacaACompra": "Pasar butaca a compra",
+            "imprimir": "Imprimir entrada"
         },
         "mensajes": {
             "anulaCompra": "¿Está seguro de querer anular la compra con todas sus butacas?",

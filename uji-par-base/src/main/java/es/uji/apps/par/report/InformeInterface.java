@@ -12,17 +12,18 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Locale;
 
-public interface InformeInterface {
-	public InformeInterface create(Locale locale, Configuration configuration, String logoReport);
-	public void serialize(OutputStream output) throws ReportSerializationException;
-	public void genera(String inicio, String fin, List<InformeModelReport> compras, BigDecimal totalTaquillaTPV,
-            BigDecimal totalTaquillaEfectivo, BigDecimal totalOnline);
-	public void genera(String inicio, String fin, List<InformeModelReport> compras, List<InformeAbonoReport> abonos, String cargoInformeEfectivo,
+public interface InformeInterface
+{
+	InformeInterface create(Locale locale, Configuration configuration, String logoReport);
+	void serialize(OutputStream output) throws ReportSerializationException;
+	void genera(String inicio, String fin, List<InformeModelReport> compras, BigDecimal totalTaquillaTPV,
+            BigDecimal totalTaquillaEfectivo, BigDecimal totalTaquillaTransferencia, BigDecimal totalOnline);
+	void genera(String inicio, String fin, List<InformeModelReport> compras, List<InformeAbonoReport> abonos, String cargoInformeEfectivo,
     		String firmanteInformeEfectivo) throws SinIvaException;
-	public void genera(String titulo, String inicio, String fin, List<InformeModelReport> compras, List<InformeAbonoReport> abonos, String cargoInformeEfectivo,
+	void genera(String titulo, String inicio, String fin, List<InformeModelReport> compras, List<InformeAbonoReport> abonos, String cargoInformeEfectivo,
 			String firmanteInformeEfectivo) throws SinIvaException;
-	public void genera(String cargo, String firmante, List<InformeSesion> informesSesion, Cine cine, boolean printSesion) throws SinIvaException;
-	public void genera(String inicio, String fin, List<InformeModelReport> compras) throws SinIvaException;
-    public void genera(long sesionId, String userUID) throws SinIvaException;
-	public void genera(String fechaInicio, String fechaFin, String userUID) throws ParseException;
+	void genera(String cargo, String firmante, List<InformeSesion> informesSesion, Cine cine, boolean printSesion) throws SinIvaException;
+	void genera(String inicio, String fin, List<InformeModelReport> compras) throws SinIvaException;
+    void genera(long sesionId, String userUID) throws SinIvaException;
+	void genera(String fechaInicio, String fechaFin, String userUID) throws ParseException;
 }

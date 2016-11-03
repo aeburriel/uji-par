@@ -50,13 +50,13 @@ public class InformeTaquillaReport extends Report implements InformeInterface
     }
 
     public void genera(String inicio, String fin, List<InformeModelReport> compras, BigDecimal totalTaquillaTPV,
-            BigDecimal totalTaquillaEfectivo, BigDecimal totalOnline)
+            BigDecimal totalTaquillaEfectivo, BigDecimal totalTaquillaTransferencia, BigDecimal totalOnline)
     {
         creaLogo();
         creaCabecera(inicio, fin);
         creaTabla(compras);
         creaTotales(compras);
-        creaSubtotales(totalTaquillaTPV, totalTaquillaEfectivo, totalOnline);
+        creaSubtotales(totalTaquillaTPV, totalTaquillaEfectivo, totalTaquillaTransferencia, totalOnline);
     }
 
     private void creaLogo()
@@ -224,7 +224,7 @@ public class InformeTaquillaReport extends Report implements InformeInterface
         return total;
     }
 
-    private void creaSubtotales(BigDecimal totalTaquillaTPV, BigDecimal totalTaquillaEfectivo, BigDecimal totalOnline)
+    private void creaSubtotales(BigDecimal totalTaquillaTPV, BigDecimal totalTaquillaEfectivo, BigDecimal totalTaquillaTransferencia, BigDecimal totalOnline)
     {
         Block block = withNewBlock();
         block.setMarginTop("1cm");
@@ -246,6 +246,14 @@ public class InformeTaquillaReport extends Report implements InformeInterface
         Block blockTaquillaEfectivo = createBoldBlock(ReportUtils.formatEuros(totalTaquillaEfectivo));
         blockTaquillaEfectivo.setTextAlign(TextAlignType.RIGHT);
         table.withNewCell(blockTaquillaEfectivo);
+
+        table.withNewRow();
+
+        table.withNewCell("");
+        table.withNewCell(ResourceProperties.getProperty(locale, "informeTaquilla.subtotales.transferencia"));
+        Block blockTaquillaTransferencia = createBoldBlock(ReportUtils.formatEuros(totalTaquillaTransferencia));
+        blockTaquillaTransferencia.setTextAlign(TextAlignType.RIGHT);
+        table.withNewCell(blockTaquillaTransferencia);
         
 
         table.withNewRow();

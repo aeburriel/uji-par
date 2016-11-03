@@ -146,7 +146,7 @@ public class CompraResource extends BaseResource
 			recibo = "";
 		}
 
-		comprasService.passarACompra(sesionId, idCompraReserva, tipoPago, recibo);
+		comprasService.passarACompra(sesionId, idCompraReserva, recibo, tipoPago);
 		return Response.ok().build();
 	}
 

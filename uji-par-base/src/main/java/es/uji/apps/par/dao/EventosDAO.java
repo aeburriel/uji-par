@@ -177,8 +177,8 @@ public class EventosDAO extends BaseDAO
 
     private String getWhereActivos(String userUID)
     {
-        return " where s.FECHA_CELEBRACION >= " + databaseHelper.toDate() + "('" + DateUtils.dateToSpanishStringWithHour
-		(configuration.dateConMargenTrasVenta()) + "','DD/MM/YYYY HH24:MI') and (u.usuario = '" + userUID + "' or e.CINE_ID IS "
+        return " where s.ID IS NULL or (s.FECHA_CELEBRACION >= " + databaseHelper.toDate() + "('" + DateUtils.dateToSpanishStringWithHour
+		(configuration.dateConMargenTrasVenta()) + "','DD/MM/YYYY HH24:MI')) and (u.usuario = '" + userUID + "' or e.CINE_ID IS "
 				+ "NULL)";
     }
 

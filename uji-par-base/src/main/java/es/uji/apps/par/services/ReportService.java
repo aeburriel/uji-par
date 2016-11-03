@@ -8,6 +8,7 @@ import es.uji.apps.par.database.DatabaseHelper;
 import es.uji.apps.par.database.DatabaseHelperFactory;
 import es.uji.apps.par.db.ButacaDTO;
 import es.uji.apps.par.db.SesionDTO;
+import es.uji.apps.par.enums.TipoPago;
 import es.uji.apps.par.exceptions.SinIvaException;
 import es.uji.apps.par.i18n.ResourceProperties;
 import es.uji.apps.par.model.*;
@@ -244,9 +245,11 @@ public class ReportService {
 
 		List<InformeModelReport> compras = objectsToInformes(comprasDAO.getComprasPorEventoInFechas(fechaInicio, fechaFin, userUID));
 
-		Object[] taquillaTpv = comprasDAO.getTotalTaquillaTpv(fechaInicio, fechaFin, userUID);
-		Object[] taquillaEfectivo = comprasDAO.getTotalTaquillaEfectivo(fechaInicio, fechaFin, userUID);
-		Object[] online = comprasDAO.getTotalOnline(fechaInicio, fechaFin, userUID);
+		Object[] taquillaTpv = comprasDAO.getTotalNueva(fechaInicio, fechaFin, userUID, TipoPago.TARJETA, true);
+		Object[] taquillaTpvOffline = comprasDAO.getTotalNueva(fechaInicio, fechaFin, userUID, TipoPago.TARJETAOFFLINE, true);
+		Object[] taquillaEfectivo = comprasDAO.getTotalNueva(fechaInicio, fechaFin, userUID, TipoPago.METALICO, true);
+		Object[] taquillaTransferencia = comprasDAO.getTotalNueva(fechaInicio, fechaFin, userUID, TipoPago.TRANSFERENCIA, false);
+		Object[] online = comprasDAO.getTotalNueva(fechaInicio, fechaFin, userUID, TipoPago.TARJETA, false);
 
 		BigDecimal totalTaquillaTpv = new BigDecimal(0);
 		BigDecimal countTaquillaTpv = new BigDecimal(0);
@@ -259,6 +262,15 @@ public class ReportService {
 			}
 		}
 
+		if (taquillaTpvOffline != null) {
+			if (taquillaTpvOffline.length > 0 && taquillaTpvOffline[0] != null) {
+				totalTaquillaTpv = totalTaquillaTpv.add(dbHelper.castBigDecimal(taquillaTpvOffline[0]));
+			}
+			if (taquillaTpvOffline.length > 1 && taquillaTpvOffline[1] != null) {
+				countTaquillaTpv = countTaquillaTpv.add(dbHelper.castBigDecimal(taquillaTpvOffline[1]));
+			}
+		}
+
 		BigDecimal totalTaquillaEfectivo = new BigDecimal(0);
 		BigDecimal countTaquillaEfectivo = new BigDecimal(0);
 		if (taquillaEfectivo != null) {
@@ -267,6 +279,17 @@ public class ReportService {
 			}
 			if (taquillaEfectivo.length > 1 && taquillaEfectivo[1] != null) {
 				countTaquillaEfectivo = dbHelper.castBigDecimal(taquillaEfectivo[1]);
+			}
+		}
+
+		BigDecimal totalTaquillaTransferencia = new BigDecimal(0);
+		BigDecimal countTaquillaTransferencia = new BigDecimal(0);
+		if (taquillaTransferencia != null) {
+			if (taquillaTransferencia.length > 0 && taquillaTransferencia[0] != null) {
+				totalTaquillaTransferencia = dbHelper.castBigDecimal(taquillaTransferencia[0]);
+			}
+			if (taquillaTransferencia.length > 1 && taquillaTransferencia[1] != null) {
+				countTaquillaTransferencia = dbHelper.castBigDecimal(taquillaTransferencia[1]);
 			}
 		}
 
@@ -285,11 +308,12 @@ public class ReportService {
 		for (InformeModelReport compra: compras) {
 			compra.setNumeroEntradasTPV(countTaquillaTpv);
 			compra.setNumeroEntradasEfectivo(countTaquillaEfectivo);
+			compra.setNumeroEntradasTransferencia(countTaquillaTransferencia);
 			compra.setNumeroEntradasOnline(countOnline);
 		}
 
 		informe.genera(getSpanishStringDateFromBBDDString(fechaInicio), getSpanishStringDateFromBBDDString(fechaFin), compras,
-				totalTaquillaTpv, totalTaquillaEfectivo, totalOnline);
+				totalTaquillaTpv, totalTaquillaEfectivo, totalTaquillaTransferencia, totalOnline);
 		return informe;
 	}
 

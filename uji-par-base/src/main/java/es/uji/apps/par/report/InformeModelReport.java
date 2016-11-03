@@ -1,5 +1,6 @@
 package es.uji.apps.par.report;
 
+import es.uji.apps.par.enums.TipoPago;
 import es.uji.apps.par.exceptions.AnticipadaFormatException;
 import es.uji.apps.par.db.ButacaDTO;
 import es.uji.apps.par.enums.TipoVenta;
@@ -17,10 +18,12 @@ public class InformeModelReport {
     private int numeroEntradas;
     private BigDecimal numeroEntradasTPV;
     private BigDecimal numeroEntradasEfectivo;
+    private BigDecimal numeroEntradasTransferencia;
     private BigDecimal numeroEntradasOnline;
     private BigDecimal total;
     private String tipoCompra;
     private TipoVenta tipoVenta;
+    private TipoPago tipoPago;
     private BigDecimal iva;
     private String localizacion;
     private BigDecimal aforo;
@@ -54,6 +57,16 @@ public class InformeModelReport {
 
     public BigDecimal getNumeroEntradasOnline() {
         return numeroEntradasOnline;
+    }
+
+    public BigDecimal getNumeroEntradasTransferencia()
+    {
+        return numeroEntradasTransferencia;
+    }
+
+    public void setNumeroEntradasTransferencia(BigDecimal numeroEntradasTransferencia)
+    {
+        this.numeroEntradasTransferencia = numeroEntradasTransferencia;
     }
 
     public void setNumeroEntradasOnline(BigDecimal numeroEntradasOnline) {
@@ -196,6 +209,16 @@ public class InformeModelReport {
         this.vendidasTaquilla = vendidasTaquilla;
     }
 
+    public TipoPago getTipoPago()
+    {
+        return tipoPago;
+    }
+
+    public void setTipoPago(TipoPago tipoPago)
+    {
+        this.tipoPago = tipoPago;
+    }
+
     public static TipoVenta getTipoVentaPorDia(Timestamp fechaInicioSesion, Timestamp fechaCompraSesion, Integer dias) {
         Calendar fechaInicioSesionCalendar = Calendar.getInstance();
         fechaInicioSesionCalendar.setTimeInMillis(fechaInicioSesion.getTime());
@@ -271,6 +294,9 @@ public class InformeModelReport {
         informeModel.setAnulada(butaca.getAnulada());
         informeModel.setAforo(butaca.getParLocalizacion().getTotalEntradas());
 		informeModel.setReserva(butaca.getParCompra().getReserva());
+
+        if (butaca.getParCompra().getTipoPago() != null)
+            informeModel.setTipoPago(TipoPago.valueOf(butaca.getParCompra().getTipoPago().toUpperCase()));
 
         if (anticipada != null)
             informeModel.setTipoVenta(getTipoVenta(butaca.getParCompra().getTaquilla(), butaca.getParSesion().getFechaCelebracion

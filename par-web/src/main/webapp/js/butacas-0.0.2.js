@@ -277,19 +277,31 @@ Butacas = (function () {
 
     function respuestaDatosCompra(data, context) {
         var butacaId;
+        var precioCompra = 0;
+        var precioButaca = 0;
         if (data != null) {
             for (var i = 0; i < data.parButacas.length; i++) {
                 if (!data.parButacas[i].anulada) {
+                    precioCompra += data.parButacas[i].precio;
                     $("#" + getIdButaca(data.parButacas[i])).addClass("accionCompra");
                     if (iguales(context.butaca, data.parButacas[i])) {
                         butacaId = data.parButacas[i].id;
+                        precioButaca = data.parButacas[i].precio;
                     }
                 }
             }
 
             butacasCompra = data.parButacas;
-            var tooltip = $("<div />")
-                .append($('<button class="button-tooltip-primary" onclick="javascript:Butacas.anula(' + data.id + ');">' + UI.i18n.acciones.anulaCompra + '</button>'))
+            var tooltip = $(
+                "<div><div>" +  UI.i18n.butacas.precioButaca + " " + precioButaca + " €</div>" +
+                "<div>" +  UI.i18n.butacas.precioCompra + " " + precioCompra + " €</div></div>"
+            );
+
+            if (data.observacionesReserva) {
+                tooltip.append("<div>" + UI.i18n.butacas.observaciones + " <p> " + data.observacionesReserva + "</p></div>");
+            }
+
+            tooltip.append($('<button class="button-tooltip-primary" onclick="javascript:Butacas.anula(' + data.id + ');">' + UI.i18n.acciones.anulaCompra + '</button>'))
                 .append("<div />")
                 .append($('<button class="button-tooltip-primary" onclick="javascript:Butacas.anula(' + data.id + ', ' + butacaId + ', \'' + getIdButaca(context.butaca) + '\');">' + UI.i18n.acciones.anulaButaca + '</button>'));
             if (data.reserva) {
@@ -298,9 +310,25 @@ Butacas = (function () {
                     .append("<div />")
                     .append("<div />").append($('<button class="button-tooltip-primary" onclick="javascript:Butacas.pasarButacaACompra(' + data.id + ', ' + butacaId + ', \'' + getIdButaca(context.butaca) + '\');">' + UI.i18n.acciones.pasarButacaACompra + '</button>'));
             }
+            else {
+                tooltip
+                    .append("<div />")
+                    .append($('<button class="button-tooltip-primary" onclick="javascript:Butacas.imprimir(\'' + data.uuid + '\');">' + UI.i18n.acciones.imprimir + '</button>'))
+            }
 
             return tooltip.html();
         }
+    }
+
+    function imprimir(uuid) {
+        pm({
+            target: window.parent,
+            type: "imprimir",
+            data: {uuid: uuid},
+            success: function (data) {
+                tooltip.hide();
+            }
+        });
     }
 
     function anula(compraId, butacaId, butacaSelectorId) {
@@ -502,7 +530,8 @@ Butacas = (function () {
         muestraMinimapa: muestraMinimapa,
         anula: anula,
         pasarACompra: pasarACompra,
-        pasarButacaACompra: pasarButacaACompra
+        pasarButacaACompra: pasarButacaACompra,
+        imprimir: imprimir
     };
 
 }());

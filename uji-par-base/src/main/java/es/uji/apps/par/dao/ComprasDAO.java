@@ -30,6 +30,7 @@ import java.util.*;
 @Repository
 public class ComprasDAO extends BaseDAO {
 	public static Logger log = Logger.getLogger(ComprasDAO.class);
+	public static final String NO_FINALIZADAS = "cnf";
 	private static final int ELIMINA_PENDIENTES_MINUTOS = 20;
 
 	@Autowired
@@ -745,6 +746,27 @@ public class ComprasDAO extends BaseDAO {
         else
             return null;
 	}
+
+	/************************************ NUEVAS **********************************************************************************/
+	@Transactional
+	public Object[] getTotalNueva(String fechaInicio, String fechaFin, String userUID, TipoPago tipoPago, boolean taquilla) {
+		String sql = "select sum(b.precio), count(b.precio) "
+				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, "
+				+ "par_salas sala, par_salas_usuarios su, par_usuarios u "
+				+ "where b.compra_id = c.id and s.id = c.sesion_id and e.id = s.evento_id "
+				+ "and sala.id = s.sala_id and u.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = u.id "
+				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
+		 		+ "and c.taquilla = " + (taquilla ? dbHelper.trueString() : dbHelper.falseString()) + " "
+				+ "and c.tipo IS NOT NULL and lower(c.tipo) = '" + tipoPago.toString().toLowerCase() + "' ";
+
+		List<Object[]> result = entityManager.createNativeQuery(sql).getResultList();
+
+		if (result.size() > 0)
+			return result.get(0);
+		else
+			return null;
+	}
+	/******************************************************************************************************************************/
 
 	@Transactional
 	public void rellenaCodigoPagoPasarela(long idCompra, String codigoPago) {

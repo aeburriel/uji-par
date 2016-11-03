@@ -535,7 +535,7 @@ public class InformeSesionNoAnuladasReport extends Report implements InformeInte
     }
 
 	public void genera(String inicio, String fin, List<InformeModelReport> compras, BigDecimal totalTaquillaTPV,
-			BigDecimal totalTaquillaEfectivo, BigDecimal totalOnline) {
+			BigDecimal totalTaquillaEfectivo, BigDecimal totalTaquillaTransferencia, BigDecimal totalOnline) {
 		// TODO Auto-generated method stub
 		
 	}
