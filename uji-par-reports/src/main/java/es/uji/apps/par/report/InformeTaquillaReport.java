@@ -250,15 +250,6 @@ public class InformeTaquillaReport extends Report implements InformeInterface
         table.withNewRow();
 
         table.withNewCell("");
-        table.withNewCell(ResourceProperties.getProperty(locale, "informeTaquilla.subtotales.transferencia"));
-        Block blockTaquillaTransferencia = createBoldBlock(ReportUtils.formatEuros(totalTaquillaTransferencia));
-        blockTaquillaTransferencia.setTextAlign(TextAlignType.RIGHT);
-        table.withNewCell(blockTaquillaTransferencia);
-        
-
-        table.withNewRow();
-
-        table.withNewCell("");
         table.withNewCell(ResourceProperties.getProperty(locale, "informeTaquilla.subtotales.online"));
         Block blockOnline = createBoldBlock(ReportUtils.formatEuros(totalOnline));
         blockOnline.setTextAlign(TextAlignType.RIGHT);
