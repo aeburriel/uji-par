@@ -19,8 +19,7 @@ import es.uji.commons.web.template.Template;
 public class ThymeleafMessageBodyWriter implements MessageBodyWriter<Template>
 {
     @Override
-    public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations,
-            MediaType mediaType)
+    public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType)
     {
         return type.equals(HTMLTemplate.class) || type.equals(PDFTemplate.class);
     }
