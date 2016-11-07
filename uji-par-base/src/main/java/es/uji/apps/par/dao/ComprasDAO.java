@@ -172,12 +172,12 @@ public class ComprasDAO extends BaseDAO {
 	}
 
 	@Transactional
-	public void marcarPagadaConReferenciaDePago(Long idCompra, String referenciaPago) {
+	public void marcarPagadaConReferenciaDePago(Long idCompra, String referenciaPago, String tipoPago) {
 		CompraDTO compra = getCompraById(idCompra);
 
 		compra.setPagada(true);
 		compra.setReferenciaPago(referenciaPago);
-		compra.setTipoPago(TipoPago.TARJETAOFFLINE.toString());
+		compra.setTipoPago(tipoPago);
 
 		entityManager.persist(compra);
 	}

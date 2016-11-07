@@ -51,12 +51,12 @@ public class CompraResource extends BaseResource
 	{
 		AuthChecker.canWrite(currentRequest);
 
-		if (isTipoPagoTarjetaOffline(tipoPago))
-			comprasService.marcarPagadaConReferenciaDePago(idCompra, referenciaDePago);
-		else if (isTipoPagoTransferencia(tipoPago))
-			comprasService.marcaPagada(idCompra, TipoPago.TRANSFERENCIA);
-		else
-			comprasService.marcaPagada(idCompra, TipoPago.METALICO);
+		if (!isTipoPagoTarjetaOffline(tipoPago))
+		{
+			referenciaDePago = "";
+		}
+
+		comprasService.marcarPagadaConReferenciaDePago(idCompra, referenciaDePago, tipoPago);
 	}
 
     @POST
@@ -66,12 +66,12 @@ public class CompraResource extends BaseResource
     {
         AuthChecker.canWrite(currentRequest);
 
-		if (isTipoPagoTarjetaOffline(tipoPago))
-            comprasService.marcarAbonadoPagadoConReferenciaDePago(idAbonado, referenciaDePago);
-		else if (isTipoPagoTransferencia(tipoPago))
-			comprasService.marcaAbonadoPagado(idAbonado, TipoPago.TRANSFERENCIA);
-		else
-			comprasService.marcaAbonadoPagado(idAbonado, TipoPago.METALICO);
+		if (!isTipoPagoTarjetaOffline(tipoPago))
+		{
+			referenciaDePago = "";
+		}
+
+		comprasService.marcarAbonadoPagadoConReferenciaDePago(idAbonado, referenciaDePago, tipoPago);
     }
 	
 	@GET
@@ -173,11 +173,6 @@ public class CompraResource extends BaseResource
 	private boolean isTipoPagoTarjetaOffline(String tipoPago)
 	{
 		return tipoPago != null && tipoPago.trim().toLowerCase().equals(TipoPago.TARJETAOFFLINE.toString().toLowerCase());
-	}
-
-	private boolean isTipoPagoTransferencia(String tipoPago)
-	{
-		return tipoPago != null && tipoPago.trim().toLowerCase().equals(TipoPago.TRANSFERENCIA.toString().toLowerCase());
 	}
 
 	@PUT

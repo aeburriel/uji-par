@@ -246,32 +246,21 @@ public class ComprasService
     }
 
     @Transactional
-	public void marcarPagadaConReferenciaDePago(Long idCompra, String referenciaDePago) {
+	public void marcarPagadaConReferenciaDePago(Long idCompra, String referenciaDePago, String tipoPago) {
 		
-		comprasDAO.marcarPagadaConReferenciaDePago(idCompra, referenciaDePago);
+		comprasDAO.marcarPagadaConReferenciaDePago(idCompra, referenciaDePago, tipoPago);
         if (configuration.isIdEntrada()) {
             butacasDAO.asignarIdEntrada(idCompra);
         }
 	}
 
-    @Transactional
-    public void marcaAbonadoPagado(long idAbonado, TipoPago tipoPago)
-    {
-        AbonadoDTO abonado = abonadosDAO.getAbonado(idAbonado);
-        for (CompraDTO compra : abonado.getParCompras()) {
-            comprasDAO.marcarPagada(compra.getId(), tipoPago);
-            if (configuration.isIdEntrada()) {
-                butacasDAO.asignarIdEntrada(compra.getId());
-            }
-        }
-    }
 
     @Transactional
-    public void marcarAbonadoPagadoConReferenciaDePago(Long idAbonado, String referenciaDePago)
+    public void marcarAbonadoPagadoConReferenciaDePago(Long idAbonado, String referenciaDePago, String tipoPago)
     {
         AbonadoDTO abonado = abonadosDAO.getAbonado(idAbonado);
         for (CompraDTO compra : abonado.getParCompras()) {
-            comprasDAO.marcarPagadaConReferenciaDePago(compra.getId(), referenciaDePago);
+            comprasDAO.marcarPagadaConReferenciaDePago(compra.getId(), referenciaDePago, tipoPago);
             if (configuration.isIdEntrada()) {
                 butacasDAO.asignarIdEntrada(compra.getId());
             }
@@ -462,7 +451,8 @@ public class ComprasService
 	}
 
     @Transactional
-    public void passarButacasACompra(Long sesionId, Long idCompraReserva, String recibo, String tipoPago, List<Long> idsButacas, String language, String userUID) {
+    public void passarButacasACompra(Long sesionId, Long idCompraReserva, String recibo, String tipoPago, List<Long> idsButacas, String language, String userUID)
+    {
         CompraDTO compra = comprasDAO.getCompraById(idCompraReserva);
 
         List<ButacaDTO> butacasReserva = new ArrayList<>();
@@ -489,7 +479,7 @@ public class ComprasService
                     butaca.setId(0);
                 }
                 ResultadoCompra resultadoCompra = registraCompraTaquilla(sesionId, butacas, userUID);
-                marcarPagadaConReferenciaDePago(resultadoCompra.getId(), recibo);
+                marcarPagadaConReferenciaDePago(resultadoCompra.getId(), recibo, tipoPago);
             }
             else {
                 passarACompra(sesionId, idCompraReserva, recibo, tipoPago);
