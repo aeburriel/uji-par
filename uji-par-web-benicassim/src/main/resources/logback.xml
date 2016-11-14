@@ -27,7 +27,7 @@
 	<appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
 		<smtpHost>localhost</smtpHost>
 		<smtpPort>25</smtpPort>
-		<to>soporte@4tic.com</to>
+		<to>debug@wifi.benicassim.es</to>
 		<from>no_reply@wifi.benicassim.es</from>
 		<subject>Error en 4ticket Benicassim PUBLIC</subject>
 		<layout class="ch.qos.logback.classic.PatternLayout">

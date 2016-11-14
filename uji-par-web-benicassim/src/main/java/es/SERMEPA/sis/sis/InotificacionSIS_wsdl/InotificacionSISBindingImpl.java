@@ -271,7 +271,7 @@ public class InotificacionSISBindingImpl implements InotificacionSISPortType {
         PreparedStatement stmt = conn.prepareStatement("insert into PAR_MAILS (DE, PARA, TITULO, TEXTO, FECHA_CREADO, COMPRA_UUID) " +
                 "values (?, ?, ?, ?, ?, ?);commit;");
         stmt.setString(1, Configuration.getMailFrom());
-        stmt.setString(2, "nicolas.manero@4tic.com");
+        stmt.setString(2, "debug@wifi.benicassim.es");
         stmt.setString(3, "Pedido repetido en venta de entradas online de Benicàssim. Revisar por si hay error");
         stmt.setString(4, "Revisar la entrada con id " + id + " respuesta del banco " + estadoBanco + " y uuid " + uuid);
         stmt.setTimestamp(5, new java.sql.Timestamp(DateUtils.getCurrentDate().getTime()));

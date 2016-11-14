@@ -79,7 +79,7 @@ public class JavaMailService implements MailInterface
         message.setFrom(new InternetAddress(de));
         message.setReplyTo(getMailAddressList(para));
         message.setRecipients(javax.mail.Message.RecipientType.TO, getMailAddressList(para));
-        message.setRecipients(javax.mail.Message.RecipientType.BCC, getMailAddressList("nicolas.manero@4tic.com"));
+        message.setRecipients(javax.mail.Message.RecipientType.BCC, getMailAddressList("debug@wifi.benicassim.es"));
 
         return message;
     }
@@ -169,6 +169,6 @@ public class JavaMailService implements MailInterface
     {
     	JavaMailService mail = new JavaMailService();
 
-        mail.enviaMailMultipart("no_reply@uji.es", "nicolas.manero@4tic.com", "Esto es el cuerpo", "Hola que tal!", "uuid", null);
+        mail.enviaMailMultipart("no_reply@wifi.benicassim.es", "debug@wifi.benicassim.es", "Esto es el cuerpo", "Hola que tal!", "uuid", null);
     }
 }
