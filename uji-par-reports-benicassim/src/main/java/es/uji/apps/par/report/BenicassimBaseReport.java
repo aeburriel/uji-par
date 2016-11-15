@@ -13,6 +13,7 @@ import java.awt.*;
 
 public class BenicassimBaseReport extends Report {
 	private static final String font = "Verdana";
+	private static final String cortes = " -,;:._/|\\~";
 
 	public BenicassimBaseReport(ReportSerializer serializer, ReportStyle style) throws ReportSerializerInitException {
 		super(serializer, style);
@@ -22,28 +23,35 @@ public class BenicassimBaseReport extends Report {
 		super(reportSerializer, new EntradaReportStyle());
 	}
 
-	protected String getTituloPequenyoAMostrar(String texto, int widthMaximo) {
-        boolean textoIncorrecto = true;
+    protected String getTextoRecortadoMostrar(String texto, int widthMaximo, int fontType, int fontSize) {
+        boolean caracter = false;
 
-        while (textoIncorrecto) {
-        	int width = getWidthTexto(texto, Font.PLAIN, 13);
-        	if (width > widthMaximo)
-        		texto = texto.substring(0, texto.lastIndexOf(" ")) + "\u2026";
-        	else
-        		textoIncorrecto = false;
-        }
-        return texto;
-	}
+        while (true) {
+            int width = getWidthTexto(texto, fontType, fontSize);
+            if (width > widthMaximo) {
+                int i = texto.length();
+                while (i > 0) {
+                    if (caracter || cortes.contains(texto.substring(i - 1, i))) {
+                        break;
+                    }
+                    i -= 1;
+                }
 
-    protected String getTextoRecortadoMostrar(String texto, int widthMaximo, int font) {
-        boolean textoIncorrecto = true;
+                // No hay ningún punto de corte predefinido válido, lo haremos caracter a caracter
+                if (i <= 0 && !caracter) {
+                    caracter = true;
+                    continue;
+                }
 
-        while (textoIncorrecto) {
-            int width = getWidthTexto(texto, Font.PLAIN, font);
-            if (width > widthMaximo)
-                texto = texto.substring(0, texto.lastIndexOf(" ")) + "\u2026";
-            else
-                textoIncorrecto = false;
+                // En caracter a caracter, omitimos los puntos suspensivos
+                if (caracter && texto.substring(texto.length() - 1).equals("\u2026")) {
+                    i -= 1;
+                }
+                texto = texto.substring(0, i - 1) + "\u2026";
+            }
+            else {
+                break;
+            }
         }
         return texto;
     }
@@ -51,44 +59,44 @@ public class BenicassimBaseReport extends Report {
     protected int getFontTitulo(String texto, int widthMaximo) {
         boolean textoIncorrecto = true;
 
-        int font = 15;
+        int fontSize = 15;
         while (textoIncorrecto) {
-            int width = getWidthTexto(texto, Font.PLAIN, font);
+            int width = getWidthTexto(texto, Font.PLAIN, fontSize);
             if (width > widthMaximo)
-                font -= 1;
+                fontSize -= 1;
             else
                 textoIncorrecto = false;
         }
-        return font;
+        return fontSize;
     }
 
     private int getWidthTexto(String texto, int tipo, int size) {
-		Font font = new Font(BenicassimBaseReport.font, tipo, size);
+        Font fuente = new Font(BenicassimBaseReport.font, tipo, size);
         Canvas c = new Canvas();
-        FontMetrics fm = c.getFontMetrics(font);
+        FontMetrics fm = c.getFontMetrics(fuente);
         return fm.stringWidth(texto);
 	}
 
     protected Block getAdjustedBlock(String texto, int maxWidth, int minFont) {
         boolean textoIncorrecto = true;
 
-        int font = 22;
+        int fontSize = 22;
         while (textoIncorrecto) {
-            int width = getWidthTexto(texto, Font.ITALIC, font);
+            int width = getWidthTexto(texto, Font.ITALIC, fontSize);
             if (width > maxWidth) {
-                if (font > minFont) {
-                    font -= 1;
+                if (fontSize > minFont) {
+                    fontSize -= 1;
                 }
                 else
                 {
-                    return getBlockWithText(getTextoRecortadoMostrar(texto, maxWidth, font), font + "pt");
+                    return getBlockWithText(getTextoRecortadoMostrar(texto, maxWidth, Font.ITALIC, fontSize), fontSize + "pt");
                 }
             }
             else
                 textoIncorrecto = false;
         }
 
-        return getBlockWithText(texto, font + "pt");
+        return getBlockWithText(texto, fontSize + "pt");
     }
     
     protected Block getBlockWithText(String property, String size) {

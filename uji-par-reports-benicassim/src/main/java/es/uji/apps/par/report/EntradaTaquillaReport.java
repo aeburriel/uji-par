@@ -13,6 +13,7 @@ import es.uji.apps.par.report.components.EntradaReportStyle;
 import org.apache.fop.apps.FopFactory;
 import org.xml.sax.SAXException;
 
+import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -23,7 +24,8 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
     private static final String FONDO_BLANCO = "#FFFFFF";
     private static final String GRIS_OSCURO = "#666666";
     private static final int sizeTxtTituloEvento = 22;
-    private static final String sizeTxtZonaFilaButaca = "15pt";
+    private static final int sizeTxtZonaFilaButacaInt = 15;
+    private static final String sizeTxtZonaFilaButaca = sizeTxtZonaFilaButacaInt + "pt";
 	private static final String sixeZonaImpresion = "72.2mm";
 	private static final String font = "Verdana";
 
@@ -132,13 +134,14 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
     	
     	BlockContainer bc = new BlockContainer();
     	bc.setWidth("100%");
-    	String fontSize = "13pt";
-        bc.getMarkerOrBlockOrBlockContainer().add(getBlockWithText(getTituloPequenyoAMostrar(this.titulo, 120), fontSize));
+        final int fontSize = 13;
+        final String fontSizeTxt = fontSize + "pt";
+        bc.getMarkerOrBlockOrBlockContainer().add(getBlockWithText(getTextoRecortadoMostrar(this.titulo, 120, Font.PLAIN, fontSize), fontSizeTxt));
 
     	if (this.fila != null && this.numero != null)
-    		bc.getMarkerOrBlockOrBlockContainer().add(getBlockWithText(this.iniciales + " " + this.fila + "-" + this.numero, fontSize));
-    	bc.getMarkerOrBlockOrBlockContainer().add(getBlockWithText(getTituloPequenyoAMostrar(this.tipoEntrada + " " + this.total + " €", 120), fontSize));
-    	bc.getMarkerOrBlockOrBlockContainer().add(getBlockWithText(this.fecha + "-" + this.hora, fontSize));
+                bc.getMarkerOrBlockOrBlockContainer().add(getBlockWithText(this.iniciales + " " + this.fila + "-" + this.numero, fontSizeTxt));
+        bc.getMarkerOrBlockOrBlockContainer().add(getBlockWithText(getTextoRecortadoMostrar(this.tipoEntrada + " " + this.total + " €", 120, Font.PLAIN, fontSize), fontSizeTxt));
+        bc.getMarkerOrBlockOrBlockContainer().add(getBlockWithText(this.fecha + "-" + this.hora, fontSizeTxt));
         blockIzquierda.getContent().add(bc);
         
     	BaseTable table = new BaseTable(getStyleWithFont(), 2, "42.2mm", "30mm");
@@ -252,7 +255,7 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
 
 	private Block createZona() {
 		String txtZona = this.zona.toUpperCase();
-		Block blkZona = getBlockWithText(getTituloPequenyoAMostrar(txtZona, 180), EntradaTaquillaReport.sizeTxtZonaFilaButaca);
+		Block blkZona = getBlockWithText(getTextoRecortadoMostrar(txtZona, 180, Font.PLAIN, EntradaTaquillaReport.sizeTxtZonaFilaButacaInt), EntradaTaquillaReport.sizeTxtZonaFilaButaca);
 
 		return blkZona;
 	}
