@@ -496,6 +496,13 @@ public class EntradasResource extends BaseResource
                     ResourceProperties.getProperty(getLocale(), "error.datosComprador.apellidos"));
         }
 
+        if (telefono == null || telefono.length() < 9)
+        {
+            return rellenaDatosComprador(uuidCompra, nombre, apellidos, direccion, poblacion, cp, provincia, telefono,
+                    email, infoPeriodica, condicionesPrivacidad,
+                    ResourceProperties.getProperty(getLocale(), "error.datosComprador.telefono"));
+        }
+
         if (email == null || email.equals(""))
         {
             return rellenaDatosComprador(uuidCompra, nombre, apellidos, direccion, poblacion, cp, provincia, telefono,
