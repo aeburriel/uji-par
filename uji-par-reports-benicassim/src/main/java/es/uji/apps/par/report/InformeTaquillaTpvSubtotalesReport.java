@@ -33,6 +33,7 @@ public class InformeTaquillaTpvSubtotalesReport extends Report implements Inform
 
     private Locale locale;
     private InformeTaquillaReportStyle style;
+	private Configuration configuration;
 
 	public InformeTaquillaTpvSubtotalesReport() throws ReportSerializerInitException {
 		super(reportSerializer, new InformeTaquillaReportStyle());
@@ -88,7 +89,7 @@ public class InformeTaquillaTpvSubtotalesReport extends Report implements Inform
     private Block creaLogo()
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + Configuration.getLogoReport()).getAbsolutePath());
+        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + configuration.getLogoReport()).getAbsolutePath());
         externalGraphic.setMaxWidth("2cm");
 
         Block block = new Block();
@@ -385,11 +386,12 @@ public class InformeTaquillaTpvSubtotalesReport extends Report implements Inform
             reportSerializer = new FopPDFSerializer();
     }
 
-    public InformeInterface create(Locale locale)
+    public InformeInterface create(Locale locale, Configuration configuration)
     {
         try
         {
             initStatics();
+			this.configuration = configuration;
             InformeTaquillaReportStyle estilo = new InformeTaquillaReportStyle();
 
             return new InformeTaquillaTpvSubtotalesReport(reportSerializer, estilo, locale);

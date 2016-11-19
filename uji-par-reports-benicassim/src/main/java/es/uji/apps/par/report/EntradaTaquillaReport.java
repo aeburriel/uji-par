@@ -350,7 +350,7 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
         fopFactory.setUserConfig(new File("/etc/uji/par/fop.xconf"));
     }
 
-    public EntradaTaquillaReport create(Locale locale) throws SAXException, IOException
+    public EntradaTaquillaReport create(Locale locale, Configuration configuration) throws SAXException, IOException
     {
         try
         {

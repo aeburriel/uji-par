@@ -34,6 +34,7 @@ public class InformeEventosReport extends Report implements InformeInterface
 
     private Locale locale;
     private InformeTaquillaReportStyle style;
+	private Configuration configuration;
 
 	public InformeEventosReport() throws ReportSerializerInitException {
 		super(reportSerializer, new InformeTaquillaReportStyle());
@@ -144,7 +145,7 @@ public class InformeEventosReport extends Report implements InformeInterface
     private Block creaLogo()
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + Configuration.getLogoReport()).getAbsolutePath());
+        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + configuration.getLogoReport()).getAbsolutePath());
         externalGraphic.setMaxWidth("2cm");
 
         Block block = new Block();
@@ -417,11 +418,12 @@ public class InformeEventosReport extends Report implements InformeInterface
             reportSerializer = new FopPDFSerializer();
     }
 
-    public InformeInterface create(Locale locale)
+    public InformeInterface create(Locale locale, Configuration configuration)
     {
         try
         {
             initStatics();
+			this.configuration = configuration;
             InformeTaquillaReportStyle estilo = new InformeTaquillaReportStyle();
 
             return new InformeEventosReport(reportSerializer, estilo, locale);
