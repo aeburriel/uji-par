@@ -22,6 +22,7 @@ public class ActiveDirectoryAuthenticator implements Authenticator {
 	private static final String PASSWORD_PARAM = "password";
 
 	private static final Logger log = LoggerFactory.getLogger(ActiveDirectoryAuthenticator.class);
+	Configuration configuration;
 
 	public ActiveDirectoryAuthenticator() {
 
@@ -54,8 +55,13 @@ public class ActiveDirectoryAuthenticator implements Authenticator {
 		}
 	}
 
+	@Override
+	public void setConfiguration(Configuration configuration) {
+		this.configuration = configuration;
+	}
+
 	private boolean tienePermisoParaEntrar(String login) {
-		List<String> admins = Configuration.getAdminLogin();
+		List<String> admins = configuration.getAdminLogin();
 		
 		if (login != null && admins.contains(login))
 			return true;
@@ -63,10 +69,10 @@ public class ActiveDirectoryAuthenticator implements Authenticator {
 	}
 
 	public boolean loginAdminOk(String login, String password) throws Exception {
-		String activeDirectoryIP = Configuration.getActiveDirectoryIP();
-		String activeDirectoryPort = Configuration.getActiveDirectoryPort();
-		String activeDirectoryDomain = Configuration.getActiveDirectoryDomain();
-		String activeDirectoryDC = Configuration.getActiveDirectoryDC();
+		String activeDirectoryIP = configuration.getActiveDirectoryIP();
+		String activeDirectoryPort = configuration.getActiveDirectoryPort();
+		String activeDirectoryDomain = configuration.getActiveDirectoryDomain();
+		String activeDirectoryDC = configuration.getActiveDirectoryDC();
 		
 		java.util.Properties properties = new Properties();
 		properties.setProperty(Context.INITIAL_CONTEXT_FACTORY,	"com.sun.jndi.ldap.LdapCtxFactory");

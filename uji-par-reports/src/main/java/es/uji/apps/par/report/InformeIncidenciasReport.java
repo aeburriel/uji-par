@@ -46,12 +46,13 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
 
     private Locale locale;
     private InformeTaquillaReportStyle style;
+	Configuration configuration;
 
     public InformeIncidenciasReport() throws ReportSerializerInitException {
         super(reportSerializer, new InformeTaquillaReportStyle());
     }
 
-    private InformeIncidenciasReport(ReportSerializer serializer, InformeTaquillaReportStyle style, Locale locale)
+    private InformeIncidenciasReport(ReportSerializer serializer, InformeTaquillaReportStyle style, Locale locale, Configuration configuration)
             throws ReportSerializerInitException {
         super(serializer, style);
 
@@ -60,6 +61,7 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
 
         this.style = style;
         this.locale = locale;
+		this.configuration = configuration;
     }
 
     private List<InformeSesion> getInformeSesiones(String fechaInicio, String fechaFin) throws ParseException {
@@ -115,7 +117,7 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
 	private Block creaLogo()
 	{
 		ExternalGraphic externalGraphic = new ExternalGraphic();
-		externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + Configuration.getLogoReport()).getAbsolutePath());
+		externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + configuration.getLogoReport()).getAbsolutePath());
 		externalGraphic.setMaxWidth("2cm");
 
 		Block block = new Block();
@@ -149,7 +151,7 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
 		creaCabecera();
 		creaTituloYPeriodo(fechaInicio, fechaFin);
 		creaTabla(fechaInicio, fechaFin);
-		creaFirma(Configuration.getCargoInformeEfectivo(), Configuration.getFirmanteInformeEfectivo());
+		creaFirma(configuration.getCargoInformeEfectivo(), configuration.getFirmanteInformeEfectivo());
     }
 
     private BlockContainer getDatosCine(Cine cine) {
@@ -234,12 +236,12 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
             reportSerializer = new FopPDFSerializer();
     }
 
-    public InformeInterface create(Locale locale) {
+    public InformeInterface create(Locale locale, Configuration configuration) {
         try {
             initStatics();
             InformeTaquillaReportStyle estilo = new InformeTaquillaReportStyle();
 
-            return new InformeIncidenciasReport(reportSerializer, estilo, locale);
+            return new InformeIncidenciasReport(reportSerializer, estilo, locale, configuration);
         } catch (ReportSerializerInitException e) {
             throw new RuntimeException(e);
         }
@@ -268,7 +270,6 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
 
     }
 
-    @Override
     public void genera(String cargo, String firmante, List<InformeSesion> informesSesion, Cine cine, boolean printSesion) throws SinIvaException {
         // TODO Auto-generated method stub
     }
@@ -277,7 +278,6 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
 
 	}
 
-	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		appContext = applicationContext;
 	}

@@ -208,7 +208,7 @@ public class EventosResource extends BaseResource {
     }
 
     private List<Map<String, Object>> getSesionesPlantilla(List<Sesion> sesiones) {
-        DatabaseHelper databaseHelper = DatabaseHelperFactory.newInstance();
+        DatabaseHelper databaseHelper = DatabaseHelperFactory.newInstance(configuration);
         List<Map<String, Object>> sesionesPlantilla = new ArrayList<Map<String, Object>>();
         Calendar cal = Calendar.getInstance();
 
@@ -217,7 +217,7 @@ public class EventosResource extends BaseResource {
             if (sesion.getFechaCelebracion().before(cal.getTime()))
                 continue;
 
-            if (!Configuration.showSesionesSinVentaInternet() && !sesion.getCanalInternet())
+            if (!configuration.showSesionesSinVentaInternet() && !sesion.getCanalInternet())
                 continue;
 
             Map<String, Object> datos = new HashMap<String, Object>();

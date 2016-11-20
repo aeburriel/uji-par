@@ -106,7 +106,7 @@ public class AuthFilterSSOUji implements Filter
     }
 
 	private void redirectToEmptyPage(HttpServletResponse sResponse) throws IOException {
-		//sResponse.sendRedirect(Configuration.getUrlAdmin() + "/rest/login");
+		//sResponse.sendRedirect(configuration.getUrlAdmin() + "/rest/login");
 		sResponse.sendError(403);
 	}
 }

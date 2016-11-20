@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.model.TipoInforme;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
@@ -13,14 +14,17 @@ import java.util.List;
 @Service
 public class InformesService
 {
+	@Autowired
+	Configuration configuration;
+
     public List<TipoInforme> getTiposInforme(String language)
     {
-        String tiposInforme = Configuration.getTiposInforme();
+        String tiposInforme = configuration.getTiposInforme();
         return parseInformes(tiposInforme, language);
     }
 
 	public List<TipoInforme> getTiposInformeGenerales(String language) {
-		String tiposInforme = Configuration.getTiposInformeGenerales();
+		String tiposInforme = configuration.getTiposInformeGenerales();
 		return parseInformes(tiposInforme, language);
 	}
 

@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import es.uji.apps.par.config.Configuration;
 import es.uji.commons.web.template.HTMLTemplate;
 import es.uji.commons.web.template.Template;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Provider
 public class CommonExceptionMapper implements ExceptionMapper<Exception>
@@ -30,6 +31,9 @@ public class CommonExceptionMapper implements ExceptionMapper<Exception>
     
     @Context
     HttpServletRequest currentRequest;
+
+	@Autowired
+	Configuration configuration;
     
     protected static final String APP = "par";
     protected static final String LANG = "language";
@@ -101,14 +105,14 @@ public class CommonExceptionMapper implements ExceptionMapper<Exception>
 		Pagina pagina = null;
 
 		try {
-			pagina = new Pagina(Configuration.getUrlPublic(), Configuration.getUrlPublic(), language, Configuration.getHtmlTitle());
-			pagina.setTitulo(Configuration.getHtmlTitle());
+			pagina = new Pagina(configuration.getUrlPublic(), configuration.getUrlPublic(), language, configuration.getHtmlTitle());
+			pagina.setTitulo(configuration.getHtmlTitle());
 			pagina.setSubTitulo("");
 		} catch (ParseException e) {
 
 		}
 		template.put("idioma", language);
-		template.put("baseUrl", Configuration.getUrlPublic());
+		template.put("baseUrl", configuration.getUrlPublic());
 		template.put("pagina", pagina);
 
 		Menu menu = new Menu();

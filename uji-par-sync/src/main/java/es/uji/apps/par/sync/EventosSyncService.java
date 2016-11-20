@@ -22,11 +22,14 @@ public class EventosSyncService
     @Qualifier("syncUji")
     EventosSync syncUji;
 
+	@Autowired
+	Configuration configuration;
+
     private String tipo;
 
     public EventosSyncService()
     {
-        tipo = Configuration.getSyncTipo();
+        tipo = configuration.getSyncTipo();
     }
 
     public void setTipo(String tipo)
@@ -42,6 +45,6 @@ public class EventosSyncService
         else
             throw new RuntimeException(
                     "No se ha encontrado sincronizador para el tipo definido en la config uji.sync.lugar="
-                            + Configuration.getSyncTipo());
+                            + configuration.getSyncTipo());
     }
 }

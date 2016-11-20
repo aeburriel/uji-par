@@ -1,13 +1,9 @@
 package es.uji.apps.par.db;
 
 import java.io.Serializable;
+import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 
 /**
@@ -30,7 +26,14 @@ public class UsuarioDTO implements Serializable {
 
 	private String usuario;
 
+	@OneToMany(mappedBy = "parUsuario", fetch = FetchType.LAZY)
+	private List<SalasUsuarioDTO> parSalasUsuario;
+
 	public UsuarioDTO() {
+	}
+
+	public UsuarioDTO(long id) {
+		this.id = id;
 	}
 
 	public long getId() {
@@ -65,4 +68,11 @@ public class UsuarioDTO implements Serializable {
 		this.usuario = usuario;
 	}
 
+	public List<SalasUsuarioDTO> getParSalasUsuario() {
+		return parSalasUsuario;
+	}
+
+	public void setParSalasUsuario(List<SalasUsuarioDTO> parSalasUsuario) {
+		this.parSalasUsuario = parSalasUsuario;
+	}
 }

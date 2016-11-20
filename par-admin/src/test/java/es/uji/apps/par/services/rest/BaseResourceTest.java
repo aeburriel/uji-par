@@ -6,10 +6,14 @@ import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.WebAppDescriptor;
 
 import es.uji.apps.par.config.Configuration;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Ignore
 public class BaseResourceTest extends JerseyTest
 {
+	@Autowired
+	Configuration configuration;
+
     public BaseResourceTest(WebAppDescriptor build)
     {
         super(build);
@@ -19,7 +23,7 @@ public class BaseResourceTest extends JerseyTest
 
     private void desactivarAppenderLogGmail()
     {
-        Configuration.desactivaLogGmail();
+        configuration.desactivaLogGmail();
     }
     
     @Override

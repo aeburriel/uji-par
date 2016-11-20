@@ -173,7 +173,7 @@ public class EntradasResource extends BaseResource
             template.put("precioDescuento_" + precio.getLocalizacion().getCodigo(), precio.getDescuento());
         }
 
-        template.put("gastosGestion", Float.parseFloat(Configuration.getGastosGestion()));
+        template.put("gastosGestion", Float.parseFloat(configuration.getGastosGestion()));
         template.put("lang", language);
         
         ResponseBuilder builder = Response.ok(template);
@@ -251,7 +251,7 @@ public class EntradasResource extends BaseResource
         Map<String, Map<Long, PreciosSesion>> preciosSesionLocalizacion = sesionesService.getPreciosSesionPublicosPorLocalizacion(sesion.getId());
         template.put("preciosSesionLocalizacion", preciosSesionLocalizacion);
 
-        template.put("gastosGestion", Float.parseFloat(Configuration.getGastosGestion()));
+        template.put("gastosGestion", Float.parseFloat(configuration.getGastosGestion()));
         template.put("lang", language);
         
         ResponseBuilder builder = Response.ok(template);
@@ -293,7 +293,7 @@ public class EntradasResource extends BaseResource
             for (Butaca butacaSeleccionada : butacasSeleccionadas) {
                 String localizacion = butacaSeleccionada.getLocalizacion();
                 if (!butacasExistentes.containsKey(localizacion)) {
-                    byte[] encoded = Files.readAllBytes(Paths.get(Configuration.getPathJson() + localizacion + ".json"));
+                    byte[] encoded = Files.readAllBytes(Paths.get(configuration.getPathJson() + localizacion + ".json"));
                     butacasExistentes.put(localizacion, Butaca.parseaJSON(new String(encoded, "UTF-8")));
                 }
 
@@ -448,7 +448,7 @@ public class EntradasResource extends BaseResource
         template.put("telefono", telefono);
         template.put("email", email);
         template.put("condicionesPrivacidad", condicionesPrivacidad);
-        template.put("urlCondicionesPrivacidad", Configuration.getUrlCondicionesPrivacidad());
+        template.put("urlCondicionesPrivacidad", configuration.getUrlCondicionesPrivacidad());
         
         CompraDTO compra = comprasService.getCompraByUuid(uuidCompra);
         
@@ -548,7 +548,7 @@ public class EntradasResource extends BaseResource
         Locale locale = getLocale();
         String language = locale.getLanguage();
 
-		if (Configuration.isDebug())
+		if (configuration.isDebug())
 			return tpvInterface.testTPV(compra.getId());
         else if (compra.getImporte().equals(BigDecimal.ZERO)) {
             return tpvInterface.compraGratuita(compra.getId());

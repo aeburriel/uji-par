@@ -61,7 +61,7 @@ public class EntradaTaquillaReport extends Report implements EntradaReportTaquil
     private String total;
     private String barcode;
     private String tipoEntrada;
-    
+
     public EntradaTaquillaReport() throws ReportSerializerInitException {
     	super(reportSerializer, new EntradaReportStyle());
     }
@@ -136,7 +136,7 @@ public class EntradaTaquillaReport extends Report implements EntradaReportTaquil
 
         entradaTable.withNewRow();
 
-        TableCell cellIzquierda = entradaTable.withNewCell(createEntradaIzquierda());
+        TableCell cellIzquierda = entradaTable.withNewCell(createEntradaIzquierda(urlPublic));
         cellIzquierda.setPadding("0.1cm");
         cellIzquierda.setPaddingTop("0.0cm");
         cellIzquierda.setBackgroundColor(FONDO_BLANCO);
@@ -144,12 +144,12 @@ public class EntradaTaquillaReport extends Report implements EntradaReportTaquil
         entradaBlock.getContent().add(entradaTable);
     }
 
-    private Block createEntradaIzquierda()
+    private Block createEntradaIzquierda(String urlPublic)
     {
         Block block = new Block();
 
         block.getContent().add(createEntradaIzquierdaArriba());
-        block.getContent().add(createEntradaIzquierdaCentro());
+        block.getContent().add(createEntradaIzquierdaCentro(urlPublic));
 
         return block;
     }
@@ -221,7 +221,7 @@ public class EntradaTaquillaReport extends Report implements EntradaReportTaquil
         return text;
 	}
 
-	private BaseTable createEntradaIzquierdaCentro()
+	private BaseTable createEntradaIzquierdaCentro(String urlPublic)
     {
         BaseTable table = new BaseTable(new EntradaReportStyle(), 2, "7.0cm", "3.2cm");
 
@@ -243,7 +243,7 @@ public class EntradaTaquillaReport extends Report implements EntradaReportTaquil
         
         table.withNewCell(createFilaButacaYUuid());
         	
-        TableCell cellBarCode = table.withNewCell(createBarcode());
+        TableCell cellBarCode = table.withNewCell(createBarcode(urlPublic));
         cellBarCode.setTextAlign(TextAlignType.RIGHT);
         cellBarCode.setPaddingLeft("0.2cm");
         
@@ -420,10 +420,10 @@ public class EntradaTaquillaReport extends Report implements EntradaReportTaquil
         return table;
     }
 
-    private Block createBarcode()
+    private Block createBarcode(String urlPublic)
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(Configuration.getUrlPublic() + "/rest/barcode/" + this.barcode);
+        externalGraphic.setSrc(urlPublic + "/rest/barcode/" + this.barcode);
 
         Block blockCodebar = new Block();
         blockCodebar.getContent().add(externalGraphic);
@@ -446,7 +446,7 @@ public class EntradaTaquillaReport extends Report implements EntradaReportTaquil
             reportSerializer = new FopPDFSerializer();
     }
 
-    public EntradaTaquillaReport create(Locale locale) throws SAXException, IOException
+    public EntradaTaquillaReport create(Locale locale, Configuration configuration) throws SAXException, IOException
     {
         try
         {

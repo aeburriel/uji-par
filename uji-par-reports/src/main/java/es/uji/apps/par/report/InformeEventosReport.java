@@ -34,18 +34,20 @@ public class InformeEventosReport extends Report implements InformeInterface
 
     private Locale locale;
     private InformeTaquillaReportStyle style;
+	Configuration configuration;
     
     public InformeEventosReport() throws ReportSerializerInitException {
 		super(reportSerializer, new InformeTaquillaReportStyle());
 	}
 
     private InformeEventosReport(ReportSerializer serializer, InformeTaquillaReportStyle style,
-            Locale locale) throws ReportSerializerInitException
+			Locale locale, Configuration configuration) throws ReportSerializerInitException
     {
         super(serializer, style);
 
         this.style = style;
         this.locale = locale;
+		this.configuration = configuration;
     }
 
     public void genera(String inicio, String fin, List<InformeModelReport> compras) throws SinIvaException
@@ -144,7 +146,7 @@ public class InformeEventosReport extends Report implements InformeInterface
     private Block creaLogo()
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + Configuration.getLogoReport()).getAbsolutePath());
+        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + configuration.getLogoReport()).getAbsolutePath());
         externalGraphic.setMaxWidth("2cm");
 
         Block block = new Block();
@@ -453,14 +455,14 @@ public class InformeEventosReport extends Report implements InformeInterface
     {
         Block cargoBlock = withNewBlock();
         cargoBlock.setMarginTop("1cm");
-        String cargo = Configuration.getCargoInformeEfectivo();
+        String cargo = configuration.getCargoInformeEfectivo();
         cargoBlock.getContent().add(cargo);
 
         Block nombreBlock = withNewBlock();
         nombreBlock.setMarginTop("2cm");
         nombreBlock.getContent().add(
                 ResourceProperties.getProperty(locale, "informeEventos.subtotales.firmado",
-                        Configuration.getFirmanteInformeEfectivo()));
+                        configuration.getFirmanteInformeEfectivo()));
 
         Calendar fecha = Calendar.getInstance();
 
@@ -489,14 +491,14 @@ public class InformeEventosReport extends Report implements InformeInterface
             reportSerializer = new FopPDFSerializer();
     }
 
-    public InformeInterface create(Locale locale)
+    public InformeInterface create(Locale locale, Configuration configuration)
     {
         try
         {
             initStatics();
             InformeTaquillaReportStyle estilo = new InformeTaquillaReportStyle();
 
-            return new InformeEventosReport(reportSerializer, estilo, locale);
+            return new InformeEventosReport(reportSerializer, estilo, locale, configuration);
         }
         catch (ReportSerializerInitException e)
         {
@@ -532,7 +534,6 @@ public class InformeEventosReport extends Report implements InformeInterface
 
     }
 
-	@Override
 	public void genera(String fechaInicio, String fechaFin) {
 
 	}

@@ -12,6 +12,7 @@ import java.util.Map;
 import org.krysalis.barcode4j.impl.datamatrix.DataMatrixBean;
 import org.krysalis.barcode4j.output.bitmap.BitmapCanvasProvider;
 import org.krysalis.barcode4j.tools.UnitConv;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,9 @@ import es.uji.apps.par.config.Configuration;
 @Service
 public class BarcodeService
 {
+	@Autowired
+	Configuration configuration;
+
     public void generaBarcodeDatamatrix(String text, OutputStream output) throws IOException
     {
         DataMatrixBean bean = new DataMatrixBean();
@@ -60,7 +64,7 @@ public class BarcodeService
 
     public void generaBarcodeQr(String text, String size, OutputStream output) throws WriterException, IOException
     {
-    	String widthHeight = (size == null)?Configuration.getBarcodeWidthHeight():size;
+    	String widthHeight = (size == null)?configuration.getBarcodeWidthHeight():size;
     		
         QRCodeWriter writer = new QRCodeWriter();
         Map<EncodeHintType,Object> hints = new HashMap<EncodeHintType, Object>();

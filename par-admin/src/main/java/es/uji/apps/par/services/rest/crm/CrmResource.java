@@ -31,6 +31,9 @@ public class CrmResource extends BaseResource {
     @InjectParam
     private ButacasService butacasService;
 
+	@InjectParam
+	Configuration configuration;
+
     @POST
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -56,7 +59,8 @@ public class CrmResource extends BaseResource {
             TipoEvento parTiposEvento = sesion.getEvento().getParTiposEvento();
             if (parTiposEvento != null && parTiposEvento.getNombreEs() != null) {
                 try {
-                    EntradaReportFactory.newInstanceByClassName("es.uji.apps.par.report." + EntradasService.BEAN_REPORT_PREFIX + parTiposEvento.getNombreEs() + EntradasService.BEAN_REPORT_SUFFIX);
+                    EntradaReportFactory.newInstanceByClassName("es.uji.apps.par.report." + EntradasService.BEAN_REPORT_PREFIX +
+							parTiposEvento.getNombreEs() + EntradasService.BEAN_REPORT_SUFFIX);
                 } catch(Exception e) {
                     return errorResponse("error.tipoNoPermitido");
                 }
@@ -93,7 +97,7 @@ public class CrmResource extends BaseResource {
 
                     if (resultadoCompra.getCorrecta()) {
                         comprasService.marcaPagada(resultadoCompra.getId());
-                        String urlPdf = Configuration.getUrlPublic() + "/rest/compra/" + resultadoCompra.getUuid() + "/pdf";
+                        String urlPdf = configuration.getUrlPublic() + "/rest/compra/" + resultadoCompra.getUuid() + "/pdf";
                         return Response.ok(new ResponseMessage(true, urlPdf)).build();
                     }
                     else {
@@ -128,7 +132,8 @@ public class CrmResource extends BaseResource {
             TipoEvento parTiposEvento = sesion.getEvento().getParTiposEvento();
             if (parTiposEvento != null && parTiposEvento.getNombreEs() != null) {
                 try {
-                    EntradaReportFactory.newInstanceByClassName("es.uji.apps.par.report." + EntradasService.BEAN_REPORT_PREFIX + parTiposEvento.getNombreEs() + EntradasService.BEAN_REPORT_SUFFIX);
+                    EntradaReportFactory.newInstanceByClassName("es.uji.apps.par.report." + EntradasService.BEAN_REPORT_PREFIX +
+							parTiposEvento.getNombreEs() + EntradasService.BEAN_REPORT_SUFFIX);
                 } catch (Exception e) {
                     return errorResponse("error.tipoNoPermitido");
                 }

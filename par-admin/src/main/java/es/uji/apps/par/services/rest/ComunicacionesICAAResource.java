@@ -29,17 +29,19 @@ public class ComunicacionesICAAResource extends BaseResource
     @InjectParam
     private ComunicacionesICAAService comunicacionesICAAService;
 
+	@InjectParam
+	Configuration configuration;
+
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_PLAIN)
     public Response generaFicheroICAA(@FormParam("ids") List<Integer> ids, 
     		@FormParam("fechaEnvioHabitualAnterior") String fechaEnvioHabitualAnterior, @FormParam("tipoEnvio") String tipoEnvio)
-    		throws GeneralPARException, RegistroSerializaException, IncidenciaNotFoundException, 
-    		NoSuchProviderException, IOException, InterruptedException
+    		throws GeneralPARException, NoSuchProviderException, IOException, InterruptedException
     {
         AuthChecker.canWrite(currentRequest);
         byte[] arr = comunicacionesICAAService.generaFicheroICAA(ids, fechaEnvioHabitualAnterior, tipoEnvio);
-        String fileName = Configuration.getCodigoBuzon() + tipoEnvio + DateUtils.getNumeroSemana() + ".pgp";
+        String fileName = configuration.getCodigoBuzon() + tipoEnvio + DateUtils.getNumeroSemana() + ".pgp";
 		return Response.ok(arr, 
 				MediaType.TEXT_PLAIN).
 				header("Content-Disposition","attachment; filename =\"" + fileName + "\"").build();

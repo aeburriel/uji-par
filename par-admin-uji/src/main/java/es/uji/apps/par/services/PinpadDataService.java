@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 public interface PinpadDataService
 {
 
-    public String consultaEstado(String id);
+    public String consultaEstado(String id, String secret);
 
-    public String realizaPago(String id, BigDecimal importe, String concepto);
+    public String realizaPago(String id, BigDecimal importe, String concepto, String secret);
 
 }

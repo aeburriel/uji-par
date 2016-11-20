@@ -10,8 +10,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import com.sun.jersey.api.core.InjectParam;
 import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.db.ButacaDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @XmlRootElement
 public class Butaca
@@ -42,13 +44,13 @@ public class Butaca
         return butacaDTO;
     }
 
-    public static List<Butaca> butacasDTOToButacas(List<ButacaDTO> butacasDTO)
+    public static List<Butaca> butacasDTOToButacas(List<ButacaDTO> butacasDTO, boolean isIdEntrada)
     {
         List<Butaca> butacas = new ArrayList<Butaca>();
          
          for (ButacaDTO butacaDTO: butacasDTO)
          {
-             butacas.add(new Butaca(butacaDTO));
+             butacas.add(new Butaca(butacaDTO, isIdEntrada));
          }
          
          return butacas;
@@ -64,7 +66,7 @@ public class Butaca
         this.tipo = tipo;
     }
 
-    public Butaca(ButacaDTO butacaDTO)
+    public Butaca(ButacaDTO butacaDTO, boolean isIdEntrada)
     {
         id = butacaDTO.getId();
         fila = butacaDTO.getFila();
@@ -79,7 +81,7 @@ public class Butaca
         	anulada = butacaDTO.getAnulada();
         
         if (butacaDTO.getParCompra() != null) {
-            if (Configuration.isIdEntrada()) {
+            if (isIdEntrada) {
                 uuid = butacaDTO.getParCompra().getUuid() + "-" + butacaDTO.getIdEntrada();
             } else {
                 uuid = butacaDTO.getParCompra().getUuid() + "-" + butacaDTO.getId();

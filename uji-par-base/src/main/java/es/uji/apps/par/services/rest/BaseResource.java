@@ -1,9 +1,11 @@
 package es.uji.apps.par.services.rest;
 
 import com.sun.jersey.api.client.ClientResponse.Status;
+import com.sun.jersey.api.core.InjectParam;
 import es.uji.apps.par.exceptions.ResponseMessage;
 import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.i18n.ResourceProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -16,11 +18,12 @@ public class BaseResource
 {
     protected static final String APP = "par";
     protected static final String LANG = "language";
-    //private static final String API_KEY = "kajshdka234hsdoiuqhiu918092";
-    private static final String API_KEY = Configuration.getApiKey();
 
     @Context
     HttpServletRequest currentRequest;
+
+	@InjectParam
+	Configuration configuration;
 
     protected Locale getLocale()
     {
@@ -40,7 +43,7 @@ public class BaseResource
     
     protected Locale getLocale(String lang)
     {
-        String idiomaFinal = Configuration.getIdiomaPorDefecto();
+        String idiomaFinal = configuration.getIdiomaPorDefecto();
 
         if (lang != null && lang.length() > 0)
         {
@@ -88,7 +91,7 @@ public class BaseResource
 
     protected String getBaseUrlPublic()
     {
-        return Configuration.getUrlPublic();
+        return configuration.getUrlPublic();
     }
     
     
@@ -96,8 +99,8 @@ public class BaseResource
     //deberían arreglarlo ellos pero no lo quieren hacer
     protected String getBaseUrlPublicLimpio()
     {
-    	String urlPublicLimpio = Configuration.getUrlPublicLimpio(); 
-        urlPublicLimpio = (urlPublicLimpio == null)?Configuration.getUrlPublic():urlPublicLimpio;
+    	String urlPublicLimpio = configuration.getUrlPublicLimpio(); 
+        urlPublicLimpio = (urlPublicLimpio == null)?configuration.getUrlPublic():urlPublicLimpio;
         return urlPublicLimpio;
     }
 
@@ -116,7 +119,8 @@ public class BaseResource
     {
         String key = request.getParameter("key");
 
-        return API_KEY.equals(key);
+		//String API_KEY = "kajshdka234hsdoiuqhiu918092";
+        return configuration.getApiKey().equals(key);
     }
 
     protected Response apiAccessDenied()

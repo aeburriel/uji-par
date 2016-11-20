@@ -87,6 +87,10 @@ public class CineDTO implements Serializable {
         this.iva = iva;
     }
 
+	public CineDTO(long id) {
+		this.id = id;
+	}
+
 	public long getId() {
 		return this.id;
 	}

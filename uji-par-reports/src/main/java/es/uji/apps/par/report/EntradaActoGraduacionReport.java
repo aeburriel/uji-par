@@ -7,6 +7,7 @@ import es.uji.apps.fopreports.serialization.ReportSerializationException;
 import es.uji.apps.fopreports.serialization.ReportSerializer;
 import es.uji.apps.fopreports.serialization.ReportSerializerInitException;
 import es.uji.apps.fopreports.style.ReportStyle;
+import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.i18n.ResourceProperties;
 import es.uji.apps.par.report.components.BaseTable;
 import es.uji.apps.par.report.components.EntradaReportStyle;
@@ -38,17 +39,19 @@ public class EntradaActoGraduacionReport extends Report implements EntradaReport
     protected String urlPortada;
     private int totalButacas;
     private String barcode;
+	private Configuration configuration;
 
-    public EntradaActoGraduacionReport() throws ReportSerializerInitException {
+	public EntradaActoGraduacionReport() throws ReportSerializerInitException {
         super(reportSerializer, new EntradaReportStyle());
     }
 
-    public EntradaActoGraduacionReport(ReportSerializer serializer, ReportStyle style, Locale locale)
+    public EntradaActoGraduacionReport(ReportSerializer serializer, ReportStyle style, Locale locale, Configuration configuration)
             throws ReportSerializerInitException
     {
         super(serializer, style);
 
         this.locale = locale;
+		this.configuration = configuration;
     }
 
     public void generaPaginaButaca(EntradaModelReport entrada, String urlPublic)
@@ -396,7 +399,7 @@ public class EntradaActoGraduacionReport extends Report implements EntradaReport
             reportSerializer = new FopPDFSerializer();
     }
 
-    public EntradaReportOnlineInterface create(Locale locale)
+    public EntradaReportOnlineInterface create(Locale locale, Configuration configuration)
     {
         try
         {
@@ -404,7 +407,7 @@ public class EntradaActoGraduacionReport extends Report implements EntradaReport
             EntradaReportStyle estilo = new EntradaReportStyle();
             estilo.setSimplePageMasterMarginBottom("0cm");
             estilo.setSimplePageMasterRegionBodyMarginBottom("0cm");
-            return new EntradaActoGraduacionReport(reportSerializer, estilo, locale);
+            return new EntradaActoGraduacionReport(reportSerializer, estilo, locale, configuration);
         }
         catch (ReportSerializerInitException e)
         {
@@ -453,11 +456,9 @@ public class EntradaActoGraduacionReport extends Report implements EntradaReport
         this.barcode = barcode;
     }
 
-    @Override
     public void setTotalButacas(int totalButacas) {
         this.totalButacas = totalButacas;
     }
 
-    @Override
     public boolean esAgrupada() { return true; }
 }

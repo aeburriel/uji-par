@@ -39,9 +39,13 @@ public class EventosDAO extends BaseDAO
     @Autowired
     private TpvsDAO tpvsDAO;
 
-    public EventosDAO()
+	@Autowired
+	Configuration configuration;
+
+	@Autowired
+    public EventosDAO(Configuration configuration)
     {
-        databaseHelper = DatabaseHelperFactory.newInstance();
+        databaseHelper = DatabaseHelperFactory.newInstance(configuration);
     }
 
     @Transactional
@@ -162,7 +166,8 @@ public class EventosDAO extends BaseDAO
 
     private String getWhereActivos()
     {
-        return " where s.FECHA_CELEBRACION >= TO_DATE('" + DateUtils.dateToSpanishStringWithHour(DateUtils.dateConMargenTrasVenta()) + "','DD/MM/YYYY HH24:MI') ";
+        return " where s.FECHA_CELEBRACION >= TO_DATE('" + DateUtils.dateToSpanishStringWithHour(configuration.dateConMargenTrasVenta()) +
+				"','DD/MM/YYYY HH24:MI') ";
     }
 
     @Transactional
@@ -237,7 +242,7 @@ public class EventosDAO extends BaseDAO
             tpv.setNombre((String) array[37]);
             evento.setParTpv(tpv);
         }
-        evento.setMultipleTpv(Configuration.isMultipleTpvEnabled());
+        evento.setMultipleTpv(configuration.isMultipleTpvEnabled());
 
         return evento;
     }
@@ -255,7 +260,7 @@ public class EventosDAO extends BaseDAO
         QSesionDTO qSesionDTO = QSesionDTO.sesionDTO;
         JPAQuery query = new JPAQuery(entityManager);
 
-        Timestamp now = new Timestamp(DateUtils.dateConMargenTrasVenta().getTime());
+        Timestamp now = new Timestamp(configuration.dateConMargenTrasVenta().getTime());
 
         return query
                 .from(qEventoDTO, qTipoEventoDTO)
@@ -331,7 +336,7 @@ public class EventosDAO extends BaseDAO
         }
 
         TpvsDTO parTpv = new TpvsDTO();
-        if (Configuration.isMultipleTpvEnabled())
+        if (configuration.isMultipleTpvEnabled())
         {
             if (evento.getParTpv() != null) {
                 parTpv.setId(evento.getParTpv().getId());

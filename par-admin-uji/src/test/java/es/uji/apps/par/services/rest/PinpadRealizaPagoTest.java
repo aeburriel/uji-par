@@ -30,7 +30,7 @@ public class PinpadRealizaPagoTest
     @Test
     public void testError()
     {
-        when(pinpadService.realizaPago(anyString(), (BigDecimal) anyObject(), anyString())).thenReturn("");
+        when(pinpadService.realizaPago(anyString(), (BigDecimal) anyObject(), anyString(), "")).thenReturn("");
 
         ResultadoPagoPinpad resultado = pinpad.realizaPago("1", new BigDecimal("1.02"), "Test");
 
@@ -40,7 +40,7 @@ public class PinpadRealizaPagoTest
     @Test
     public void testNoError()
     {
-        when(pinpadService.realizaPago(anyString(), (BigDecimal) anyObject(), anyString())).thenReturn("123756");
+        when(pinpadService.realizaPago(anyString(), (BigDecimal) anyObject(), anyString(), "")).thenReturn("123756");
 
         ResultadoPagoPinpad resultado = pinpad.realizaPago("1", new BigDecimal("1.02"), "Test");
 
@@ -50,7 +50,7 @@ public class PinpadRealizaPagoTest
     @Test
     public void testrecuperaIdResultado()
     {
-        when(pinpadService.realizaPago(anyString(), (BigDecimal) anyObject(), anyString())).thenReturn("12345\n");
+        when(pinpadService.realizaPago(anyString(), (BigDecimal) anyObject(), anyString(), "")).thenReturn("12345\n");
 
         ResultadoPagoPinpad resultado = pinpad.realizaPago("1", new BigDecimal("1.02"), "Test");
 
@@ -60,7 +60,7 @@ public class PinpadRealizaPagoTest
     @Test
     public void testExcepcion()
     {
-        when(pinpadService.realizaPago(anyString(), (BigDecimal) anyObject(), anyString())).thenThrow(new RuntimeException("Error de conexión"));
+        when(pinpadService.realizaPago(anyString(), (BigDecimal) anyObject(), anyString(), "")).thenThrow(new RuntimeException("Error de conexión"));
 
         ResultadoPagoPinpad resultado = pinpad.realizaPago("1", new BigDecimal("1.02"), "Test");
 

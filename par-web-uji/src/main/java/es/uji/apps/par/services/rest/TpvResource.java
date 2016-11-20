@@ -14,6 +14,7 @@ import es.uji.commons.web.template.HTMLTemplate;
 import es.uji.commons.web.template.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +45,9 @@ public class TpvResource extends BaseResource implements TpvInterface
     
     @Context
     private HttpServletRequest request;
+
+	@InjectParam
+	Configuration configuration;
 
 	@InjectParam
 	private PublicPageBuilderInterface publicPageBuilderInterface;
@@ -112,14 +116,14 @@ public class TpvResource extends BaseResource implements TpvInterface
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "compraValida", locale, APP);
         String url = request.getRequestURL().toString();
 
-        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(Configuration.getUrlPublic(), url,
+        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(configuration.getUrlPublic(), url,
 				language.toString()));
         template.put("baseUrl", getBaseUrlPublic());
 
         template.put("referencia", recibo);
         template.put("email", compra.getEmail());
         template.put("url", getBaseUrlPublic() + "/rest/compra/" + compra.getUuid() + "/pdf");
-        template.put("urlComoLlegar", Configuration.getUrlComoLlegar());
+        template.put("urlComoLlegar", configuration.getUrlComoLlegar());
         template.put("lang", language);
 
         return template;

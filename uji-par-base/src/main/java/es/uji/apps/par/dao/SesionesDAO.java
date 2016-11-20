@@ -7,6 +7,7 @@ import com.mysema.query.jpa.impl.JPADeleteClause;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.expr.BooleanExpression;
+import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.db.*;
 import es.uji.apps.par.exceptions.EdicionSesionAnuladaException;
 import es.uji.apps.par.exceptions.EventoConCompras;
@@ -40,6 +41,9 @@ public class SesionesDAO extends BaseDAO {
 
     private QSesionDTO qSesionDTO = QSesionDTO.sesionDTO;
     private QPreciosSesionDTO qPreciosSesionDTO = QPreciosSesionDTO.preciosSesionDTO;
+
+	@Autowired
+	Configuration configuration;
 
     @Autowired
     private EventosDAO eventosDAO;
@@ -113,7 +117,7 @@ public class SesionesDAO extends BaseDAO {
 
         JPAQuery query = new JPAQuery(entityManager);
 
-        Timestamp now = new Timestamp(DateUtils.dateConMargenTrasVenta().getTime());
+        Timestamp now = new Timestamp(configuration.dateConMargenTrasVenta().getTime());
 
         return query.from(qSesionDTO).leftJoin(qSesionDTO.parSala, qSalaDTO).fetch()
                 .where(qSesionDTO.parEvento.id.eq(eventoId).and(qSesionDTO.fechaCelebracion.after(now)).and(qSesionDTO.anulada
@@ -272,7 +276,7 @@ public class SesionesDAO extends BaseDAO {
     }
 
     private boolean hasVentasDegradadas(long sesionId, Timestamp fechaCelebracion) {
-        Timestamp fechaTopeParaSaberSiEsDegradada = DateUtils.getDataTopePerASaberSiEsDegradada(fechaCelebracion);
+        Timestamp fechaTopeParaSaberSiEsDegradada = configuration.getDataTopePerASaberSiEsDegradada(fechaCelebracion);
         JPAQuery query = new JPAQuery(entityManager);
         QCompraDTO qCompraDTO = QCompraDTO.compraDTO;
 

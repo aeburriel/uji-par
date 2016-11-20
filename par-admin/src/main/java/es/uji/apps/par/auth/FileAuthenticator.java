@@ -20,6 +20,7 @@ public class FileAuthenticator implements Authenticator
     {
         encryptor = new BasicPasswordEncryptor();
     }
+	Configuration configuration;
 
     @Override
     public int authenticate(HttpServletRequest request)
@@ -43,14 +44,19 @@ public class FileAuthenticator implements Authenticator
         }
     }
 
-    private boolean loginAdminOk(HttpServletRequest request)
+	@Override
+	public void setConfiguration(Configuration configuration) {
+		this.configuration = configuration;
+	}
+
+	private boolean loginAdminOk(HttpServletRequest request)
     {
-        return loginOk(request, Configuration.getAdminLogin(), Configuration.getAdminPassword());
+        return loginOk(request, configuration.getAdminLogin(), configuration.getAdminPassword());
     }
 
     private boolean loginUserReadonlyOk(HttpServletRequest request)
     {
-        return loginOk(request, Configuration.getUserReadonlyLogin(), Configuration.getUserReadonlyPassword());
+        return loginOk(request, configuration.getUserReadonlyLogin(), configuration.getUserReadonlyPassword());
     }
     
     private boolean loginOk(HttpServletRequest request, List<String> logins, List<String> passwordsCifrado)

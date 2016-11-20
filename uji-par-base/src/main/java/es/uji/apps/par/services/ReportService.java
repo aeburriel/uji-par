@@ -3,10 +3,7 @@ package es.uji.apps.par.services;
 import com.mysema.query.Tuple;
 import es.uji.apps.fopreports.serialization.ReportSerializationException;
 import es.uji.apps.par.config.Configuration;
-import es.uji.apps.par.dao.ButacasDAO;
-import es.uji.apps.par.dao.CinesDAO;
-import es.uji.apps.par.dao.ComprasDAO;
-import es.uji.apps.par.dao.SesionesDAO;
+import es.uji.apps.par.dao.*;
 import es.uji.apps.par.database.DatabaseHelper;
 import es.uji.apps.par.database.DatabaseHelperFactory;
 import es.uji.apps.par.db.ButacaDTO;
@@ -22,20 +19,14 @@ import es.uji.apps.par.utils.DateUtils;
 import es.uji.apps.par.utils.Utils;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @Service
 public class ReportService {
@@ -52,28 +43,20 @@ public class ReportService {
 	@Autowired
 	CinesDAO cinesDAO;
 
+	@Autowired
+	UsuariosDAO usuariosDAO;
+
+	Configuration configuration;
+
 	private DatabaseHelper dbHelper;
 
-	private InformeInterface informeTaquillaReport;
-	private InformeInterface informeEfectivoReport;
-	private InformeInterface informeTaquillaTpvSubtotalesReport;
-	private InformeInterface informeEventosReport;
-	private InformeInterface informeSesionReport;
     private InformeInterface informeReport;
 
-	/*
-	 * static { entradaTaquillaReport =
-	 * EntradaReportFactory.newInstanceTaquilla(); entradaOnlineReport =
-	 * EntradaReportFactory.newInstanceOnline(); }
-	 */
-
-	public ReportService() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-		dbHelper = DatabaseHelperFactory.newInstance();
-		informeTaquillaReport = EntradaReportFactory.newInstanceInformeTaquilla();
-		informeEfectivoReport = EntradaReportFactory.newInstanceInformeEfectivo();
-		informeTaquillaTpvSubtotalesReport = EntradaReportFactory.newInstanceInformeTaquillaTpvSubtotalesReport();
-		informeEventosReport = EntradaReportFactory.newInstanceInformeEventosReport();
-		informeSesionReport = EntradaReportFactory.newInstanceInformeSesionReport();
+	@Autowired
+	public ReportService(Configuration configuration) throws InstantiationException, IllegalAccessException,
+			ClassNotFoundException {
+		this.configuration = configuration;
+		dbHelper = DatabaseHelperFactory.newInstance(configuration);
 	}
 
 	public ByteArrayOutputStream getExcelTaquilla(String fechaInicio,
@@ -231,60 +214,67 @@ public class ReportService {
 		return excelService.getExcel();
 	}
 
-	public void getPdfTaquilla(String fechaInicio, String fechaFin, OutputStream bos, Locale locale) throws ReportSerializationException,
-			ParseException {
-		InformeInterface informe = informeTaquillaReport.create(locale);
+	public void getPdfTaquilla(String fechaInicio, String fechaFin, OutputStream bos, Locale locale, String login) throws
+			ReportSerializationException, ParseException {
+		InformeInterface informe = generaYRellenaInformePDFTaquilla(fechaInicio, fechaFin, locale, login);
+		informe.serialize(bos);
+	}
+
+	public InformeInterface generaYRellenaInformePDFTaquilla(String fechaInicio, String fechaFin, Locale locale, String login)
+			throws ParseException {
+		String className = usuariosDAO.getReportClassNameForUserAndType(login, EntradaReportFactory.TIPO_INFORME_PDF_TAQUILLA);
+		InformeInterface informeTaquillaReport = EntradaReportFactory.newInstanceInformeTaquilla(className);
+		InformeInterface informe = informeTaquillaReport.create(locale, configuration);
 
 		List<InformeModelReport> compras = objectsToInformes(comprasDAO.getComprasPorEventoInFechas(fechaInicio, fechaFin));
 
-        Object[] taquillaTpv = comprasDAO.getTotalTaquillaTpv(fechaInicio, fechaFin);
+		Object[] taquillaTpv = comprasDAO.getTotalTaquillaTpv(fechaInicio, fechaFin);
 		Object[] taquillaEfectivo = comprasDAO.getTotalTaquillaEfectivo(fechaInicio, fechaFin);
-        Object[] online = comprasDAO.getTotalOnline(fechaInicio, fechaFin);
+		Object[] online = comprasDAO.getTotalOnline(fechaInicio, fechaFin);
 
-        BigDecimal totalTaquillaTpv = new BigDecimal(0);
-        BigDecimal countTaquillaTpv = new BigDecimal(0);
-        if (taquillaTpv != null) {
-            if (taquillaTpv.length > 0 && taquillaTpv[0] != null) {
-                totalTaquillaTpv = dbHelper.castBigDecimal(taquillaTpv[0]);
-            }
-            if (taquillaTpv.length > 1 && taquillaTpv[1] != null) {
-                countTaquillaTpv = dbHelper.castBigDecimal(taquillaTpv[1]);
-            }
-        }
+		BigDecimal totalTaquillaTpv = new BigDecimal(0);
+		BigDecimal countTaquillaTpv = new BigDecimal(0);
+		if (taquillaTpv != null) {
+			if (taquillaTpv.length > 0 && taquillaTpv[0] != null) {
+				totalTaquillaTpv = dbHelper.castBigDecimal(taquillaTpv[0]);
+			}
+			if (taquillaTpv.length > 1 && taquillaTpv[1] != null) {
+				countTaquillaTpv = dbHelper.castBigDecimal(taquillaTpv[1]);
+			}
+		}
 
-        BigDecimal totalTaquillaEfectivo = new BigDecimal(0);
-        BigDecimal countTaquillaEfectivo = new BigDecimal(0);
-        if (taquillaEfectivo != null) {
-            if (taquillaEfectivo.length > 0 && taquillaEfectivo[0] != null) {
-                totalTaquillaEfectivo = dbHelper.castBigDecimal(taquillaEfectivo[0]);
-            }
-            if (taquillaEfectivo.length > 1 && taquillaEfectivo[1] != null) {
-                countTaquillaEfectivo = dbHelper.castBigDecimal(taquillaEfectivo[1]);
-            }
-        }
+		BigDecimal totalTaquillaEfectivo = new BigDecimal(0);
+		BigDecimal countTaquillaEfectivo = new BigDecimal(0);
+		if (taquillaEfectivo != null) {
+			if (taquillaEfectivo.length > 0 && taquillaEfectivo[0] != null) {
+				totalTaquillaEfectivo = dbHelper.castBigDecimal(taquillaEfectivo[0]);
+			}
+			if (taquillaEfectivo.length > 1 && taquillaEfectivo[1] != null) {
+				countTaquillaEfectivo = dbHelper.castBigDecimal(taquillaEfectivo[1]);
+			}
+		}
 
-        BigDecimal totalOnline = new BigDecimal(0);
-        BigDecimal countOnline = new BigDecimal(0);
-        if (online != null) {
-            if (online.length > 0 && online[0] != null) {
-                totalOnline = dbHelper.castBigDecimal(online[0]);
-            }
-            if (online.length > 1 && online[1] != null) {
-                countOnline = dbHelper.castBigDecimal(online[1]);
-            }
-        }
+		BigDecimal totalOnline = new BigDecimal(0);
+		BigDecimal countOnline = new BigDecimal(0);
+		if (online != null) {
+			if (online.length > 0 && online[0] != null) {
+				totalOnline = dbHelper.castBigDecimal(online[0]);
+			}
+			if (online.length > 1 && online[1] != null) {
+				countOnline = dbHelper.castBigDecimal(online[1]);
+			}
+		}
 
-        // TODO: Esto hay que pasarlo como parámetro y no meterlo duplicado en todas las compras
-        for (InformeModelReport compra: compras) {
-            compra.setNumeroEntradasTPV(countTaquillaTpv);
-            compra.setNumeroEntradasEfectivo(countTaquillaEfectivo);
-            compra.setNumeroEntradasOnline(countOnline);
-        }
+		// TODO: Esto hay que pasarlo como parámetro y no meterlo duplicado en todas las compras
+		for (InformeModelReport compra: compras) {
+			compra.setNumeroEntradasTPV(countTaquillaTpv);
+			compra.setNumeroEntradasEfectivo(countTaquillaEfectivo);
+			compra.setNumeroEntradasOnline(countOnline);
+		}
 
 		informe.genera(getSpanishStringDateFromBBDDString(fechaInicio), getSpanishStringDateFromBBDDString(fechaFin), compras,
 				totalTaquillaTpv, totalTaquillaEfectivo, totalOnline);
-
-		informe.serialize(bos);
+		return informe;
 	}
 
 	private String getSpanishStringDateFromBBDDString(String fecha)	throws ParseException {
@@ -292,51 +282,66 @@ public class ReportService {
 		return DateUtils.dateToSpanishString(dt);
 	}
 
-	public void getPdfEfectivo(String fechaInicio, String fechaFin,	OutputStream bos, Locale locale) throws ReportSerializationException,
-			ParseException, SinIvaException {
-		InformeInterface informe = informeEfectivoReport.create(locale);
+	public void getPdfEfectivo(String fechaInicio, String fechaFin,	OutputStream bos, Locale locale, String login) throws
+			ReportSerializationException, ParseException, SinIvaException {
+		InformeInterface informe = generaYRellenaInformePDFEfectivo(fechaInicio, fechaFin, locale, login);
+		informe.serialize(bos);
+	}
+
+	public InformeInterface generaYRellenaInformePDFEfectivo(String fechaInicio, String fechaFin, Locale locale, String login)
+			throws ParseException {
+		String className = usuariosDAO.getReportClassNameForUserAndType(login, EntradaReportFactory.TIPO_INFORME_PDF_EFECTIVO);
+		InformeInterface informeEfectivoReport = EntradaReportFactory.newInstanceInformeEfectivo(className);
+		InformeInterface informe = informeEfectivoReport.create(locale, configuration);
 		List<InformeModelReport> compras = objectsSesionesToInformesIva(comprasDAO.getComprasEfectivo(fechaInicio, fechaFin));
 		List<InformeAbonoReport> abonos = new ArrayList<InformeAbonoReport>();
-		if (Configuration.isMenuAbono()) {
+
+		if (configuration.isMenuAbono()) {
 			abonos = objectsAbonosToInformesIva(comprasDAO.getAbonosEfectivo(fechaInicio, fechaFin));
 		}
 
-		informe.genera(getSpanishStringDateFromBBDDString(fechaInicio),
-				getSpanishStringDateFromBBDDString(fechaFin), compras, abonos,
-				Configuration.getCargoInformeEfectivo(),
-				Configuration.getFirmanteInformeEfectivo());
+		informe.genera(getSpanishStringDateFromBBDDString(fechaInicio), getSpanishStringDateFromBBDDString(fechaFin), compras,
+				abonos, configuration.getCargoInformeEfectivo(), configuration.getFirmanteInformeEfectivo());
+		return informe;
+	}
 
+	public void getPdfTpvSubtotales(String fechaInicio, String fechaFin, OutputStream bos, Locale locale, String login) throws
+			ReportSerializationException, ParseException, SinIvaException {
+		InformeInterface informe = generaYRellenaInformePDFTaquillaTPVSubtotales(fechaInicio, fechaFin, locale, login);
 		informe.serialize(bos);
 	}
 
-	public void getPdfTpvSubtotales(String fechaInicio, String fechaFin,
-			OutputStream bos, Locale locale) throws ReportSerializationException,
-			ParseException, SinIvaException {
-		InformeInterface informe = informeTaquillaTpvSubtotalesReport
-				.create(locale);
-
+	public InformeInterface generaYRellenaInformePDFTaquillaTPVSubtotales(String fechaInicio, String fechaFin, Locale locale,
+			String login) throws ParseException {
+		String className = usuariosDAO.getReportClassNameForUserAndType(login, EntradaReportFactory
+				.TIPO_INFORME_PDF_TAQUILLA_TPV_SUBTOTALES);
+		InformeInterface informeTaquillaTpvSubtotalesReport = EntradaReportFactory.newInstanceInformeTaquillaTpvSubtotalesReport
+				(className);
+		InformeInterface informe = informeTaquillaTpvSubtotalesReport.create(locale, configuration);
 		List<InformeModelReport> compras = objectsSesionesToInformesTpv(comprasDAO.getComprasTpv(fechaInicio, fechaFin));
 
-		informe.genera(getSpanishStringDateFromBBDDString(fechaInicio),
-				getSpanishStringDateFromBBDDString(fechaFin), compras, null,
-				Configuration.getCargoInformeEfectivo(),
-				Configuration.getFirmanteInformeEfectivo());
+		informe.genera(getSpanishStringDateFromBBDDString(fechaInicio), getSpanishStringDateFromBBDDString(fechaFin),
+				compras, null, configuration.getCargoInformeEfectivo(), configuration.getFirmanteInformeEfectivo());
+		return informe;
+	}
 
+	public void getPdfEventos(String fechaInicio, String fechaFin, OutputStream bos, Locale locale, String login) throws
+			ReportSerializationException, ParseException, SinIvaException {
+		InformeInterface informe = generaYRellenaInformePDFEventos(fechaInicio, fechaFin, locale, login);
 		informe.serialize(bos);
 	}
 
-	public void getPdfEventos(String fechaInicio, String fechaFin,
-			OutputStream bos, Locale locale) throws ReportSerializationException,
-			ParseException, SinIvaException {
-		InformeInterface informe = informeEventosReport
-				.create(locale);
+	public InformeInterface generaYRellenaInformePDFEventos(String fechaInicio, String fechaFin, Locale locale, String login)
+			throws ParseException {
+		String className = usuariosDAO.getReportClassNameForUserAndType(login, EntradaReportFactory.TIPO_INFORME_PDF_EVENTOS);
+		InformeInterface informeEventosReport = EntradaReportFactory.newInstanceInformeEventosReport(className);
+		InformeInterface informe = informeEventosReport.create(locale, configuration);
 
 		List<InformeModelReport> compras = objectsSesionesToInformesEventos(comprasDAO.getComprasEventos(fechaInicio, fechaFin));
 
 		informe.genera(getSpanishStringDateFromBBDDString(fechaInicio),
 				getSpanishStringDateFromBBDDString(fechaFin), compras);
-
-		informe.serialize(bos);
+		return informe;
 	}
 
 	private List<InformeModelReport> objectsToInformes(List<Object[]> compras) {
@@ -390,36 +395,44 @@ public class ReportService {
 		}
 
 		return result;
+		//informeSesionReport = EntradaReportFactory.newInstanceInformeSesionReport(configuration);
 	}
 
-	public void getPdfSesion(long sesionId, ByteArrayOutputStream bos, Locale locale) throws SinIvaException, ReportSerializationException, IOException {
-		InformeInterface informe = informeSesionReport.create(locale);
-		Cine cine = Cine.cineDTOToCine(cinesDAO.getCines().get(0));
-		List<InformeSesion> informesSesion = new ArrayList<InformeSesion>();
-		informesSesion.add(getInformeSesion(sesionId));
-		informe.genera(Configuration.getCargoInformeEfectivo(), Configuration.getFirmanteInformeEfectivo(), informesSesion, cine, true);
-
+	public void getPdfSesion(long sesionId, ByteArrayOutputStream bos, Locale locale, String login) throws SinIvaException,
+			ReportSerializationException, IOException {
+		Sesion sesion = new Sesion(new Long(sesionId).intValue());
+		InformeInterface informe = generaYRellenaPDFSesiones(Arrays.asList(sesion), locale, login);
 		informe.serialize(bos);
 	}
 
-	public void getPdfSesiones(List<Sesion> sesiones, ByteArrayOutputStream bos, Locale locale) throws SinIvaException, ReportSerializationException, IOException {
-		InformeInterface informe = informeSesionReport.create(locale);
+	public void getPdfSesiones(List<Sesion> sesiones, ByteArrayOutputStream bos, Locale locale, String login) throws
+			SinIvaException, ReportSerializationException, IOException {
+		InformeInterface informe = generaYRellenaPDFSesiones(sesiones, locale, login);
+		informe.serialize(bos);
+	}
+
+	public InformeInterface generaYRellenaPDFSesiones(List<Sesion> sesiones, Locale locale, String login) {
+		String className = usuariosDAO.getReportClassNameForUserAndType(login, EntradaReportFactory.TIPO_INFORME_PDF_SESIONES);
+		InformeInterface informeSesionReport = EntradaReportFactory.newInstanceInformeSesionReport(className);
+		InformeInterface informe = informeSesionReport.create(locale, configuration);
 		List<InformeSesion> informesSesion = new ArrayList<InformeSesion>();
 		Cine cine = Cine.cineDTOToCine(cinesDAO.getCines().get(0));
+
 		for (Sesion sesion: sesiones)
 		{
 			long sesionId = sesion.getId();
 			informesSesion.add(getInformeSesion(sesionId));
 		}
 
-		informe.genera(Configuration.getCargoInformeEfectivo(), Configuration.getFirmanteInformeEfectivo(), informesSesion, cine, false);
-
-		informe.serialize(bos);
+		boolean printSesion = (sesiones.size() == 1) ? true : false;
+		informe.genera(configuration.getCargoInformeEfectivo(), configuration.getFirmanteInformeEfectivo(), informesSesion, cine,
+				printSesion);
+		return informe;
 	}
 
-    public void getPdf(long sesionId, ByteArrayOutputStream bos, String tipo, Locale locale) throws SinIvaException, ReportSerializationException, IOException {
-        informeReport = EntradaReportFactory.newInstanceInformeReport(tipo);
-        InformeInterface informe = informeReport.create(locale);
+	public void getPdf(long sesionId, ByteArrayOutputStream bos, String tipo, Locale locale) throws SinIvaException, ReportSerializationException, IOException {
+        informeReport = EntradaReportFactory.newInstanceInformeReport(tipo, configuration);
+        InformeInterface informe = informeReport.create(locale, configuration);
         informe.genera(sesionId);
 
         informe.serialize(bos);
@@ -437,7 +450,7 @@ public class ReportService {
 		for (Tuple butacaYTarifa: butacasYTarifas) {
 			ButacaDTO butacaDTO = butacaYTarifa.get(0, ButacaDTO.class);
 			String nombreTarifa = butacaYTarifa.get(1, String.class);
-			InformeModelReport informeModel = InformeModelReport.fromButaca(butacaDTO, Configuration.getHorasVentaAnticipada());
+			InformeModelReport informeModel = InformeModelReport.fromButaca(butacaDTO, configuration.getHorasVentaAnticipada());
 			informeModel.setTipoEntrada(nombreTarifa);
 			compras.add(informeModel);
 		}
@@ -454,19 +467,9 @@ public class ReportService {
 		return informeSesion;
 	}
 
-	public static void main(String[] args) throws Exception {
-		ApplicationContext ctx = new ClassPathXmlApplicationContext(
-				"/applicationContext-db.xml");
-
-		ReportService service = ctx.getBean(ReportService.class);
-
-		service.getPdfEventos("2013-10-01", "2013-10-30", new FileOutputStream(
-				"/tmp/informe.pdf"), new Locale(Configuration.getIdiomaPorDefecto()));
-	}
-
 	public void getPdfPorFechas(String fechaInicio, String fechaFin, String tipo, ByteArrayOutputStream ostream, Locale locale) throws ReportSerializationException, ParseException {
-		informeReport = EntradaReportFactory.newInstanceInformeReport(tipo);
-		InformeInterface informe = informeReport.create(locale);
+		informeReport = EntradaReportFactory.newInstanceInformeReport(tipo, configuration);
+		InformeInterface informe = informeReport.create(locale, configuration);
 		informe.genera(fechaInicio, fechaFin);
 		informe.serialize(ostream);
 	}

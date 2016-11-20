@@ -57,6 +57,9 @@ public class EventosSyncBenicassim implements EventosSync
     @Autowired
     RssParser rssParser;
 
+	@Autowired
+	Configuration configuration;
+
     @Override
     public void sync(InputStream rssInputStream) throws JAXBException, MalformedURLException, IOException, ParseException
     {
@@ -120,7 +123,7 @@ public class EventosSyncBenicassim implements EventosSync
                 inicioVentaOnline.set(Calendar.SECOND, 0);
                 inicioVentaOnline.set(Calendar.MILLISECOND, 0);
                 
-                inicioVentaOnline.add(Calendar.HOUR_OF_DAY, Configuration.getSyncHorasInicioVentaOnline());
+                inicioVentaOnline.add(Calendar.HOUR_OF_DAY, configuration.getSyncHorasInicioVentaOnline());
                 
                 sesion.setFechaInicioVentaOnlineWithDate(inicioVentaOnline.getTime());
             }

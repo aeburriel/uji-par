@@ -1,24 +1,20 @@
 package es.uji.apps.par.config;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-
+import es.uji.apps.par.i18n.ResourceProperties;
 import es.uji.apps.par.model.TipoInforme;
+import es.uji.apps.par.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.thymeleaf.util.StringUtils;
 
-import es.uji.apps.par.i18n.ResourceProperties;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.sql.Timestamp;
+import java.util.*;
 
-import javax.validation.constraints.Null;
-
+@Component
 public class Configuration
 {
     private static final String TPV_ORDER_PREFIX_CODE_CAJAMAR = "0000";
@@ -106,41 +102,21 @@ public class Configuration
 	private static final Logger log = LoggerFactory.getLogger(Configuration.class);
 	private static final String SHOW_SESIONES_SIN_VENTA_INTERNET = "uji.par.showSesionesSinVentaInternet";
     public static final String JSON_LOCALIZACIONES_PATH = "/etc/uji/par/butacas/";
+	private static final String IS_LOADED_FROM_RESOURCE = "uji.par.isLoadedFromResource";
 
 
-    private static String fileName = "/etc/uji/par/app.properties";
+	private static String fileName = "/etc/uji/par/app.properties";
     private Properties properties;
-    private static Configuration instance;
 
-    static
+
+	@Autowired
+    public Configuration(ConfigurationInterface configurationInterface) throws IOException
     {
-        try
-        {
-            instance = new Configuration();
-        }
-        catch (IOException e)
-        {
-            log.error(e.toString());
-        }
-    }
-
-    private Configuration() throws IOException
-    {
-        String filePath = fileName;
-        File f = new File(filePath);
-
         properties = new Properties();
-        FileInputStream fis = new FileInputStream(f);
-        properties.load(fis);
+        properties.load(configurationInterface.getPathToFile());
     }
 
-    public static void reinitConfig() throws IOException
-    {
-        instance = null;
-        instance = new Configuration();
-    }
-    
-    private static String getNoObligatoryProperty(String propertyName)
+    private String getNoObligatoryProperty(String propertyName)
     {
         try
         {
@@ -153,9 +129,9 @@ public class Configuration
         }
     }
 
-    private static String getProperty(String propertyName)
+    private String getProperty(String propertyName)
     {
-        String value = (String) instance.properties.getProperty(propertyName);
+        String value = (String) properties.getProperty(propertyName);
         try
         {
             value = new String(value.getBytes("ISO-8859-1"), "UTF-8");
@@ -173,7 +149,7 @@ public class Configuration
         return value.trim();
     }
 
-    public static String getIdiomaPorDefecto()
+    public String getIdiomaPorDefecto()
     {
         String lang = getNoObligatoryProperty(IDIOMA_POR_DEFECTO);
         if (lang != null && lang.length() > 0) {
@@ -184,7 +160,7 @@ public class Configuration
         }
     }
 
-    public static boolean isIdEntrada()
+    public boolean isIdEntrada()
     {
         String entradaId = getNoObligatoryProperty(ENTRADA_ID);
         if (entradaId != null && entradaId.length() > 0 && !entradaId.equals("false")) {
@@ -203,7 +179,7 @@ public class Configuration
         }
     }
 
-    public static Boolean isMultipleTpvEnabled()
+    public Boolean isMultipleTpvEnabled()
     {
         String tpv = getNoObligatoryProperty(TPV);
         if (tpv != null && tpv.length() > 0 && !tpv.equals("false")) {
@@ -214,7 +190,7 @@ public class Configuration
         }
     }
 
-    public static Integer getIdEntrada()
+    public Integer getIdEntrada()
     {
         String entradaId = getNoObligatoryProperty(ENTRADA_ID);
         if (entradaId != null && entradaId.length() > 0) {
@@ -232,7 +208,7 @@ public class Configuration
         }
     }
     
-    public static String getPayModes(Locale locale)
+    public String getPayModes(Locale locale)
     {
     	List<String> payModesJs = new ArrayList<String>(Arrays.asList("['metalico', '" + ResourceProperties.getProperty(locale, "paymode.metalico") + "']",
     	         "['tarjeta', '" + ResourceProperties.getProperty(locale, "paymode.tarjeta") + "']",
@@ -254,77 +230,77 @@ public class Configuration
     	return "[" + StringUtils.join(payModes, PROPERTIES_SEPARATOR) + "]";
     }
 
-    public static String getUrlPublic()
+    public String getUrlPublic()
     {
         return getProperty(URL_PUBLIC);
     }
     
-    public static String getUrlAdmin()
+    public String getUrlAdmin()
     {
         return getProperty(URL_ADMIN);
     }
 
-    public static String getSecret()
+    public String getSecret()
     {
         return getProperty(SECRET);
     }
 
-    public static String getMailHost()
+    public String getMailHost()
     {
         return getProperty(MAIL_HOST);
     }
 
-    public static String getMailFrom()
+    public String getMailFrom()
     {
         return getProperty(MAIL_FROM);
     }
 
-    public static String getUrlComoLlegar()
+    public String getUrlComoLlegar()
     {
         return getProperty(COMO_LLEGAR);
     }
 
-    public static String getUrlCondicionesPrivacidad()
+    public String getUrlCondicionesPrivacidad()
     {
         return getProperty(URL_CONDICIONES_PRIVACIDAD);
     }
 
-    public static String getGastosGestion()
+    public String getGastosGestion()
     {
         return getProperty(GASTOS_GESTION);
     }
     
-    public static String getEnviarMailsError()
+    public String getEnviarMailsError()
     {
         return getProperty(ENVIAR_MAILS_ERROR);
     }
 
-    public static void desactivaLogGmail()
+    public void desactivaLogGmail()
     {
-        instance.properties.setProperty(ENVIAR_MAILS_ERROR, "false");
+        properties.setProperty(ENVIAR_MAILS_ERROR, "false");
     }
     
-    public static String getUrlPieEntrada()
+    public String getUrlPieEntrada()
     {
         return getProperty(URL_PIE_ENTRADA);
     }
     
-    public static String getEntorno()
+    public String getEntorno()
     {
         return getProperty(ENTORNO);
     }  
     
-    public static String getCargoInformeEfectivo()
+    public String getCargoInformeEfectivo()
     {
         return getProperty(INFORME_EFECTIVO_CARGO);
     }
     
-    public static String getFirmanteInformeEfectivo()
+    public String getFirmanteInformeEfectivo()
     {
         return getProperty(INFORME_EFECTIVO_FIRMANTE);
     } 
     
-    public static int getMargenVentaTaquillaMinutos()
+    public int getMargenVentaTaquillaMinutos()
     {
         try {
             return Integer.parseInt(getProperty(MARGEN_VENTA_TAQUILLA_MINUTOS));
@@ -334,27 +310,27 @@ public class Configuration
         }
     }
     
-    public static String getAuthClass()
+    public String getAuthClass()
     {
         return getProperty(AUTH_CLASS);
     }
     
-    public static String getEntradaTaquillaReport()
+    public String getEntradaTaquillaReport()
     {
         return getProperty(ENTRADA_TAQUILLA_REPORT);
     }
     
-    public static List<String> getAdminLogin()
+    public List<String> getAdminLogin()
     {
         return Arrays.asList(getProperty(ADMIN_LOGIN).split(PROPERTIES_SEPARATOR));
     }
     
-    public static List<String> getAdminPassword()
+    public List<String> getAdminPassword()
     {
         return Arrays.asList(getProperty(ADMIN_PASSWORD).split(PROPERTIES_SEPARATOR));
     }
 
-    public static List<String> getUserReadonlyLogin()
+    public List<String> getUserReadonlyLogin()
     {
         String noObligatoryProperty = getNoObligatoryProperty(USER_READONLY_LOGIN);
         if (noObligatoryProperty != null)
@@ -367,7 +343,7 @@ public class Configuration
         }
     }
     
-    public static List<String> getUserReadonlyPassword()
+    public List<String> getUserReadonlyPassword()
     {
         String noObligatoryProperty = getNoObligatoryProperty(USER_READONLY_PASSWORD);
         if (noObligatoryProperty != null)
@@ -380,32 +356,32 @@ public class Configuration
         }
     }
     
-    public static String getJdbUrl()
+    public String getJdbUrl()
     {
         return getProperty(JDBC_URL);
     }
 
-    public static String getSyncTipo()
+    public String getSyncTipo()
     {
         return getProperty(SYNC_TIPO);
     }
     
-    public static String[] getSyncUrlsRss()
+    public String[] getSyncUrlsRss()
     {
         return getProperty(SYNC_URL_TIPO).split(PROPERTIES_SEPARATOR);
     }
 
-    public static String getSyncUrlsHeaderToken()
+    public String getSyncUrlsHeaderToken()
     {
         return getNoObligatoryProperty(SYNC_HEADER_TOKEN);
     }
 
-    public static String getSyncUrlsToken()
+    public String getSyncUrlsToken()
     {
         return getNoObligatoryProperty(SYNC_TOKEN);
     }
     
-    public static int getSyncHorasInicioVentaOnline()
+    public int getSyncHorasInicioVentaOnline()
     {
         try
         {
@@ -417,171 +393,177 @@ public class Configuration
         }
     }
     
-    public static String[] getImagenesFondo() {
+    public String[] getImagenesFondo() {
     	return getProperty(LOCALIZACIONES).split(PROPERTIES_SEPARATOR);
     }
 
-	public static String[] getLocalizacionesEnImagen(String localizacion) {
+	public String[] getLocalizacionesEnImagen(String localizacion) {
 		return getProperty(LOCALIZACIONES + "." + localizacion).split(PROPERTIES_SEPARATOR);
 	}
 
-	public static String getEntradaOnlineReport() {
+	public String getEntradaOnlineReport() {
 		return getProperty(ENTRADA_ONLINE_REPORT);
 	}
 
-	public static String getInformeTaquillaReport() {
+	public String getInformeTaquillaReport() {
 		return getProperty(INFORME_TAQUILLA_REPORT);
 	}
 
-	public static String getInformeEfectivoReport() {
+	public String getInformeEfectivoReport() {
 		return getProperty(INFORME_EFECTIVO_REPORT);
 	}
 
-	public static String getInformeTaquillaTpvSubtotalesReport() {
+	public String getInformeTaquillaTpvSubtotalesReport() {
 		return getProperty(INFORME_TAQUILLA_SUBTOTALES_TPV_REPORT);
 	}
 
-	public static String getInformeEventosReport() {
+	public String getInformeEventosReport() {
 		return getProperty(INFORME_EVENTOS_REPORT);
 	}
 
-	public static String getBarcodeWidthHeight() {
+	public String getBarcodeWidthHeight() {
 		return getProperty(BARCODE_WIDTH_HEIGHT);
 	}
 
-	public static String getLogoReport() {
+	public String getLogoReport() {
 		return getProperty(LOGO_REPORT);
 	}
 
-	public static String getApiKey() {
+	public String getApiKey() {
 		return getProperty(API_KEY);
 	}
 
-	public static String getHtmlTitle() {
+	public String getHtmlTitle() {
 		return getProperty(HTML_TITLE);
 	}
 
-	public static String getUrlPublicSinHTTPS() {
+	public String getUrlPublicSinHTTPS() {
 		return getProperty(URL_PUBLIC_SIN_HTTPS);
 	}
 
-    public static String getTpvLangCaCode() {
+    public String getTpvLangCaCode() {
         return TPV_LANG_CA_CODE;
     }
 
-    public static String getTpvLangEsCode() {
+    public String getTpvLangEsCode() {
         return TPV_LANG_ES_CODE;
     }
 
-    public static String getTpvOrderPrefixCodeCajamar() {
+    public String getTpvOrderPrefixCodeCajamar() {
         return TPV_ORDER_PREFIX_CODE_CAJAMAR;
     }
 
-	public static String getTpvCurrency() {
+	public String getTpvCurrency() {
 		return getNoObligatoryProperty(TPV_CURRENCY);
 	}
 
-	public static String getTpvCode() {
+	public String getTpvCode() {
 		return getNoObligatoryProperty(TPV_CODE);
 	}
 
-	public static String getTpvTerminal() {
+	public String getTpvTerminal() {
 		return getNoObligatoryProperty(TPV_TERMINAL);
 	}
 
-	public static String getTpvTransaction() {
+	public String getTpvTransaction() {
 		return getNoObligatoryProperty(TPV_TRANSACTION);
 	}
 
-	public static String getTpvNombre() {
+	public String getTpvNombre() {
 		return getNoObligatoryProperty(TPV_NOMBRE);
 	}
 
-	public static String getInformeSesionReport() {
+	public String getInformeSesionReport() {
 		return getProperty(INFORME_SESION_REPORT); 
 	}
 
-    public static String getInformeReport(String tipo) {
+    public String getInformeReport(String tipo) {
         return getProperty("uji.reports." + tipo + ".class");
     }
 
-    public static String getTiposInforme() {
+    public String getTiposInforme() {
         return getProperty(TIPOS_INFORME);
     }
 	
-	public static String getURLTPV() {
+	public String getURLTPV() {
 		return getProperty(URL_TPV);
 	}
 
-	public static String getMailingClass() {
+	public String getMailingClass() {
 		return getProperty(MAILING_CLASS);
 	}
 
-	public static String getTmpFolder() {
+	public String getTmpFolder() {
 		return getProperty(TMP_FOLDER);
 	}
 
-	public static String getPassphrase() {
+	public String getPassphrase() {
 		return getProperty(PGP_PASSPHRASE);
 	}
 
-	public static String getCodigoBuzon() {
+	public String getCodigoBuzon() {
 		return getProperty(CODIGO_BUZON);
 	}
 
 	public static String getWSDLURL() {
-		return getProperty(WSDL_URL);
+		try {
+			Properties propertiesFile = new Properties();
+			propertiesFile.load(new ConfigurationInFile().getPathToFile());
+			return propertiesFile.getProperty(WSDL_URL);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
-	public static String getDBUser() {
+	public String getDBUser() {
 		return getProperty(DB_USER);
 	}
 	
-	public static String getDBPassword() {
+	public String getDBPassword() {
 		return getProperty(DB_PASS);
 	}
 
-	public static String getUrlPublicLimpio() {
+	public String getUrlPublicLimpio() {
 		return getNoObligatoryProperty(URL_PUBLIC_LIMPIO);
 	}
 	
-	public static String getActiveDirectoryIP() {
+	public String getActiveDirectoryIP() {
 		return getProperty(ACTIVE_DIRECTORY_IP);
 	}
 	
-	public static String getActiveDirectoryPort() {
+	public String getActiveDirectoryPort() {
 		return getProperty(ACTIVE_DIRECTORY_Port);
 	}
 	
-	public static String getActiveDirectoryDomain() {
+	public String getActiveDirectoryDomain() {
 		return getProperty(ACTIVE_DIRECTORY_DOMAIN);
 	}
 	
-	public static String getActiveDirectoryDC() {
+	public String getActiveDirectoryDC() {
 		return getProperty(ACTIVE_DIRECTORY_DC);
 	}
 
-	public static String getPathImagenSustitutiva() {
+	public String getPathImagenSustitutiva() {
 		return getNoObligatoryProperty(IMAGEN_SUSTITUTIVA);
 	}
 
-	public static String getImagenSustitutivaContentType() {
+	public String getImagenSustitutivaContentType() {
 		return getNoObligatoryProperty(IMAGEN_SUSTITUTIVA_CONTENT_TYPE);
 	}
 
-	public static String getPorcentajeIvaDefecto() {
+	public String getPorcentajeIvaDefecto() {
 		return getNoObligatoryProperty(PORCENTAJE_IVA_DEFECTO);
 	}
 	
-	public static String getEnviarMailsEntradas() {
+	public String getEnviarMailsEntradas() {
 		return getNoObligatoryProperty(ENVIAR_MAILS_ENTRADAS);
 	}
 
-    public static String getHorasVentaAnticipada() {
+    public String getHorasVentaAnticipada() {
         return getNoObligatoryProperty(HORAS_VENTA_ANTICIPADA);
     }
 
-	public static boolean isDebug() {
+	public boolean isDebug() {
 		String debug = getNoObligatoryProperty(ENTORNO);
 		if (debug != null && debug.toLowerCase().equals("devel"))
 			return true;
@@ -589,7 +571,7 @@ public class Configuration
 			return false;
 	}
 
-	public static boolean getAllowMultisesion() {
+	public boolean getAllowMultisesion() {
 		String allowMultisesion = getNoObligatoryProperty(ALLOW_MULTISESION);
 
 		if (allowMultisesion != null && allowMultisesion.equalsIgnoreCase("true"))
@@ -597,7 +579,7 @@ public class Configuration
 		return false;
 	}
 
-    public static String getLangsAllowed() {
+    public String getLangsAllowed() {
         String langsAllowed = getNoObligatoryProperty(LANGS_ALLOWED);
 
         if (langsAllowed != null && langsAllowed.length() > 0)
@@ -605,7 +587,7 @@ public class Configuration
         return "[{'locale':'ca', 'alias': 'Valencià'}]";
     }
 
-	public static boolean getGenerarCifrado() {
+	public boolean getGenerarCifrado() {
 		String generarCifrado = getNoObligatoryProperty(GENERAR_CIFRADO);
 		if (generarCifrado == null || generarCifrado.equalsIgnoreCase("true"))
 			return true;
@@ -613,14 +595,14 @@ public class Configuration
 			return false;
 	}
 
-	public static String getTiposInformeGenerales() {
+	public String getTiposInformeGenerales() {
 		String tiposInformeGenerales = getNoObligatoryProperty(TIPOS_INFORME_GENERALES);
 		if (tiposInformeGenerales == null)
 			tiposInformeGenerales = TipoInforme.getDefaultGenerales();
 		return tiposInformeGenerales;
 	}
 
-    public static boolean showSesionesSinVentaInternet() {
+    public boolean showSesionesSinVentaInternet() {
         String showSesionesSinVentaInternet = getNoObligatoryProperty(SHOW_SESIONES_SIN_VENTA_INTERNET);
         if (showSesionesSinVentaInternet == null)
             return true;
@@ -630,11 +612,11 @@ public class Configuration
         return false;
     }
 
-    public static String getPathJson() {
+    public String getPathJson() {
         return JSON_LOCALIZACIONES_PATH;
     }
 
-    public static boolean isMenuAbono() {
+    public boolean isMenuAbono() {
         String menuAbono = getNoObligatoryProperty(MENU_ABONO);
         if (menuAbono == null || !menuAbono.equalsIgnoreCase("true"))
             return false;
@@ -642,7 +624,7 @@ public class Configuration
             return true;
     }
 
-    public static boolean isMenuClientes() {
+    public boolean isMenuClientes() {
         String menuAbono = getNoObligatoryProperty(MENU_CLIENTES);
         if (menuAbono == null || !menuAbono.equalsIgnoreCase("true"))
             return false;
@@ -650,7 +632,7 @@ public class Configuration
             return true;
     }
 
-    public static boolean isMenuICAA() {
+    public boolean isMenuICAA() {
         String menuICAA = getNoObligatoryProperty(MENU_ICAA);
         if (menuICAA == null || !menuICAA.equalsIgnoreCase("true"))
             return false;
@@ -658,11 +640,41 @@ public class Configuration
             return true;
     }
 
-    public static boolean isTicketLogo() {
+    public boolean isTicketLogo() {
         String generarTicketLogo = getNoObligatoryProperty(TICKET_LOGO);
         if (generarTicketLogo == null || generarTicketLogo.equalsIgnoreCase("true"))
             return true;
         else
             return false;
     }
+
+	/**
+	 * Se usa para mostrar eventos y sesiones como activos pasados X minutos de la hora del espectáculo
+	 */
+	public Date dateConMargenTrasVenta()
+	{
+		Calendar limite = Calendar.getInstance();
+		limite.add(Calendar.MINUTE, - getMargenVentaTaquillaMinutos());
+
+		return limite.getTime();
+	}
+
+	public boolean isDataDegradada(Timestamp data) {
+		long aux = data.getTime() + (getMargenVentaTaquillaMinutos() * 60 * 1000);
+		Timestamp timeAux = new Timestamp(aux);
+		return (DateUtils.getCurrentDate().after(timeAux));
+	}
+
+	public Timestamp getDataTopePerASaberSiEsDegradada(Timestamp data) {
+		long aux = data.getTime() + (getMargenVentaTaquillaMinutos() * 60 * 1000);
+		return new Timestamp(aux);
+	}
+
+	public boolean isLoadedFromResource() {
+		String isLoadedFromResource = getNoObligatoryProperty(IS_LOADED_FROM_RESOURCE);
+		if (isLoadedFromResource == null || !isLoadedFromResource.equalsIgnoreCase("true"))
+			return false;
+		else
+			return true;
+	}
 }

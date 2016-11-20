@@ -33,18 +33,21 @@ public class InformeEfectivoReport extends Report implements InformeInterface
 
     private Locale locale;
     private InformeTaquillaReportStyle style;
+
+	Configuration configuration;
     
     public InformeEfectivoReport() throws ReportSerializerInitException {
 		super(reportSerializer, new InformeTaquillaReportStyle());
 	}
 
-    private InformeEfectivoReport(ReportSerializer serializer, InformeTaquillaReportStyle style, Locale locale)
+    private InformeEfectivoReport(ReportSerializer serializer, InformeTaquillaReportStyle style, Locale locale, Configuration configuration)
             throws ReportSerializerInitException
     {
         super(serializer, style);
 
         this.style = style;
         this.locale = locale;
+		this.configuration = configuration;
     }
 
     public void genera(String inicio, String fin, List<InformeModelReport> compras, List<InformeAbonoReport> abonos, String cargoInformeEfectivo,
@@ -63,7 +66,7 @@ public class InformeEfectivoReport extends Report implements InformeInterface
     private void creaLogo()
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + Configuration.getLogoReport()).getAbsolutePath());
+        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + configuration.getLogoReport()).getAbsolutePath());
         externalGraphic.setMaxWidth("2cm");
 
         Block block = withNewBlock();
@@ -342,14 +345,14 @@ public class InformeEfectivoReport extends Report implements InformeInterface
             reportSerializer = new FopPDFSerializer();
     }
 
-    public InformeInterface create(Locale locale)
+    public InformeInterface create(Locale locale, Configuration configuration)
     {
         try
         {
             initStatics();
             InformeTaquillaReportStyle estilo = new InformeTaquillaReportStyle();
 
-            return new InformeEfectivoReport(reportSerializer, estilo, locale);
+            return new InformeEfectivoReport(reportSerializer, estilo, locale, configuration);
         }
         catch (ReportSerializerInitException e)
         {
@@ -378,7 +381,6 @@ public class InformeEfectivoReport extends Report implements InformeInterface
 
     }
 
-	@Override
 	public void genera(String fechaInicio, String fechaFin) {
 
 	}

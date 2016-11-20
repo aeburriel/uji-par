@@ -7,6 +7,8 @@ import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.Expression;
 import com.mysema.query.types.QTuple;
 import com.sun.istack.logging.Logger;
+import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.config.ConfigurationInterface;
 import es.uji.apps.par.database.DatabaseHelper;
 import es.uji.apps.par.database.DatabaseHelperFactory;
 import es.uji.apps.par.db.*;
@@ -38,8 +40,9 @@ public class ComprasDAO extends BaseDAO {
 
 	private DatabaseHelper dbHelper;
 
-	public ComprasDAO() {
-		dbHelper = DatabaseHelperFactory.newInstance();
+	@Autowired
+	public ComprasDAO(Configuration configuration) {
+		dbHelper = DatabaseHelperFactory.newInstance(configuration);
 	}
 
 	@Transactional
@@ -817,6 +820,7 @@ public class ComprasDAO extends BaseDAO {
 								qCompraDTO.reserva.eq(true)))).execute();
 	}
 
+	@Transactional
     public void updateDatosAbonadoCompra(Abonado abonado) {
         QCompraDTO qCompraDTO = QCompraDTO.compraDTO;
         JPAUpdateClause updateC = new JPAUpdateClause(entityManager, qCompraDTO);
@@ -832,4 +836,18 @@ public class ComprasDAO extends BaseDAO {
                 .where(qCompraDTO.parAbonado.id.eq(abonado.getId())).execute();
 
     }
+
+	@Transactional
+	public String getReportClassByCompraUUID(String uuidCompra, String tipo) {
+		JPAQuery query = new JPAQuery(entityManager);
+		QCompraDTO qCompraDTO = QCompraDTO.compraDTO;
+		QSesionDTO qSesionDTO = QSesionDTO.sesionDTO;
+		QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+		QReportDTO qReportDTO = QReportDTO.reportDTO;
+
+		return query.from(qCompraDTO).join(qCompraDTO.parSesion, qSesionDTO).join(qSesionDTO.parSala, qSalaDTO).join(qSalaDTO
+				.parReports, qReportDTO)
+				.where(qCompraDTO.uuid.eq(uuidCompra).and(qReportDTO.tipo.toUpperCase().eq(tipo.toUpperCase())))
+				.uniqueResult(qReportDTO.clase);
+	}
 }

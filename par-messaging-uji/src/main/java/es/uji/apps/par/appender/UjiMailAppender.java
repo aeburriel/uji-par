@@ -14,9 +14,11 @@ import ch.qos.logback.core.helpers.CyclicBuffer;
 
 import com.sun.mail.smtp.SMTPTransport;
 
-import es.uji.apps.par.config.Configuration;
 import es.uji.commons.messaging.client.MessagingClient;
 import es.uji.commons.messaging.client.model.MailMessage;
+
+import java.io.FileInputStream;
+import java.util.Properties;
 
 public class UjiMailAppender extends SMTPAppender
 {
@@ -24,17 +26,35 @@ public class UjiMailAppender extends SMTPAppender
     protected Session session;
 
     private MessagingClient client;
+	private boolean enviarMailsError;
+	private String entorno;
 
     public UjiMailAppender()
     {
         super();
 
+		try {
+			Properties properties = new Properties();
+			properties.load(new FileInputStream("/etc/uji/par/app.properties"));
+			try {
+				String propEnviarMails = properties.getProperty("uji.par.enviarMailsError");
+				enviarMailsError = (propEnviarMails == null || propEnviarMails.trim().equals("")) ? false : (propEnviarMails.trim
+						().toUpperCase().equals("TRUE"));
+			} catch (Exception e) {
+				enviarMailsError = true;
+			}
+			entorno = properties.getProperty("uji.par.entorno");
+			entorno = (entorno == null || entorno.trim().equals("")) ? "NO DEFINIDO" : entorno;
+		} catch (Exception e) {
+			enviarMailsError = true;
+			entorno = "NO DEFINIDO";
+		}
         client = new MessagingClient();
     }
 
     protected void sendBuffer()
     {
-        if (!Configuration.getEnviarMailsError().equals("true"))
+        if (!enviarMailsError)
         {
             return;
         }
@@ -44,7 +64,7 @@ public class UjiMailAppender extends SMTPAppender
             String body = getMailContent();
 
             MailMessage mensaje = new MailMessage("PAR");
-            mensaje.setTitle(getSubject() + " (" + Configuration.getEntorno() + ")");
+            mensaje.setTitle(getSubject() + " (" + entorno + ")");
             mensaje.setContentType(MediaType.TEXT_PLAIN);
             mensaje.setSender(getFrom());
             String mails = "";

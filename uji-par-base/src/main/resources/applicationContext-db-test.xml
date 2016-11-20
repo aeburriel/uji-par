@@ -65,4 +65,6 @@
     </property>
   </bean>
 
+    <bean id="ConfigurationInterface" class="es.uji.apps.par.config.ConfigurationInResource" />
+
 </beans>

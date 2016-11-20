@@ -1,12 +1,13 @@
 package es.uji.apps.par.report;
 
 import es.uji.apps.fopreports.serialization.ReportSerializationException;
+import es.uji.apps.par.config.Configuration;
 
 import java.io.OutputStream;
 import java.util.Locale;
 
 public interface EntradaReportOnlineInterface {
-	public EntradaReportOnlineInterface create(Locale locale);
+	public EntradaReportOnlineInterface create(Locale locale, Configuration configuration);
 	public void setTitulo(String titulo);
 	public void setFecha(String fecha);
 	public void setHora(String hora);

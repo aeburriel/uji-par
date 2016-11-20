@@ -19,23 +19,26 @@ public class EnviaMails
 	
 	@Autowired
 	EntradasService entradasService;
-	
+
+	@Autowired
+	Configuration configuration;
+
 	private static final Logger log = LoggerFactory.getLogger(EnviaMails.class);
 	
-	public static MailInterface newInstanceMailSender()
+	public MailInterface newInstanceMailSender()
     {
-		log.info("Inicializamos la clase de envio de mails: " + Configuration.getMailingClass());
+		log.info("Inicializamos la clase de envio de mails: " + configuration.getMailingClass());
     	try {
-    		return (MailInterface) Class.forName(Configuration.getMailingClass()).newInstance();
+    		return (MailInterface) Class.forName(configuration.getMailingClass()).newInstance();
     	} catch(Exception e) {
-    		throw new RuntimeException("Imposible instanciar la clase de envio de mails: " + Configuration.getMailingClass());
+    		throw new RuntimeException("Imposible instanciar la clase de envio de mails: " + configuration.getMailingClass());
     	}
     }
 	
     public void ejecuta() throws MessagingException
     {
     	log.info("Inicializamos envío de mails");
-    	MailInterface mailService = EnviaMails.newInstanceMailSender();
+    	MailInterface mailService = newInstanceMailSender();
         mailService.enviaPendientes(mailDAO, entradasService);
     }
 }

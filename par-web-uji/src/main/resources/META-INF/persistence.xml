@@ -29,33 +29,8 @@
     <class>es.uji.apps.par.db.UsuarioDTO</class>
     <class>es.uji.apps.par.db.SesionFormatoIdiomaICAADTO</class>
     <class>es.uji.apps.par.db.TpvsDTO</class>
-
-    <!--<class>es.uji.commons.sso.db.ApaAcceso</class>
-    <class>es.uji.commons.sso.db.ApaAplicacione</class>
-    <class>es.uji.commons.sso.db.ApaAplicacionesExtra</class>
-    <class>es.uji.commons.sso.db.ApaAplicacionesItem</class>
-    <class>es.uji.commons.sso.db.ApaAplicacionesMapeo</class>
-    <class>es.uji.commons.sso.db.ApaAplicacionesPerfile</class>
-    <class>es.uji.commons.sso.db.ApaAplicacionesResponsable</class>
-    <class>es.uji.commons.sso.db.ApaGrupo</class>
-    <class>es.uji.commons.sso.db.ApaGruposAplicacione</class>
-    <class>es.uji.commons.sso.db.ApaGruposItem</class>
-    <class>es.uji.commons.sso.db.ApaItemsExtra</class>
-    <class>es.uji.commons.sso.db.ApaItemsMapeo</class>
-    <class>es.uji.commons.sso.db.ApaItemsPerfile</class>
-    <class>es.uji.commons.sso.db.ApaPerfile</class>
-    <class>es.uji.commons.sso.db.ApaPerfilesPer</class>
-    <class>es.uji.commons.sso.db.ApaPersonasCuenta</class>
-    <class>es.uji.commons.sso.db.ApaPersonasCuentaPK</class>
-    <class>es.uji.commons.sso.db.ApaPersonasPlaza</class>
-    <class>es.uji.commons.sso.db.ApaPersonasPlazaPK</class>
-    <class>es.uji.commons.sso.db.ApaRole</class>
-    <class>es.uji.commons.sso.db.ApaSesione</class>
-    <class>es.uji.commons.sso.db.ApaTiposItem</class>
-    <class>es.uji.commons.sso.db.ApaVwPerfilesPer</class>
-    <class>es.uji.commons.sso.db.ApaVwPersonasCuenta</class>
-    <class>es.uji.commons.sso.db.ApaVwPersonasItems</class>
-    <class>es.uji.commons.sso.db.ApaVwPersonasPlaza</class>-->
+    <class>es.uji.apps.par.db.ReportDTO</class>
+    <class>es.uji.apps.par.db.SalasUsuarioDTO</class>
   </persistence-unit>
   
 </persistence>

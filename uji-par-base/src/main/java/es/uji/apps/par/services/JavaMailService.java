@@ -35,6 +35,9 @@ public class JavaMailService implements MailInterface
     @Autowired
 	MailDAO mailDao;
 
+	@Autowired
+	Configuration configuration;
+
     public JavaMailService()
     {
         
@@ -42,7 +45,7 @@ public class JavaMailService implements MailInterface
 
     public void anyadeEnvio(String to, String titulo, String texto, String uuid)
     {
-        mailDao.insertaMail(Configuration.getMailFrom(), to, titulo, texto, uuid);
+        mailDao.insertaMail(configuration.getMailFrom(), to, titulo, texto, uuid);
     }
     
     private Address[] getMailAddressList(String path) throws AddressException
@@ -66,7 +69,7 @@ public class JavaMailService implements MailInterface
     private Message createMailMessage(String de, String para, String titulo) throws MessagingException
     {
         Properties props = System.getProperties();
-        props.put("mail.smtp.host", Configuration.getMailHost());
+        props.put("mail.smtp.host", configuration.getMailHost());
 
         Session session = Session.getInstance(props, null);
         Message message = new MimeMessage(session);
@@ -152,7 +155,7 @@ public class JavaMailService implements MailInterface
 
     //al llamarse desde el job de quartz, no se inyecta el mailDAO, ni el service y lo enviamos desde la interfaz
     public synchronized void enviaPendientes(MailDAO mailDAO, EntradasService entradasService) throws MessagingException {
-    	if (Configuration.getEnviarMailsEntradas() == null || Configuration.getEnviarMailsEntradas().equals("true")) {
+    	if (configuration.getEnviarMailsEntradas() == null || configuration.getEnviarMailsEntradas().equals("true")) {
 	        log.info("** - Enviando mails pendientes desde JavaMailService...");
 	
 	        List<MailDTO> mails = mailDAO.getMailsPendientes();

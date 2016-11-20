@@ -31,6 +31,9 @@ public class ButacasService
     @Autowired
     private LocalizacionesDAO localizacionesDAO;
 
+	@Autowired
+	Configuration configuration;
+
     public ButacaDTO getButaca(long idButaca)
     {
         return butacasDAO.getButaca(idButaca);
@@ -127,7 +130,7 @@ public class ButacasService
 		for (Tuple objButacaTarifa: listaButacasDTO) {
 			ButacaDTO butacaDTO = objButacaTarifa.get(0, ButacaDTO.class);
 			TarifaDTO tarifaDTO = objButacaTarifa.get(1, TarifaDTO.class);
-			Butaca butaca = new Butaca(butacaDTO);
+			Butaca butaca = new Butaca(butacaDTO, configuration.isIdEntrada());
 			butaca.setTipo(tarifaDTO.getNombre());
 			listaButacas.add(butaca);
 		}
@@ -141,7 +144,7 @@ public class ButacasService
 
     public List<Butaca> getButacasNoAnuladas(Long idSesion)
     {
-         return Butaca.butacasDTOToButacas(butacasDAO.getButacasNoAnuladas(idSesion));
+         return Butaca.butacasDTOToButacas(butacasDAO.getButacasNoAnuladas(idSesion), configuration.isIdEntrada());
     }
 
     public void updatePresentadas(List<Butaca> butacas)
@@ -170,7 +173,7 @@ public class ButacasService
         List<Butaca> butacasDisponibles = new ArrayList<>();
 
 
-        byte[] encoded = Files.readAllBytes(Paths.get(Configuration.getPathJson() + tarifaId + ".json"));
+        byte[] encoded = Files.readAllBytes(Paths.get(configuration.getPathJson() + tarifaId + ".json"));
         List<Butaca> butacasTotales = Butaca.parseaJSON(new String(encoded, "UTF-8"));
 
         int i = 1;

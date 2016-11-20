@@ -51,6 +51,9 @@ public class ComunicacionesICAAService {
 	@Autowired
 	CinesDAO cinesDAO;
 
+	@Autowired
+	Configuration configuration;
+
 	public byte[] generaFicheroICAA(List<Integer> ids, String fechaEnvioHabitualAnterior, String tipoEnvio) 
 			throws RegistroSerializaException, 
 			IncidenciaNotFoundException, NoSuchProviderException, IOException, InterruptedException, GeneralPARException {
@@ -65,7 +68,7 @@ public class ComunicacionesICAAService {
 		
 		comunicacionesICAADAO.addNewEnvio(ids, ficheroRegistros.getRegistroBuzon().getFechaEnvio(), tipoEnvio);
 		
-		if (Configuration.getGenerarCifrado())
+		if (configuration.getGenerarCifrado())
 			return contenidoCifrado;
 		else
 			return contenido;

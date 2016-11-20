@@ -27,6 +27,9 @@ public class MailService implements MailInterface
     @Autowired
     MailDAO mailDao;
 
+	@Autowired
+	Configuration configuration;
+
     private MessagingClient client;
 
     public MailService()
@@ -36,7 +39,7 @@ public class MailService implements MailInterface
 
     public void anyadeEnvio(String to, String titulo, String texto, String uuid)
     {
-        mailDao.insertaMail(Configuration.getMailFrom(), to, titulo, texto, uuid);
+        mailDao.insertaMail(configuration.getMailFrom(), to, titulo, texto, uuid);
     }
 
     private void enviaMail(String de, String para, String titulo, String texto) throws MessageNotSentException

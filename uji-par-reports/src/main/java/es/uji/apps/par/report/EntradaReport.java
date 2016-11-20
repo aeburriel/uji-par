@@ -7,6 +7,7 @@ import es.uji.apps.fopreports.serialization.ReportSerializationException;
 import es.uji.apps.fopreports.serialization.ReportSerializer;
 import es.uji.apps.fopreports.serialization.ReportSerializerInitException;
 import es.uji.apps.fopreports.style.ReportStyle;
+import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.i18n.ResourceProperties;
 import es.uji.apps.par.report.components.BaseTable;
 import es.uji.apps.par.report.components.EntradaReportStyle;
@@ -43,8 +44,7 @@ public class EntradaReport extends Report implements EntradaReportOnlineInterfac
     private String barcode;
     private int totalButacas;
 
-    
-    public EntradaReport() throws ReportSerializerInitException {
+	public EntradaReport() throws ReportSerializerInitException {
     	super(reportSerializer, new EntradaReportStyle());
     }
 
@@ -461,7 +461,7 @@ public class EntradaReport extends Report implements EntradaReportOnlineInterfac
             reportSerializer = new FopPDFSerializer();
     }
 
-    public EntradaReportOnlineInterface create(Locale locale)
+    public EntradaReportOnlineInterface create(Locale locale, Configuration configuration)
     {
         try
         {
@@ -533,12 +533,10 @@ public class EntradaReport extends Report implements EntradaReportOnlineInterfac
         this.urlPortada = urlPortada;
     }
 
-    @Override
     public boolean esAgrupada() {
         return false;
     }
 
-    @Override
     public void setTotalButacas(int totalButacas) {
         this.totalButacas = totalButacas;
     }

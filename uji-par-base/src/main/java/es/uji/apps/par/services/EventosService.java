@@ -30,6 +30,9 @@ public class EventosService
     @Autowired
     private ComprasDAO comprasDAO;
 
+	@Autowired
+	Configuration configuration;
+
     public List<Evento> getEventosConSesiones()
     {
        return eventosDAO.getEventosConSesiones();
@@ -127,7 +130,7 @@ public class EventosService
 	public List<EventoParaSync> getEventosActivosParaVentaOnline() {
 		List<EventoDTO> eventosDTO = eventosDAO.getEventosActivosParaVentaOnline();
 		List<EventoParaSync> eventosParaSync = new ArrayList<EventoParaSync>();
-		String urlPrefix = Configuration.getUrlPublic() + "/rest/evento/";
+		String urlPrefix = configuration.getUrlPublic() + "/rest/evento/";
 		String urlSuffix = "?lang=##IDIOMA##";
 		
 		for (EventoDTO eventoDTO: eventosDTO) {
@@ -138,7 +141,7 @@ public class EventosService
 	}
 
 	public byte[] getImagenSustitutivaSiExiste() throws IOException {
-		String path = Configuration.getPathImagenSustitutiva();
+		String path = configuration.getPathImagenSustitutiva();
 		if (path != null) {
 			FileInputStream fis = new FileInputStream("/etc/uji/par/imagenes/" + path);
 			return IOUtils.toByteArray(fis);
@@ -147,7 +150,7 @@ public class EventosService
 	}
 
 	public String getImagenSustitutivaContentType() {
-		return Configuration.getImagenSustitutivaContentType();
+		return configuration.getImagenSustitutivaContentType();
 	}
 
 	public List<Evento> getPeliculas() {

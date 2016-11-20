@@ -10,6 +10,7 @@ import es.uji.apps.par.model.Abono;
 import es.uji.apps.par.model.SesionAbono;
 import es.uji.apps.par.services.AbonosService;
 import es.uji.apps.par.services.ButacasService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -34,6 +35,9 @@ public class MapaDrawer
     @InjectParam
     private AbonosService abonosService;
 
+	@InjectParam
+	Configuration configuration;
+
     private BufferedImage butacaOcupada;
     private BufferedImage butacaReservada;
     private BufferedImage butacaOcupadaDiscapacitado;
@@ -45,15 +49,17 @@ public class MapaDrawer
     // Imágenes de distintas localizaciones
     private Map<String, BufferedImage> imagenes;
 
-    public MapaDrawer() throws IOException
+	@Autowired
+    public MapaDrawer(Configuration configuration) throws IOException
     {
+		this.configuration = configuration;
         cargaImagenes();
         leeJson();
     }
 
     private String[] getLocalizacionesEnImagen(String localizacion)
     {
-    	return Configuration.getLocalizacionesEnImagen(localizacion);
+    	return configuration.getLocalizacionesEnImagen(localizacion);
     }
 
     public ByteArrayOutputStream generaImagen(long idSesion, String codigoLocalizacion, boolean mostrarReservadas) throws IOException
@@ -82,9 +88,9 @@ public class MapaDrawer
         {
             datosButacas = new HashMap<String, DatosButaca>();
 
-            for (String localizacion : Configuration.getImagenesFondo())
+            for (String localizacion : configuration.getImagenesFondo())
             {
-            	for (String localizacionImagen: Configuration.getLocalizacionesEnImagen(localizacion))
+            	for (String localizacionImagen: configuration.getLocalizacionesEnImagen(localizacion))
             		loadJsonLocalizacion(localizacionImagen);
             }
         }
@@ -92,14 +98,15 @@ public class MapaDrawer
 
     private void loadJsonLocalizacion(String localizacion) throws FileNotFoundException
     {
-        List<DatosButaca> listaButacas = parseaJsonButacas(localizacion);
+		if (!configuration.isLoadedFromResource()) {
+			List<DatosButaca> listaButacas = parseaJsonButacas(localizacion);
 
-        for (DatosButaca datosButaca : listaButacas)
-        {
-            datosButacas.put(
-                    String.format("%s_%d_%d", datosButaca.getLocalizacion(), datosButaca.getFila(),
-                            datosButaca.getNumero()), datosButaca);
-        }
+			for (DatosButaca datosButaca : listaButacas) {
+				datosButacas.put(
+						String.format("%s_%d_%d", datosButaca.getLocalizacion(), datosButaca.getFila(),
+								datosButaca.getNumero()), datosButaca);
+			}
+		}
     }
 
     private List<DatosButaca> parseaJsonButacas(String localizacion) throws FileNotFoundException
@@ -196,39 +203,35 @@ public class MapaDrawer
 
     private void cargaImagenes() throws IOException
     {
-        if (imagenes == null)
-        {
-            imagenes = new HashMap<String, BufferedImage>();
+		if (!configuration.isLoadedFromResource()) {
+			if (imagenes == null) {
+				imagenes = new HashMap<String, BufferedImage>();
 
-            for (String localizacion : Configuration.getImagenesFondo())
-            {
-                loadImage(IMAGES_PATH, localizacion);
-            }
-        }
+				for (String localizacion : configuration.getImagenesFondo()) {
+					loadImage(IMAGES_PATH, localizacion);
+				}
+			}
 
-        if (butacaOcupada == null)
-        {
-            butacaOcupada = ImageIO.read(new File(IMAGES_PATH + "/ocupada.png"));
-        }
+			if (butacaOcupada == null) {
+				butacaOcupada = ImageIO.read(new File(IMAGES_PATH + "/ocupada.png"));
+			}
 
-        if (butacaOcupadaDiscapacitado == null)
-        {
-            File f = new File(IMAGES_PATH + "/ocupadaDiscapacitado.png");
-            if (f.exists())
-                butacaOcupadaDiscapacitado = ImageIO.read(f);
-        }
-        
-        if (butacaReservada == null)
-        {
-            butacaReservada = ImageIO.read(new File(IMAGES_PATH + "/reservada.png"));
-        }
-        
-        if (butacaReservadaDiscapacitado == null)
-        {
-            File f = new File(IMAGES_PATH + "/reservadaDiscapacitado.png");
-            if (f.exists())
-                butacaReservadaDiscapacitado = ImageIO.read(f);
-        }
+			if (butacaOcupadaDiscapacitado == null) {
+				File f = new File(IMAGES_PATH + "/ocupadaDiscapacitado.png");
+				if (f.exists())
+					butacaOcupadaDiscapacitado = ImageIO.read(f);
+			}
+
+			if (butacaReservada == null) {
+				butacaReservada = ImageIO.read(new File(IMAGES_PATH + "/reservada.png"));
+			}
+
+			if (butacaReservadaDiscapacitado == null) {
+				File f = new File(IMAGES_PATH + "/reservadaDiscapacitado.png");
+				if (f.exists())
+					butacaReservadaDiscapacitado = ImageIO.read(f);
+			}
+		}
     }
 
     private void loadImage(String imagesPath, String localizacion) throws IOException

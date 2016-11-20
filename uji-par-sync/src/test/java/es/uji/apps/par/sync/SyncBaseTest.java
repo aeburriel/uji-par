@@ -9,9 +9,12 @@ import es.uji.apps.par.config.Configuration;
 @Ignore
 public class SyncBaseTest
 {
+	@Autowired
+	Configuration configuration;
+
     public SyncBaseTest()
     {
-        Configuration.desactivaLogGmail();
+        configuration.desactivaLogGmail();
     }
     
     protected InputStream loadFromClasspath(String filePath)

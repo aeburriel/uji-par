@@ -85,6 +85,9 @@
         </property>
     </bean>
 
+    <bean id="ConfigurationInterface" class="es.uji.apps.par.config.ConfigurationInFile" />
+    <bean id="Configuration" class="es.uji.apps.par.config.Configuration" />
+
     <bean id="cinesDAO" class="es.uji.apps.par.dao.CinesDAO">
     </bean>
 
@@ -94,7 +97,6 @@
     <bean id="sesionesDAO" class="es.uji.apps.par.dao.SesionesDAO">
     </bean>
 
-    <bean id="comprasDAO" class="es.uji.apps.par.dao.ComprasDAO">
-    </bean>
+
 
 </beans>

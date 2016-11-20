@@ -45,40 +45,58 @@ public class EntradasService {
     @Autowired
     private TarifasDAO tarifasDAO;
 
+	@Autowired
+	Configuration configuration;
+
     private static EntradaReportTaquillaInterface entradaTaquillaReport;
     private static EntradaReportOnlineInterface entradaOnlineReport;
 
     public void generaEntrada(String uuidCompra, OutputStream outputStream) throws ReportSerializationException {
-        CompraDTO compra = comprasDAO.getCompraByUuid(uuidCompra);
-        if (compra == null)
-            throw new NullPointerException();
-
-        EventoDTO evento = compra.getParSesion().getParEvento();
-        try {
-            entradaOnlineReport = EntradaReportFactory.newInstanceByClassName("es.uji.apps.par.report." + BEAN_REPORT_PREFIX + evento.getParTiposEvento().getNombreEs() + BEAN_REPORT_SUFFIX);
-        } catch(Exception e) {
-            entradaOnlineReport = EntradaReportFactory.newInstanceOnline();
-        }
-
-        EntradaReportOnlineInterface entrada = entradaOnlineReport.create(new Locale(Configuration.getIdiomaPorDefecto()));
-        try {
-            rellenaEntrada(compra, entrada);
-            entrada.serialize(outputStream);
-        } catch (NullPointerException e) {
-            log.error("La compra con uuid " + uuidCompra + " no existe");
-        }
+		try {
+			EntradaReportOnlineInterface entrada = generaEntradaOnlineYRellena(uuidCompra);
+			entrada.serialize(outputStream);
+		} catch (NullPointerException e) {
+			log.error("La compra con uuid " + uuidCompra + " no existe");
+		}
     }
 
-    public void generaEntradaTaquilla(String uuidCompra, OutputStream outputStream) throws ReportSerializationException, SAXException, IOException {
-        if (entradaTaquillaReport == null)
-            entradaTaquillaReport = EntradaReportFactory.newInstanceTaquilla();
-        EntradaReportTaquillaInterface entrada = entradaTaquillaReport.create(new Locale(Configuration.getIdiomaPorDefecto()));
+	public EntradaReportOnlineInterface generaEntradaOnlineYRellena(String uuidCompra) throws
+			ReportSerializationException {
+		CompraDTO compra = comprasDAO.getCompraByUuid(uuidCompra);
+		if (compra == null)
+			throw new NullPointerException();
 
-        rellenaEntradaTaquilla(uuidCompra, entrada);
+		EventoDTO evento = compra.getParSesion().getParEvento();
+		try {
+			String className = "es.uji.apps.par.report." + BEAN_REPORT_PREFIX + evento.getParTiposEvento().getNombreEs() +
+					BEAN_REPORT_SUFFIX;
+			entradaOnlineReport = EntradaReportFactory.newInstanceByClassName(className);
+		} catch(Exception e) {
+			String reportClass = comprasDAO.getReportClassByCompraUUID(uuidCompra, EntradaReportFactory.TIPO_ENTRADA_ONLINE);
+			entradaOnlineReport = EntradaReportFactory.newInstanceOnline(reportClass);
+		}
+
+		EntradaReportOnlineInterface entrada = entradaOnlineReport.create(new Locale(configuration.getIdiomaPorDefecto()), configuration);
+		rellenaEntrada(compra, entrada);
+		return entrada;
+	}
+
+	public void generaEntradaTaquilla(String uuidCompra, OutputStream outputStream) throws ReportSerializationException, SAXException, IOException {
+		EntradaReportTaquillaInterface entrada = generaEntradaTaquillaYRellena(uuidCompra);
         entrada.serialize(outputStream);
     }
 
-    private void rellenaEntradaTaquilla(String uuidCompra, EntradaReportTaquillaInterface entrada) {
+	public EntradaReportTaquillaInterface generaEntradaTaquillaYRellena(String uuidCompra) throws SAXException, IOException {
+		String reportClass = comprasDAO.getReportClassByCompraUUID(uuidCompra, EntradaReportFactory.TIPO_ENTRADA_TAQUILLA);
+		if (entradaTaquillaReport == null)
+			entradaTaquillaReport = EntradaReportFactory.newInstanceTaquilla(reportClass);
+		EntradaReportTaquillaInterface entrada = entradaTaquillaReport.create(new Locale(configuration.getIdiomaPorDefecto()), configuration);
+
+		rellenaEntradaTaquilla(uuidCompra, entrada);
+		return entrada;
+	}
+
+	private void rellenaEntradaTaquilla(String uuidCompra, EntradaReportTaquillaInterface entrada) {
         CompraDTO compra = comprasDAO.getCompraByUuid(uuidCompra);
         List<TarifaDTO> tarifas = tarifasDAO.getAll("", 0, 100);
 
@@ -99,7 +117,7 @@ public class EntradasService {
         entrada.setFecha(fecha);
         entrada.setHora(hora);
         entrada.setHoraApertura(horaApertura);
-        entrada.setUrlPortada(Configuration.getUrlPublicSinHTTPS() + "/rest/evento/"
+        entrada.setUrlPortada(configuration.getUrlPublicSinHTTPS() + "/rest/evento/"
                 + compra.getParSesion().getParEvento().getId() + "/imagenEntrada");
 
         for (ButacaDTO butaca : compra.getParButacas()) {
@@ -111,7 +129,7 @@ public class EntradasService {
                 entradaModelReport.setTotal(ReportUtils.formatEuros(butaca.getPrecio()));
                 entradaModelReport.setCifEmpresa(butaca.getParSesion().getParEvento().getParTpv().getCif());
                 entradaModelReport.setNombreEmpresa(butaca.getParSesion().getParEvento().getParTpv().getNombre());
-                if (Configuration.isIdEntrada()) {
+                if (configuration.isIdEntrada()) {
                     entradaModelReport.setBarcode(compra.getUuid() + "-" + butaca.getIdEntrada());
                 } else {
                     entradaModelReport.setBarcode(compra.getUuid() + "-" + butaca.getId());
@@ -126,7 +144,7 @@ public class EntradasService {
                     }
                 }
 
-                entrada.generaPaginaButaca(entradaModelReport, Configuration.getUrlPublicSinHTTPS());
+                entrada.generaPaginaButaca(entradaModelReport, configuration.getUrlPublicSinHTTPS());
             }
         }
 
@@ -155,9 +173,9 @@ public class EntradasService {
         entrada.setFecha(fecha);
         entrada.setHora(hora);
         entrada.setHoraApertura(horaApertura);
-        entrada.setUrlPortada(Configuration.getUrlPublicSinHTTPS() + "/rest/evento/"
+        entrada.setUrlPortada(configuration.getUrlPublicSinHTTPS() + "/rest/evento/"
                 + compra.getParSesion().getParEvento().getId() + "/imagenEntrada");
-        entrada.setUrlPublicidad(Configuration.getUrlPieEntrada());
+        entrada.setUrlPublicidad(configuration.getUrlPieEntrada());
         int totalButacas = 0;
 
         for (ButacaDTO butaca : compra.getParButacas()) {
@@ -187,14 +205,14 @@ public class EntradasService {
         entradaModelReport.setTotal(ReportUtils.formatEuros(butaca.getPrecio()));
         entradaModelReport.setCifEmpresa(butaca.getParSesion().getParEvento().getParTpv().getCif());
         entradaModelReport.setNombreEmpresa(butaca.getParSesion().getParEvento().getParTpv().getNombre());
-        if (Configuration.isIdEntrada()) {
+        if (configuration.isIdEntrada()) {
             entradaModelReport.setBarcode(compra.getUuid() + "-" + butaca.getIdEntrada());
         } else {
             entradaModelReport.setBarcode(compra.getUuid() + "-" + butaca.getId());
         }
         entradaModelReport.setTipo(tarifaCompra.getNombre());
         entradaModelReport.setTarifaDefecto(tarifaCompra.getDefecto());
-        entrada.generaPaginaButaca(entradaModelReport, Configuration.getUrlPublicSinHTTPS());
+        entrada.generaPaginaButaca(entradaModelReport, configuration.getUrlPublicSinHTTPS());
     }
 
     public static void main(String[] args) throws FileNotFoundException, ReportSerializationException {

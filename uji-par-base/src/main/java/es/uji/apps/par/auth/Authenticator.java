@@ -1,5 +1,7 @@
 package es.uji.apps.par.auth;
 
+import es.uji.apps.par.config.Configuration;
+
 import javax.servlet.http.HttpServletRequest;
 
 public interface Authenticator
@@ -12,4 +14,5 @@ public interface Authenticator
     public static final String READONLY_ATTRIBUTE = "readonly";
 
     public int authenticate(HttpServletRequest request);
+	public void setConfiguration(Configuration configuration);
 }

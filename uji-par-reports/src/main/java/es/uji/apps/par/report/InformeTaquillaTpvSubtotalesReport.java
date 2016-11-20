@@ -33,18 +33,20 @@ public class InformeTaquillaTpvSubtotalesReport extends Report implements Inform
 
     private Locale locale;
     private InformeTaquillaReportStyle style;
+	Configuration configuration;
     
     public InformeTaquillaTpvSubtotalesReport() throws ReportSerializerInitException {
 		super(reportSerializer, new InformeTaquillaReportStyle());
 	}
 
     private InformeTaquillaTpvSubtotalesReport(ReportSerializer serializer, InformeTaquillaReportStyle style,
-            Locale locale) throws ReportSerializerInitException
+			Locale locale, Configuration configuration) throws ReportSerializerInitException
     {
         super(serializer, style);
 
         this.style = style;
         this.locale = locale;
+		this.configuration = configuration;
     }
 
     public void genera(String inicio, String fin, List<InformeModelReport> compras, List<InformeAbonoReport> abonos,
@@ -88,7 +90,7 @@ public class InformeTaquillaTpvSubtotalesReport extends Report implements Inform
     private Block creaLogo()
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + Configuration.getLogoReport()).getAbsolutePath());
+        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + configuration.getLogoReport()).getAbsolutePath());
         externalGraphic.setMaxWidth("2cm");
 
         Block block = new Block();
@@ -388,14 +390,14 @@ public class InformeTaquillaTpvSubtotalesReport extends Report implements Inform
             reportSerializer = new FopPDFSerializer();
     }
 
-    public InformeInterface create(Locale locale)
+    public InformeInterface create(Locale locale, Configuration configuration)
     {
         try
         {
             initStatics();
             InformeTaquillaReportStyle estilo = new InformeTaquillaReportStyle();
 
-            return new InformeTaquillaTpvSubtotalesReport(reportSerializer, estilo, locale);
+            return new InformeTaquillaTpvSubtotalesReport(reportSerializer, estilo, locale, configuration);
         }
         catch (ReportSerializerInitException e)
         {
@@ -425,7 +427,6 @@ public class InformeTaquillaTpvSubtotalesReport extends Report implements Inform
 
     }
 
-	@Override
 	public void genera(String fechaInicio, String fechaFin) {
 
 	}

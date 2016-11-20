@@ -19,6 +19,7 @@ import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.services.EventosSyncService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Path("sync")
 public class SyncResource extends BaseResource {
@@ -27,14 +28,17 @@ public class SyncResource extends BaseResource {
     @InjectParam
     EventosSyncService eventosSyncService;
 
+	@InjectParam
+	Configuration configuration;
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response syncronizaDesdeURL() throws JAXBException, IOException, ParseException {
         String urlRssException = null;
-        String syncUrlsHeaderToken = Configuration.getSyncUrlsHeaderToken();
-        String syncUrlsToken = Configuration.getSyncUrlsToken();
+        String syncUrlsHeaderToken = configuration.getSyncUrlsHeaderToken();
+        String syncUrlsToken = configuration.getSyncUrlsToken();
 
-        for (String urlRss : Configuration.getSyncUrlsRss()) {
+        for (String urlRss : configuration.getSyncUrlsRss()) {
             urlRssException = urlRss;
 
             try {

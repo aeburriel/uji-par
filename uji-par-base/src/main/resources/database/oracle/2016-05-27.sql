@@ -1,0 +1,24 @@
+CREATE TABLE par_reports
+(
+  "id" number,
+  sala_id number,
+  clase varchar2(255),
+  tipo varchar2(100),
+  CONSTRAINT "PAR_REPORTS_PK" PRIMARY KEY ("id"),
+  CONSTRAINT "PAR_REPORTS_FK1" FOREIGN KEY (sala_id)
+  REFERENCES PAR_SALAS ("ID") ON DELETE CASCADE ENABLE
+);
+
+CREATE TABLE par_salas_usuarios
+(
+  "id" number,
+  usuario_id integer,
+  sala_id integer,
+  CONSTRAINT "PAR_SALAS_USUARIOS_PK" PRIMARY KEY ("id"),
+  CONSTRAINT "PAR_SALAS_USUARIOS_US_FK1" FOREIGN KEY (usuario_id)
+  REFERENCES PAR_USUARIOS ("ID") ON DELETE CASCADE ENABLE,
+  CONSTRAINT "PAR_SALAS_USUARIOS_CINES_FK1" FOREIGN KEY (sala_id)
+  REFERENCES PAR_SALAS ("ID") ON DELETE CASCADE ENABLE
+);
+
+INSERT INTO par_version_bbdd (VERSION) VALUES ('2016-05-27.sql');

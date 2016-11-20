@@ -22,11 +22,11 @@ public class PinpadWebService implements PinpadDataService
     private static final int READ_TIMEOUT = 10000;
 
     @Override
-    public String consultaEstado(String id)
+    public String consultaEstado(String id, String secret)
     {
         Client client = createClient();
 
-        String sha1String = Utils.sha1(id + Configuration.getSecret());
+        String sha1String = Utils.sha1(id + secret);
 
         String url = String.format("https://e-ujier.uji.es/pls/www/!pinpad.estado?tpv_identificador=%s&tpv_hash=%s",
                 id, sha1String);
@@ -52,12 +52,12 @@ public class PinpadWebService implements PinpadDataService
     }
 
     @Override
-    public String realizaPago(String id, BigDecimal importe, String concepto)
+    public String realizaPago(String id, BigDecimal importe, String concepto, String secret)
     {
         Client client = createClient();
 
         String importeEnviar = Utils.monedaToCents(importe);
-        String sha1String = Utils.sha1(id + importeEnviar + Configuration.getSecret());
+        String sha1String = Utils.sha1(id + importeEnviar + secret);
 
         String conceptoEncoded;
         try

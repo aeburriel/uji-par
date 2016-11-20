@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+import es.uji.apps.par.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class Pinpad
 
     @Autowired
     PinpadDataService dataService;
+
+	@Autowired
+	Configuration configuration;
 
     public Pinpad()
     {
@@ -40,7 +44,7 @@ public class Pinpad
         try
         {
             log.info(String.format("llamando consultaEstado(\"%s\")...", id));
-            String resultado = dataService.consultaEstado(id);
+            String resultado = dataService.consultaEstado(id, configuration.getSecret());
             log.info(String.format("llamado consultaEstado(\"%s\") -> \"%s\"", id, resultado));
 
             return parseEstado(resultado);
@@ -57,7 +61,7 @@ public class Pinpad
         try
         {
             log.info(String.format("llamando realizaPago(\"%s\", \"%s\", \"%s\")...", id, importe.floatValue(), concepto));
-            String resultado = dataService.realizaPago(id, importe, concepto);
+            String resultado = dataService.realizaPago(id, importe, concepto, configuration.getSecret());
             log.info(String.format("llamado realizaPago(\"%s\", \"%s\", \"%s\") -> \"%s\"", id, importe, concepto, resultado));
             
             return parseResultadoPago(resultado);

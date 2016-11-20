@@ -1,5 +1,8 @@
 package es.uji.apps.par.services.dao;
 
+import es.uji.apps.par.dao.TpvsDAO;
+import es.uji.apps.par.db.TpvsDTO;
+import es.uji.apps.par.model.Tpv;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -72,7 +75,16 @@ public class EventosDAOTest
     private Evento preparaEvento()
     {
     	TipoEvento tipoEvento = tiposEventosDAO.addTipoEvento(new TipoEvento("Tipo evento"));
-        return new Evento("Nombre", tipoEvento);
+		Tpv tpv = new Tpv();
+		tpv.setNombre("Test TPV");
+		if (tpvsDAO.getTpvDefault() == null)
+			tpvsDAO.addTpv(tpv, true);
+
+		TpvsDTO tpvDefault = tpvsDAO.getTpvDefault();
+		tpv.setId(tpvDefault.getId());
+		Evento evento = new Evento("Nombre", tipoEvento);
+		evento.setParTpv(tpv);
+		return evento;
     }
 
     @Test

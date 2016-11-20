@@ -1,5 +1,6 @@
 package com.tgerm.log4j.appender;
 
+import java.io.FileInputStream;
 import java.util.Date;
 import java.util.Properties;
 
@@ -30,10 +31,24 @@ public class GmailSMTPAppender extends SMTPAppender
      * Cached session for later use i.e. while sending emails
      */
     protected Session session;
+	private boolean enviarMailsError;
 
     public GmailSMTPAppender()
     {
         super();
+		try {
+			Properties properties = new Properties();
+			properties.load(new FileInputStream("/etc/uji/par/app.properties"));
+			try {
+				String propEnviarMails = properties.getProperty("uji.par.enviarMailsError");
+				enviarMailsError = (propEnviarMails == null || propEnviarMails.trim().equals("")) ? false : (propEnviarMails.trim
+						().toUpperCase().equals("TRUE"));
+			} catch (Exception e) {
+				enviarMailsError = true;
+			}
+		} catch (Exception e) {
+			enviarMailsError = true;
+		}
     }
 
     /**
@@ -67,7 +82,7 @@ public class GmailSMTPAppender extends SMTPAppender
      */
     protected void sendBuffer()
     {
-        if (!Configuration.getEnviarMailsError().equals("true"))
+        if (!enviarMailsError)
         {
             return;
         }

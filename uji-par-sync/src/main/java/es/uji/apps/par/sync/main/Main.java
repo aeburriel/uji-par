@@ -26,9 +26,12 @@ public class Main
     @Autowired
     EventosSyncService syncService;
 
+	@Autowired
+	Configuration configuration;
+
     private void sync() throws MalformedURLException, JAXBException, IOException, ParseException
     {
-        for (String urlRss:Configuration.getSyncUrlsRss())
+        for (String urlRss:configuration.getSyncUrlsRss())
         {
             syncService.sync(new URL(urlRss).openStream());
         }

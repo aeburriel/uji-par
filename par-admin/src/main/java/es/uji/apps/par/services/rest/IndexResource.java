@@ -1,20 +1,23 @@
 package es.uji.apps.par.services.rest;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-
-import es.uji.apps.par.exceptions.Constantes;
+import com.sun.jersey.api.core.InjectParam;
 import es.uji.apps.par.auth.Authenticator;
 import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.exceptions.Constantes;
 import es.uji.apps.par.i18n.ResourceProperties;
 import es.uji.commons.web.template.HTMLTemplate;
 import es.uji.commons.web.template.Template;
 
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import java.util.Locale;
 
 @Path("index")
 public class IndexResource extends BaseResource
 {
+	@InjectParam
+	Configuration configuration;
+	
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Template index(@QueryParam("lang") String lang) throws Exception
@@ -27,11 +30,11 @@ public class IndexResource extends BaseResource
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "admin", getLocale(), APP);
 
         template.put("user", currentRequest.getSession().getAttribute(Authenticator.USER_ATTRIBUTE));
-        template.put("urlPublic", Configuration.getUrlPublic());
-		template.put("allowMultisesion", Configuration.getAllowMultisesion());
-        template.put("payModes", Configuration.getPayModes(getLocale()));
+        template.put("urlPublic", configuration.getUrlPublic());
+		template.put("allowMultisesion", configuration.getAllowMultisesion());
+        template.put("payModes", configuration.getPayModes(getLocale()));
         template.put("lang", getLocale().getLanguage());
-        template.put("langsAllowed", Configuration.getLangsAllowed());
+        template.put("langsAllowed", configuration.getLangsAllowed());
 
         Boolean b = (Boolean) currentRequest.getSession().getAttribute(Authenticator.READONLY_ATTRIBUTE);
         boolean readOnlyUser = (b == null || !b)?false:true;
@@ -41,9 +44,9 @@ public class IndexResource extends BaseResource
         template.put("controllers", getControllers(readOnlyUser));
         template.put("screens", getScreens(readOnlyUser));
         template.put("views", getViews(readOnlyUser));
-        template.put("multipleTpv", Configuration.isMultipleTpvEnabled());
-        template.put("icaa", Configuration.isMenuICAA());
-        template.put("clientes", Configuration.isMenuClientes());
+        template.put("multipleTpv", configuration.isMultipleTpvEnabled());
+        template.put("icaa", configuration.isMenuICAA());
+        template.put("clientes", configuration.isMenuClientes());
 
         return template;
     }
@@ -77,7 +80,7 @@ public class IndexResource extends BaseResource
                 "            <a href=\"javascript:muestraMenu('ComprasReservas')\"><img src=\"../resources/images/menu/settings.png\" width=\"24\"/><span>" + ResourceProperties.getProperty(locale, "menu.comprasReservas") + "</span></a>" +
                 "        </li>";
 
-        if (Configuration.isMenuAbono()) {
+        if (configuration.isMenuAbono()) {
             menuHtml += "        <li id=\"menuAbonos\">" +
                     "            <a href=\"javascript:muestraMenu('Abonos')\"><img src=\"../resources/images/menu/abonos.png\" width=\"24\"/><span>" + ResourceProperties.getProperty(locale, "menu.abonos") + "</span></a>" +
                     "        </li>";
@@ -87,13 +90,13 @@ public class IndexResource extends BaseResource
                 "            <a href=\"javascript:muestraMenu('Informes')\"><img src=\"../resources/images/menu/informes.png\" width=\"24\"/><span>" + ResourceProperties.getProperty(locale, "menu.informes") + "</span></a>" +
                 "        </li>    ";
 
-        if (Configuration.isMenuClientes()) {
+        if (configuration.isMenuClientes()) {
             menuHtml += "        <li id=\"menuClientes\">" +
                     "            <a href=\"javascript:muestraMenu('Clientes')\"><img src=\"../resources/images/menu/email.png\" width=\"24\"/><span>" + ResourceProperties.getProperty(locale, "menu.clientes") + "</span></a>" +
                     "        </li>    ";
         }
 
-        if (Configuration.isMenuICAA()) {
+        if (configuration.isMenuICAA()) {
             menuHtml += "        <li id=\"menuGenerarFicheros\">" +
                     "            <a href=\"javascript:muestraMenu('GenerarFicheros')\"><img src=\"../resources/images/menu/Save.png\" width=\"24\"/><span>" + ResourceProperties.getProperty(locale, "menu.icaa") + "</span></a>" +
                     "        </li>";
@@ -107,7 +110,7 @@ public class IndexResource extends BaseResource
     private String getControllers(boolean readOnlyUser) {
         String controllers = "['Dashboard', 'Usuarios', 'TiposEventos', 'Eventos', 'PlantillasPrecios', 'ComprasReservas', 'Informes', 'Tarifas'";
 
-        if (Configuration.isMenuClientes()) {
+        if (configuration.isMenuClientes()) {
             controllers += ", 'Clientes'";
         }
 
@@ -115,11 +118,11 @@ public class IndexResource extends BaseResource
             controllers += ", 'Taquilla'";
         }
 
-        if (Configuration.isMenuAbono()) {
+        if (configuration.isMenuAbono()) {
             controllers += ", 'Abonos'";
         }
 
-        if (Configuration.isMenuICAA()) {
+        if (configuration.isMenuICAA()) {
             controllers += ", 'GenerarFicheros'";
         }
 
@@ -132,7 +135,7 @@ public class IndexResource extends BaseResource
         String screens = "[{'Dashboard': 0, 'Usuarios': 1, 'TiposEventos': 2, 'Eventos': 3, 'PlantillasPrecios': 4,  'ComprasReservas': 5, 'Informes': 6, 'Tarifas': 7";
 
         int i = 8;
-        if (Configuration.isMenuClientes()) {
+        if (configuration.isMenuClientes()) {
             screens += ", 'Clientes': " + i;
             i++;
         }
@@ -142,12 +145,12 @@ public class IndexResource extends BaseResource
             i++;
         }
 
-        if (Configuration.isMenuAbono()) {
+        if (configuration.isMenuAbono()) {
             screens += ", 'Abonos': " + i;
             i++;
         }
 
-        if (Configuration.isMenuICAA()) {
+        if (configuration.isMenuICAA()) {
             screens += ", 'GenerarFicheros': " + i;
             i++;
         }
@@ -160,7 +163,7 @@ public class IndexResource extends BaseResource
     private String getViews(boolean readOnlyUser) {
         String views = "[{border: false, xtype: 'dashboard'}, {xtype: 'gridUsuarios'}, {xtype: 'gridTiposEventos'}, {xtype: 'panelEventos'}, {xtype: 'panelPlantillas'}, {xtype: 'panelComprasReservas'}, {xtype: 'panelInformes'}, {xtype: 'panelTarifas'}";
 
-        if (Configuration.isMenuClientes()) {
+        if (configuration.isMenuClientes()) {
             views += ", {xtype: 'gridClientes'}";
         }
 
@@ -168,11 +171,11 @@ public class IndexResource extends BaseResource
             views += ", {xtype: 'panelTaquilla'}";
         }
 
-        if (Configuration.isMenuAbono()) {
+        if (configuration.isMenuAbono()) {
             views += ", {xtype: 'panelAbonos'}";
         }
 
-        if (Configuration.isMenuICAA()) {
+        if (configuration.isMenuICAA()) {
             views += ", {xtype: 'panelSesionesFicheros'}";
         }
 

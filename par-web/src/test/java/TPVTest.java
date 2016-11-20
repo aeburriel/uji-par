@@ -32,6 +32,9 @@ public class TPVTest extends BaseResourceTest {
     @Autowired
     TpvsDAO tpvsDAO;
 
+	@Autowired
+	Configuration configuration;
+
     private TpvsDTO tpvDefault;
 
     public TPVTest() {
@@ -74,8 +77,8 @@ public class TPVTest extends BaseResourceTest {
     public void getTPVCaLangCode() {
         String language = getCALang();
         if (language.equals("ca")) {
-            Assert.assertEquals(Configuration.getTpvLangCaCode(), "003");
-            Assert.assertEquals(Configuration.getTpvLangCaCode(), tpvDefault.getLangCaCode());
+            Assert.assertEquals(configuration.getTpvLangCaCode(), "003");
+            Assert.assertEquals(configuration.getTpvLangCaCode(), tpvDefault.getLangCaCode());
         } else {
             Assert.fail("Idioma incorrecto detectado");
         }
@@ -85,8 +88,8 @@ public class TPVTest extends BaseResourceTest {
     public void getTPVEsLangCode() {
         String language = getESLang();
         if (!language.equals("ca")) {
-            Assert.assertEquals(Configuration.getTpvLangEsCode(), "001");
-            Assert.assertEquals(Configuration.getTpvLangEsCode(), tpvDefault.getLangEsCode());
+            Assert.assertEquals(configuration.getTpvLangEsCode(), "001");
+            Assert.assertEquals(configuration.getTpvLangEsCode(), tpvDefault.getLangEsCode());
         } else {
             Assert.fail("Idioma incorrecto detectado");
         }
@@ -94,17 +97,17 @@ public class TPVTest extends BaseResourceTest {
 
     @Test
     public void getTPVOrderPrefix() {
-        Assert.assertEquals(Configuration.getTpvOrderPrefixCodeCajamar(), "0000");
-        Assert.assertEquals(Configuration.getTpvOrderPrefixCodeCajamar(), tpvDefault.getOrderPrefix());
+        Assert.assertEquals(configuration.getTpvOrderPrefixCodeCajamar(), "0000");
+        Assert.assertEquals(configuration.getTpvOrderPrefixCodeCajamar(), tpvDefault.getOrderPrefix());
     }
 
     @Test
     public void getTPVValues() {
-        Assert.assertEquals(Configuration.getTpvCurrency(), tpvDefault.getCurrency());
-        Assert.assertEquals(Configuration.getTpvCode(), tpvDefault.getCode());
-        Assert.assertEquals(Configuration.getTpvNombre(), tpvDefault.getNombre());
-        Assert.assertEquals(Configuration.getTpvTerminal(), tpvDefault.getTerminal());
-        Assert.assertEquals(Configuration.getTpvTransaction(), tpvDefault.getTransactionCode());
+        Assert.assertEquals(configuration.getTpvCurrency(), tpvDefault.getCurrency());
+        Assert.assertEquals(configuration.getTpvCode(), tpvDefault.getCode());
+        Assert.assertEquals(configuration.getTpvNombre(), tpvDefault.getNombre());
+        Assert.assertEquals(configuration.getTpvTerminal(), tpvDefault.getTerminal());
+        Assert.assertEquals(configuration.getTpvTransaction(), tpvDefault.getTransactionCode());
 
     }
 

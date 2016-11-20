@@ -39,7 +39,7 @@ public class PinpadConsultaEstadoTest
     @Test
     public void testNoError()
     {
-        when(pinpadService.consultaEstado(anyString())).thenReturn("0-<recibo>-Pago correcto");
+        when(pinpadService.consultaEstado(anyString(), "")).thenReturn("0-<recibo>-Pago correcto");
 
         EstadoPinpad estado = pinpad.getEstadoPinpad("");
 
@@ -51,7 +51,7 @@ public class PinpadConsultaEstadoTest
 
 	@Test
 	public void testPendienteConfirmacion() {
-		when(pinpadService.consultaEstado(anyString())).thenReturn("1-<recibo>-Pendiente de confirmación");
+		when(pinpadService.consultaEstado(anyString(), "")).thenReturn("1-<recibo>-Pendiente de confirmación");
 
 		EstadoPinpad estado = pinpad.getEstadoPinpad("");
 
@@ -63,7 +63,7 @@ public class PinpadConsultaEstadoTest
 
 	@Test
 	public void testTimeout() {
-		when(pinpadService.consultaEstado(anyString())).thenReturn("5--Timeout");
+		when(pinpadService.consultaEstado(anyString(), "")).thenReturn("5--Timeout");
 
 		EstadoPinpad estado = pinpad.getEstadoPinpad("");
 
@@ -76,7 +76,7 @@ public class PinpadConsultaEstadoTest
     @Test
     public void testMensajeConGuiones()
     {
-        when(pinpadService.consultaEstado(anyString())).thenReturn("1-2-Esto es el mensaje - ole");
+        when(pinpadService.consultaEstado(anyString(), "")).thenReturn("1-2-Esto es el mensaje - ole");
 
         EstadoPinpad estado = pinpad.getEstadoPinpad("");
 
@@ -85,7 +85,7 @@ public class PinpadConsultaEstadoTest
 
 	@Test
 	public void testReciboNoCreado() {
-		when(pinpadService.consultaEstado(anyString())).thenReturn("6--Recibo no creado");
+		when(pinpadService.consultaEstado(anyString(), "")).thenReturn("6--Recibo no creado");
 
 		EstadoPinpad estado = pinpad.getEstadoPinpad("");
 
@@ -97,7 +97,7 @@ public class PinpadConsultaEstadoTest
 
 	@Test
 	public void testErrorFirma() {
-		when(pinpadService.consultaEstado(anyString())).thenReturn("7--Error de firma");
+		when(pinpadService.consultaEstado(anyString(), "")).thenReturn("7--Error de firma");
 
 		EstadoPinpad estado = pinpad.getEstadoPinpad("");
 
@@ -109,7 +109,7 @@ public class PinpadConsultaEstadoTest
 
 	@Test
 	public void testErrorEnParametros() {
-		when(pinpadService.consultaEstado(anyString())).thenReturn("8--Error en parámetros");
+		when(pinpadService.consultaEstado(anyString(), "")).thenReturn("8--Error en parámetros");
 
 		EstadoPinpad estado = pinpad.getEstadoPinpad("");
 
@@ -121,7 +121,7 @@ public class PinpadConsultaEstadoTest
 
 	@Test
 	public void testErrorDesconocido() {
-		when(pinpadService.consultaEstado(anyString())).thenReturn("9--Error desconocido");
+		when(pinpadService.consultaEstado(anyString(), "")).thenReturn("9--Error desconocido");
 
 		EstadoPinpad estado = pinpad.getEstadoPinpad("");
 

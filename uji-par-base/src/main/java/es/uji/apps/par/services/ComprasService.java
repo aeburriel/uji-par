@@ -41,6 +41,9 @@ public class ComprasService
     @Autowired
     private AbonosService abonosService;
 
+	@Autowired
+	Configuration configuration;
+
     public ResultadoCompra registraCompraTaquilla(Long sesionId, List<Butaca> butacasSeleccionadas)
             throws NoHayButacasLibresException, ButacaOcupadaException, CompraSinButacasException, IncidenciaNotFoundException {
         return registraCompra(sesionId, butacasSeleccionadas, true);
@@ -123,7 +126,7 @@ public class ComprasService
         if (taquilla) {
             SesionDTO sesionDTO = sesionesDAO.getSesion(sesionId);
             long totalAnuladas = sesionesDAO.getButacasAnuladasTotal(sesionId);
-            boolean isVentaDegradada = DateUtils.isDataDegradada(sesionDTO.getFechaCelebracion());
+            boolean isVentaDegradada = configuration.isDataDegradada(sesionDTO.getFechaCelebracion());
             boolean isReprogramada = sesionesDAO.isSesionReprogramada(sesionDTO.getFechaCelebracion(),
                     sesionDTO.getParSala().getId(), sesionId);
 
@@ -197,7 +200,7 @@ public class ComprasService
 
         if (!taquilla)
         {
-            BigDecimal gastosGestion = new BigDecimal(Configuration.getGastosGestion());
+            BigDecimal gastosGestion = new BigDecimal(configuration.getGastosGestion());
                     
             importe = importe.add(gastosGestion);
         }
@@ -236,7 +239,7 @@ public class ComprasService
     public void marcaPagada(long idCompra)
     {
         comprasDAO.marcarPagada(idCompra);
-        if (Configuration.isIdEntrada()) {
+        if (configuration.isIdEntrada()) {
             butacasDAO.asignarIdEntrada(idCompra);
         }
     }
@@ -245,7 +248,7 @@ public class ComprasService
 	public void marcarPagadaConReferenciaDePago(Long idCompra, String referenciaDePago) {
 		
 		comprasDAO.marcarPagadaConReferenciaDePago(idCompra, referenciaDePago);
-        if (Configuration.isIdEntrada()) {
+        if (configuration.isIdEntrada()) {
             butacasDAO.asignarIdEntrada(idCompra);
         }
 	}
@@ -256,7 +259,7 @@ public class ComprasService
         AbonadoDTO abonado = abonadosDAO.getAbonado(idAbonado);
         for (CompraDTO compra : abonado.getParCompras()) {
             comprasDAO.marcarPagada(compra.getId());
-            if (Configuration.isIdEntrada()) {
+            if (configuration.isIdEntrada()) {
                 butacasDAO.asignarIdEntrada(compra.getId());
             }
         }
@@ -268,7 +271,7 @@ public class ComprasService
         AbonadoDTO abonado = abonadosDAO.getAbonado(idAbonado);
         for (CompraDTO compra : abonado.getParCompras()) {
             comprasDAO.marcarPagadaConReferenciaDePago(compra.getId(), referenciaDePago);
-            if (Configuration.isIdEntrada()) {
+            if (configuration.isIdEntrada()) {
                 butacasDAO.asignarIdEntrada(compra.getId());
             }
         }
@@ -443,7 +446,7 @@ public class ComprasService
 
 	public void passarACompra(Long sesionId, Long idCompraReserva) {
 		comprasDAO.passarACompra(sesionId, idCompraReserva);
-        if (Configuration.isIdEntrada()) {
+        if (configuration.isIdEntrada()) {
             butacasDAO.asignarIdEntrada(idCompraReserva);
         }
 	}

@@ -1,5 +1,8 @@
 package es.uji.apps.par.services.dao;
 
+import es.uji.apps.par.dao.TpvsDAO;
+import es.uji.apps.par.db.TpvsDTO;
+import es.uji.apps.par.model.Tpv;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,8 +50,16 @@ public class SesionesDAOTest
     {
     	TipoEvento tipoEvento = new TipoEvento("tipo evento");
     	tipoEvento = tiposEventosDAO.addTipoEvento(tipoEvento);
-    	
+
+		Tpv tpv = new Tpv();
+		tpv.setNombre("Test TPV");
+		if (tpvsDAO.getTpvDefault() == null)
+			tpvsDAO.addTpv(tpv, true);
+
+		TpvsDTO tpvDefault = tpvsDAO.getTpvDefault();
+		tpv.setId(tpvDefault.getId());
     	Evento evento = new Evento("Evento", tipoEvento);
+		evento.setParTpv(tpv);
     	evento = eventosDAO.addEvento(evento);
     	
         Sesion parSesion = new Sesion();

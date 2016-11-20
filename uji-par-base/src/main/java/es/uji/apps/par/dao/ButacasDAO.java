@@ -42,6 +42,9 @@ public class ButacasDAO extends BaseDAO
 	@Autowired
 	private ComprasDAO comprasDAO;
 
+	@Autowired
+	Configuration configuration;
+
     private QButacaDTO qButacaDTO = QButacaDTO.butacaDTO;
 
     @Transactional
@@ -355,7 +358,7 @@ public class ButacasDAO extends BaseDAO
     @Transactional
     public void asignarIdEntrada(Long idCompra) {
         QButacaDTO qButacaDTO = QButacaDTO.butacaDTO;
-		Integer idEntradaConfiguracion = Configuration.getIdEntrada();
+		Integer idEntradaConfiguracion = configuration.getIdEntrada();
 	    JPAQuery query = new JPAQuery(entityManager);
         Integer maxIdEntrada = query.from(qButacaDTO).uniqueResult(qButacaDTO.idEntrada.max().coalesce(idEntradaConfiguracion));
 		maxIdEntrada = (maxIdEntrada < idEntradaConfiguracion)?idEntradaConfiguracion:maxIdEntrada;

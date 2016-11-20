@@ -29,12 +29,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <version>3.9</version>
-        </dependency>
-	
-        <dependency>
             <groupId>es.uji.apps.par</groupId>
             <artifactId>uji-par-base</artifactId>
             <version>0.0.12-SNAPSHOT</version>

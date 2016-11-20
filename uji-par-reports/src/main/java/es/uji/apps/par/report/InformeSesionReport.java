@@ -44,18 +44,20 @@ public class InformeSesionReport extends Report implements InformeInterface
 
     private Locale locale;
     private InformeTaquillaReportStyle style;
+	Configuration configuration;
     
     public InformeSesionReport() throws ReportSerializerInitException {
 		super(reportSerializer, new InformeTaquillaReportStyle());
 	}
 
-    private InformeSesionReport(ReportSerializer serializer, InformeTaquillaReportStyle style, Locale locale)
+    private InformeSesionReport(ReportSerializer serializer, InformeTaquillaReportStyle style, Locale locale, Configuration configuration)
             throws ReportSerializerInitException
     {
         super(serializer, style);
 
         this.style = style;
         this.locale = locale;
+		this.configuration = configuration;
     }
 
     public void genera(String cargo, String firmante, List<InformeSesion> informesSesion, Cine cine, boolean printSesion) 
@@ -124,7 +126,7 @@ public class InformeSesionReport extends Report implements InformeInterface
 	private Block getLogo()
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + Configuration.getLogoReport()).getAbsolutePath());
+        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + configuration.getLogoReport()).getAbsolutePath());
         externalGraphic.setMaxWidth("2cm");
 
         Block block = new Block();
@@ -405,14 +407,14 @@ public class InformeSesionReport extends Report implements InformeInterface
             reportSerializer = new FopPDFSerializer();
     }
 
-    public InformeInterface create(Locale locale)
+    public InformeInterface create(Locale locale, Configuration configuration)
     {
         try
         {
             initStatics();
             InformeTaquillaReportStyle estilo = new InformeTaquillaReportStyle();
 
-            return new InformeSesionReport(reportSerializer, estilo, locale);
+            return new InformeSesionReport(reportSerializer, estilo, locale, configuration);
         }
         catch (ReportSerializerInitException e)
         {
@@ -442,7 +444,6 @@ public class InformeSesionReport extends Report implements InformeInterface
 
     }
 
-	@Override
 	public void genera(String fechaInicio, String fechaFin) {
 
 	}

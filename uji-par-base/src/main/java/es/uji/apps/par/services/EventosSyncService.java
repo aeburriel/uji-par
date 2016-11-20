@@ -23,11 +23,15 @@ public class EventosSyncService
     @Qualifier("syncBenicassim")
     EventosSync syncBenicassim;
 
+	@Autowired
+	Configuration configuration;
+
     private String tipo;
 
-    public EventosSyncService()
+	@Autowired
+    public EventosSyncService(Configuration configuration)
     {
-        tipo = Configuration.getSyncTipo();
+        tipo = configuration.getSyncTipo();
     }
 
     public void setTipo(String tipo)
@@ -44,6 +48,6 @@ public class EventosSyncService
         else
             throw new RuntimeException(
                     "No se ha encontrado sincronizador para el tipo definido en la config uji.sync.lugar="
-                            + Configuration.getSyncTipo());
+                            + configuration.getSyncTipo());
     }
 }

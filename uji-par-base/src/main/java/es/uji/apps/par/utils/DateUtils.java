@@ -146,18 +146,7 @@ public class DateUtils
 	public static Date databaseStringToDate(String databaseDate) throws ParseException {
 	    return DATABASE_DAY.parse(databaseDate);
 	}
-    
-    /**
-     * Se usa para mostrar eventos y sesiones como activos pasados X minutos de la hora del espectáculo
-     */
-    public static Date dateConMargenTrasVenta()
-    {
-        Calendar limite = Calendar.getInstance();
-        limite.add(Calendar.MINUTE, -Configuration.getMargenVentaTaquillaMinutos());
-        
-        return limite.getTime();
-    }
-    
+
     public static String formatDdmmyy(Date fecha)
     {
         return FORMAT_DDMMYY.format(fecha);
@@ -168,15 +157,4 @@ public class DateUtils
 		int week = cal.get(Calendar.WEEK_OF_YEAR);
 		return String.format("%03d", week);
 	}
-
-    public static boolean isDataDegradada(Timestamp data) {
-        long aux = data.getTime() + (Configuration.getMargenVentaTaquillaMinutos() * 60 * 1000);
-        Timestamp timeAux = new Timestamp(aux);
-        return (DateUtils.getCurrentDate().after(timeAux));
-    }
-
-    public static Timestamp getDataTopePerASaberSiEsDegradada(Timestamp data) {
-        long aux = data.getTime() + (Configuration.getMargenVentaTaquillaMinutos() * 60 * 1000);
-        return new Timestamp(aux);
-    }
 }

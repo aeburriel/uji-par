@@ -2,16 +2,12 @@ package es.uji.apps.par.dao;
 
 import java.util.List;
 
+import es.uji.apps.par.db.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mysema.query.jpa.impl.JPAQuery;
 
-import es.uji.apps.par.db.PlantaSalaDTO;
-import es.uji.apps.par.db.QPlantaSalaDTO;
-import es.uji.apps.par.db.QSalaDTO;
-import es.uji.apps.par.db.QSesionDTO;
-import es.uji.apps.par.db.SalaDTO;
 import es.uji.apps.par.model.PlantaSala;
 import es.uji.apps.par.model.Sala;
 import es.uji.apps.par.model.Sesion;
@@ -83,4 +79,9 @@ public class SalasDAO extends BaseDAO
     public void persistSala(SalaDTO salaDTO) {
         entityManager.persist(salaDTO);
     }
+
+	@Transactional
+	public void addReport(ReportDTO reportDTO) {
+		entityManager.persist(reportDTO);
+	}
 }

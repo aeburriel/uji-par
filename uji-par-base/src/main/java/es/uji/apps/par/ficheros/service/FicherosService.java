@@ -49,6 +49,9 @@ public class FicherosService
     @Autowired
     private SesionesDAO sesionesDAO;
 
+	@Autowired
+	Configuration configuration;
+
     public FicheroRegistros generaFicheroRegistros(Date fechaEnvioAnterior, String tipo, List<Sesion> sesiones) 
     		throws IncidenciaNotFoundException, UnsupportedEncodingException, SesionSinFormatoIdiomaIcaaException
     {
@@ -156,7 +159,7 @@ public class FicherosService
     
     public byte[] encryptData(byte[] contenido) throws IOException, InterruptedException {
     	Calendar cal = Calendar.getInstance();
-    	String filePath = Configuration.getTmpFolder() + "/" + DateUtils.dateToStringForFileNames(cal.getTime()); 
+    	String filePath = configuration.getTmpFolder() + "/" + DateUtils.dateToStringForFileNames(cal.getTime());
  
 	    FileOutputStream fileOuputStream =  new FileOutputStream(filePath); 
 	    fileOuputStream.write(contenido);
@@ -176,9 +179,9 @@ public class FicherosService
     private String doPGP(String filePath) throws IOException, InterruptedException {
     	String pathFicheroSalida = filePath + "_cifrado";
     	/*String comando = "gpg --compress-algo 1 --cipher-algo cast5 --no-armor --output "
-    		+ pathFicheroSalida + " --symmetric --passphrase " + Configuration.getPassphrase() + " " + filePath;*/
+    		+ pathFicheroSalida + " --symmetric --passphrase " + configuration.getPassphrase() + " " + filePath;*/
 		String comando = "gpg --compress-algo 1 --cipher-algo cast5 --no-armor --encrypt --trust-model always --recipient " +
-				Configuration.getPassphrase() + " --output " + pathFicheroSalida + " " + filePath;
+				configuration.getPassphrase() + " --output " + pathFicheroSalida + " " + filePath;
     	Process process = Runtime.getRuntime().exec(comando);
     	process.waitFor();
     	return pathFicheroSalida;

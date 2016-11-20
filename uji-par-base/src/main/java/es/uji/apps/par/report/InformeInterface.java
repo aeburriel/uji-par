@@ -1,6 +1,7 @@
 package es.uji.apps.par.report;
 
 import es.uji.apps.fopreports.serialization.ReportSerializationException;
+import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.exceptions.SinIvaException;
 import es.uji.apps.par.model.Cine;
 import es.uji.apps.par.model.InformeSesion;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Locale;
 
 public interface InformeInterface {
-	public InformeInterface create(Locale locale);
+	public InformeInterface create(Locale locale, Configuration configuration);
 	public void serialize(OutputStream output) throws ReportSerializationException;
 	public void genera(String inicio, String fin, List<InformeModelReport> compras, BigDecimal totalTaquillaTPV,
             BigDecimal totalTaquillaEfectivo, BigDecimal totalOnline);

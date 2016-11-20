@@ -74,6 +74,12 @@ public class SalaDTO implements Serializable
     @OneToMany(mappedBy = "sala", fetch = FetchType.LAZY)
     private List<PlantillaDTO> parPlantillas;
 
+	@OneToMany(mappedBy = "sala", fetch = FetchType.LAZY)
+	private List<ReportDTO> parReports;
+
+	@OneToMany(mappedBy = "parSala", fetch = FetchType.LAZY)
+	private List<SalasUsuarioDTO> parSalasUsuario;
+
     public SalaDTO()
     {
     }
@@ -240,4 +246,20 @@ public class SalaDTO implements Serializable
     public void setHtmlTemplateName(String htmlTemplateName) {
         this.htmlTemplateName = htmlTemplateName;
     }
+
+	public List<ReportDTO> getParReports() {
+		return parReports;
+	}
+
+	public void setParReports(List<ReportDTO> parReports) {
+		this.parReports = parReports;
+	}
+
+	public List<SalasUsuarioDTO> getParSalasUsuario() {
+		return parSalasUsuario;
+	}
+
+	public void setParSalasUsuario(List<SalasUsuarioDTO> parSalasUsuario) {
+		this.parSalasUsuario = parSalasUsuario;
+	}
 }

@@ -3,11 +3,13 @@ package es.uji.apps.par.dao;
 import com.mysema.query.jpa.impl.JPADeleteClause;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.jpa.impl.JPAUpdateClause;
+import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.database.DatabaseHelper;
 import es.uji.apps.par.database.DatabaseHelperFactory;
 import es.uji.apps.par.db.QTarifaDTO;
 import es.uji.apps.par.db.TarifaDTO;
 import es.uji.apps.par.model.Tarifa;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,9 +23,10 @@ public class TarifasDAO extends BaseDAO
     @SuppressWarnings("unused")
 	private DatabaseHelper databaseHelper;
 
-    public TarifasDAO()
+	@Autowired
+    public TarifasDAO(Configuration configuration)
     {
-        databaseHelper = DatabaseHelperFactory.newInstance();
+        databaseHelper = DatabaseHelperFactory.newInstance(configuration);
     }
 
     @Transactional
