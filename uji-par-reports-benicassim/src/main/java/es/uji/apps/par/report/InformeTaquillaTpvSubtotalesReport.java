@@ -419,7 +419,7 @@ public class InformeTaquillaTpvSubtotalesReport extends Report implements Inform
 		
 	}
 
-	public void genera(long sesionId) throws SinIvaException {
+	public void genera(long sesionId, String userUID) throws SinIvaException {
 
 	}
 

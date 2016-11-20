@@ -286,7 +286,7 @@ public class InformeTaquillaReport extends Report implements InformeInterface
 		
 	}
 
-	public void genera(long sesionId) throws SinIvaException {
+	public void genera(long sesionId, String userUID) throws SinIvaException {
 
 	}
 

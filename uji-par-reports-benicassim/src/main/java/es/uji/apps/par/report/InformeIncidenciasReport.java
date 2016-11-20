@@ -89,7 +89,7 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
         return listaInformesSesion;
     }
 
-	private void creaCabecera()
+	private void creaCabecera(String userUID)
 	{
 		BaseTable table = new BaseTable(style, 3, "10cm", "4.6cm", "3.7cm");
 
@@ -107,7 +107,7 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
 		cell.setBorderRightColor("black");
 		cell.setBorderRightStyle(BorderStyleType.SOLID);
 
-		Cine cine = Cine.cineDTOToCine(cinesDAO.getCines().get(0));
+		Cine cine = Cine.cineDTOToCine(cinesDAO.getCines(userUID).get(0));
 		block = new Block();
 		block.getContent().add(getDatosCine(cine));
 		block.setMarginTop("0.5cm");
@@ -152,7 +152,7 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
 	}
 
     public void genera(String fechaInicio, String fechaFin, String userUID) throws ParseException {
-		creaCabecera();
+		creaCabecera(userUID);
 		creaTituloYPeriodo(fechaInicio, fechaFin);
 		creaTabla(fechaInicio, fechaFin, userUID);
 		creaFirma(configuration.getCargoInformeEfectivo(), configuration.getFirmanteInformeEfectivo());
@@ -275,7 +275,7 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
     public void genera(String cargo, String firmante, List<InformeSesion> informesSesion, Cine cine, boolean printSesion) throws SinIvaException {
     }
 
-	public void genera(long sesionId) throws SinIvaException {
+	public void genera(long sesionId, String userUID) throws SinIvaException {
 
 	}
 
