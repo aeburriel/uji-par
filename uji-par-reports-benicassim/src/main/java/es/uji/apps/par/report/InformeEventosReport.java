@@ -459,6 +459,6 @@ public class InformeEventosReport extends Report implements InformeInterface
         public void genera(long sesionId) throws SinIvaException {
         }
 
-        public void genera(String fechaInicio, String fechaFin) {
+        public void genera(String fechaInicio, String fechaFin, String userUID) {
         }
 }
