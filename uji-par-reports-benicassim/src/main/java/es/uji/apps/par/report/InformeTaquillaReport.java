@@ -37,13 +37,14 @@ public class InformeTaquillaReport extends Report implements InformeInterface
 		super(reportSerializer, new InformeTaquillaReportStyle());
 	}
 
-    private InformeTaquillaReport(ReportSerializer serializer, InformeTaquillaReportStyle style, Locale locale)
+    private InformeTaquillaReport(ReportSerializer serializer, InformeTaquillaReportStyle style, Locale locale, Configuration configuration)
             throws ReportSerializerInitException
     {
         super(serializer, style);
 
         this.style = style;
         this.locale = locale;
+        this.configuration = configuration;
     }
 
     public void genera(String inicio, String fin, List<InformeModelReport> compras, BigDecimal totalTaquillaTPV,
@@ -261,7 +262,7 @@ public class InformeTaquillaReport extends Report implements InformeInterface
 			this.configuration = configuration;
             InformeTaquillaReportStyle estilo = new InformeTaquillaReportStyle();
 
-            return new InformeTaquillaReport(reportSerializer, estilo, locale);
+            return new InformeTaquillaReport(reportSerializer, estilo, locale, configuration);
         }
         catch (ReportSerializerInitException e)
         {
@@ -289,7 +290,6 @@ public class InformeTaquillaReport extends Report implements InformeInterface
 
 	}
 
-	@Override
 	public void genera(String fechaInicio, String fechaFin) {
 
 	}

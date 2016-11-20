@@ -46,16 +46,19 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
     private String tipoEntrada;
     private String iniciales;
 
+    private Configuration configuration;
+
 	public EntradaTaquillaReport() throws ReportSerializerInitException {
     	super(reportSerializer, new EntradaReportStyle());
     }
 
-    private EntradaTaquillaReport(ReportSerializer serializer, ReportStyle style, Locale locale)
+    private EntradaTaquillaReport(ReportSerializer serializer, ReportStyle style, Locale locale, Configuration configuration)
             throws ReportSerializerInitException
     {
         super(serializer, style);
 
         this.locale = locale;
+        this.configuration = configuration;
         
         SimplePageMaster reciboPageMaster = withSimplePageMaster();
         reciboPageMaster.setMasterName("reciboPinpad");
@@ -114,7 +117,7 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
         style.setSimplePageMasterRegionBodyMarginTop("0");
 
         BaseTable entradaTable = new BaseTable(style, 1, EntradaTaquillaReport.sixeZonaImpresion);
-        if (Configuration.isTicketLogo())
+        if (configuration.isTicketLogo())
         {
             entradaTable.withNewRow();
             entradaTable.withNewCell(createLogo());
@@ -368,7 +371,7 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
             reportStyle.setSimplePageMasterRegionBodyMarginTop("0cm");
             reportStyle.setSimplePageMasterRegionBodyMarginBottom("0cm");
 
-            return new EntradaTaquillaReport(reportSerializer, reportStyle, locale);
+            return new EntradaTaquillaReport(reportSerializer, reportStyle, locale, configuration);
         }
         catch (ReportSerializerInitException e)
         {

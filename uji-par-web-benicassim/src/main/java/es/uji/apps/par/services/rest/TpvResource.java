@@ -14,6 +14,7 @@ import es.uji.commons.web.template.HTMLTemplate;
 import es.uji.commons.web.template.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import sis.redsys.api.ApiMacSha256;
 
@@ -33,6 +34,9 @@ import java.util.Locale;
 @Path("tpv")
 public class TpvResource extends BaseResource implements TpvInterface {
     private static final Logger log = LoggerFactory.getLogger(TpvResource.class);
+
+    @Autowired
+    Configuration configuration;
 
     @InjectParam
     private ComprasService compras;
@@ -56,7 +60,7 @@ public class TpvResource extends BaseResource implements TpvInterface {
 
     private void initializeConnectionIfNeeded() throws SQLException {
         if (conn == null)
-            conn = DriverManager.getConnection(Configuration.getJdbUrl(), Configuration.getDBUser(), Configuration.getDBPassword());
+            conn = DriverManager.getConnection(configuration.getJdbUrl(), configuration.getDBUser(), configuration.getDBPassword());
     }
 
     private void closeConnection() throws SQLException {
@@ -142,12 +146,12 @@ public class TpvResource extends BaseResource implements TpvInterface {
             log.info("Compra NO caducada: " + compra.getId());
             compras.marcaPagadaPasarela(compra.getId(), recibo);
 
-            if (Configuration.isIdEntrada()) {
+            if (configuration.isIdEntrada()) {
                 try {
                     initializeConnectionIfNeeded();
                     PreparedStatement stmt = conn.prepareStatement("select updateEntradaId(?, ?);commit;");
                     stmt.setInt(1, (int) compra.getId());
-                    stmt.setInt(2, new Long(Configuration.getIdEntrada()).intValue());
+                    stmt.setInt(2, new Long(configuration.getIdEntrada()).intValue());
                     stmt.execute();
                     closeConnection();
 
@@ -252,13 +256,13 @@ public class TpvResource extends BaseResource implements TpvInterface {
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "compraValida", locale, APP);
         String url = request.getRequestURL().toString();
 
-        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(Configuration.getUrlPublic(), url, language.toString()));
+        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(configuration.getUrlPublic(), url, language.toString()));
         template.put("baseUrl", getBaseUrlPublic());
 
         template.put("referencia", recibo);
         template.put("email", compra.getEmail());
         template.put("url", getBaseUrlPublic() + "/rest/compra/" + compra.getUuid() + "/pdf");
-        template.put("urlComoLlegar", Configuration.getUrlComoLlegar());
+        template.put("urlComoLlegar", configuration.getUrlComoLlegar());
         template.put("lang", language);
 
         return template;
@@ -281,7 +285,7 @@ public class TpvResource extends BaseResource implements TpvInterface {
     }
 
     private void enviaMail(String email, String uuid, String recibo) {
-        String urlEntradas = String.format("%s/rest/compra/%s/pdf", Configuration.getUrlPublic(), uuid);
+        String urlEntradas = String.format("%s/rest/compra/%s/pdf", configuration.getUrlPublic(), uuid);
 
         String titulo = ResourceProperties.getProperty(new Locale("ca"), "mail.entradas.titulo") + " | " +
                 ResourceProperties.getProperty(new Locale("es"), "mail.entradas.titulo");

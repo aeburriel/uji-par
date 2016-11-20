@@ -56,7 +56,7 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
         super(reportSerializer, new InformeTaquillaReportStyle());
     }
 
-    private InformeIncidenciasReport(ReportSerializer serializer, InformeTaquillaReportStyle style, Locale locale)
+    private InformeIncidenciasReport(ReportSerializer serializer, InformeTaquillaReportStyle style, Locale locale, Configuration configuration)
             throws ReportSerializerInitException {
         super(serializer, style);
 
@@ -65,6 +65,7 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
 
         this.style = style;
         this.locale = locale;
+        this.configuration = configuration;
     }
 
     private List<InformeSesion> getInformeSesiones(String fechaInicio, String fechaFin) throws ParseException {
@@ -245,7 +246,7 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
 			this.configuration = configuration;
             InformeTaquillaReportStyle estilo = new InformeTaquillaReportStyle();
 
-            return new InformeIncidenciasReport(reportSerializer, estilo, locale);
+            return new InformeIncidenciasReport(reportSerializer, estilo, locale, configuration);
         } catch (ReportSerializerInitException e) {
             throw new RuntimeException(e);
         }
@@ -271,7 +272,6 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
 
     }
 
-    @Override
     public void genera(String cargo, String firmante, List<InformeSesion> informesSesion, Cine cine, boolean printSesion) throws SinIvaException {
     }
 
@@ -279,7 +279,6 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
 
 	}
 
-	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		appContext = applicationContext;
 	}

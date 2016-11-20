@@ -50,13 +50,14 @@ public class InformeSesionReport extends Report implements InformeInterface
 		super(reportSerializer, new InformeTaquillaReportStyle());
 	}
 
-    private InformeSesionReport(ReportSerializer serializer, InformeTaquillaReportStyle style, Locale locale)
+    private InformeSesionReport(ReportSerializer serializer, InformeTaquillaReportStyle style, Locale locale, Configuration configuration)
             throws ReportSerializerInitException
     {
         super(serializer, style);
 
         this.style = style;
         this.locale = locale;
+        this.configuration = configuration;
     }
 
     public void genera(String cargo, String firmante, List<InformeSesion> informesSesion, Cine cine, boolean printSesion) 
@@ -413,7 +414,7 @@ public class InformeSesionReport extends Report implements InformeInterface
 			this.configuration = configuration;
             InformeTaquillaReportStyle estilo = new InformeTaquillaReportStyle();
 
-            return new InformeSesionReport(reportSerializer, estilo, locale);
+            return new InformeSesionReport(reportSerializer, estilo, locale, configuration);
         }
         catch (ReportSerializerInitException e)
         {

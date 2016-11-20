@@ -41,12 +41,13 @@ public class InformeEventosReport extends Report implements InformeInterface
 	}
 
     private InformeEventosReport(ReportSerializer serializer, InformeTaquillaReportStyle style,
-            Locale locale) throws ReportSerializerInitException
+            Locale locale, Configuration configuration) throws ReportSerializerInitException
     {
         super(serializer, style);
 
         this.style = style;
         this.locale = locale;
+        this.configuration = configuration;
     }
 
     public void genera(String inicio, String fin, List<InformeModelReport> compras) throws SinIvaException
@@ -426,7 +427,7 @@ public class InformeEventosReport extends Report implements InformeInterface
 			this.configuration = configuration;
             InformeTaquillaReportStyle estilo = new InformeTaquillaReportStyle();
 
-            return new InformeEventosReport(reportSerializer, estilo, locale);
+            return new InformeEventosReport(reportSerializer, estilo, locale, configuration);
         }
         catch (ReportSerializerInitException e)
         {
@@ -458,7 +459,6 @@ public class InformeEventosReport extends Report implements InformeInterface
         public void genera(long sesionId) throws SinIvaException {
         }
 
-        @Override
         public void genera(String fechaInicio, String fechaFin) {
         }
 }

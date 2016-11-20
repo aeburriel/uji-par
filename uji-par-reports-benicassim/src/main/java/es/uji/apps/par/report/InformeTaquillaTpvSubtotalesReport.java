@@ -40,12 +40,13 @@ public class InformeTaquillaTpvSubtotalesReport extends Report implements Inform
 	}
 
     private InformeTaquillaTpvSubtotalesReport(ReportSerializer serializer, InformeTaquillaReportStyle style,
-            Locale locale) throws ReportSerializerInitException
+            Locale locale, Configuration configuration) throws ReportSerializerInitException
     {
         super(serializer, style);
 
         this.style = style;
         this.locale = locale;
+        this.configuration = configuration;
     }
 
     public void genera(String inicio, String fin, List<InformeModelReport> compras, List<InformeAbonoReport> abonos,
@@ -394,7 +395,7 @@ public class InformeTaquillaTpvSubtotalesReport extends Report implements Inform
 			this.configuration = configuration;
             InformeTaquillaReportStyle estilo = new InformeTaquillaReportStyle();
 
-            return new InformeTaquillaTpvSubtotalesReport(reportSerializer, estilo, locale);
+            return new InformeTaquillaTpvSubtotalesReport(reportSerializer, estilo, locale, configuration);
         }
         catch (ReportSerializerInitException e)
         {
@@ -422,7 +423,6 @@ public class InformeTaquillaTpvSubtotalesReport extends Report implements Inform
 
 	}
 
-	@Override
 	public void genera(String fechaInicio, String fechaFin) {
 
 	}

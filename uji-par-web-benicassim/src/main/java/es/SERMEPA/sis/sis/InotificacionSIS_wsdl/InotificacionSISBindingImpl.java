@@ -8,6 +8,7 @@ import es.uji.apps.par.utils.DateUtils;
 import org.bouncycastle.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import sis.redsys.api.ApiMacSha256;
 
 import javax.xml.bind.JAXBContext;
@@ -25,9 +26,12 @@ public class InotificacionSISBindingImpl implements InotificacionSISPortType {
     private static final int PEDIDO_REPETIDO = 913;
     private static Connection conn = null;
 
+    @Autowired
+    Configuration configuration;
+
     private void initializeConnectionIfNeeded() throws SQLException {
         if (conn == null)
-            conn = DriverManager.getConnection(Configuration.getJdbUrl(), Configuration.getDBUser(), Configuration.getDBPassword());
+            conn = DriverManager.getConnection(configuration.getJdbUrl(), configuration.getDBUser(), configuration.getDBPassword());
     }
 
     private void closeConnection() throws SQLException {
@@ -189,13 +193,13 @@ public class InotificacionSISBindingImpl implements InotificacionSISPortType {
         initializeConnectionIfNeeded();
         PreparedStatement stmt;
 
-        if (Configuration.isIdEntrada()) {
+        if (configuration.isIdEntrada()) {
             stmt = conn.prepareStatement("update PAR_COMPRAS set CODIGO_PAGO_PASARELA = ?, " +
                     "PAGADA = true where id = ?;select updateEntradaId(?, ?);commit;");
             stmt.setString(1, recibo);
             stmt.setLong(2, id);
             stmt.setInt(3, new Long(id).intValue());
-            stmt.setInt(4, new Long(Configuration.getIdEntrada()).intValue());
+            stmt.setInt(4, new Long(configuration.getIdEntrada()).intValue());
         }
         else {
             stmt = conn.prepareStatement("update PAR_COMPRAS set CODIGO_PAGO_PASARELA = ?, PAGADA = true where id = ?;commit;");
@@ -247,7 +251,7 @@ public class InotificacionSISBindingImpl implements InotificacionSISPortType {
     private void enviaMail(String email, String uuid, String recibo) throws SQLException
     {
         initializeConnectionIfNeeded();
-        String urlEntradas = String.format("%s/rest/compra/%s/pdf", Configuration.getUrlPublic(), uuid);
+        String urlEntradas = String.format("%s/rest/compra/%s/pdf", configuration.getUrlPublic(), uuid);
 
         String titulo = ResourceProperties.getProperty(new Locale("ca"), "mail.entradas.titulo") + " | " +
                 ResourceProperties.getProperty(new Locale("es"), "mail.entradas.titulo");
@@ -255,7 +259,7 @@ public class InotificacionSISBindingImpl implements InotificacionSISPortType {
                 ResourceProperties.getProperty(new Locale("es"), "mail.entradas.texto", recibo, urlEntradas);
 
         PreparedStatement stmt = conn.prepareStatement("insert into PAR_MAILS (DE, PARA, TITULO, TEXTO, FECHA_CREADO, COMPRA_UUID) values (?, ?, ?, ?, ?, ?);commit;");
-        stmt.setString(1, Configuration.getMailFrom());
+        stmt.setString(1, configuration.getMailFrom());
         stmt.setString(2, email);
         stmt.setString(3, titulo);
         stmt.setString(4, texto);
@@ -270,7 +274,7 @@ public class InotificacionSISBindingImpl implements InotificacionSISPortType {
         initializeConnectionIfNeeded();
         PreparedStatement stmt = conn.prepareStatement("insert into PAR_MAILS (DE, PARA, TITULO, TEXTO, FECHA_CREADO, COMPRA_UUID) " +
                 "values (?, ?, ?, ?, ?, ?);commit;");
-        stmt.setString(1, Configuration.getMailFrom());
+        stmt.setString(1, configuration.getMailFrom());
         stmt.setString(2, "debug@wifi.benicassim.es");
         stmt.setString(3, "Pedido repetido en venta de entradas online de Benicàssim. Revisar por si hay error");
         stmt.setString(4, "Revisar la entrada con id " + id + " respuesta del banco " + estadoBanco + " y uuid " + uuid);

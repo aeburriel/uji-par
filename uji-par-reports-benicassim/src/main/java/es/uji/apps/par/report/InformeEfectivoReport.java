@@ -39,13 +39,14 @@ public class InformeEfectivoReport extends Report implements InformeInterface
 		super(reportSerializer, new InformeTaquillaReportStyle());
 	}
 
-    private InformeEfectivoReport(ReportSerializer serializer, InformeTaquillaReportStyle style, Locale locale)
+    private InformeEfectivoReport(ReportSerializer serializer, InformeTaquillaReportStyle style, Locale locale, Configuration configuration)
             throws ReportSerializerInitException
     {
         super(serializer, style);
 
         this.style = style;
         this.locale = locale;
+        this.configuration = configuration;
     }
 
     public void genera(String inicio, String fin, List<InformeModelReport> compras, List<InformeAbonoReport> abonos, String cargoInformeEfectivo,
@@ -347,7 +348,7 @@ public class InformeEfectivoReport extends Report implements InformeInterface
 			this.configuration = configuration;
             InformeTaquillaReportStyle estilo = new InformeTaquillaReportStyle();
 
-            return new InformeEfectivoReport(reportSerializer, estilo, locale);
+            return new InformeEfectivoReport(reportSerializer, estilo, locale, configuration);
         }
         catch (ReportSerializerInitException e)
         {
@@ -374,7 +375,6 @@ public class InformeEfectivoReport extends Report implements InformeInterface
 
 	}
 
-	@Override
 	public void genera(String fechaInicio, String fechaFin) {
 
 	}

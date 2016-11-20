@@ -498,12 +498,10 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         this.barcode = barcode;
     }
 
-    @Override
     public boolean esAgrupada() {
         return false;
     }
 
-    @Override
     public void setTotalButacas(int totalButacas) {
         this.totalButacas = totalButacas;
     }
