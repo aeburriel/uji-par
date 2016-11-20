@@ -11,7 +11,7 @@
 
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath:applicationContext-db.xml classpath:applicationContext.xml classpath:applicationContextFilter.xml</param-value>
+		<param-value>classpath:applicationContext-db.xml classpath:applicationContext.xml classpath:applicationContextFilter.xml classpath:applicationContext-butacasConImagen.xml</param-value>
 	</context-param>
 
 	<listener>
