@@ -38,6 +38,10 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
     private String urlPortada;
     private String barcode;
     private int totalButacas;
+    private String cif;
+    private String promotor;
+    private String nifPromotor;
+
 	private Configuration configuration;
 
 	public EntradaReport() throws ReportSerializerInitException {
@@ -500,6 +504,21 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
 
     public boolean esAgrupada() {
         return false;
+    }
+
+    public void setCif(String cif)
+    {
+        this.cif = cif;
+    }
+
+    public void setPromotor(String promotor)
+    {
+        this.promotor = promotor;
+    }
+
+    public void setNifPromotor(String nifPromotor)
+    {
+        this.nifPromotor = nifPromotor;
     }
 
     public void setTotalButacas(int totalButacas) {

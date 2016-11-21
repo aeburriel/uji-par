@@ -45,6 +45,9 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
     private String barcode;
     private String tipoEntrada;
     private String iniciales;
+    private String cif;
+    private String promotor;
+    private String nifPromotor;
 
     private Configuration configuration;
 
@@ -403,7 +406,22 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
     {
         this.horaApertura = horaApertura;
     }
-    
+
+    public void setPromotor(String promotor)
+    {
+        this.promotor = promotor;
+    }
+
+    public void setCif(String cif)
+    {
+        this.cif = cif;
+    }
+
+    public void setNifPromotor(String nifPromotor)
+    {
+        this.nifPromotor = nifPromotor;
+    }
+
     private EntradaReportStyle getStyleWithFont() {
     	EntradaReportStyle reportStyle = new EntradaReportStyle();
         reportStyle.setFontFamily(EntradaTaquillaReport.font);
