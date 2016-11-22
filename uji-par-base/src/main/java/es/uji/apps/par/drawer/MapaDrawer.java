@@ -48,8 +48,10 @@ public class MapaDrawer implements MapaDrawerInterface
     private Map<String, BufferedImage> imagenes;
 
 	@Autowired
-    public MapaDrawer(Configuration configuration) throws IOException
+    public MapaDrawer(ButacasService butacasService, AbonosService abonosService, Configuration configuration) throws IOException
     {
+                this.butacasService = butacasService;
+                this.abonosService = abonosService;
 		this.configuration = configuration;
         cargaImagenes();
         leeJson();
