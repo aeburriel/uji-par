@@ -52,12 +52,6 @@ public class SesionesDAOTest
     @Autowired
     TpvsDAO tpvsDAO;
 
-    @Before
-    public void setup()
-    {
-        tpvsDAO.addTpvDefault();
-    }
-
     @PersistenceContext
     protected EntityManager entityManager;
 
