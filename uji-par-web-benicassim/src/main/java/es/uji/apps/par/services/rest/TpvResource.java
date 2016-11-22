@@ -256,7 +256,7 @@ public class TpvResource extends BaseResource implements TpvInterface {
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "compraValida", locale, APP);
         String url = request.getRequestURL().toString();
 
-        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(configuration.getUrlPublic(), url, language.toString()));
+        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(configurationSelector.getUrlPublic(), url, language.toString()));
         template.put("baseUrl", getBaseUrlPublic());
 
         template.put("referencia", recibo);
@@ -285,7 +285,7 @@ public class TpvResource extends BaseResource implements TpvInterface {
     }
 
     private void enviaMail(String email, String uuid, String recibo) {
-        String urlEntradas = String.format("%s/rest/compra/%s/pdf", configuration.getUrlPublic(), uuid);
+        String urlEntradas = String.format("%s/rest/compra/%s/pdf", configurationSelector.getUrlPublic(), uuid);
 
         String titulo = ResourceProperties.getProperty(new Locale("ca"), "mail.entradas.titulo") + " | " +
                 ResourceProperties.getProperty(new Locale("es"), "mail.entradas.titulo");

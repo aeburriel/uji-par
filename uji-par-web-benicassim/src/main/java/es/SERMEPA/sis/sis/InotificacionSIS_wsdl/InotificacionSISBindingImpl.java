@@ -1,6 +1,7 @@
 package es.SERMEPA.sis.sis.InotificacionSIS_wsdl;
 
 import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.config.ConfigurationSelector;
 import es.uji.apps.par.db.CompraDTO;
 import es.uji.apps.par.i18n.ResourceProperties;
 import es.uji.apps.par.tpvmodel.Message;
@@ -28,6 +29,9 @@ public class InotificacionSISBindingImpl implements InotificacionSISPortType {
 
     @Autowired
     Configuration configuration;
+
+    @Autowired
+    ConfigurationSelector configurationSelector;
 
     private void initializeConnectionIfNeeded() throws SQLException {
         if (conn == null)
@@ -251,7 +255,7 @@ public class InotificacionSISBindingImpl implements InotificacionSISPortType {
     private void enviaMail(String email, String uuid, String recibo) throws SQLException
     {
         initializeConnectionIfNeeded();
-        String urlEntradas = String.format("%s/rest/compra/%s/pdf", configuration.getUrlPublic(), uuid);
+        String urlEntradas = String.format("%s/rest/compra/%s/pdf", configurationSelector.getUrlPublic(), uuid);
 
         String titulo = ResourceProperties.getProperty(new Locale("ca"), "mail.entradas.titulo") + " | " +
                 ResourceProperties.getProperty(new Locale("es"), "mail.entradas.titulo");
