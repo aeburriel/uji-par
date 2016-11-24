@@ -90,8 +90,7 @@ public class EntradasService {
 
 	public EntradaReportTaquillaInterface generaEntradaTaquillaYRellena(String uuidCompra, String userUID, String urlPublicSinHTTPS) throws SAXException, IOException {
 		String reportClass = comprasDAO.getReportClassByCompraUUID(uuidCompra, EntradaReportFactory.TIPO_ENTRADA_TAQUILLA);
-		if (entradaTaquillaReport == null)
-			entradaTaquillaReport = EntradaReportFactory.newInstanceTaquilla(reportClass);
+		entradaTaquillaReport = EntradaReportFactory.newInstanceTaquilla(reportClass);
 
 		EntradaReportTaquillaInterface entrada = entradaTaquillaReport.create(new Locale(configuration.getIdiomaPorDefecto()), configuration);
 
