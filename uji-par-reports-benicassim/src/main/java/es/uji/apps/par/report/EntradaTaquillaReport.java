@@ -48,6 +48,9 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
     private String cif;
     private String promotor;
     private String nifPromotor;
+    private String nombreEntidad;
+    private String direccion;
+    private String urlCondiciones;
 
     private Configuration configuration;
 
@@ -430,5 +433,20 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
     
     public void setUrlPortada(String urlPortada) {
 		
-	}
+    }
+
+    public void setNombreEntidad(String nombreEntidad)
+    {
+        this.nombreEntidad = nombreEntidad;
+    }
+
+    public void setDireccion(String direccion)
+    {
+        this.direccion = direccion;
+    }
+
+    public void setUrlCondiciones(String urlCondiciones)
+    {
+        this.urlCondiciones = urlCondiciones;
+    }
 }

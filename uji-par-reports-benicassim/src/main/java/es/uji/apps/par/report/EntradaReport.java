@@ -41,6 +41,8 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
     private String cif;
     private String promotor;
     private String nifPromotor;
+    private String nombreEntidad;
+    private String direccion;
 
 	private Configuration configuration;
 
@@ -523,5 +525,15 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
 
     public void setTotalButacas(int totalButacas) {
         this.totalButacas = totalButacas;
+    }
+
+    public void setNombreEntidad(String nombreEntidad)
+    {
+        this.nombreEntidad = nombreEntidad;
+    }
+
+    public void setDireccion(String direccion)
+    {
+        this.direccion = direccion;
     }
 }

@@ -35,19 +35,21 @@ public class InformeEventosReport extends Report implements InformeInterface
     private Locale locale;
     private InformeTaquillaReportStyle style;
 	private Configuration configuration;
+    String logoReport;
 
 	public InformeEventosReport() throws ReportSerializerInitException {
 		super(reportSerializer, new InformeTaquillaReportStyle());
 	}
 
     private InformeEventosReport(ReportSerializer serializer, InformeTaquillaReportStyle style,
-            Locale locale, Configuration configuration) throws ReportSerializerInitException
+            Locale locale, Configuration configuration, String logoReport) throws ReportSerializerInitException
     {
         super(serializer, style);
 
         this.style = style;
         this.locale = locale;
         this.configuration = configuration;
+        this.logoReport = logoReport;
     }
 
     public void genera(String inicio, String fin, List<InformeModelReport> compras) throws SinIvaException
@@ -146,7 +148,7 @@ public class InformeEventosReport extends Report implements InformeInterface
     private Block creaLogo()
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + configuration.getLogoReport()).getAbsolutePath());
+        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + logoReport).getAbsolutePath());
         externalGraphic.setMaxWidth("2cm");
 
         Block block = new Block();
@@ -419,7 +421,7 @@ public class InformeEventosReport extends Report implements InformeInterface
             reportSerializer = new FopPDFSerializer();
     }
 
-    public InformeInterface create(Locale locale, Configuration configuration)
+    public InformeInterface create(Locale locale, Configuration configuration, String logoReport)
     {
         try
         {
@@ -427,7 +429,7 @@ public class InformeEventosReport extends Report implements InformeInterface
 			this.configuration = configuration;
             InformeTaquillaReportStyle estilo = new InformeTaquillaReportStyle();
 
-            return new InformeEventosReport(reportSerializer, estilo, locale, configuration);
+            return new InformeEventosReport(reportSerializer, estilo, locale, configuration, logoReport);
         }
         catch (ReportSerializerInitException e)
         {
@@ -446,11 +448,14 @@ public class InformeEventosReport extends Report implements InformeInterface
 		
 	}
 
-	public void genera(String inicio, String fin,
-			List<InformeModelReport> compras, List<InformeAbonoReport> abonos, String cargoInformeEfectivo,
-			String firmanteInformeEfectivo) throws SinIvaException {
-		
-	}
+
+	public void genera(String inicio, String fin, List<InformeModelReport> compras, List<InformeAbonoReport> abonos, String cargoInformeEfectivo, String firmanteInformeEfectivo) throws SinIvaException {
+	    genera(null, inicio, fin, compras, abonos, cargoInformeEfectivo, firmanteInformeEfectivo);
+        }
+
+        public void genera(String titulo, String inicio, String fin, List<InformeModelReport> compras, List<InformeAbonoReport> abonos, String cargoInformeEfectivo, String firmanteInformeEfectivo) throws SinIvaException {
+
+        }
 
 	public void genera(String cargo, String firmante, List<InformeSesion> informesSesion, Cine cine, boolean printSesion) throws SinIvaException {
 		
