@@ -50,7 +50,7 @@ public class InformeTaquillaReport extends Report implements InformeInterface
     }
 
     public void genera(String inicio, String fin, List<InformeModelReport> compras, BigDecimal totalTaquillaTPV,
-            BigDecimal totalTaquillaEfectivo, BigDecimal totalOnline)
+            BigDecimal totalTaquillaEfectivo, BigDecimal totalTaquillaTransferencia, BigDecimal totalOnline)
     {
         creaLogo();
         creaCabecera(inicio, fin);
