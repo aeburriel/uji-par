@@ -248,7 +248,7 @@ public class ReportService {
 		Object[] taquillaTpv = comprasDAO.getTotalNueva(fechaInicio, fechaFin, userUID, TipoPago.TARJETA, true);
 		Object[] taquillaTpvOffline = comprasDAO.getTotalNueva(fechaInicio, fechaFin, userUID, TipoPago.TARJETAOFFLINE, true);
 		Object[] taquillaEfectivo = comprasDAO.getTotalNueva(fechaInicio, fechaFin, userUID, TipoPago.METALICO, true);
-		Object[] taquillaTransferencia = comprasDAO.getTotalNueva(fechaInicio, fechaFin, userUID, TipoPago.TRANSFERENCIA, false);
+		Object[] taquillaTransferencia = comprasDAO.getTotalNueva(fechaInicio, fechaFin, userUID, TipoPago.TRANSFERENCIA, true);
 		Object[] online = comprasDAO.getTotalNueva(fechaInicio, fechaFin, userUID, TipoPago.TARJETA, false);
 
 		BigDecimal totalTaquillaTpv = new BigDecimal(0);
