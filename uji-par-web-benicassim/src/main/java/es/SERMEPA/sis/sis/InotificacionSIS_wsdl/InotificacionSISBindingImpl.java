@@ -263,7 +263,7 @@ public class InotificacionSISBindingImpl implements InotificacionSISPortType {
                 ResourceProperties.getProperty(new Locale("es"), "mail.entradas.texto", recibo, urlEntradas);
 
         PreparedStatement stmt = conn.prepareStatement("insert into PAR_MAILS (DE, PARA, TITULO, TEXTO, FECHA_CREADO, COMPRA_UUID) values (?, ?, ?, ?, ?, ?);commit;");
-        stmt.setString(1, configuration.getMailFrom());
+        stmt.setString(1, configurationSelector.getMailFrom());
         stmt.setString(2, email);
         stmt.setString(3, titulo);
         stmt.setString(4, texto);
@@ -278,7 +278,7 @@ public class InotificacionSISBindingImpl implements InotificacionSISPortType {
         initializeConnectionIfNeeded();
         PreparedStatement stmt = conn.prepareStatement("insert into PAR_MAILS (DE, PARA, TITULO, TEXTO, FECHA_CREADO, COMPRA_UUID) " +
                 "values (?, ?, ?, ?, ?, ?);commit;");
-        stmt.setString(1, configuration.getMailFrom());
+        stmt.setString(1, configurationSelector.getMailFrom());
         stmt.setString(2, "debug@wifi.benicassim.es");
         stmt.setString(3, "Pedido repetido en venta de entradas online de Benicàssim. Revisar por si hay error");
         stmt.setString(4, "Revisar la entrada con id " + id + " respuesta del banco " + estadoBanco + " y uuid " + uuid);

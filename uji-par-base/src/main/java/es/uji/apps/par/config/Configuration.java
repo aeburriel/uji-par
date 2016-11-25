@@ -59,6 +59,7 @@ public class Configuration
 	private static final String TMP_FOLDER = "uji.tmp.folder";
 	private static final String PGP_PASSPHRASE = "uji.pgp.key";
 	private static final String CODIGO_BUZON = "uji.codigo.buzon";
+	private static final String WSDL_URL = "uji.tpv.wsdlurl";
 	private static final String ACTIVE_DIRECTORY_IP = "activedirectory.ip";
 	private static final String ACTIVE_DIRECTORY_Port = "activedirectory.port";
 	private static final String ACTIVE_DIRECTORY_DOMAIN = "activedirectory.domain";
@@ -391,6 +392,16 @@ public class Configuration
 		return getProperty(CODIGO_BUZON);
 	}
 
+	public static String getWSDLURL() {
+	        try {
+	                Properties propertiesFile = new Properties();
+	                propertiesFile.load(new ConfigurationInFile().getPathToFile());
+	                return propertiesFile.getProperty(WSDL_URL);
+                } catch (Exception e) {
+                        throw new RuntimeException(e);
+                }
+        }
+
 	public String getDBUser() {
 		return getProperty(DB_USER);
 	}
@@ -572,4 +583,5 @@ public class Configuration
 		String langsAllowed = getProperty(LANGS_ALLOWED);
 		return (langsAllowed.toUpperCase().contains("VALENCI") || langsAllowed.toUpperCase().contains("CATAL"));
 	}
+
 }
