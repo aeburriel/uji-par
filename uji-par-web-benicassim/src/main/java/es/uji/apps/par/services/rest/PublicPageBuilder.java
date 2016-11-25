@@ -13,9 +13,9 @@ public class PublicPageBuilder implements PublicPageBuilderInterface {
 	@Autowired
 	Configuration configuration;
 
-	public Pagina buildPublicPageInfo(String urlBase, String url, String idioma) throws ParseException
+	public Pagina buildPublicPageInfo(String urlBase, String url, String idioma, String htmlTitle) throws ParseException
 	{
-		Pagina pagina = new Pagina(urlBase, url, idioma, configuration.getHtmlTitle());
+		Pagina pagina = new Pagina(urlBase, url, idioma, htmlTitle);
 		pagina.setSubTitulo("");
 		return pagina;
 	}

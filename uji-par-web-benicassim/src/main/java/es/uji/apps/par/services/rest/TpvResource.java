@@ -256,13 +256,13 @@ public class TpvResource extends BaseResource implements TpvInterface {
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "compraValida", locale, APP);
         String url = request.getRequestURL().toString();
 
-        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(configurationSelector.getUrlPublic(), url, language.toString()));
+        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(configurationSelector.getUrlPublic(), url, language.toString(), configurationSelector.getHtmlTitle()));
         template.put("baseUrl", getBaseUrlPublic());
 
         template.put("referencia", recibo);
         template.put("email", compra.getEmail());
         template.put("url", getBaseUrlPublic() + "/rest/compra/" + compra.getUuid() + "/pdf");
-        template.put("urlComoLlegar", configuration.getUrlComoLlegar());
+        template.put("urlComoLlegar", configurationSelector.getUrlComoLlegar());
         template.put("lang", language);
 
         return template;
@@ -275,7 +275,7 @@ public class TpvResource extends BaseResource implements TpvInterface {
         HTMLTemplate template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "compraIncorrecta", locale, APP);
         String url = request.getRequestURL().toString();
 
-        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(getBaseUrlPublic(), url, language.toString()));
+        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(getBaseUrlPublic(), url, language.toString(), configurationSelector.getHtmlTitle()));
         template.put("baseUrl", getBaseUrlPublic());
 
         template.put("urlReintentar", getBaseUrlPublic() + "/rest/entrada/" + compra.getParSesion().getId());
@@ -292,7 +292,7 @@ public class TpvResource extends BaseResource implements TpvInterface {
         String texto = ResourceProperties.getProperty(new Locale("ca"), "mail.entradas.texto", recibo, urlEntradas) + "\n\n" +
                 ResourceProperties.getProperty(new Locale("es"), "mail.entradas.texto", recibo, urlEntradas);
 
-        mailService.anyadeEnvio(email, titulo, texto, uuid, configurationSelector.getUrlPublic());
+        mailService.anyadeEnvio(configurationSelector.getMailFrom(), email, titulo, texto, uuid, configurationSelector.getUrlPublic(), configurationSelector.getUrlPublic());
     }
 
     @Override
