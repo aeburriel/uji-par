@@ -22,7 +22,7 @@ public class TarifasCineDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="PAR_TARIFAS_CINE_ID_GENERATOR", sequenceName="HIBERNATE_SEQUENCE")
+	@SequenceGenerator(name="PAR_TARIFAS_CINE_ID_GENERATOR", sequenceName="par_tarifas_cines_id_seq", allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="PAR_TARIFAS_CINE_ID_GENERATOR")
 	private long id;
 

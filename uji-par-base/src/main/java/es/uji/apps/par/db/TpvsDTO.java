@@ -9,7 +9,7 @@ public class TpvsDTO {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @SequenceGenerator(name="PAR_TPV_ID_GENERATOR", sequenceName="HIBERNATE_SEQUENCE")
+    @SequenceGenerator(name="PAR_TPV_ID_GENERATOR", sequenceName="par_tpvs_id_seq", allocationSize=1)
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="PAR_TPV_ID_GENERATOR")
     private long id;
 

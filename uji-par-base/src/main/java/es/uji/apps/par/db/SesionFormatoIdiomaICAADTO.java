@@ -23,7 +23,7 @@ public class SesionFormatoIdiomaICAADTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="PAR_SESIONES_FORMATO_IDI_ICAA", sequenceName="HIBERNATE_SEQUENCE")
+	@SequenceGenerator(name="PAR_SESIONES_FORMATO_IDI_ICAA", sequenceName="par_sesiones_formato_idioma_icaa_id_seq", allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="PAR_SESIONES_FORMATO_IDI_ICAA")
 	private long id;
     

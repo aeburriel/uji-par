@@ -9,7 +9,7 @@ public class SesionAbonoDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @SequenceGenerator(name="PAR_SESIONES_ABONOS_ID_GENERATOR", sequenceName="HIBERNATE_SEQUENCE")
+    @SequenceGenerator(name="PAR_SESIONES_ABONOS_ID_GENERATOR", sequenceName="par_sesiones_abonos_id_seq", allocationSize=1)
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="PAR_SESIONES_ABONOS_ID_GENERATOR")
     private long id;
 

@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 @Table(name="PAR_EVENTOS_MULTISESION", uniqueConstraints={@UniqueConstraint(columnNames={"EVENTO_ID", "EVENTO_HIJO_ID"})})
 public class EventoMultisesionDTO {
     @Id
-    @SequenceGenerator(name="PAR_EVENTOS_MULTISESION_ID_GENERATOR", sequenceName="HIBERNATE_SEQUENCE")
+    @SequenceGenerator(name="PAR_EVENTOS_MULTISESION_ID_GENERATOR", sequenceName="par_eventos_multisesion_id_seq", allocationSize=1)
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="PAR_EVENTOS_MULTISESION_ID_GENERATOR")
     private long id;
 

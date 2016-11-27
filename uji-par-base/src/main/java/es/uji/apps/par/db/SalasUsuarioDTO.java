@@ -9,7 +9,7 @@ public class SalasUsuarioDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="PAR_SALAS_USUARIOS_ID_GENERATOR", sequenceName="HIBERNATE_SEQUENCE")
+	@SequenceGenerator(name="PAR_SALAS_USUARIOS_ID_GENERATOR", sequenceName="par_salas_usuarios_id_seq", allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="PAR_SALAS_USUARIOS_ID_GENERATOR")
 	private long id;
 

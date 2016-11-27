@@ -23,7 +23,7 @@ public class PlantaSalaDTO implements Serializable
     private static final long serialVersionUID = 1L;
 
     @Id
-    @SequenceGenerator(name = "PAR_PLANTAS_SALA_ID_GENERATOR", sequenceName = "HIBERNATE_SEQUENCE")
+    @SequenceGenerator(name = "PAR_PLANTAS_SALA_ID_GENERATOR", sequenceName = "par_plantas_sala_id_seq", allocationSize=1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PAR_PLANTAS_SALA_ID_GENERATOR")
     private long id;
 
