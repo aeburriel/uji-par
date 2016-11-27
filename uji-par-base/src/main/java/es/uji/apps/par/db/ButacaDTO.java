@@ -56,7 +56,7 @@ public class ButacaDTO implements Serializable{
     private CompraDTO parCompra;
     
     @Column(name="TIPO")
-    private String tipo;
+    private long tipo;
     
     @Column(name = "ANULADA")
     private Boolean anulada;
@@ -140,12 +140,12 @@ public class ButacaDTO implements Serializable{
 
     public String getTipo()
     {
-        return tipo;
+        return tipo == -1 ? "descuento" : String.valueOf(tipo);
     }
 
     public void setTipo(String tipo)
     {
-        this.tipo = tipo;
+        this.tipo = tipo.equals("descuento") ? -1 : Long.valueOf(tipo);
     }
 
 	public Boolean getAnulada() {
