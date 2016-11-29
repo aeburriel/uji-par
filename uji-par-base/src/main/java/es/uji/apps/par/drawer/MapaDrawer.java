@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import com.sun.jersey.api.core.InjectParam;
 import es.uji.apps.par.butacas.DatosButaca;
 import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.config.ConfigurationSelector;
 import es.uji.apps.par.db.ButacaDTO;
 import es.uji.apps.par.model.Abono;
 import es.uji.apps.par.model.SesionAbono;
@@ -33,13 +34,17 @@ public class MapaDrawer implements MapaDrawerInterface
     @InjectParam
     private AbonosService abonosService;
 
-	@InjectParam
-	Configuration configuration;
+    @InjectParam
+    Configuration configuration;
+
+    @Autowired
+    ConfigurationSelector configurationSelector;
 
     private BufferedImage butacaOcupada;
     private BufferedImage butacaReservada;
     private BufferedImage butacaOcupadaDiscapacitado;
     private BufferedImage butacaReservadaDiscapacitado;
+    private BufferedImage butacaPresentada;
 
     // Para cuando necesitamos saber el (x, y) que ocupa la butaca en la imagen
     private Map<String, DatosButaca> datosButacas;
@@ -161,16 +166,20 @@ public class MapaDrawer implements MapaDrawerInterface
                         if (esDiscapacitadoAnfiteatro(butaca))
                             continue;
 
-                        if (esDiscapacitado(butaca)) {
-                            if (mostrarReservadas && esReserva(butacaDTO))
-                                imagenOcupada = butacaReservadaDiscapacitado;
-                            else
-                                imagenOcupada = butacaOcupadaDiscapacitado;
+                        if (mostrarReservadas && configurationSelector.showButacasHanEntradoEnDistintoColor() && butacaPresentada != null && butacaDTO.getPresentada() != null) {
+                            imagenOcupada = butacaPresentada;
                         } else {
-                            if (mostrarReservadas && esReserva(butacaDTO))
-                                imagenOcupada = butacaReservada;
-                            else
-                                imagenOcupada = butacaOcupada;
+                            if (esDiscapacitado(butaca)) {
+                                if (mostrarReservadas && esReserva(butacaDTO))
+                                    imagenOcupada = butacaReservadaDiscapacitado;
+                                else
+                                    imagenOcupada = butacaOcupadaDiscapacitado;
+                            } else {
+                                if (mostrarReservadas && esReserva(butacaDTO))
+                                    imagenOcupada = butacaReservada;
+                                else
+                                    imagenOcupada = butacaOcupada;
+                            }
                         }
 
                         if (butaca != null)
@@ -230,6 +239,12 @@ public class MapaDrawer implements MapaDrawerInterface
 				File f = new File(IMAGES_PATH + "/reservadaDiscapacitado.png");
 				if (f.exists())
 					butacaReservadaDiscapacitado = ImageIO.read(f);
+			}
+
+			if (butacaPresentada == null) {
+				File f = new File(IMAGES_PATH + "/presentada.png");
+				if (f.exists())
+					butacaPresentada = ImageIO.read(f);
 			}
 		}
     }
