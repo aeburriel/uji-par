@@ -21,7 +21,7 @@ Ext.define('Paranimf.view.plantillaprecios.FormPrecios', {
     forceSelection: false,
     displayField: 'nombre',
     valueField: 'id',
-    store: 'PlantillasPrecios',
+    store: 'PlantillasPreciosEditables',
     readOnly: true,
     queryMode: 'local',
     typeAhead: true
