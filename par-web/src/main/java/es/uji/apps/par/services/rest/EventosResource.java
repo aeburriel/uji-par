@@ -250,6 +250,7 @@ public class EventosResource extends BaseResource {
             datos.put("enPlazoVentaInternet", sesion.getEnPlazoVentaInternet());
             datos.put("canalInternet", databaseHelper.booleanToNumber(sesion.getCanalInternet()));
             datos.put("fechaInicioVentaOnline", sesion.getFechaInicioVentaOnline());
+            datos.put("versionLinguistica", sesion.getVersionLinguistica());
 
             if (sesion.getFechaInicioVentaOnline() != null && sesion.getFechaFinVentaOnline() != null)
                 datos.put(
