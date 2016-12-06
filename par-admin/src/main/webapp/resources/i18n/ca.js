@@ -502,19 +502,19 @@ UI =
             "betamax": "Betamax"
         },
         "versionLinguistica": {
-            "S": "Original Castellano",
-            "B": "Original Valenciano",
-            "R": "Original Catalán ",
-            "Q": "Original Vasco ",
-            "P": "Original Gallego ",
-            "Z": "Original Otras Lenguas",
-            "W": "Doblada Castellano ",
-            "Y": "Doblada Valenciano",
-            "V": "Doblada Catalán ",
-            "U": "Doblada Vasco ",
-            "T": "Doblada Gallego ",
-            "F": "Doblada Otras Lenguas",
-            "X": "Sin diálogos"
+            "S": "Original Castellà",
+            "B": "Original Valencià",
+            "R": "Original Català",
+            "Q": "Original Basc",
+            "P": "Original Gallec",
+            "Z": "Original Altres Llengües",
+            "W": "Doblegada Castellà",
+            "Y": "Doblegada Valencià",
+            "V": "Doblegada Català",
+            "U": "Doblegada Basc",
+            "T": "Doblegada Gallec",
+            "F": "Doblegada Altres Llengües",
+            "X": "Sense diàlegs"
         },
         "nacionalidades": {
             "ES": 'Espanyola',
