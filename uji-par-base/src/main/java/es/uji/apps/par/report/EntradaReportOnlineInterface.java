@@ -2,12 +2,14 @@ package es.uji.apps.par.report;
 
 import es.uji.apps.fopreports.serialization.ReportSerializationException;
 import es.uji.apps.par.config.Configuration;
+import org.xml.sax.SAXException;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Locale;
 
 public interface EntradaReportOnlineInterface {
-	EntradaReportOnlineInterface create(Locale locale, Configuration configuration);
+	EntradaReportOnlineInterface create(Locale locale, Configuration configuration) throws SAXException, IOException;
 	void setTitulo(String titulo);
 	void setFecha(String fecha);
 	void setHora(String hora);

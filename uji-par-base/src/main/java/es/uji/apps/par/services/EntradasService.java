@@ -52,7 +52,8 @@ public class EntradasService {
     private static EntradaReportOnlineInterface entradaOnlineReport;
 
 	synchronized
-    public void generaEntrada(String uuidCompra, OutputStream outputStream, String userUID, String urlPublicSinHTTPS, String urlPieEntrada) throws ReportSerializationException {
+    public void generaEntrada(String uuidCompra, OutputStream outputStream, String userUID, String urlPublicSinHTTPS, String urlPieEntrada) throws
+                        ReportSerializationException, SAXException, IOException {
 		try {
 			EntradaReportOnlineInterface entrada = generaEntradaOnlineYRellena(uuidCompra, userUID, urlPublicSinHTTPS, urlPieEntrada);
 			entrada.serialize(outputStream);
@@ -62,7 +63,7 @@ public class EntradasService {
     }
 
 	public EntradaReportOnlineInterface generaEntradaOnlineYRellena(String uuidCompra, String userUID, String urlPublicSinHTTPS, String urlPieEntrada) throws
-			ReportSerializationException {
+			ReportSerializationException, SAXException, IOException {
 		CompraDTO compra = comprasDAO.getCompraByUuid(uuidCompra);
 		if (compra == null)
 			throw new NullPointerException();
@@ -293,7 +294,7 @@ public class EntradasService {
         entrada.generaPaginaButaca(entradaModelReport, urlPublicSinHTTPS);
     }
 
-    public static void main(String[] args) throws FileNotFoundException, ReportSerializationException {
+    public static void main(String[] args) throws FileNotFoundException, ReportSerializationException, SAXException, IOException {
         ApplicationContext ctx = new ClassPathXmlApplicationContext("/applicationContext-db.xml");
 
         EntradasService service = ctx.getBean(EntradasService.class);

@@ -10,8 +10,11 @@ import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.i18n.ResourceProperties;
 import es.uji.apps.par.report.components.BaseTable;
 import es.uji.apps.par.report.components.EntradaReportStyle;
+import org.apache.fop.apps.FopFactory;
+import org.xml.sax.SAXException;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Locale;
 
@@ -23,6 +26,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
     
 
     private static FopPDFSerializer reportSerializer;
+    private static FopFactory fopFactory;
 
     private Locale locale;
 
@@ -421,13 +425,16 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         return b;
     }
 
-    private static void initStatics() throws ReportSerializerInitException
+    private static void initStatics() throws ReportSerializerInitException, SAXException, IOException
     {
         if (reportSerializer == null)
             reportSerializer = new FopPDFSerializer();
+
+        fopFactory = FopFactory.newInstance();
+        fopFactory.setUserConfig(new File("/etc/uji/par/fop.xconf"));
     }
 
-    public EntradaReportOnlineInterface create(Locale locale, Configuration configuration)
+    public EntradaReportOnlineInterface create(Locale locale, Configuration configuration) throws SAXException, IOException
     {
         try
         {
@@ -446,7 +453,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
 
     public void serialize(OutputStream output) throws ReportSerializationException
     {
-        super.serialize(output);
+        super.serialize(output, fopFactory);
     }
 
     public void setTitulo(String titulo)
