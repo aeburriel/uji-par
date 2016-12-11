@@ -23,7 +23,8 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
     private static final String GRIS_OSCURO = "#666666";
     private static final String FONDO_GRIS = "#EEEEEE";
     private static final String FONDO_BLANCO = "#FFFFFF";
-    
+
+    private static final String DETAIL_SIZE = "12pt";
 
     private static FopPDFSerializer reportSerializer;
     private static FopFactory fopFactory;
@@ -80,8 +81,9 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         pageBreak.setPageBreakAfter(PageBreakAfterType.ALWAYS);
     }
 
-	private void creaSeccionPublicidad()
+    private void creaSeccionPublicidad()
     {
+        final String width = "18cm";
         Block publicidadBlock = withNewBlock();
         
         publicidadBlock.setMarginTop("0.3cm");
@@ -89,7 +91,8 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         if (this.urlPublicidad != null && !this.urlPublicidad.contains("example")) {
 	        ExternalGraphic externalGraphic = new ExternalGraphic();
 	        externalGraphic.setSrc(this.urlPublicidad);
-	
+                externalGraphic.setContentWidth(width);
+                externalGraphic.setMaxWidth(width);
 	        publicidadBlock.getContent().add(externalGraphic);
         }
     }
@@ -143,7 +146,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         cellIzquierda.setPaddingTop("0.0cm");
         cellIzquierda.setBackgroundColor(FONDO_GRIS);
 
-        TableCell cellDerecha = entradaTable.withNewCell(createEntradaDerecha());
+        TableCell cellDerecha = entradaTable.withNewCell(createEntradaDerecha(urlPublic));
         cellDerecha.setPadding("0.3cm");
         cellDerecha.setPaddingTop("0.3cm");
         cellDerecha.setBackgroundColor(FONDO_GRIS);
@@ -174,7 +177,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         BaseTable table = new BaseTable(new EntradaReportStyle(), 2, "9cm", "2cm");
 
         table.withNewRow();
-        Block blockTeatro = getBlockWithText(ResourceProperties.getProperty(locale, "entrada.nombreLocalizacion"), "17pt", true, false);
+        Block blockTeatro = getBlockWithText(ResourceProperties.getProperty(locale, "entrada.nombreLocalizacion"), "15pt", true, false);
         Block blockEntidad = getBlockWithText(ResourceProperties.getProperty(locale, "entrada.nombreEntidad"), "10pt");
         Block blockDireccion = getBlockWithText(ResourceProperties.getProperty(locale, "entrada.direccion"), "10pt");
         BlockContainer bc = new BlockContainer();
@@ -212,12 +215,13 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
 
     private Block createEntradaIzquierdaCentroFoto()
     {
+        final String width = "2.5cm";
         Block block = new Block();
 
         ExternalGraphic externalGraphic = new ExternalGraphic();
         externalGraphic.setSrc(this.urlPortada);
-        externalGraphic.setContentWidth("2.5cm");
-        externalGraphic.setMaxWidth("2.5cm");
+        externalGraphic.setContentWidth(width);
+        externalGraphic.setMaxWidth(width);
 
         block.getContent().add(externalGraphic);
 
@@ -236,7 +240,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
     {
         Block block = new Block();
 
-        BaseTable table = new BaseTable(new EntradaReportStyle(), 3, "2.5cm", "1.8cm", "2.1cm");
+        BaseTable table = new BaseTable(new EntradaReportStyle(), 3, "2.5cm", "1.8cm", "3.2cm");
 
         Block titulo = getAdjustedBlock(this.titulo, 350, 10);
         titulo.setMarginBottom("0.2cm");
@@ -260,15 +264,19 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
 
         Block zona = new Block();
         zona.getContent().add(this.zona);
-        zona.setFontSize("12pt");
+        zona.setFontSize(DETAIL_SIZE);
 
         table.withNewRow();
         table.withNewCell(zona, "3");
 
         if (this.fila != null && this.numero != null)
         {
+            String butacaText = ResourceProperties.getProperty(locale, "entrada.butaca", this.fila, this.numero);
+            Block butacaBlock = new Block();
+            butacaBlock.getContent().add(butacaText);
+            butacaBlock.setFontSize(DETAIL_SIZE);
             table.withNewRow();
-            table.withNewCell(ResourceProperties.getProperty(locale, "entrada.butaca", this.fila, this.numero), "3");
+            table.withNewCell(butacaBlock, "3");
         }
 
         block.getContent().add(table);
@@ -298,8 +306,11 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
 
     private Block createBarcode(String urlPublic)
     {
+        final String width = "1.00in";
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(urlPublic + "/rest/barcode/" + this.barcode + "?size=70");
+        externalGraphic.setSrc(urlPublic + "/rest/barcode/" + this.barcode + "?size=72");
+        externalGraphic.setContentWidth(width);
+        externalGraphic.setMaxWidth(width);
 
         Block blockCodebar = new Block();
         blockCodebar.getContent().add(externalGraphic);
@@ -307,13 +318,13 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         return blockCodebar;
     }
 
-    private Block createEntradaDerecha()
+    private Block createEntradaDerecha(String urlPublic)
     {
         Block block = new Block();
 
         block.getContent().add(createEntradaDerechaArriba());
         block.getContent().add(createEntradaDerechaCentro());
-        block.getContent().add(createEntradaDerechaAbajo());
+        block.getContent().add(createEntradaDerechaAbajo(urlPublic));
 
         return block;
     }
@@ -373,16 +384,19 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
 
         Block zona = new Block();
         zona.getContent().add(this.zona);
-        zona.setFontSize("12pt");
+        zona.setFontSize(DETAIL_SIZE);
 
         table.withNewRow();
         TableCell zonaCell = table.withNewCell(zona, "2");
 
         if (this.fila != null && this.numero != null)
         {
+            String butacaText = ResourceProperties.getProperty(locale, "entrada.butaca", this.fila, this.numero);
+            Block butacaBlock = new Block();
+            butacaBlock.getContent().add(butacaText);
+            butacaBlock.setFontSize(DETAIL_SIZE);
             table.withNewRow();
-            TableCell butacaCell = table.withNewCell(
-                    ResourceProperties.getProperty(locale, "entrada.butaca", this.fila, this.numero), "2");
+            TableCell butacaCell = table.withNewCell(butacaBlock, "2");
             butacaCell.setPaddingBottom("0.2cm");
         }
         else
@@ -393,9 +407,12 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         return table;
     }
 
-    private Table createEntradaDerechaAbajo()
+    private Table createEntradaDerechaAbajo(String urlPublic)
     {
+        final String margin = "0.15cm";
         BaseTable table = new BaseTable(new EntradaReportStyle(), 2, "3cm", "2.5cm");
+        table.setMarginLeft(margin);
+        table.setMarginRight(margin);
 
         table.withNewRow();
         table.withNewCell("");
@@ -404,7 +421,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         cell.setPaddingRight("10px");
 
         table.withNewRow();
-        table.withNewCell("");
+        table.withNewCell(createBarcode(urlPublic));
         TableCell cell1 = table.withNewCell(ResourceProperties.getProperty(locale, "entrada.importe", this.total));
         cell1.setTextAlign(TextAlignType.RIGHT);
         cell1.setPaddingRight("10px");

@@ -30,7 +30,7 @@ public class ParanimfBaseReportStyle extends ReportStyle
     {
         this.fontWeight = "normal";
         this.textAlign = TextAlignType.LEFT;
-        this.fontFamily = "Arial";
+        this.fontFamily = "Verdana";
         this.setTableCellBorder("0cm");
         this.setTableCellDisplayAlign(DisplayAlignType.CENTER);
         this.setTableCellPadding("0cm");
