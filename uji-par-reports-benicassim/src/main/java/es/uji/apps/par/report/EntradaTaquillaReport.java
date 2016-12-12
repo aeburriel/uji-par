@@ -26,8 +26,8 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
     private static final int sizeTxtTituloEvento = 22;
     private static final int sizeTxtZonaFilaButacaInt = 15;
     private static final String sizeTxtZonaFilaButaca = sizeTxtZonaFilaButacaInt + "pt";
-	private static final String sixeZonaImpresion = "72.2mm";
-	private static final String font = "Verdana";
+    private static final String sizeZonaImpresion = "72.2mm";
+    private static final String font = "Verdana";
 
     private static FopPDFSerializer reportSerializer;
     private static FopFactory fopFactory;
@@ -122,7 +122,7 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
         style.setSimplePageMasterMarginTop("0");
         style.setSimplePageMasterRegionBodyMarginTop("0");
 
-        BaseTable entradaTable = new BaseTable(style, 1, EntradaTaquillaReport.sixeZonaImpresion);
+        BaseTable entradaTable = new BaseTable(style, 1, EntradaTaquillaReport.sizeZonaImpresion);
         if (configuration.isTicketLogo())
         {
             entradaTable.withNewRow();
@@ -189,7 +189,7 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
     {
 		Block b = new Block();
 		EntradaReportStyle reportStyle = getStyleWithFont();
-        BaseTable table = new BaseTable(reportStyle, 1, EntradaTaquillaReport.sixeZonaImpresion);
+        BaseTable table = new BaseTable(reportStyle, 1, EntradaTaquillaReport.sizeZonaImpresion);
 
         table.setMarginTop("0");
 
@@ -280,7 +280,7 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
         externalGraphic.setSrc(new File("/etc/uji/par/imagenes/logo.svg").getAbsolutePath());
-        externalGraphic.setContentWidth(EntradaTaquillaReport.sixeZonaImpresion);
+        externalGraphic.setContentWidth(EntradaTaquillaReport.sizeZonaImpresion);
 
         return externalGraphic;
     }
@@ -288,7 +288,7 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
 	private Block createEntradaFechaHoras()
     {
         Block block = new Block();
-        BaseTable table = new BaseTable(getStyleWithFont(), 1, EntradaTaquillaReport.sixeZonaImpresion);
+        BaseTable table = new BaseTable(getStyleWithFont(), 1, EntradaTaquillaReport.sizeZonaImpresion);
         table.withNewRow();
         
         String dia = getDiaEvento();
@@ -343,6 +343,7 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
         externalGraphic.setSrc(urlPublic + "/rest/barcode/" + this.barcode);
+        externalGraphic.setContentWidth("28.222mm");
 
         Block blockCodebar = new Block();
         blockCodebar.getContent().add(externalGraphic);
