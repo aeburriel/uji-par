@@ -85,7 +85,7 @@ public class AuthFilter implements Filter
             	String url = ((HttpServletRequest)request).getRequestURL().toString();
             	log.info("Autenticamos " + url + " KO");
             	if (url.toLowerCase().contains("par/rest/index")) {
-            	        String redirect = sRequest.getRequestURL().toString().replaceFirst("logout$", "login");
+            	        String redirect = sRequest.getRequestURL().toString().replaceFirst("index$", "login");
             		sResponse.sendRedirect(redirect);
                 }
             	else
