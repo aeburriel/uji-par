@@ -161,7 +161,8 @@ public class Utils
 
 	public static String sinHTTPS(String url)
 	{
-		return url.replaceFirst("^https://", "http://");
+		//return url.replaceFirst("^https://", "http://");
+		return url;
 	}
 
 	public static String sinUnicodes(String text)
