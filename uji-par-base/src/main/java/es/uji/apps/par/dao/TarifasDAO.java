@@ -55,6 +55,24 @@ public class TarifasDAO extends BaseDAO
 				.offset(start).limit(limit).list(qTarifaDTO);
     }
 
+	@Transactional
+	public List<TarifaDTO> getAll(String userUID)
+	{
+		QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
+		QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+		QCineDTO qCineDTO = QCineDTO.cineDTO;
+		QUsuarioDTO qUsuarioDTO = QUsuarioDTO.usuarioDTO;
+
+		JPAQuery query = new JPAQuery(entityManager);
+		return query.from(qTarifaDTO)
+				.leftJoin(qTarifaDTO.parCine, qCineDTO)
+				.leftJoin(qCineDTO.parSalas, qSalaDTO)
+				.leftJoin(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
+				.leftJoin(qSalasUsuarioDTO.parUsuario, qUsuarioDTO)
+				.where((qUsuarioDTO.usuario.eq(userUID).or(qCineDTO.isNull())))
+				.distinct().list(qTarifaDTO);
+	}
+
     @Transactional
 	public TarifaDTO add(TarifaDTO tarifa) {
 		entityManager.persist(tarifa);

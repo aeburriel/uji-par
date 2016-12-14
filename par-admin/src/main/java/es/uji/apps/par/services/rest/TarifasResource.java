@@ -37,7 +37,8 @@ public class TarifasResource
     {
         String userUID = AuthChecker.getUserUID(currentRequest);
         List<Tarifa> tarifas = tarifasService.getAll(sort, start, limit, userUID);
-        return Response.ok().entity(new RestResponse(true, tarifas, tarifas.size())).build();
+        int tarifasSize = tarifasService.getTotalTarifas(userUID);
+        return Response.ok().entity(new RestResponse(true, tarifas, tarifasSize)).build();
     }
 
     @POST

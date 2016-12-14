@@ -26,6 +26,10 @@ public class TarifasService
 		return listaTarifas;
 	}
 
+	public int getTotalTarifas(String userUID) {
+		return tarifasDAO.getAll("", 0, Integer.MAX_VALUE, userUID).size();
+	}
+
 	public Tarifa add(Tarifa tarifa) {
 		TarifaDTO tarifaDTO = tarifasDAO.add(Tarifa.toDTO(tarifa));
 		tarifa.setId(tarifaDTO.getId());
