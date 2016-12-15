@@ -44,9 +44,9 @@ Ext.define('Paranimf.view.plantillaprecios.FormPrecios', {
     forceSelection: false,
     displayField: 'nombre',
     valueField: 'id',
-    store: 'Tarifas',
+    store: 'TarifasCombo',
     disabled: true,
-    queryMode: 'local',
+    queryMode: 'remote',
     typeAhead: true
    }, {
     fieldLabel: UI.i18n.field.precio,

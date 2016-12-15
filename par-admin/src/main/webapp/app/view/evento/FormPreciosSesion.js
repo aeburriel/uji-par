@@ -32,9 +32,9 @@ Ext.define('Paranimf.view.evento.FormPreciosSesion', {
     forceSelection: false,
     displayField: 'nombre',
     valueField: 'id',
-    store: 'Tarifas',
+    store: 'TarifasCombo',
     disabled: true,
-    queryMode: 'local',
+    queryMode: 'remote',
     typeAhead: true
    }, {
     fieldLabel: UI.i18n.field.precio,

@@ -7,7 +7,7 @@ Ext.define('Paranimf.view.evento.FormSesiones', {
    defaults: {
       anchor: '100%',
       xtype: 'textfield',
-      labelWidth: 190,
+      labelWidth: 190
    },
 
    items: [{

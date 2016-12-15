@@ -2,7 +2,7 @@ Ext.define('Paranimf.controller.Tarifas', {
    extend: 'Ext.app.Controller',
 
    views: ['EditModalWindow', 'EditBaseForm', 'EditBaseGrid', 'tarifa.GridTarifas', 'tarifa.FormTarifas', 'tarifa.PanelTarifas'],
-   stores: ['Tarifas'],
+   stores: ['Tarifas', 'TarifasCombo'],
    models: ['Tarifa'],
 
    refs: [{
