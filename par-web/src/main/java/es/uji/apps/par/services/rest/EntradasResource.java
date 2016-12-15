@@ -80,7 +80,12 @@ public class EntradasResource extends BaseResource {
     @Produces(MediaType.TEXT_HTML)
     public Response datosEntrada(@PathParam("id") Long sesionId) throws Exception {
         Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
-        Sesion sesion = sesionesService.getSesion(sesionId, user.getUsuario());
+        Sesion sesion;
+        try {
+            sesion = sesionesService.getSesion(sesionId, user.getUsuario());
+        } catch (Exception e) {
+            return Response.status(404).build();
+        }
         if (sesion.getCanalInternet() && (sesion.getAnulada() == null || sesion.getAnulada() == false)) {
             currentRequest.getSession().setAttribute(EntradasService.ID_SESION, sesionId);
 
