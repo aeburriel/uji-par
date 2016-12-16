@@ -646,7 +646,7 @@ public class EntradasResource extends BaseResource {
         Locale locale = getLocale();
         String language = locale.getLanguage();
 
-        Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + sesion.getSala().getCine().getCodigo() + "compraFinalizada", locale, APP);
+        Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + sesion.getSala().getCine().getCodigo() + "/compraFinalizada", locale, APP);
         String urlBase = getBaseUrlPublic();
         String url = currentRequest.getRequestURL().toString();
         template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(urlBase, url, language.toString(), configurationSelector.getHtmlTitle()));
