@@ -20,7 +20,7 @@
     </dependency>
     
   	<dependency>
-	    <groupId>es.uji.apps</groupId>
+	    <groupId>es.benicassim.apps</groupId>
 	    <artifactId>uji-fopreports</artifactId>
 	    <version>0.0.5-SNAPSHOT</version>
     </dependency>

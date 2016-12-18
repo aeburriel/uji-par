@@ -54,7 +54,7 @@
         </dependency>
 
         <dependency>
-            <groupId>es.uji.commons</groupId>
+            <groupId>es.benicassim.commons</groupId>
             <artifactId>uji-commons-web-template</artifactId>
             <version>0.1.1-SNAPSHOT</version>
             <exclusions>
@@ -337,7 +337,7 @@
         </dependency>
 
         <dependency>
-            <groupId>es.uji.apps</groupId>
+            <groupId>es.benicassim.apps</groupId>
             <artifactId>uji-fopreports</artifactId>
             <version>0.0.5-SNAPSHOT</version>
         </dependency>
@@ -387,12 +387,12 @@
             <version>2.10.0</version>
         </dependency>
 
-        <!-- LAS INSERTA EL es.uji.commons:uji-commons-web-template:jar:0.0.9
+        <!-- LAS INSERTA EL es.benicassim.commons:uji-commons-web-template:jar:0.1.1
 
         <dependency>
             <groupId>org.thymeleaf</groupId>
             <artifactId>thymeleaf</artifactId>
-            <version>2.0.5</version>
+            <version>2.1.2.RELEASE</version>
         </dependency>
 
         <dependency>
@@ -410,7 +410,7 @@
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>fop</artifactId>
-            <version>1.0</version>
+            <version>2.1</version>
         </dependency>-->
 
         <dependency>

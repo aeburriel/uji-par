@@ -356,8 +356,7 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
         if (reportSerializer == null)
             reportSerializer = new FopPDFSerializer();
         
-        fopFactory = FopFactory.newInstance();
-        fopFactory.setUserConfig(new File("/etc/uji/par/fop.xconf"));
+        fopFactory = FopFactory.newInstance(new File("/etc/uji/par/fop.xconf"));
     }
 
     public EntradaTaquillaReport create(Locale locale, Configuration configuration) throws SAXException, IOException
