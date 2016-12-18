@@ -10,6 +10,7 @@ import es.uji.apps.par.i18n.ResourceProperties;
 import es.uji.apps.par.model.*;
 import es.uji.apps.par.services.*;
 import es.uji.apps.par.utils.DateUtils;
+import es.uji.apps.par.utils.ImageUtils;
 import es.uji.commons.web.template.HTMLTemplate;
 import es.uji.commons.web.template.Template;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -313,18 +314,23 @@ public class EventosResource extends BaseResource {
 
     @GET
     @Path("{id}/imagenEntrada")
-    public Response getImagenEntrada(@PathParam("id") Long eventoId) throws IOException, ImageReadException {
+    @Produces("image/jpeg")
+    public Response getImagenEntrada(@PathParam("id") Long eventoId, @QueryParam("width") String widthTXT) throws IOException, ImageReadException {
         try {
             Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
             Evento evento = eventosService.getEvento(eventoId, user.getUsuario());
 
             byte[] imagen = (evento.getImagen() != null) ? evento.getImagen() : eventosService.getImagenSustitutivaSiExiste();
-            String contentType = (evento.getImagenContentType() != null) ? evento.getImagenContentType() : eventosService.getImagenSustitutivaContentType();
+
+            int width;
+            try {
+                width = Integer.valueOf(widthTXT);
+            } catch (Exception e) {
+                width = 300;
+            }
 
             if (imagen != null) {
-                ByteArrayOutputStream bos = new ByteArrayOutputStream(imagen.length);
-                bos.write(imagen, 0, imagen.length);
-                return Response.ok(bos.toByteArray()).type(contentType).build();
+                return Response.ok(ImageUtils.scaleEncodedImage(imagen, width).toByteArray()).build();
             } else {
                 return Response.status(404).build();
             }
