@@ -27,13 +27,14 @@
 	<property name="concurrent" value="false" />
   </bean>
   
-  <bean id="enviaMailsTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+  <bean id="enviaMailsTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
 	<property name="jobDetail" ref="enviaMailsJob" />
 	<property name="repeatInterval" value="60000" />
 	<property name="startDelay" value="1000" />
   </bean>
 
   <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	<property name="waitForJobsToCompleteOnShutdown" value="true" />
 	<property name="jobDetails">
 	   <list>
 	      <ref bean="enviaMailsJob" />
