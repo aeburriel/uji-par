@@ -96,7 +96,7 @@ public class TpvResource extends BaseResource implements TpvInterface {
         String msg = String.format(
                 "Resultado pago TPV: Ds_Date=%s, Ds_Hour=%s, Ds_Amount=%s, Ds_Currency=%s, Ds_Order=%s, Ds_MerchantCode=%s, Ds_Terminal=%s, " +
                         "Ds_Signature=%s, Ds_Response=%s, Ds_MerchantData=%s, Ds_SecurePayment=%s, Ds_TransactionType=%s, Ds_Card_Country=%s, " +
-                        "Ds_AuthorisationCode=%s, Ds_ConsumerLanguage=$s",
+                        "Ds_AuthorisationCode=%s, Ds_ConsumerLanguage=%s",
                 fecha, hora, importe, currency, recibo, codigo, terminal, firma, estado, identificador, securePayment, tipoTransaccion, cardCountry, authCode, lang);
         log.info(msg);
 
