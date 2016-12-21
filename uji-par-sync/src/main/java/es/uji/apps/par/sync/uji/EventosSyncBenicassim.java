@@ -37,7 +37,7 @@ import es.uji.apps.par.utils.Utils;
 @Service("syncBenicassim")
 public class EventosSyncBenicassim implements EventosSync
 {
-    public static Logger log = Logger.getLogger(EventosSyncBenicassim.class);
+    private static final Logger log = Logger.getLogger(EventosSyncBenicassim.class);
 
     @Autowired
     EventosDAO eventosDAO;

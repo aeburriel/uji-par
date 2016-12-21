@@ -29,7 +29,7 @@ import java.util.*;
 
 @Repository
 public class ComprasDAO extends BaseDAO {
-	public static Logger log = Logger.getLogger(ComprasDAO.class);
+	private static final Logger log = Logger.getLogger(ComprasDAO.class);
 	public static final String NO_FINALIZADAS = "cnf";
 	private static final int ELIMINA_PENDIENTES_MINUTOS = 20;
 

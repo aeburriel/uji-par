@@ -21,7 +21,7 @@ public class Main
 {
     private static final int SYNC_SLEEP = 10 * 60 * 1000;
 
-    public static Logger log = Logger.getLogger(Main.class);
+    private static final Logger log = Logger.getLogger(Main.class);
 
     @Autowired
     EventosSyncService syncService;
