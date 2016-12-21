@@ -147,16 +147,20 @@ public class TpvResource extends BaseResource implements TpvInterface {
             compras.marcaPagadaPasarela(compra.getId(), recibo);
 
             if (configuration.isIdEntrada()) {
+                PreparedStatement stmt = null;
                 try {
                     initializeConnectionIfNeeded();
-                    PreparedStatement stmt = conn.prepareStatement("select updateEntradaId(?, ?);commit;");
+                    stmt = conn.prepareStatement("select updateEntradaId(?, ?);commit;");
                     stmt.setInt(1, (int) compra.getId());
                     stmt.setInt(2, new Long(configuration.getIdEntrada()).intValue());
                     stmt.execute();
-                    closeConnection();
-
                 } catch (SQLException e) {
                     log.error("Error de base de datos actualizando entradaId con función SQL updateEntradaId", e);
+                } finally {
+                    if (stmt != null) {
+                        stmt.close();
+                    }
+                    closeConnection();
                 }
             }
 
