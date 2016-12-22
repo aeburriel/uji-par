@@ -50,6 +50,8 @@ public class SyncResource extends BaseResource {
 
                 Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
                 eventosSyncService.sync(urlConnection.getInputStream(), user.getUsuario());
+            } catch (RuntimeException e) {
+                throw e;
             } catch (Exception e) {
                 if (urlRssException != null)
                     log.error(String.format("Error sincronizando eventos desde %s: %s", urlRssException, e.getMessage()));

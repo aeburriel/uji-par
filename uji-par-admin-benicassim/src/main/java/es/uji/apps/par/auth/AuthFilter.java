@@ -35,6 +35,8 @@ public class AuthFilter implements Filter
         {
             authClass = (Authenticator) Class.forName(configuration.getAuthClass()).newInstance();
 			authClass.setConfiguration(configuration);
+        } catch (RuntimeException e) {
+            throw e;
         }
         catch (Exception e)
         {
