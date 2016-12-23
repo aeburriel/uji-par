@@ -372,7 +372,7 @@ public class CompraResource extends BaseResource
 				.header("Cache-Control", "no-cache, no-store, must-revalidate")
 				.header("Pragma", "no-cache")
 				.header("Expires", "0")
-				.header("Content-Disposition", "attachment; filename=\"ticket " + uuidCompra + ".pdf\"")
+				.header("Content-Disposition", "inline; filename=\"ticket " + uuidCompra + ".pdf\"")
 				.build();
 
 		return response;
