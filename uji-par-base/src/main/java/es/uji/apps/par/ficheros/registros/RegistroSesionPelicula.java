@@ -62,8 +62,11 @@ public class RegistroSesionPelicula
     	Sala.checkValidity(codigoSala);
     	Sesion.checkFechaCelebracion(fecha);
     	Sesion.checkHoraCelebracion(hora);
-        String result = String.format(Locale.ENGLISH, "3%-12s%s%s%05d", codigoSala, DAY_FORMAT.format(fecha), hora,
+        String result;
+        synchronized(DAY_FORMAT) {
+            result = String.format(Locale.ENGLISH, "3%-12s%s%s%05d", codigoSala, DAY_FORMAT.format(fecha), hora,
                 codigoPelicula);
+        }
 
         return result;
     }

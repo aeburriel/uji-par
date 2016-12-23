@@ -98,9 +98,12 @@ public class RegistroSesion
         Sesion.checkHoraCelebracion(hora);
         Sesion.checkIncidencia(incidencia);
         Sesion.checkRecaudacion(recaudacion);
-        
-        String result = String.format(Locale.ENGLISH, "2%-12s%s%s%02d%05d%08.2f%s", codigoSala,
-                DAY_FORMAT.format(fecha), hora, peliculas, espectadores, recaudacion, incidencia.getCodigo());
+
+        String result;
+        synchronized(this) {
+            result = String.format(Locale.ENGLISH, "2%-12s%s%s%02d%05d%08.2f%s", codigoSala,
+                    DAY_FORMAT.format(fecha), hora, peliculas, espectadores, recaudacion, incidencia.getCodigo());
+        }
 
         return result;
     }

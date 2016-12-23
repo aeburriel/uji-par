@@ -292,7 +292,7 @@ public class Sesion
 		return sesionDTO;
 	}
 	
-	public static List<SesionDTO> sesionsToSesionsDTO(List<Sesion> sesiones)
+	synchronized public static List<SesionDTO> sesionsToSesionsDTO(List<Sesion> sesiones)
 	{
 	    List<SesionDTO> sesionesDTO = new ArrayList<SesionDTO>();
 	    
@@ -304,7 +304,7 @@ public class Sesion
         return sesionesDTO;
 	}
 	
-    public static List<Sesion> sesionsDTOToSesions(List<SesionDTO> sesionesDTO)
+    synchronized public static List<Sesion> sesionsDTOToSesions(List<SesionDTO> sesionesDTO)
     {
         List<Sesion> sesiones = new ArrayList<Sesion>();
         
@@ -503,7 +503,7 @@ public class Sesion
 	}
 	
 	//TODO deberíamos comprobar la recaudacion
-	public static void checkSesion(Date fechaCelebracion, String tipoEnvio, Integer incidenciaId) 
+	synchronized public static void checkSesion(Date fechaCelebracion, String tipoEnvio, Integer incidenciaId)
 			throws RegistroSerializaException {
 		Sesion.checkFechaCelebracion(fechaCelebracion);
 		Sesion.checkTipoEnvio(tipoEnvio);

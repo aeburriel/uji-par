@@ -18,7 +18,7 @@ public class DateUtils
     private static final SimpleDateFormat DATABASE_WITH_SECONDS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final SimpleDateFormat FORMAT_DDMMYY = new SimpleDateFormat("ddMMyy");
 
-    public static Date spanishStringToDate(String spanishDate)
+    synchronized public static Date spanishStringToDate(String spanishDate)
     {
     	Calendar cal = Calendar.getInstance();
     	
@@ -49,7 +49,9 @@ public class DateUtils
     
     public static String getCurrentDateAsDatabaseString() {
     	Calendar cal = Calendar.getInstance();
-    	return DATABASE_WITH_SECONDS.format(cal.getTime());
+	synchronized(DateUtils.class) {
+		return DATABASE_WITH_SECONDS.format(cal.getTime());
+        }
     }
     
     public static Date getCurrentDate() {
@@ -106,15 +108,19 @@ public class DateUtils
     public static String dateToSpanishString(Date fecha) {
     	if (fecha == null)
     		throw new NullPointerException();
-    	
-    	return FORMAT_DAY.format(fecha);
+
+	synchronized(DateUtils.class) {
+            return FORMAT_DAY.format(fecha);
+        }
     }
     
     public static String dateToHourString(Date fecha) {
         if (fecha == null)
             throw new NullPointerException();
 
-        return FORMAT_HOUR.format(fecha);
+        synchronized(DateUtils.class) {
+            return FORMAT_HOUR.format(fecha);
+        }
     }
     
     public static long millisecondsToSeconds(long time) {
@@ -124,30 +130,34 @@ public class DateUtils
 	public static String dateToSpanishStringWithHour(Date fecha) {
 		if (fecha == null)
     		throw new NullPointerException();
-    	
-    	return FORMAT_DAY_HOUR.format(fecha);
+
+	synchronized(DateUtils.class) {
+	    return FORMAT_DAY_HOUR.format(fecha);
+	}
 	}
 	
 	public static String dateToStringForFileNames(Date fecha) {
 		if (fecha == null)
     		throw new NullPointerException();
-    	
-    	return FORMAT_FILE_DAY_HOUR.format(fecha);
+
+	synchronized(DateUtils.class) {
+	    return FORMAT_FILE_DAY_HOUR.format(fecha);
+	}
 	}
 	
-    public static Date spanishStringWithHourstoDate(String spanishDate) throws ParseException {
+    synchronized public static Date spanishStringWithHourstoDate(String spanishDate) throws ParseException {
         return FORMAT_DAY_HOUR.parse(spanishDate);
     }
    
-    public static Date databaseWithSecondsToDate(String dateString) throws ParseException {
+    synchronized public static Date databaseWithSecondsToDate(String dateString) throws ParseException {
        return DATABASE_WITH_SECONDS.parse(dateString);
     }
 	
-	public static Date databaseStringToDate(String databaseDate) throws ParseException {
+	synchronized public static Date databaseStringToDate(String databaseDate) throws ParseException {
 	    return DATABASE_DAY.parse(databaseDate);
 	}
 
-    public static String formatDdmmyy(Date fecha)
+    synchronized public static String formatDdmmyy(Date fecha)
     {
         return FORMAT_DDMMYY.format(fecha);
     }

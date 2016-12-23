@@ -52,7 +52,7 @@ public class ButacasBackup
         fos.close();
     }
 
-    private String getNombreTimestamp()
+    synchronized private String getNombreTimestamp()
     {
         return FORMAT.format(new Date()) + ".json";
     }

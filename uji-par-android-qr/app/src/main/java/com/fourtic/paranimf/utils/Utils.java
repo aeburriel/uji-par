@@ -125,37 +125,37 @@ public class Utils
         return language.equals("es") || language.equals("ca");
     }
 
-    public static String formatHour(Date date)
+    synchronized public static String formatHour(Date date)
     {
         return HOUR_FORMAT.format(date);
     }
 
-    public static String formatWeekday(Date date)
+    synchronized public static String formatWeekday(Date date)
     {
         return WEEKDAY_FORMAT.format(date);
     }
 
-    public static String formatDate(Date date)
+    synchronized public static String formatDate(Date date)
     {
         return DATE_FORMAT.format(date);
     }
 
-    public static String formatDateWithTime(Date date)
+    synchronized public static String formatDateWithTime(Date date)
     {
         return DATE_WITH_TIME_FORMAT.format(date);
     }
 
-    public static String formatDateShort(Date date)
+    synchronized public static String formatDateShort(Date date)
     {
         return DATE_FORMAT_SHORT.format(date);
     }
 
-    public static Date parseDateShort(String date) throws ParseException
+    synchronized public static Date parseDateShort(String date) throws ParseException
     {
         return DATE_FORMAT_SHORT.parse(date);
     }
 
-    public static Date parseDateWithTime(String string) throws ParseException
+    synchronized public static Date parseDateWithTime(String string) throws ParseException
     {
         return DATE_WITH_TIME_FORMAT.parse(string);
     }

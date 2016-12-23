@@ -433,7 +433,9 @@ public class SesionesDAO extends BaseDAO {
             registro.setEspectadores(espectadores.intValue());
             registro.setPeliculas((peliculasMultisesion == 0L) ? 1 : peliculasMultisesion.intValue());
             registro.setFecha(fechaCelebracion);
-            registro.setHora(HOUR_FORMAT.format(fechaCelebracion));
+            synchronized(this) {
+                registro.setHora(HOUR_FORMAT.format(fechaCelebracion));
+            }
             registro.setIncidencia(TipoIncidencia.intToTipoIncidencia(idIncidencia));
 
             if (recaudacion == null)
@@ -498,7 +500,9 @@ public class SesionesDAO extends BaseDAO {
                     registro.setCodigoSala(sesionDTO.getParSala().getCodigo());
                     registro.setCodigoPelicula((int) eventoDTO.getId());
                     registro.setFecha(sesionDTO.getFechaCelebracion());
-                    registro.setHora(HOUR_FORMAT.format(sesionDTO.getFechaCelebracion()));
+                    synchronized(this) {
+                        registro.setHora(HOUR_FORMAT.format(sesionDTO.getFechaCelebracion()));
+                    }
                     registros.add(registro);
                 }
             } else {
@@ -513,7 +517,9 @@ public class SesionesDAO extends BaseDAO {
                 registro.setCodigoSala(sesionDTO.getParSala().getCodigo());
                 registro.setCodigoPelicula((int) sesionDTO.getParEvento().getId());
                 registro.setFecha(sesionDTO.getFechaCelebracion());
-                registro.setHora(HOUR_FORMAT.format(sesionDTO.getFechaCelebracion()));
+                synchronized(this) {
+                    registro.setHora(HOUR_FORMAT.format(sesionDTO.getFechaCelebracion()));
+                }
                 registros.add(registro);
             }
         }
