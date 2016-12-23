@@ -351,7 +351,7 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
         return blockCodebar;
     }
     
-    private static void initStatics() throws ReportSerializerInitException, SAXException, IOException
+    synchronized private static void initStatics() throws ReportSerializerInitException, SAXException, IOException
     {
         if (reportSerializer == null)
             reportSerializer = new FopPDFSerializer();

@@ -389,7 +389,7 @@ public class InformeTaquillaTpvSubtotalesReport extends Report implements Inform
         cell.setBorderBottomStyle(BorderStyleType.SOLID);
     }
 
-    private static void initStatics() throws ReportSerializerInitException
+    synchronized private static void initStatics() throws ReportSerializerInitException
     {
         if (reportSerializer == null)
             reportSerializer = new FopPDFSerializer();

@@ -442,7 +442,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         return b;
     }
 
-    private static void initStatics() throws ReportSerializerInitException, SAXException, IOException
+    synchronized private static void initStatics() throws ReportSerializerInitException, SAXException, IOException
     {
         if (reportSerializer == null)
             reportSerializer = new FopPDFSerializer();

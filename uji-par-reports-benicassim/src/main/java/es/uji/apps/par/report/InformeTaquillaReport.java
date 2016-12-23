@@ -250,7 +250,7 @@ public class InformeTaquillaReport extends Report implements InformeInterface
         block.getContent().add(table);
     }
 
-    private static void initStatics() throws ReportSerializerInitException
+    synchronized private static void initStatics() throws ReportSerializerInitException
     {
         if (reportSerializer == null)
             reportSerializer = new FopPDFSerializer();

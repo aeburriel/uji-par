@@ -237,7 +237,7 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
                         fecha.get(Calendar.DAY_OF_MONTH), ReportUtils.getMesValenciaConDe(fecha), fecha.get(Calendar.YEAR)));
     }
 
-    private static void initStatics() throws ReportSerializerInitException {
+    synchronized private static void initStatics() throws ReportSerializerInitException {
         if (reportSerializer == null)
             reportSerializer = new FopPDFSerializer();
     }

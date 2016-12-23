@@ -415,7 +415,7 @@ public class InformeEventosReport extends Report implements InformeInterface
         cell.setBorderBottomStyle(BorderStyleType.SOLID);
     }
 
-    private static void initStatics() throws ReportSerializerInitException
+    synchronized private static void initStatics() throws ReportSerializerInitException
     {
         if (reportSerializer == null)
             reportSerializer = new FopPDFSerializer();
