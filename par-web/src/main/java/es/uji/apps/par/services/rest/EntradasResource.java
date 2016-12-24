@@ -374,7 +374,13 @@ public class EntradasResource extends BaseResource {
 
         Locale locale = getLocale();
         String language = locale.getLanguage();
-        Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + compra.getParSesion().getParSala().getParCine().getCodigo() + "/datosComprador", locale, APP);
+        String codigo;
+        if (compra != null) {
+            codigo = compra.getParSesion().getParSala().getParCine().getCodigo();
+        } else {
+            codigo = Constantes.CODIGO_CINE_DEFECTO;
+        }
+        Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + codigo + "/datosComprador", locale, APP);
         String urlBase = getBaseUrlPublic();
         String url = currentRequest.getRequestURL().toString();
         template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(urlBase, url, language.toString(), configurationSelector.getHtmlTitle()));
