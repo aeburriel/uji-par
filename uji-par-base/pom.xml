@@ -126,11 +126,13 @@
             <version>9.4.1212.jre7</version>
         </dependency>
 
+	<!--
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc6</artifactId>
             <version>11.1.0.7.0</version>
         </dependency>
+        -->
 
         <dependency>
             <groupId>org.hibernate</groupId>
