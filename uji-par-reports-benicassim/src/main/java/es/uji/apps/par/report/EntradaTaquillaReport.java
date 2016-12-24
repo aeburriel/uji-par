@@ -353,10 +353,11 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
     
     synchronized private static void initStatics() throws ReportSerializerInitException, SAXException, IOException
     {
-        if (reportSerializer == null)
+        if (reportSerializer == null) {
             reportSerializer = new FopPDFSerializer();
         
-        fopFactory = FopFactory.newInstance(new File("/etc/uji/par/fop.xconf"));
+            fopFactory = FopFactory.newInstance(new File("/etc/uji/par/fop.xconf"));
+        }
     }
 
     public EntradaTaquillaReport create(Locale locale, Configuration configuration) throws SAXException, IOException
