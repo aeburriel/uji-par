@@ -684,8 +684,12 @@ public class EntradasResource extends BaseResource {
     {
         Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
 
-        return Response.ok().entity(new RestResponse(true, sesionesService.getPreciosSesion(sesionId, user.getUsuario()),
-                sesionesService.getTotalPreciosSesion(sesionId))).build();
+        try {
+            return Response.ok().entity(new RestResponse(true, sesionesService.getPreciosSesion(sesionId, user.getUsuario()),
+                    sesionesService.getTotalPreciosSesion(sesionId))).build();
+        } catch (Exception e) {
+            return Response.status(404).build();
+        }
     }
 
     @GET
@@ -699,7 +703,12 @@ public class EntradasResource extends BaseResource {
         Locale locale = getLocale();
         String language = locale.getLanguage();
 
-        Sesion sesion = sesionesService.getSesion(sesionId, user.getUsuario());
+        Sesion sesion;
+        try {
+            sesion = sesionesService.getSesion(sesionId, user.getUsuario());
+        } catch (Exception e) {
+            return Response.status(404).build();
+        }
         HTMLTemplate template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + sesion.getSala().getCine().getCodigo() + "/" + sesion.getSala().getHtmlTemplateName(), locale, APP);
 
         template.put("baseUrl", getBaseUrlPublic());
