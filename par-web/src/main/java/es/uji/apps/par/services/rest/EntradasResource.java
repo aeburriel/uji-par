@@ -666,6 +666,7 @@ public class EntradasResource extends BaseResource {
         return butacasService.estanOcupadas(idSesion, params.getButacas(), params.getUuidCompra());
     }
 
+    /*
     @GET
     @Path("{id}/compra/{fila}/{butaca}/{localizacion}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -674,6 +675,7 @@ public class EntradasResource extends BaseResource {
             @PathParam("localizacion") String localizacion) throws Exception {
         return butacasService.getCompra(idSesion, localizacion, fila, butaca);
     }
+    */
 
     @GET
     @Path("{id}/precios")
