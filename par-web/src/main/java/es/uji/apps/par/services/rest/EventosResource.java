@@ -315,17 +315,14 @@ public class EventosResource extends BaseResource {
     @GET
     @Path("{id}/imagenEntrada")
     @Produces("image/jpeg")
-    public Response getImagenEntrada(@PathParam("id") Long eventoId, @QueryParam("width") String widthTXT) throws IOException, ImageReadException {
+    public Response getImagenEntrada(@PathParam("id") Long eventoId, @QueryParam("width") int width) throws IOException, ImageReadException {
         try {
             Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
             Evento evento = eventosService.getEvento(eventoId, user.getUsuario());
 
             byte[] imagen = (evento.getImagen() != null) ? evento.getImagen() : eventosService.getImagenSustitutivaSiExiste();
 
-            int width;
-            try {
-                width = Integer.valueOf(widthTXT);
-            } catch (Exception e) {
+            if (width <= 0) {
                 width = 300;
             }
 
