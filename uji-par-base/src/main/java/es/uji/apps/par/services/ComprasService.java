@@ -281,9 +281,13 @@ public class ComprasService
         return comprasDAO.getCompraByUuid(uuidCompra);
     }
 
+    @Transactional
     public void marcaPagadaPasarela(long idCompra, String codigoPago)
     {
         comprasDAO.marcarPagadaPasarela(idCompra, codigoPago);
+        if (configuration.isIdEntrada()) {
+            butacasDAO.asignarIdEntrada(idCompra);
+        }
     }
 
     public void rellenaDatosComprador(String uuidCompra, String nombre, String apellidos, String direccion,

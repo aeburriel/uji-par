@@ -24,10 +24,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.Locale;
 
 @Component
@@ -55,20 +51,6 @@ public class TpvResource extends BaseResource implements TpvInterface {
 
     @InjectParam
     private PublicPageBuilderInterface publicPageBuilderInterface;
-
-    private static Connection conn = null;
-
-    private void initializeConnectionIfNeeded() throws SQLException {
-        if (conn == null)
-            conn = DriverManager.getConnection(configuration.getJdbUrl(), configuration.getDBUser(), configuration.getDBPassword());
-    }
-
-    private void closeConnection() throws SQLException {
-        if (conn != null)
-            conn.close();
-
-        conn = null;
-    }
 
     @POST
     @Path("resultadosha2")
@@ -133,7 +115,7 @@ public class TpvResource extends BaseResource implements TpvInterface {
 	return template;
     }
 
-    private Response getResponseResultadoTpv(String recibo, String estado, String identificador) throws SQLException {
+    private Response getResponseResultadoTpv(String recibo, String estado, String identificador) {
         CompraDTO compra = compras.getCompraById(Long.parseLong(identificador));
         log.info("Identificador: " + Long.parseLong(identificador));
         log.info("CADUCADA " + compra.getCaducada());
@@ -145,24 +127,6 @@ public class TpvResource extends BaseResource implements TpvInterface {
         } else if (isEstadoOk(estado)) {
             log.info("Compra NO caducada: " + compra.getId());
             compras.marcaPagadaPasarela(compra.getId(), recibo);
-
-            if (configuration.isIdEntrada()) {
-                PreparedStatement stmt = null;
-                try {
-                    initializeConnectionIfNeeded();
-                    stmt = conn.prepareStatement("select updateEntradaId(?, ?);commit;");
-                    stmt.setInt(1, (int) compra.getId());
-                    stmt.setInt(2, new Long(configuration.getIdEntrada()).intValue());
-                    stmt.execute();
-                } catch (SQLException e) {
-                    log.error("Error de base de datos actualizando entradaId con función SQL updateEntradaId", e);
-                } finally {
-                    if (stmt != null) {
-                        stmt.close();
-                    }
-                    closeConnection();
-                }
-            }
 
             log.info("Marcada como pagada " + compra.getUuid() + " - " + compra.getEmail());
             enviaMail(compra.getEmail(), compra.getUuid(), recibo);
