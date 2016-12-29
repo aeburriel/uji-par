@@ -60,6 +60,7 @@ public class GeneralPARException extends WebApplicationException
     public static final String CODIGO_SALA_LARGO = "El código de sala es un string de tamaño mayor de 6 carácteres";
     public static final String ANTICIPADA_FORMAT_ERROR = "Formato incorrecto de la propiedad " + Configuration.HORAS_VENTA_ANTICIPADA;
     public static final String NOT_FOUND_INCIDENCIA = "Incidencia no encontrada";
+    public static final String SESION_NO_ENCONTRADA= "Sesión no encontrada";
 	public static final String EDICION_ANULADA_EXCEPTION = "No se puede editar una sesión anulada";
     public static final String ABONO_CON_ABONADOS = "Abono con abonados";
 
@@ -115,6 +116,7 @@ public class GeneralPARException extends WebApplicationException
 	public static final Integer EDICION_ANULADA_EXCEPTION_CODE = 549;
     public static final Integer ABONO_CON_ABONADOS_CODE = 550;
     public static final Integer COMPRA_BUTACA_NO_EXISTENTE_CODE = 551;
+    public static final Integer SESION_NO_ENCONTRADA_CODE = 552;
 
     static {
 		messages = new HashMap<Integer,String>();
@@ -170,6 +172,7 @@ public class GeneralPARException extends WebApplicationException
 		messages.put(EDICION_ANULADA_EXCEPTION_CODE, EDICION_ANULADA_EXCEPTION);
         messages.put(ABONO_CON_ABONADOS_CODE, ABONO_CON_ABONADOS);
         messages.put(COMPRA_BUTACA_NO_EXISTENTE_CODE, COMPRA_BUTACA_NO_EXISTENTE);
+                messages.put(SESION_NO_ENCONTRADA_CODE, SESION_NO_ENCONTRADA);
     }
 
     public GeneralPARException(int errorCode) {

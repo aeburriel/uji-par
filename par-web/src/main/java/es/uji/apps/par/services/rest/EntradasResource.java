@@ -83,7 +83,7 @@ public class EntradasResource extends BaseResource {
         Sesion sesion;
         try {
             sesion = sesionesService.getSesion(sesionId, user.getUsuario());
-        } catch (Exception e) {
+        } catch (SesionNoEncontradaException e) {
             return Response.status(404).build();
         }
         if (sesion.getCanalInternet() && (sesion.getAnulada() == null || sesion.getAnulada() == false)) {
@@ -693,7 +693,7 @@ public class EntradasResource extends BaseResource {
         try {
             return Response.ok().entity(new RestResponse(true, sesionesService.getPreciosSesion(sesionId, user.getUsuario()),
                     sesionesService.getTotalPreciosSesion(sesionId))).build();
-        } catch (Exception e) {
+        } catch (SesionNoEncontradaException e) {
             return Response.status(404).build();
         }
     }
@@ -712,7 +712,7 @@ public class EntradasResource extends BaseResource {
         Sesion sesion;
         try {
             sesion = sesionesService.getSesion(sesionId, user.getUsuario());
-        } catch (Exception e) {
+        } catch (SesionNoEncontradaException e) {
             return Response.status(404).build();
         }
         HTMLTemplate template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + sesion.getSala().getCine().getCodigo() + "/" + sesion.getSala().getHtmlTemplateName(), locale, APP);

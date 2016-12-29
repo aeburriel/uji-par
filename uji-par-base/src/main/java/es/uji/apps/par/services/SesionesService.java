@@ -10,6 +10,7 @@ import es.uji.apps.par.exceptions.CampoRequeridoException;
 import es.uji.apps.par.exceptions.EventoConCompras;
 import es.uji.apps.par.exceptions.FechasInvalidasException;
 import es.uji.apps.par.exceptions.IncidenciaNotFoundException;
+import es.uji.apps.par.exceptions.SesionNoEncontradaException;
 import es.uji.apps.par.model.*;
 import es.uji.apps.par.utils.DateUtils;
 import es.uji.apps.par.utils.Pair;
@@ -403,7 +404,11 @@ public class SesionesService
 
 	public Sesion getSesion(long id, String userUID)
 	{
-	    return new Sesion(sesionDAO.getSesion(id, userUID));
+	    SesionDTO sesionDTO = sesionDAO.getSesion(id, userUID);
+	    if (sesionDTO == null) {
+			throw new SesionNoEncontradaException(id);
+	    }
+	    return new Sesion(sesionDTO);
 	}
 
 	public int getTotalSesionesActivas(Long eventoId, String userUID) {
