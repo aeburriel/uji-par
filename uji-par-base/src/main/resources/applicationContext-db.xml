@@ -29,33 +29,20 @@
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
           destroy-method="close">
         <property name="dataSourceName" value="par"/>
-        <property name="driverClass">
-            <value>${uji.db.driverClass}</value>
-        </property>
-        <property name="jdbcUrl">
-            <value>${uji.db.jdbcUrl}</value>
-        </property>
+        <property name="driverClass" value="${uji.db.driverClass}"/>
+        <property name="jdbcUrl" value="${uji.db.jdbcUrl}"/>
+        <property name="user" value="${uji.db.username}"/>
+        <property name="password" value="${uji.db.password}"/>
         <property name="initialPoolSize" value="${uji.db.initialPoolSize}"/>
-        <property name="maxPoolSize" value="${uji.db.maxPoolSize}"/>
         <property name="minPoolSize" value="${uji.db.minPoolSize}"/>
+        <property name="maxPoolSize" value="${uji.db.maxPoolSize}"/>
         <property name="acquireIncrement" value="${uji.db.acquireIncrement}"/>
-        <property name="acquireRetryAttempts" value="10"/>
-        <property name="idleConnectionTestPeriod">
-            <value>14400</value>
-        </property>
-        <property name="checkoutTimeout">
-            <value>25200</value>
-        </property>
-        <property name="properties">
-            <props>
-                <prop key="c3p0.max_size">${uji.db.maxPoolSize}</prop>
-                <prop key="c3p0.min_size">${uji.db.minPoolSize}</prop>
-                <prop key="c3p0.max_statements">0</prop>
-                <prop key="c3p0.preferredTestQuery">${uji.db.preferredTestQuery}</prop>
-                <prop key="user">${uji.db.username}</prop>
-                <prop key="password">${uji.db.password}</prop>
-            </props>
-        </property>
+        <property name="checkoutTimeout" value="10000"/>
+        <property name="idleConnectionTestPeriod" value="300"/>
+        <property name="maxIdleTimeExcessConnections" value="240"/>
+        <property name="preferredTestQuery" value="${uji.db.preferredTestQuery}"/>
+        <property name="testConnectionOnCheckin" value="true"/>
+        <!-- <property name="testConnectionOnCheckout" value="true"/> -->
     </bean>
 
     <bean id="entityManagerFactory"
