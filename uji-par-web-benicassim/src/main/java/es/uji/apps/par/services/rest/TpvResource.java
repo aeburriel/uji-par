@@ -117,6 +117,9 @@ public class TpvResource extends BaseResource implements TpvInterface {
 
     private Response getResponseResultadoTpv(String recibo, String estado, String identificador) {
         CompraDTO compra = compras.getCompraById(Long.parseLong(identificador));
+        if (compra == null) {
+            return Response.status(409).build();
+        }
         log.info("Identificador: " + Long.parseLong(identificador));
         log.info("CADUCADA " + compra.getCaducada());
         log.info("ESTADO " + estado);
@@ -169,6 +172,9 @@ public class TpvResource extends BaseResource implements TpvInterface {
         Template template;
 
         CompraDTO compra = compras.getCompraById(Long.parseLong(identificador));
+        if (compra == null) {
+            return Response.status(409).build();
+        }
 
         if (compra.getCaducada()) {
             template = paginaError(compra);
@@ -206,6 +212,9 @@ public class TpvResource extends BaseResource implements TpvInterface {
 
     private Response getResponseResultadoKo(String identificador) throws Exception {
         CompraDTO compra = compras.getCompraById(Long.parseLong(identificador));
+        if (compra == null) {
+            return Response.status(409).build();
+        }
 
         Template template = paginaError(compra);
 
