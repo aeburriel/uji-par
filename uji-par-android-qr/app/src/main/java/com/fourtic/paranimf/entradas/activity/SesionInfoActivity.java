@@ -28,7 +28,6 @@ import com.fourtic.paranimf.entradas.sync.SincronizadorButacas;
 import com.fourtic.paranimf.entradas.sync.SincronizadorButacas.SyncCallback;
 import com.fourtic.paranimf.utils.Utils;
 import com.google.inject.Inject;
-import com.google.zxing.integration.android.IntentIntegrator;
 
 import java.sql.SQLException;
 import java.util.Date;
@@ -217,8 +216,12 @@ public class SesionInfoActivity extends BaseNormalActivity
         {
             if (aplicacionInstalada(BARCODE_SCANNER_PACKAGE))
             {
-                IntentIntegrator scanIntegrator = new IntentIntegrator(this);
-                scanIntegrator.initiateScan();
+                Intent scanner = new Intent(BARCODE_SCANNER_PACKAGE + ".SCAN");
+                scanner.putExtra("SCAN_MODE", "QR_CODE_MODE");
+                scanner.putExtra("RESULT_DISPLAY_DURATION_MS", 0L);
+                scanner.putExtra("SAVE_HISTORY", false);
+                scanner.setPackage(BARCODE_SCANNER_PACKAGE);
+                startActivityForResult(scanner, BARCODE_SCANNER_REQUEST);
             } else
             {
                 Toast.makeText(this, R.string.instalar_barcode_scanner, Toast.LENGTH_LONG).show();
@@ -250,33 +253,41 @@ public class SesionInfoActivity extends BaseNormalActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        if ((requestCode == EXTERNAL_SCANNER_REQUEST || requestCode == BARCODE_SCANNER_REQUEST) && resultCode == Activity.RESULT_OK)
-        {
-        	try
-            {
-                String scanningResult;
-                if (requestCode == BARCODE_SCANNER_REQUEST)
-                {
-                    scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data).getContents();
-                }
-                else
-                {
-                    scanningResult = data.getAction();
-                }
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
 
-            	if (scanningResult != null) {
-            		procesCodigoBarras(scanningResult);
-            	}
-            	else{
-            	    Toast toast = Toast.makeText(getApplicationContext(), 
-            	        "No scan data received!", Toast.LENGTH_SHORT);
-            	    toast.show();
-            	}
-            }
-            catch (Exception e)
+        try
+        {
+            String scanningResult;
+            switch(requestCode)
             {
-                gestionaError(getString(R.string.error_escaneando_entrada), e);
+                case BARCODE_SCANNER_REQUEST:
+                    scanningResult = data.getStringExtra("SCAN_RESULT");
+                    break;
+                case EXTERNAL_SCANNER_REQUEST:
+                    scanningResult = data.getAction();
+                    break;
+                default:
+                    Toast.makeText(getApplicationContext(),
+                            "Recibido resultado de actividad de origen desconocido",
+                            Toast.LENGTH_LONG).show();
+                    return;
             }
+
+            if (scanningResult != null) {
+                procesCodigoBarras(scanningResult);
+            }
+            else
+            {
+                Toast toast = Toast.makeText(getApplicationContext(),
+                    "No scan data received!", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        }
+        catch (Exception e)
+        {
+            gestionaError(getString(R.string.error_escaneando_entrada), e);
         }
     }
 
