@@ -22,10 +22,10 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.PersistentCookieStore;
 import com.loopj.android.http.RequestParams;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicHeader;
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.HttpEntity;
+import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.message.BasicHeader;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -39,6 +39,7 @@ import java.util.Map.Entry;
 @Singleton
 public class RestService {
 	private static final String PORT_SEPARATOR = ":";
+	private static final String CHARACTER_ENCODING = "UTF-8";
 
 	private static String BASE_SECURE_URL = "/par-public/rest";
 
@@ -132,7 +133,7 @@ public class RestService {
 
 	private HttpEntity mapToEntity(Map<String, Object> map)
 			throws UnsupportedEncodingException {
-		return new StringEntity(gson.toJson(map), "UTF-8");
+		return new StringEntity(gson.toJson(map), CHARACTER_ENCODING);
 	}
 
 	/*
@@ -143,17 +144,17 @@ public class RestService {
 	 * postJSON(BASE_SECURE_URL + "/loginTablet", data, new
 	 * AsyncHttpResponseHandler(context, true) {
 	 * 
-	 * @Override public void onSuccess(int status, String response, boolean
-	 * fromCache) { responseHandler.onSuccess(null); };
+	 * @Override public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+	 * responseHandler.onSuccess(null); };
 	 * 
-	 * @Override public void onFailure(Throwable error, String errorBody) {
-	 * responseHandler.onError(error, getErrorMessage(errorBody)); } }); } catch
-	 * (Exception e) { responseHandler.onError(e, ""); } }
+	 * @Override public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable error) {
+	 * responseHandler.onError(error, getErrorMessage(errorResponse)); } }); }
 	 */
 
-	protected String getErrorMessage(String errorBody) {
+	protected String getErrorMessage(byte[] errorBody) {
 		try {
-			return parseErrorBody(errorBody).getError();
+			String msg = new String(errorBody, CHARACTER_ENCODING);
+			return parseErrorBody(msg).getError();
 		} catch (Exception e) {
 			return "";
 		}
@@ -173,21 +174,25 @@ public class RestService {
 		return gson.fromJson(json, collectionType);
 	}
 
-	protected List<Butaca> parseButacas(String json) {
+	protected List<Butaca> parseButacas(byte[] json) {
 		Type collectionType = new TypeToken<List<Butaca>>() {
 		}.getType();
 
-		return gson.fromJson(json, collectionType);
+		try {
+			return gson.fromJson(new String(json, CHARACTER_ENCODING), collectionType);
+		} catch (UnsupportedEncodingException e) {
+			return null;
+		}
 	}
 
 	public void getEventos(final ResultCallback<List<Evento>> responseHandler) {
 		get(getUrl() + BASE_SECURE_URL + "/evento" + getApiKey(),
 				new AsyncHttpResponseHandler() {
 					@Override
-					public void onSuccess(String result) {
+					public void onSuccess(int statusCode, Header[] headers, byte[] response) {
 						try {
-							ResponseEventos response = parseEventos(result);
-							responseHandler.onSuccess(response.getEventos());
+							ResponseEventos responseEventos = parseEventos(new String(response, CHARACTER_ENCODING));
+							responseHandler.onSuccess(responseEventos.getEventos());
 						} catch (Exception e) {
 							responseHandler.onError(e,
 									"Error recuperando eventos");
@@ -195,9 +200,9 @@ public class RestService {
 					}
 
 					@Override
-					public void onFailure(Throwable error, String errorBody) {
+					public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable error) {
 						responseHandler.onError(error,
-								getErrorMessage(errorBody));
+								getErrorMessage(errorResponse));
 					}
 				});
 	}
@@ -207,13 +212,13 @@ public class RestService {
 		get(getUrl() + BASE_SECURE_URL + "/sesion/" + idSesion + "/butacas"
 				+ getApiKey(), new AsyncHttpResponseHandler() {
 			@Override
-			public void onSuccess(String result) {
-				responseHandler.onSuccess(parseButacas(result));
+			public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+				responseHandler.onSuccess(parseButacas(response));
 			}
 
 			@Override
-			public void onFailure(Throwable error, String errorBody) {
-				responseHandler.onError(error, getErrorMessage(errorBody));
+			public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable error) {
+				responseHandler.onError(error, getErrorMessage(errorResponse));
 			}
 		});
 	}
@@ -226,22 +231,22 @@ public class RestService {
 		HttpEntity entity = null;
 		try {
 			String json = gson.toJson(butacas);
-			entity = new StringEntity(json, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
+			entity = new StringEntity(json, CHARACTER_ENCODING);
+		} catch (Exception e) {
 			responseHandler.onError(e, "Error toJson en POST");
 		}
 
 		client.post(context, url, defaultHeaders(), entity, "application/json",
 				new AsyncHttpResponseHandler() {
 					@Override
-					public void onSuccess(int arg0, String response) {
+					public void onSuccess(int statusCode, Header[] headers, byte[] response) {
 						responseHandler.onSuccess(null);
 					}
 
 					@Override
-					public void onFailure(Throwable throwable, String body) {
-						responseHandler.onError(throwable,
-								getErrorMessage(body));
+					public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable error) {
+						responseHandler.onError(error,
+								getErrorMessage(errorResponse));
 					}
 				});
 	}
@@ -254,8 +259,8 @@ public class RestService {
         HttpEntity entity = null;
         try {
             String json = gson.toJson(butaca);
-            entity = new StringEntity(json, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
+            entity = new StringEntity(json, CHARACTER_ENCODING);
+        } catch (Exception e) {
             responseHandler.onError(e, "Error toJson en POST");
         }
 
@@ -263,10 +268,10 @@ public class RestService {
         client.post(context, url, defaultHeaders(), entity, "application/json",
                 new AsyncHttpResponseHandler() {
                     @Override
-                    public void onSuccess(int arg0, String response) {
+                    public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                         client.setTimeout(30000);
                         try {
-                            RestResponse restResponse = gson.fromJson(response, RestResponse.class);
+                            RestResponse restResponse = gson.fromJson(new String(response, CHARACTER_ENCODING), RestResponse.class);
                             if (restResponse.getSuccess()) {
                                 responseHandler.onSuccess(null);
                             }
@@ -275,13 +280,14 @@ public class RestService {
                             }
                         } catch (JsonSyntaxException e) {
                             responseHandler.onError(e, "Error fromJson al recibir la respuesta del POST");
+                        } catch (UnsupportedEncodingException e) {
+			        responseHandler.onError(e, "Error interpretando la respuesta del POST como UTF-8");
                         }
                     }
-
                     @Override
-                    public void onFailure(Throwable throwable, String body) {
+                    public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable error) {
                         client.setTimeout(30000);
-                        responseHandler.onError(throwable, getErrorMessage(body));
+                        responseHandler.onError(error, getErrorMessage(errorResponse));
                     }
                 });
     }
@@ -291,53 +297,15 @@ public class RestService {
 		client.get(context, url, defaultHeaders(), null,
 				new AsyncHttpResponseHandler() {
 					@Override
-					public void onSuccess(int status, String result) {
-						responseHandler.onSuccess(status, result);
+					public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+						responseHandler.onSuccess(statusCode, headers, response);
 					}
 
 					@Override
-					public void onFailure(Throwable throwable, String message) {
-						responseHandler.onFailure(throwable, message);
+					public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable error) {
+						responseHandler.onFailure(statusCode, headers, errorResponse, error);
 					}
 				});
-	}
-
-	private void postJSON(String url, Map<String, Object> data,
-			final AsyncHttpResponseHandler responseHandler) {
-		try {
-			HttpEntity entity = mapToEntity(data);
-
-			client.post(context, url, defaultHeaders(), entity,
-					"application/json", responseHandler);
-		} catch (Exception e) {
-			responseHandler.onFailure(e, "");
-		}
-	}
-
-	private void postWithFileUpload(String url, InputStream fileInputStream,
-			String fileName, Map<String, Object> data,
-			final AsyncHttpResponseHandler responseHandler) {
-		try {
-			RequestParams params = new RequestParams();
-
-			if (data != null) {
-				for (Entry<String, Object> entry : data.entrySet())
-					params.put(entry.getKey(), (String) entry.getValue());
-			}
-
-			if (fileInputStream != null)
-				params.put("file", fileInputStream, fileName);
-
-			client.post(context, url, defaultHeaders(), params, null,
-					responseHandler);
-		} catch (Exception e) {
-			responseHandler.onFailure(e, "");
-		}
-	}
-
-	private void delete(String url,
-			final AsyncHttpResponseHandler responseHandler) {
-		client.delete(context, url, defaultHeaders(), responseHandler);
 	}
 
 	private Header[] defaultHeaders() {

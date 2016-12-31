@@ -30,8 +30,8 @@ import com.fourtic.paranimf.entradas.sync.SincronizadorButacas;
 import com.fourtic.paranimf.utils.Utils;
 import com.google.inject.Inject;
 
-import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.conn.HttpHostConnectException;
+import cz.msebera.android.httpclient.conn.ConnectTimeoutException;
+import cz.msebera.android.httpclient.conn.HttpHostConnectException;
 
 public class EntradaManualActivity extends BaseNormalActivity
 {

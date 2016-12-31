@@ -15,8 +15,8 @@ import com.fourtic.paranimf.entradas.rest.RestService.ResultCallback;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.conn.HttpHostConnectException;
+import cz.msebera.android.httpclient.conn.ConnectTimeoutException;
+import cz.msebera.android.httpclient.conn.HttpHostConnectException;
 
 @Singleton
 public class SincronizadorButacas

@@ -1,6 +1,6 @@
 package com.fourtic.paranimf.entradas.activity.base;
 
-import org.apache.http.conn.HttpHostConnectException;
+import cz.msebera.android.httpclient.conn.HttpHostConnectException;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface.OnClickListener;
