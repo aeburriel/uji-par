@@ -100,7 +100,7 @@ public class RegistroSesion
         Sesion.checkRecaudacion(recaudacion);
 
         String result;
-        synchronized(this) {
+        synchronized(RegistroSesion.class) {
             result = String.format(Locale.ENGLISH, "2%-12s%s%s%02d%05d%08.2f%s", codigoSala,
                     DAY_FORMAT.format(fecha), hora, peliculas, espectadores, recaudacion, incidencia.getCodigo());
         }

@@ -433,7 +433,7 @@ public class SesionesDAO extends BaseDAO {
             registro.setEspectadores(espectadores.intValue());
             registro.setPeliculas((peliculasMultisesion == 0L) ? 1 : peliculasMultisesion.intValue());
             registro.setFecha(fechaCelebracion);
-            synchronized(this) {
+            synchronized(SesionesDAO.class) {
                 registro.setHora(HOUR_FORMAT.format(fechaCelebracion));
             }
             registro.setIncidencia(TipoIncidencia.intToTipoIncidencia(idIncidencia));
@@ -500,7 +500,7 @@ public class SesionesDAO extends BaseDAO {
                     registro.setCodigoSala(sesionDTO.getParSala().getCodigo());
                     registro.setCodigoPelicula((int) eventoDTO.getId());
                     registro.setFecha(sesionDTO.getFechaCelebracion());
-                    synchronized(this) {
+                    synchronized(SesionesDAO.class) {
                         registro.setHora(HOUR_FORMAT.format(sesionDTO.getFechaCelebracion()));
                     }
                     registros.add(registro);
@@ -517,7 +517,7 @@ public class SesionesDAO extends BaseDAO {
                 registro.setCodigoSala(sesionDTO.getParSala().getCodigo());
                 registro.setCodigoPelicula((int) sesionDTO.getParEvento().getId());
                 registro.setFecha(sesionDTO.getFechaCelebracion());
-                synchronized(this) {
+                synchronized(SesionesDAO.class) {
                     registro.setHora(HOUR_FORMAT.format(sesionDTO.getFechaCelebracion()));
                 }
                 registros.add(registro);
