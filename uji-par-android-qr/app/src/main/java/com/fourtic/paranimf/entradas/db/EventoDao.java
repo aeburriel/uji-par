@@ -77,7 +77,7 @@ public class EventoDao
     public List<Evento> getEventos() throws SQLException
     {
         QueryBuilder<Evento, Integer> builder = dao.queryBuilder();
-        builder.orderBy("titulo", true);
+        builder.orderByRaw("titulo COLLATE NOCASE ASC");
 
         List<Evento> eventos = builder.query();
 
