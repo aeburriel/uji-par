@@ -92,6 +92,7 @@ public class EventosActivity extends BaseNormalActivity
                 }
             }
         });
+        eventosList.setFastScrollEnabled(true);
     }
 
     protected void abreActivitySesiones(Evento evento)
