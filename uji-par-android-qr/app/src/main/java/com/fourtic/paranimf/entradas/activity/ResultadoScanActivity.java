@@ -3,7 +3,6 @@ package com.fourtic.paranimf.entradas.activity;
 import roboguice.inject.InjectExtra;
 import roboguice.inject.InjectView;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -18,9 +17,6 @@ import com.fourtic.paranimf.entradas.scan.ResultadoScan;
 
 public class ResultadoScanActivity extends BaseNormalActivity
 {
-    private static final long RETARDO_OK = 100;
-    private static final long RETARDO_ERROR = 2000;
-
     @InjectView(R.id.dialogRoot)
     private RelativeLayout rootLayout;
 
@@ -33,8 +29,6 @@ public class ResultadoScanActivity extends BaseNormalActivity
     @InjectExtra(value = Constants.SCAN_RESULT)
     private int resultadoScan;
 
-    private Handler handler;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -45,13 +39,10 @@ public class ResultadoScanActivity extends BaseNormalActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.resultado_scan_activity);
 
-        handler = new Handler();
-
         textView.setText(message);
         cambiaColorFondo();
 
         cerrarAlTocar();
-        programaCierreActivity();
     }
 
     private void cerrarAlTocar()
@@ -61,39 +52,10 @@ public class ResultadoScanActivity extends BaseNormalActivity
             @Override
             public void onClick(View view)
             {
+                setResult(RESULT_OK);
                 finish();
             }
         });
-    }
-
-    private void programaCierreActivity()
-    {
-        handler.postDelayed(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    finish();
-                }
-                catch (Exception e)
-                {
-                }
-            }
-        }, getRetardoPorResultado());
-    }
-
-    private long getRetardoPorResultado()
-    {
-        if (resultadoScan == ResultadoScan.ERROR.ordinal())
-        {
-            return RETARDO_ERROR;
-        }
-        else
-        {
-            return RETARDO_OK;
-        }
     }
 
     private void cambiaColorFondo()

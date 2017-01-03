@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -41,6 +42,10 @@ public class SesionInfoActivity extends BaseNormalActivity
 
     private static final int EXTERNAL_SCANNER_REQUEST = 1;
     private static final int BARCODE_SCANNER_REQUEST = 49374;
+    private static final int SCANNER_RESULT_REQUEST = 2;
+
+    private static final long RETARDO_OK = 200;
+    private static final long RETARDO_ERROR = 2000;
 
     @Inject
     private ButacaDao butacaDao;
@@ -96,10 +101,20 @@ public class SesionInfoActivity extends BaseNormalActivity
     @Inject
     private RestService rest;
 
+    private Handler handler;
+    private final Runnable scanRestart = new Runnable() {
+        @Override
+        public void run() {
+            finishActivity(SCANNER_RESULT_REQUEST);
+            abreActividadEscanear();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        handler = new Handler();
         setContentView(R.layout.sesion_info_activity);
         setSupportProgressBarIndeterminateVisibility(false);
 
@@ -168,7 +183,7 @@ public class SesionInfoActivity extends BaseNormalActivity
             @Override
             public void onClick(View arg0)
             {
-                abreActividadEscanear();
+                abreActividadEscanearRetardada(ResultadoScan.NINGUNO);
             }
         });
 
@@ -268,6 +283,10 @@ public class SesionInfoActivity extends BaseNormalActivity
                 case EXTERNAL_SCANNER_REQUEST:
                     scanningResult = data.getAction();
                     break;
+                case SCANNER_RESULT_REQUEST:
+                    handler.removeCallbacks(scanRestart);
+                    abreActividadEscanearRetardada(ResultadoScan.NINGUNO);
+                    return;
                 default:
                     Toast.makeText(getApplicationContext(),
                             "Recibido resultado de actividad de origen desconocido",
@@ -293,8 +312,6 @@ public class SesionInfoActivity extends BaseNormalActivity
 
     private void procesCodigoBarras(String uuid) throws SQLException
     {
-        abreActividadEscanear();
-
         try
         {
             final Butaca butaca = butacaDao.getButacaPorUuid(sesionId, uuid);
@@ -360,8 +377,9 @@ public class SesionInfoActivity extends BaseNormalActivity
         Intent intent = new Intent(this, ResultadoScanActivity.class);
         intent.putExtra(Constants.DIALOG_MESSAGE, message);
         intent.putExtra(Constants.SCAN_RESULT, resultado.ordinal());
+        abreActividadEscanearRetardada(resultado);
 
-        startActivity(intent);
+        startActivityForResult(intent, SCANNER_RESULT_REQUEST);
     }
 
     private void actualizaInfo()
@@ -409,5 +427,23 @@ public class SesionInfoActivity extends BaseNormalActivity
             app_installed = false;
         }
         return app_installed;
+    }
+
+    private void abreActividadEscanearRetardada(ResultadoScan resultado)
+    {
+        handler.postDelayed(scanRestart, getRetardoPorResultado(resultado));
+    }
+
+    private long getRetardoPorResultado(ResultadoScan resultado)
+    {
+        switch (resultado) {
+            case OK:
+            case DESCUENTO:
+                return RETARDO_OK;
+            case ERROR:
+                return RETARDO_ERROR;
+            default:
+                return 0;
+        }
     }
 }
