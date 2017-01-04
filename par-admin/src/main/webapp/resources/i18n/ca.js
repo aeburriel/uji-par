@@ -447,7 +447,8 @@ UI =
             "incidencia": "Incidència",
             "selectIncidencia": "Seleccione la incidència",
             "ventaRetrasada": "Mostrar espectacles acabats per a introduir vendes manuals retrasades",
-            "eventosAcabados": "Mostrar espectacles acabats"
+            "eventosAcabados": "Mostrar espectacles acabats",
+            "presentada": "Presentada"
         },
         "legends": {
             "entradesAmfiteatre": "Entrades AMFITEATRE",

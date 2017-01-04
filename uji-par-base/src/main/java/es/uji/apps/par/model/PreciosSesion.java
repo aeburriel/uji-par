@@ -1,16 +1,17 @@
 package es.uji.apps.par.model;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlRootElement;
-
 import es.uji.apps.par.db.PreciosSesionDTO;
 import es.uji.apps.par.db.SesionDTO;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
+
 @XmlRootElement
-public class PreciosSesion {
+public class PreciosSesion
+{
 
 	private long id;
 	private Localizacion localizacion;
@@ -20,19 +21,22 @@ public class PreciosSesion {
 	private BigDecimal precio;
 	private BigDecimal aulaTeatro;
 	private Tarifa tarifa;
-	
-	public PreciosSesion() {
-		
+
+	public PreciosSesion()
+	{
+
 	}
-	
-	public PreciosSesion(PreciosPlantilla preciosPlantilla) {
-        this.id = preciosPlantilla.getId();
-        this.localizacion = preciosPlantilla.getLocalizacion();
-        this.precio = preciosPlantilla.getPrecio();
-        this.tarifa = preciosPlantilla.getTarifa();
-    }
-	
-	public PreciosSesion(PreciosSesionDTO preciosSesion) {
+
+	public PreciosSesion(PreciosPlantilla preciosPlantilla)
+	{
+		this.id = preciosPlantilla.getId();
+		this.localizacion = preciosPlantilla.getLocalizacion();
+		this.precio = preciosPlantilla.getPrecio();
+		this.tarifa = preciosPlantilla.getTarifa();
+	}
+
+	public PreciosSesion(PreciosSesionDTO preciosSesion)
+	{
 		this.id = preciosSesion.getId();
 		this.localizacion = Localizacion.localizacionDTOtoLocalizacion(preciosSesion.getParLocalizacione());
 		this.sesion = Sesion.SesionDTOToSesion(preciosSesion.getParSesione());
@@ -40,117 +44,141 @@ public class PreciosSesion {
 		this.tarifa = Tarifa.tarifaDTOToTarifa(preciosSesion.getParTarifa());
 	}
 
-	public long getId() {
+	public long getId()
+	{
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(long id)
+	{
 		this.id = id;
 	}
 
-	public Localizacion getLocalizacion() {
+	public Localizacion getLocalizacion()
+	{
 		return localizacion;
 	}
 
-	public void setLocalizacion(Localizacion localizacion) {
+	public void setLocalizacion(Localizacion localizacion)
+	{
 		this.localizacion = localizacion;
 	}
-	
-	public BigDecimal getDescuento() {
-		return descuento;
+
+	public BigDecimal getDescuento()
+	{
+		return descuento.setScale(2, RoundingMode.CEILING);
 	}
 
-	public void setDescuento(BigDecimal descuento) {
+	public void setDescuento(BigDecimal descuento)
+	{
 		this.descuento = descuento;
 	}
 
-	public BigDecimal getInvitacion() {
-		return invitacion;
+	public BigDecimal getInvitacion()
+	{
+		return invitacion.setScale(2, RoundingMode.CEILING);
 	}
 
-	public void setInvitacion(BigDecimal invitacion) {
+	public void setInvitacion(BigDecimal invitacion)
+	{
 		this.invitacion = invitacion;
 	}
 
-	public BigDecimal getPrecio() {
-		return precio;
+	public BigDecimal getPrecio()
+	{
+		return precio.setScale(2, RoundingMode.CEILING);
 	}
 
-	public void setPrecio(BigDecimal precio) {
+	public void setPrecio(BigDecimal precio)
+	{
 		this.precio = precio;
 	}
 
-	public BigDecimal getAulaTeatro() {
-        return aulaTeatro;
-    }
+	public BigDecimal getAulaTeatro()
+	{
+		return aulaTeatro.setScale(2, RoundingMode.CEILING);
+	}
 
-    public void setAulaTeatro(BigDecimal aulaTeatro) {
-        this.aulaTeatro = aulaTeatro;
-    }
+	public void setAulaTeatro(BigDecimal aulaTeatro)
+	{
+		this.aulaTeatro = aulaTeatro;
+	}
 
-    public Sesion getSesion() {
+	public Sesion getSesion()
+	{
 		return sesion;
 	}
 
-	public void setSesion(Sesion sesion) {
+	public void setSesion(Sesion sesion)
+	{
 		this.sesion = sesion;
 	}
-	
-	public static List<PreciosSesionDTO> listaPreciosSesionToListaPreciosSesionDTO(List<PreciosSesion> listaPreciosSesion) {
+
+	public static List<PreciosSesionDTO> listaPreciosSesionToListaPreciosSesionDTO(List<PreciosSesion> listaPreciosSesion)
+	{
 		List<PreciosSesionDTO> listaPreciosSesionDTO = new ArrayList<PreciosSesionDTO>();
-		if (listaPreciosSesion != null) {
-			for (PreciosSesion preciosSesion: listaPreciosSesion)
+		if (listaPreciosSesion != null)
+		{
+			for (PreciosSesion preciosSesion : listaPreciosSesion)
 				listaPreciosSesionDTO.add(PreciosSesion.precioSesionToPrecioSesionDTO(preciosSesion));
 		}
-		
+
 		return listaPreciosSesionDTO;
 	}
-	
-	public static List<PreciosSesion> listaPreciosSesionDTOToListaPreciosSesion(List<PreciosSesionDTO> listaPreciosSesionDTO) {
+
+	public static List<PreciosSesion> listaPreciosSesionDTOToListaPreciosSesion(List<PreciosSesionDTO> listaPreciosSesionDTO)
+	{
 		List<PreciosSesion> listaPreciosSesion = new ArrayList<PreciosSesion>();
-		if (listaPreciosSesionDTO != null) {
-			for (PreciosSesionDTO preciosSesionDTO: listaPreciosSesionDTO)
+		if (listaPreciosSesionDTO != null)
+		{
+			for (PreciosSesionDTO preciosSesionDTO : listaPreciosSesionDTO)
 				listaPreciosSesion.add(PreciosSesion.precioSesionDTOToPrecioSesion(preciosSesionDTO));
 		}
-		
+
 		return listaPreciosSesion;
 	}
 
-	public static PreciosSesionDTO precioSesionToPrecioSesionDTO(PreciosSesion preciosSesion) {
+	public static PreciosSesionDTO precioSesionToPrecioSesionDTO(PreciosSesion preciosSesion)
+	{
 		PreciosSesionDTO preciosSesionDTO = new PreciosSesionDTO();
 		preciosSesionDTO.setPrecio(preciosSesion.getPrecio());
 		preciosSesionDTO.setParTarifa(Tarifa.toDTO(preciosSesion.getTarifa()));
 		preciosSesionDTO.setParLocalizacione(Localizacion.localizacionToLocalizacionDTO(preciosSesion.getLocalizacion()));
-		
-		if (preciosSesion.getSesion() != null) {
+
+		if (preciosSesion.getSesion() != null)
+		{
 			SesionDTO sesionDTO = new SesionDTO();
 			sesionDTO.setId(preciosSesion.getSesion().getId());
 			preciosSesionDTO.setParSesione(sesionDTO);
 		}
-		
+
 		return preciosSesionDTO;
 	}
-	
-	public static PreciosSesion precioSesionDTOToPrecioSesion(PreciosSesionDTO preciosSesionDTO) {
+
+	public static PreciosSesion precioSesionDTOToPrecioSesion(PreciosSesionDTO preciosSesionDTO)
+	{
 		PreciosSesion preciosSesion = new PreciosSesion();
 		preciosSesion.setPrecio(preciosSesionDTO.getPrecio());
 		preciosSesion.setTarifa(Tarifa.tarifaDTOToTarifa(preciosSesionDTO.getParTarifa()));
 		preciosSesion.setLocalizacion(Localizacion.localizacionDTOtoLocalizacion(preciosSesionDTO.getParLocalizacione()));
-		
-		if (preciosSesionDTO.getParSesione() != null) {
+
+		if (preciosSesionDTO.getParSesione() != null)
+		{
 			Sesion sesion = new Sesion();
 			sesion.setId(preciosSesionDTO.getId());
 			preciosSesion.setSesion(sesion);
 		}
-		
+
 		return preciosSesion;
 	}
 
-	public Tarifa getTarifa() {
+	public Tarifa getTarifa()
+	{
 		return tarifa;
 	}
 
-	public void setTarifa(Tarifa tarifa) {
+	public void setTarifa(Tarifa tarifa)
+	{
 		this.tarifa = tarifa;
 	}
 }

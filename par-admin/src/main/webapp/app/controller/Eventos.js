@@ -110,7 +110,6 @@ Ext.define('Paranimf.controller.Eventos', {
    }],
 
    init: function() {
-      this._allEventosShown = false;
       this.control({
 
          'gridEventos button[action=add]': {
@@ -235,12 +234,10 @@ Ext.define('Paranimf.controller.Eventos', {
    },
 
    showHideTodosEventos: function () {
-      if (this.getCheckMostrarTodosEventos().checked) {
-         this._allEventosShown = true;
-      }
-
-      var url = (this.getCheckMostrarTodosEventos().checked) ? urlPrefix + 'evento' : urlPrefix + 'evento?activos=true';
-      this.getGridEventos().store.proxy.url = url;
+      this.getGridEventos().store.proxy.url = urlPrefix + 'evento';
+      this.getGridEventos().store.proxy.extraParams = {
+         activos: (!this.getCheckMostrarTodosEventos().checked).toString()
+      };
       this.recargaStore();
    },
 
@@ -611,10 +608,10 @@ Ext.define('Paranimf.controller.Eventos', {
          var storeSesiones = this.getGridSesiones().getStore();
          var eventoId = record[0].get("id");
          var url = urlPrefix + 'evento/' + eventoId + '/sesiones';
-
-         if (!this._allEventosShown)
-            url += '?activos=true';
          storeSesiones.getProxy().url = url;
+         storeSesiones.getProxy().extraParams = {
+            activos: (!this.getCheckMostrarTodosEventos().checked).toString()
+         };
          storeSesiones.load();
       }
    },

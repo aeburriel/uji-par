@@ -441,7 +441,8 @@ UI =
             "reserva": "Reserva",
             "title_va": "Títol",
             "ventaRetrasada": "Mostrar eventos acabados para introducir ventas manuales retrasadas",
-            "eventosAcabados": "Mostrar eventos acabados"
+            "eventosAcabados": "Mostrar eventos acabados",
+            "presentada": "Presentada"
         },
         "legends": {
             "entradesPlatea2": "Entradas PLATEA NIVEL 2",

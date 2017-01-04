@@ -71,6 +71,14 @@ Ext.define('Paranimf.view.compra.GridDetalleCompras', {
       renderer: function(val) {
         return (val == 0)?'':val.toFixed(2) + '€';
       }
+    }, {
+      dataIndex: 'presentada',
+      text: UI.i18n.field.presentada,
+      hidden: true,
+      flex: 1,
+      renderer: function(val) {
+        return (val) ? UI.i18n.message.si : UI.i18n.message.no
+      }
     }];
    
     this.callParent(arguments);

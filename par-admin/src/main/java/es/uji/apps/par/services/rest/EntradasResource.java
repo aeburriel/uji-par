@@ -10,6 +10,7 @@ import es.uji.apps.par.model.Sesion;
 import es.uji.apps.par.model.SesionAbono;
 import es.uji.apps.par.services.AbonosService;
 import es.uji.apps.par.services.ButacasService;
+import es.uji.apps.par.services.LocalizacionesService;
 import es.uji.commons.web.template.HTMLTemplate;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,10 +18,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @Path("entrada")
 public class EntradasResource extends BaseResource {
@@ -30,6 +28,9 @@ public class EntradasResource extends BaseResource {
 
     @InjectParam
     private ButacasService butacasService;
+
+    @InjectParam
+    private LocalizacionesService localizacionesService;
 
     @Context
     HttpServletRequest currentRequest;
@@ -84,6 +85,15 @@ public class EntradasResource extends BaseResource {
         else {
             template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "butacasFragmentAbono", locale, APP);
         }
+
+        Map<String, String> butacasOcupadas = new HashMap<>();
+        for (SesionAbono sesionAbono : sesiones)
+        {
+            Sesion sesion = sesionAbono.getSesion();
+            Map<String, String> butacas = butacasService.estilosButacasOcupadas(sesion.getId(), localizacionesService.getLocalizacionesSesion(sesion.getId()), isAdmin.equals("true"));
+            butacasOcupadas.putAll(butacas);
+        }
+        template.put("estilosOcupadas", butacasOcupadas);
 
         template.put("baseUrl", getBaseUrlPublic());
         template.put("idioma", language);
