@@ -66,7 +66,7 @@ public class PreciosSesion
 
 	public BigDecimal getDescuento()
 	{
-		return descuento.setScale(2, RoundingMode.CEILING);
+		return descuento == null ? null : descuento.setScale(2, RoundingMode.CEILING);
 	}
 
 	public void setDescuento(BigDecimal descuento)
@@ -76,7 +76,7 @@ public class PreciosSesion
 
 	public BigDecimal getInvitacion()
 	{
-		return invitacion.setScale(2, RoundingMode.CEILING);
+		return invitacion == null ? null : invitacion.setScale(2, RoundingMode.CEILING);
 	}
 
 	public void setInvitacion(BigDecimal invitacion)
@@ -86,7 +86,7 @@ public class PreciosSesion
 
 	public BigDecimal getPrecio()
 	{
-		return precio.setScale(2, RoundingMode.CEILING);
+		return precio == null ? null : precio.setScale(2, RoundingMode.CEILING);
 	}
 
 	public void setPrecio(BigDecimal precio)
@@ -96,7 +96,7 @@ public class PreciosSesion
 
 	public BigDecimal getAulaTeatro()
 	{
-		return aulaTeatro.setScale(2, RoundingMode.CEILING);
+		return aulaTeatro == null ? null : aulaTeatro.setScale(2, RoundingMode.CEILING);
 	}
 
 	public void setAulaTeatro(BigDecimal aulaTeatro)
