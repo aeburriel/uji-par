@@ -67,24 +67,6 @@ public class TpvResource extends BaseResource implements TpvInterface {
         return getResponseResultadoTpv(recibo, estado, identificador);
     }
 
-    @POST
-    @Path("resultado")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response leeResultadoTpv(@FormParam("Ds_Date") String fecha, @FormParam("Ds_Hour") String hora, @FormParam("Ds_Amount") String importe,
-                                    @FormParam("Ds_Currency") String currency, @FormParam("Ds_Order") String recibo, @FormParam("Ds_MerchantCode") String codigo,
-                                    @FormParam("Ds_Terminal") String terminal, @FormParam("Ds_Signature") String firma, @FormParam("Ds_Response") String estado,
-                                    @FormParam("Ds_MerchantData") String identificador, @FormParam("Ds_SecurePayment") String securePayment, @FormParam("Ds_TransactionType") String tipoTransaccion,
-                                    @FormParam("Ds_Card_Country") String cardCountry, @FormParam("Ds_AuthorisationCode") String authCode, @FormParam("Ds_ConsumerLanguage") String lang) throws Exception {
-        String msg = String.format(
-                "Resultado pago TPV: Ds_Date=%s, Ds_Hour=%s, Ds_Amount=%s, Ds_Currency=%s, Ds_Order=%s, Ds_MerchantCode=%s, Ds_Terminal=%s, " +
-                        "Ds_Signature=%s, Ds_Response=%s, Ds_MerchantData=%s, Ds_SecurePayment=%s, Ds_TransactionType=%s, Ds_Card_Country=%s, " +
-                        "Ds_AuthorisationCode=%s, Ds_ConsumerLanguage=%s",
-                fecha, hora, importe, currency, recibo, codigo, terminal, firma, estado, identificador, securePayment, tipoTransaccion, cardCountry, authCode, lang);
-        log.info(msg);
-
-        return getResponseResultadoTpv(recibo, estado, identificador);
-    }
-
     private Template checkCompra(CompraDTO compraDTO, String recibo, String estado) throws Exception {
             Template template;
 
@@ -157,17 +139,6 @@ public class TpvResource extends BaseResource implements TpvInterface {
         return getResponseResultadoOk(recibo, identificador);
     }
 
-    @GET
-    @Path("ok")
-    @Produces(MediaType.TEXT_HTML)
-    public Response resultadoOk(@QueryParam("Ds_Date") String fecha, @QueryParam("Ds_Hour") String hora, @QueryParam("Ds_Amount") String importe,
-                                @QueryParam("Ds_Currency") String currency, @QueryParam("Ds_Order") String recibo, @QueryParam("Ds_MerchantCode") String codigo,
-                                @QueryParam("Ds_Terminal") String terminal, @QueryParam("Ds_Signature") String firma, @QueryParam("Ds_Response") int estado,
-                                @QueryParam("Ds_MerchantData") String identificador, @QueryParam("Ds_SecurePayment") int securePayment, @QueryParam("Ds_TransactionType") String tipoTransaccion,
-                                @QueryParam("Ds_Card_Country") String cardCountry, @QueryParam("Ds_AuthorisationCode") String authCode, @QueryParam("Ds_ConsumerLanguage") String lang) throws Exception {
-        return getResponseResultadoOk(recibo, identificador);
-    }
-
     private Response getResponseResultadoOk(String recibo, String identificador) throws Exception {
         Template template;
 
@@ -196,17 +167,6 @@ public class TpvResource extends BaseResource implements TpvInterface {
 
         String identificador = apiMacSha256.getParameter("Ds_MerchantData");
 
-        return getResponseResultadoKo(identificador);
-    }
-
-    @GET
-    @Path("ko")
-    @Produces(MediaType.TEXT_HTML)
-    public Response resultadoKo(@QueryParam("Ds_Date") String fecha, @QueryParam("Ds_Hour") String hora, @QueryParam("Ds_Amount") String importe,
-                                @QueryParam("Ds_Currency") String currency, @QueryParam("Ds_Order") String recibo, @QueryParam("Ds_MerchantCode") String codigo,
-                                @QueryParam("Ds_Terminal") String terminal, @QueryParam("Ds_Signature") String firma, @QueryParam("Ds_Response") int estado,
-                                @QueryParam("Ds_MerchantData") String identificador, @QueryParam("Ds_SecurePayment") int securePayment, @QueryParam("Ds_TransactionType") String tipoTransaccion,
-                                @QueryParam("Ds_Card_Country") String cardCountry, @QueryParam("Ds_AuthorisationCode") String authCode, @QueryParam("Ds_ConsumerLanguage") String lang) throws Exception {
         return getResponseResultadoKo(identificador);
     }
 
