@@ -4,6 +4,7 @@ import com.sun.jersey.api.core.InjectParam;
 import es.uji.apps.par.builders.PublicPageBuilderInterface;
 import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.db.CompraDTO;
+import es.uji.apps.par.db.TpvsDTO;
 import es.uji.apps.par.exceptions.Constantes;
 import es.uji.apps.par.i18n.ResourceProperties;
 import es.uji.apps.par.services.ComprasService;
@@ -56,15 +57,26 @@ public class TpvResource extends BaseResource implements TpvInterface {
     @Path("resultadosha2")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response leeResultadoSHA2Tpv(@FormParam("Ds_MerchantParameters") String params, @FormParam("Ds_SignatureVersion") String signatureVersion, @FormParam("Ds_Signature") String signature) throws Exception {
+
         ApiMacSha256 apiMacSha256 = new ApiMacSha256();
+
         String decodecParams = apiMacSha256.decodeMerchantParameters(params);
         log.info(decodecParams);
 
+        String identificador = apiMacSha256.getParameter("Ds_MerchantData");
+        CompraDTO compra = compras.getCompraById(Long.parseLong(identificador));
+        if (compra == null) {
+            return Response.status(409).build();
+        }
+
+        if (!verificaFirmaSHA256(params, signature, signatureVersion, apiMacSha256, compra)) {
+            return Response.status(400).build();
+        }
+
         String recibo = apiMacSha256.getParameter("Ds_Order");
         String estado = apiMacSha256.getParameter("Ds_Response");
-        String identificador = apiMacSha256.getParameter("Ds_MerchantData");
 
-        return getResponseResultadoTpv(recibo, estado, identificador);
+        return getResponseResultadoTpv(recibo, estado, compra);
     }
 
     private Template checkCompra(CompraDTO compraDTO, String recibo, String estado) throws Exception {
@@ -97,12 +109,8 @@ public class TpvResource extends BaseResource implements TpvInterface {
 	return template;
     }
 
-    private Response getResponseResultadoTpv(String recibo, String estado, String identificador) {
-        CompraDTO compra = compras.getCompraById(Long.parseLong(identificador));
-        if (compra == null) {
-            return Response.status(409).build();
-        }
-        log.info("Identificador: " + Long.parseLong(identificador));
+    private Response getResponseResultadoTpv(String recibo, String estado, CompraDTO compra) {
+        log.info("Identificador: " + compra.getId());
         log.info("CADUCADA " + compra.getCaducada());
         log.info("ESTADO " + estado);
         if (compra.getCaducada()) {
@@ -135,17 +143,20 @@ public class TpvResource extends BaseResource implements TpvInterface {
 
         String recibo = apiMacSha256.getParameter("Ds_Order");
         String identificador = apiMacSha256.getParameter("Ds_MerchantData");
-
-        return getResponseResultadoOk(recibo, identificador);
-    }
-
-    private Response getResponseResultadoOk(String recibo, String identificador) throws Exception {
-        Template template;
-
         CompraDTO compra = compras.getCompraById(Long.parseLong(identificador));
         if (compra == null) {
             return Response.status(409).build();
         }
+
+        if (!verificaFirmaSHA256(params, signature, signatureVersion, apiMacSha256, compra)) {
+            return Response.status(400).build();
+        }
+
+        return getResponseResultadoOk(recibo, compra);
+    }
+
+    private Response getResponseResultadoOk(String recibo, CompraDTO compra) throws Exception {
+        Template template;
 
         if (compra.getCaducada()) {
             template = paginaError(compra);
@@ -166,16 +177,19 @@ public class TpvResource extends BaseResource implements TpvInterface {
         log.info(decodecParams);
 
         String identificador = apiMacSha256.getParameter("Ds_MerchantData");
-
-        return getResponseResultadoKo(identificador);
-    }
-
-    private Response getResponseResultadoKo(String identificador) throws Exception {
         CompraDTO compra = compras.getCompraById(Long.parseLong(identificador));
         if (compra == null) {
             return Response.status(409).build();
         }
 
+        if (!verificaFirmaSHA256(params, signature, signatureVersion, apiMacSha256, compra)) {
+            return Response.status(400).build();
+        }
+
+        return getResponseResultadoKo(compra);
+    }
+
+    private Response getResponseResultadoKo(CompraDTO compra) throws Exception {
         Template template = paginaError(compra);
 
         return Response.ok(template).build();
@@ -242,5 +256,20 @@ public class TpvResource extends BaseResource implements TpvInterface {
         CompraDTO compra = compras.getCompraById(identificador);
         Template template = checkCompra(compra, "COMPRA_GRATUITA_" + identificador, "OK");
         return Response.ok(template).build();
+    }
+
+    private static boolean verificaFirmaSHA256(final String mensaje, final String firma, final String version, final ApiMacSha256 apiMacSha256, final CompraDTO compra) throws Exception {
+        if (!version.equals("HMAC_SHA256_V1")) {
+            log.info("Algoritmo de firma no reconocido: " + version);
+            return false;
+        }
+        TpvsDTO parTpv = compra.getParSesion().getParEvento().getParTpv();
+
+        String firmaCalculada = apiMacSha256.createMerchantSignatureNotif(parTpv.getSecret(), mensaje);
+        if (!firmaCalculada.equals(firma)) {
+            log.info("Recibida respuesta TPV no auténtica");
+            return false;
+        }
+        return true;
     }
 }
