@@ -213,9 +213,13 @@ public class ButacasDAO extends BaseDAO
         }
         catch (Exception e)
         {
-            if (butacaActual != null && e.getCause() instanceof ConstraintViolationException)
-                throw new ButacaOcupadaException(sesionId, butacaActual.getLocalizacion(), butacaActual.getFila(), butacaActual.getNumero());
-            else
+                Throwable t = e;
+                while (t != null) {
+                        if (t instanceof ConstraintViolationException && butacaActual != null) {
+                                throw new ButacaOcupadaException(sesionId, butacaActual.getLocalizacion(), butacaActual.getFila(), butacaActual.getNumero());
+                        }
+                        t = t.getCause();
+                }
                 throw e;
         }
     }
