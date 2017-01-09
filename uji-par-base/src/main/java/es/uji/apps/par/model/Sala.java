@@ -64,7 +64,7 @@ public class Sala
         this.setFormato(salaDTO.getFormato());
         this.setSubtitulo(salaDTO.getSubtitulo());
         this.setHtmlTemplateName(salaDTO.getHtmlTemplateName());
-        this.setAsientosNumerados(salaDTO.getAsientosNumerados());
+        this.setAsientosNumerados(salaDTO.getAsientosNumerados() != null && salaDTO.getAsientosNumerados());
 
         if (salaDTO.getParCine() != null)
             this.setCine(Cine.cineDTOToCine(salaDTO.getParCine()));

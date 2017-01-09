@@ -115,7 +115,7 @@ public class ActoGraduacion implements EventosTipoSync {
             if (salas.size() > 0 && tarifas.size() > 0)
             {
                 evento = eventosDAO.updateEventoDTO(evento);
-                List<SesionDTO> parSesiones = sesionesDAO.getSesionesActivas(evento.getId(), null, 0, Integer.MAX_VALUE, userUID);
+                List<SesionDTO> parSesiones = sesionesDAO.getSesiones(evento.getId(), null, 0, Integer.MAX_VALUE, userUID);
                 Sesion sesion = null;
                 if (parSesiones != null && parSesiones.size() > 0)
                 {

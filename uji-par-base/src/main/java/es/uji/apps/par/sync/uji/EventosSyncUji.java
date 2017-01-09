@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 
 @Service("syncUji")
 public class EventosSyncUji implements EventosSync {
@@ -92,11 +93,18 @@ public class EventosSyncUji implements EventosSync {
         EventosTipoSync eventosTipoSync = (EventosTipoSync)appContext.getBean(item.getTipo());
         EventoDTO evento = eventosDAO.getEventoByRssId(item.getContenidoId(), userUID);
 
-        if (evento == null) {
-            Cine cine = usersService.getUserCineByUserUID(userUID);
-            eventosTipoSync.createNewTipoEvento(item, Cine.cineToCineDTO(cine), userUID);
-        } else {
-            eventosTipoSync.updateTipoEvento(evento, item, userUID);
+        Date now = new Date();
+        if (item.getDate().after(now))
+        {
+            if (evento == null)
+            {
+                Cine cine = usersService.getUserCineByUserUID(userUID);
+                eventosTipoSync.createNewTipoEvento(item, Cine.cineToCineDTO(cine), userUID);
+            }
+            else
+            {
+                eventosTipoSync.updateTipoEvento(evento, item, userUID);
+            }
         }
     }
 

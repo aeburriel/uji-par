@@ -6,8 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import es.uji.apps.par.config.Configuration;
-
 public class DateUtils
 {
     private static final SimpleDateFormat FORMAT_DAY = new SimpleDateFormat("dd/MM/yyyy");
@@ -100,6 +98,7 @@ public class DateUtils
             cal.set(Calendar.HOUR_OF_DAY, hora);
             cal.set(Calendar.MINUTE, minutos);
             cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
         }
 
         return cal.getTime();

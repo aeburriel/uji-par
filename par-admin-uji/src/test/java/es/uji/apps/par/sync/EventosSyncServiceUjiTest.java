@@ -6,7 +6,6 @@ import es.uji.apps.par.db.TarifaDTO;
 import es.uji.apps.par.model.*;
 import es.uji.apps.par.services.EventosSyncService;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,7 +153,6 @@ public class EventosSyncServiceUjiTest extends SyncBaseTest
 
     @Test
     @Transactional
-	@Ignore
     public void testSyncUpdateItemsGraduacion() throws Exception
     {
         syncService.sync(loadFromClasspath(RSS_TIPO_GRADUACION), usuario.getUsuario());
@@ -164,10 +162,8 @@ public class EventosSyncServiceUjiTest extends SyncBaseTest
         syncService.sync(loadFromClasspath(RSS_TIPO_GRADUACION_UPDATE), usuario.getUsuario());
         List<SesionDTO> sesiones = sesionesDAO.getSesionesPorRssId("2508948", usuario.getUsuario());
 
-        //No cambia la fecha
-        assertEquals("Fecha primera sesión", sesiones.get(0).getFechaCelebracion().toString(), "2015-10-16 19:00:00.0");
-
-        //Sí que actualiza la hora de apertura
+        assertEquals("Número de sesiones", 1, sesiones.size());
+        assertEquals("Fecha primera sesión", sesiones.get(0).getFechaCelebracion().toString(), "2050-10-16 19:00:00.0");
         assertEquals("Hora apertura", sesiones.get(0).getHoraApertura(), "18:00");
     }
 }
