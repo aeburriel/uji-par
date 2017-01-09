@@ -66,7 +66,7 @@ public class TpvResource extends BaseResource implements TpvInterface {
         String identificador = apiMacSha256.getParameter("Ds_MerchantData");
         CompraDTO compra = compras.getCompraById(Long.parseLong(identificador));
         if (compra == null) {
-            return Response.status(409).build();
+            return Response.status(400).build();
         }
 
         if (!verificaFirmaSHA256(params, signature, signatureVersion, apiMacSha256, compra)) {
@@ -145,7 +145,7 @@ public class TpvResource extends BaseResource implements TpvInterface {
         String identificador = apiMacSha256.getParameter("Ds_MerchantData");
         CompraDTO compra = compras.getCompraById(Long.parseLong(identificador));
         if (compra == null) {
-            return Response.status(409).build();
+            return Response.status(400).build();
         }
 
         if (!verificaFirmaSHA256(params, signature, signatureVersion, apiMacSha256, compra)) {
@@ -179,7 +179,7 @@ public class TpvResource extends BaseResource implements TpvInterface {
         String identificador = apiMacSha256.getParameter("Ds_MerchantData");
         CompraDTO compra = compras.getCompraById(Long.parseLong(identificador));
         if (compra == null) {
-            return Response.status(409).build();
+            return Response.status(400).build();
         }
 
         if (!verificaFirmaSHA256(params, signature, signatureVersion, apiMacSha256, compra)) {
