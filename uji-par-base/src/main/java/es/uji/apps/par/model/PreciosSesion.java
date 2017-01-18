@@ -1,13 +1,14 @@
 package es.uji.apps.par.model;
 
-import es.uji.apps.par.db.PreciosSesionDTO;
-import es.uji.apps.par.db.SesionDTO;
-
-import javax.xml.bind.annotation.XmlRootElement;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
+import es.uji.apps.par.db.PreciosSesionDTO;
+import es.uji.apps.par.db.SesionDTO;
 
 @XmlRootElement
 public class PreciosSesion
@@ -66,7 +67,7 @@ public class PreciosSesion
 
 	public BigDecimal getDescuento()
 	{
-		return descuento == null ? null : descuento.setScale(2, RoundingMode.CEILING);
+		return descuento != null ? descuento.setScale(2, RoundingMode.CEILING) : descuento;
 	}
 
 	public void setDescuento(BigDecimal descuento)
@@ -76,7 +77,7 @@ public class PreciosSesion
 
 	public BigDecimal getInvitacion()
 	{
-		return invitacion == null ? null : invitacion.setScale(2, RoundingMode.CEILING);
+		return invitacion != null ? invitacion.setScale(2, RoundingMode.CEILING) : invitacion;
 	}
 
 	public void setInvitacion(BigDecimal invitacion)
@@ -86,7 +87,7 @@ public class PreciosSesion
 
 	public BigDecimal getPrecio()
 	{
-		return precio == null ? null : precio.setScale(2, RoundingMode.CEILING);
+		return precio != null ? precio.setScale(2, RoundingMode.CEILING) : precio;
 	}
 
 	public void setPrecio(BigDecimal precio)
@@ -96,7 +97,7 @@ public class PreciosSesion
 
 	public BigDecimal getAulaTeatro()
 	{
-		return aulaTeatro == null ? null : aulaTeatro.setScale(2, RoundingMode.CEILING);
+		return aulaTeatro != null ? aulaTeatro.setScale(2, RoundingMode.CEILING) : aulaTeatro;
 	}
 
 	public void setAulaTeatro(BigDecimal aulaTeatro)

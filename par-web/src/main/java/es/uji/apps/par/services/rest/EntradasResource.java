@@ -407,6 +407,7 @@ public class EntradasResource extends BaseResource {
                 template.put("tipoEvento", compra.getParSesion().getParEvento().getParTiposEvento().getNombreVa());
             else
                 template.put("tipoEvento", compra.getParSesion().getParEvento().getParTiposEvento().getNombreEs());
+            template.put("eventoId", compra.getParSesion().getParEvento().getId());
 
             if (infoPeriodica == null || infoPeriodica.equals(""))
                 infoPeriodica = "no";
