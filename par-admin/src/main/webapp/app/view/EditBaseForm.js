@@ -51,7 +51,7 @@ Ext.define('Paranimf.view.EditBaseForm', {
   	        method: methodHTTP,
   	        url: formURL,
   	        headers: { 'Content-Type': ct },
-  	        params: Ext.JSON.encode(me.getValues()),
+  	        params: encodeURIComponent(Ext.JSON.encode(me.getValues())),
   	        success: function(form, action) {
   	          me.up('window').close();
               grid.deseleccionar();
