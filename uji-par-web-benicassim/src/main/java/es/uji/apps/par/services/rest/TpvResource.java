@@ -76,7 +76,8 @@ public class TpvResource extends BaseResource implements TpvInterface {
         String recibo = apiMacSha256.getParameter("Ds_Order");
         String estado = apiMacSha256.getParameter("Ds_Response");
 
-        return getResponseResultadoTpv(recibo, estado, compra);
+        asientaCompra(recibo, estado, compra);
+        return Response.ok().build();
     }
 
     private Template checkCompra(CompraDTO compraDTO, String recibo, String estado) throws Exception {
@@ -109,7 +110,7 @@ public class TpvResource extends BaseResource implements TpvInterface {
 	return template;
     }
 
-    private Response getResponseResultadoTpv(String recibo, String estado, CompraDTO compra) {
+    private void asientaCompra(String recibo, String estado, CompraDTO compra) {
         log.info("Identificador: " + compra.getId());
         log.info("CADUCADA " + compra.getCaducada());
         log.info("ESTADO " + estado);
@@ -125,7 +126,6 @@ public class TpvResource extends BaseResource implements TpvInterface {
             enviaMail(compra.getEmail(), compra.getUuid(), recibo);
         }
         eliminaCompraDeSesion();
-        return Response.ok().build();
     }
 
     private boolean isEstadoOk(String estado) {
@@ -150,6 +150,12 @@ public class TpvResource extends BaseResource implements TpvInterface {
 
         if (!verificaFirmaSHA256(params, signature, signatureVersion, apiMacSha256, compra)) {
             return Response.status(400).build();
+        }
+
+        if(!compra.getPagada()) {
+            // Podríamos no haber recibido confirmación de la pasarela (llamada a leeResultadoSHA2Tpv)
+            String estado = apiMacSha256.getParameter("Ds_Response");
+            asientaCompra(recibo, estado, compra);
         }
 
         return getResponseResultadoOk(recibo, compra);
