@@ -1,13 +1,5 @@
 package es.uji.apps.par.services.dao;
 
-import es.uji.apps.par.builders.*;
-import es.uji.apps.par.dao.EventosDAO;
-import es.uji.apps.par.dao.TiposEventosDAO;
-import es.uji.apps.par.dao.TpvsDAO;
-import es.uji.apps.par.db.*;
-import es.uji.apps.par.model.Evento;
-import es.uji.apps.par.model.TipoEvento;
-import es.uji.apps.par.model.Tpv;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,9 +10,28 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
+
+import es.uji.apps.par.builders.CineBuilder;
+import es.uji.apps.par.builders.EventoBuilder;
+import es.uji.apps.par.builders.SalaBuilder;
+import es.uji.apps.par.builders.TipoEventoBuilder;
+import es.uji.apps.par.builders.UsuarioBuilder;
+import es.uji.apps.par.dao.EventosDAO;
+import es.uji.apps.par.dao.TiposEventosDAO;
+import es.uji.apps.par.dao.TpvsDAO;
+import es.uji.apps.par.db.CineDTO;
+import es.uji.apps.par.db.EventoDTO;
+import es.uji.apps.par.db.SalaDTO;
+import es.uji.apps.par.db.TipoEventoDTO;
+import es.uji.apps.par.db.TpvsDTO;
+import es.uji.apps.par.db.UsuarioDTO;
+import es.uji.apps.par.model.Evento;
+import es.uji.apps.par.model.TipoEvento;
+import es.uji.apps.par.model.Tpv;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/applicationContext-db-test.xml" })
@@ -61,9 +72,11 @@ public class EventosDAOTest
 		//   -     ->   "   ->    "    -> Sesion4 (Sala2)
 		//   -     ->   "   ->    "    -> Sesion5 (Sala2)
 
+		//   -     ->  Cine2 -> Evento5
+
 		//   -     ->  null -> Evento4 -> Sesion6 (Sala2)
 
-		//Usuario2
+		//Usuario2 no tiene cine asociado
 
 		CineDTO cine1 = new CineBuilder("Cine 1")
 				.build(entityManager);
@@ -102,6 +115,9 @@ public class EventosDAOTest
 				.build(entityManager);
 
 
+
+		new EventoBuilder("Evento 5", "Esdeveniment 5", cine2, tipoEvento)
+			.build(entityManager);
 
 
 		usuarioSinEventos = new UsuarioBuilder("User 2", "user2@test.com", "user2")
@@ -210,7 +226,7 @@ public class EventosDAOTest
 		List<Evento> eventos = eventosDAO.getEventosActivos(EventosDAOTest.SORT, EventosDAOTest.START, EventosDAOTest.LIMIT, usuarioConEventos.getUsuario());
 
 		Assert.assertNotNull(eventos);
-		Assert.assertTrue(eventos.size() == 2);
+		Assert.assertTrue(eventos.size() == 3);
 	}
 
 	@Test

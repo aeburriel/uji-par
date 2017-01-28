@@ -2,6 +2,7 @@ package es.uji.apps.par.dao;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import com.mysema.query.Tuple;
 import com.mysema.query.jpa.JPASubQuery;
 import com.mysema.query.jpa.impl.JPADeleteClause;
@@ -11,23 +12,49 @@ import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.OrderSpecifier;
 import com.mysema.query.types.QTuple;
 import com.mysema.query.types.path.StringPath;
-import es.uji.apps.par.config.Configuration;
-import es.uji.apps.par.database.DatabaseHelper;
-import es.uji.apps.par.database.DatabaseHelperFactory;
-import es.uji.apps.par.db.*;
-import es.uji.apps.par.exceptions.CampoRequeridoException;
-import es.uji.apps.par.model.*;
-import es.uji.apps.par.utils.DateUtils;
-import es.uji.apps.par.utils.Utils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.Query;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.Query;
+
+import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.database.DatabaseHelper;
+import es.uji.apps.par.database.DatabaseHelperFactory;
+import es.uji.apps.par.db.CineDTO;
+import es.uji.apps.par.db.EventoDTO;
+import es.uji.apps.par.db.EventoMultisesionDTO;
+import es.uji.apps.par.db.QCineDTO;
+import es.uji.apps.par.db.QEventoDTO;
+import es.uji.apps.par.db.QEventoMultisesionDTO;
+import es.uji.apps.par.db.QSalaDTO;
+import es.uji.apps.par.db.QSalasUsuarioDTO;
+import es.uji.apps.par.db.QSesionDTO;
+import es.uji.apps.par.db.QTipoEventoDTO;
+import es.uji.apps.par.db.QUsuarioDTO;
+import es.uji.apps.par.db.SesionDTO;
+import es.uji.apps.par.db.TipoEventoDTO;
+import es.uji.apps.par.db.TpvsDTO;
+import es.uji.apps.par.exceptions.CampoRequeridoException;
+import es.uji.apps.par.model.Evento;
+import es.uji.apps.par.model.EventoMultisesion;
+import es.uji.apps.par.model.Sesion;
+import es.uji.apps.par.model.TipoEvento;
+import es.uji.apps.par.model.Tpv;
+import es.uji.apps.par.utils.DateUtils;
+import es.uji.apps.par.utils.Utils;
 
 @Repository
 public class EventosDAO extends BaseDAO
@@ -177,8 +204,8 @@ public class EventosDAO extends BaseDAO
 
     private String getWhereActivos(String userUID)
     {
-        return " where s.ID IS NULL or (s.FECHA_CELEBRACION >= " + databaseHelper.toDate() + "('" + DateUtils.dateToSpanishStringWithHour
-		(configuration.dateConMargenTrasVenta()) + "','DD/MM/YYYY HH24:MI')) and (u.usuario = '" + userUID + "' or e.CINE_ID IS "
+        return " where (s.ID IS NULL or (s.FECHA_CELEBRACION >= " + databaseHelper.toDate() + "('" + DateUtils.dateToSpanishStringWithHour
+		(configuration.dateConMargenTrasVenta()) + "','DD/MM/YYYY HH24:MI'))) and (u.usuario = '" + userUID + "' or e.CINE_ID IS "
 				+ "NULL)";
     }
 
@@ -548,7 +575,7 @@ public class EventosDAO extends BaseDAO
                         .and(qEventoDTO.id.eq(eventoId)))
                 .list(qEventoDTO);
 
-        return list.get(0);
+        return list != null && list.size() > 0 ? list.get(0) : null;
     }
 
     @Transactional
@@ -560,7 +587,7 @@ public class EventosDAO extends BaseDAO
 
         JPAQuery query = new JPAQuery(entityManager);
 
-        List<EventoDTO> eventos = query
+        List<EventoDTO> list = query
                 .from(qEventoDTO)
                 .leftJoin(qEventoDTO.parTiposEvento, qTipoEvento).fetch()
                 .leftJoin(qEventoDTO.parCine, qCineDTO)
@@ -570,10 +597,7 @@ public class EventosDAO extends BaseDAO
                 .where((qUsuarioDTO.usuario.eq(userUID).or(qCineDTO.isNull())).and(qEventoDTO.rssId.eq(rssId)))
                 .list(qEventoDTO);
 
-        if (eventos.size() == 0)
-            return null;
-        else
-            return eventos.get(0);
+        return list != null && list.size() > 0 ? list.get(0) : null;
     }
 
     @Transactional
