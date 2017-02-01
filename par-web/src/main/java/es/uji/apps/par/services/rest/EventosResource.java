@@ -111,7 +111,7 @@ public class EventosResource extends BaseResource {
 
             List<Evento> eventosActivosConSesiones = new ArrayList<>();
             for (Evento eventosActivo : eventosActivos) {
-                if (eventosActivo.getSesiones() != null && eventosActivo.getSesiones().size() > 0)
+                if (eventosActivo.getFechaPrimeraSesion() != null)
                 {
                     eventosActivosConSesiones.add(eventosActivo);
                 }
