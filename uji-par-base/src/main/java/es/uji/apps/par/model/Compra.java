@@ -1,10 +1,11 @@
 package es.uji.apps.par.model;
 
-import es.uji.apps.par.db.CompraDTO;
-
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
 import java.util.List;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
+import es.uji.apps.par.db.CompraDTO;
 
 @XmlRootElement
 public class Compra
@@ -12,8 +13,13 @@ public class Compra
     private long id;
     private String nombre;
     private String apellidos;
+    private String direccion;
+    private String poblacion;
+    private String cp;
+    private String provincia;
     private String telefono;
     private String email;
+    private boolean infoPeriodica;
     private boolean reserva;
     private boolean pagada;
     private boolean taquilla;
@@ -43,6 +49,11 @@ public class Compra
         this.setImporte(compraDTO.getImporte().floatValue());
         this.setUuid(compraDTO.getUuid());
 		this.setTipo(compraDTO.getTipoPago());
+		this.setDireccion(compraDTO.getDireccion());
+		this.setPoblacion(compraDTO.getPoblacion());
+		this.setCp(compraDTO.getCp());
+		this.setProvincia(compraDTO.getProvincia());
+		this.setInfoPeriodica(compraDTO.getInfoPeriodica());
         if (compraDTO.getAnulada() != null)
         	this.setAnulada(compraDTO.getAnulada());
         
@@ -114,6 +125,46 @@ public class Compra
     public void setEmail(String email)
     {
         this.email = email;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public String getPoblacion() {
+        return poblacion;
+    }
+
+    public void setPoblacion(String poblacion) {
+        this.poblacion = poblacion;
+    }
+
+    public String getCp() {
+        return cp;
+    }
+
+    public void setCp(String cp) {
+        this.cp = cp;
+    }
+
+    public String getProvincia() {
+        return provincia;
+    }
+
+    public void setProvincia(String provincia) {
+        this.provincia = provincia;
+    }
+
+    public boolean isInfoPeriodica() {
+        return infoPeriodica;
+    }
+
+    public void setInfoPeriodica(boolean infoPeriodica) {
+        this.infoPeriodica = infoPeriodica;
     }
 
     public List<Butaca> getParButacas()

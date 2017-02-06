@@ -1,6 +1,20 @@
 package es.uji.apps.par.services;
 
 import com.mysema.query.Tuple;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.dao.AbonadosDAO;
 import es.uji.apps.par.dao.ButacasDAO;
@@ -11,15 +25,24 @@ import es.uji.apps.par.db.ButacaDTO;
 import es.uji.apps.par.db.CompraDTO;
 import es.uji.apps.par.db.SesionDTO;
 import es.uji.apps.par.enums.TipoPago;
-import es.uji.apps.par.exceptions.*;
-import es.uji.apps.par.model.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.*;
+import es.uji.apps.par.exceptions.ButacaOcupadaAlActivarException;
+import es.uji.apps.par.exceptions.ButacaOcupadaException;
+import es.uji.apps.par.exceptions.CompraButacaDescuentoNoDisponible;
+import es.uji.apps.par.exceptions.CompraSinButacasException;
+import es.uji.apps.par.exceptions.FueraDePlazoVentaInternetException;
+import es.uji.apps.par.exceptions.IncidenciaNotFoundException;
+import es.uji.apps.par.exceptions.NoHayButacasLibresException;
+import es.uji.apps.par.model.Abonado;
+import es.uji.apps.par.model.Abono;
+import es.uji.apps.par.model.Butaca;
+import es.uji.apps.par.model.Compra;
+import es.uji.apps.par.model.CompraAbonado;
+import es.uji.apps.par.model.CompraYUso;
+import es.uji.apps.par.model.Evento;
+import es.uji.apps.par.model.PreciosSesion;
+import es.uji.apps.par.model.ResultadoCompra;
+import es.uji.apps.par.model.Sesion;
+import es.uji.apps.par.model.SesionAbono;
 
 @Service
 public class ComprasService
@@ -366,6 +389,12 @@ public class ComprasService
             compraDTO.setTelefono(tupleCompra.get(24, String.class));
             compraDTO.setUuid(tupleCompra.get(25, String.class));
             compraDTO.setTipoPago(tupleCompra.get(26, String.class));
+            compraDTO.setDireccion(tupleCompra.get(27, String.class));
+            compraDTO.setPoblacion(tupleCompra.get(28, String.class));
+            compraDTO.setCp(tupleCompra.get(29, String.class));
+            compraDTO.setProvincia(tupleCompra.get(30, String.class));
+            compraDTO.setInfoPeriodica(tupleCompra.get(31, Boolean.class));
+
 
         	BigDecimal importe = tupla.get(1, BigDecimal.class);
         	compraDTO.setImporte(importe);

@@ -99,6 +99,34 @@ Ext.define('Paranimf.view.compra.GridCompras', {
       text: UI.i18n.field.phone,
       hidden: true
     }, {
+        dataIndex: 'direccion',
+        flex: 2,
+        text: UI.i18n.field.address,
+        hidden: true
+    }, {
+        dataIndex: 'poblacion',
+        flex: 2,
+        text: UI.i18n.field.poblacion,
+        hidden: true
+    }, {
+        dataIndex: 'cp',
+        flex: 2,
+        text: UI.i18n.field.codigoPostal,
+        hidden: true
+    }, {
+        dataIndex: 'provincia',
+        flex: 2,
+        text: UI.i18n.field.provincia,
+        hidden: true
+    }, {
+        dataIndex: 'infoPeriodica',
+        flex: 2,
+        text: UI.i18n.field.infoPeriodica,
+        hidden: true,
+        renderer: function (val, p) {
+            return (val)?'<img src="../resources/images/tick.png" alt="Sí" title="Sí" />':'';
+        }
+    }, {
       align: 'center',
       dataIndex: 'importe',
       flex: 2,

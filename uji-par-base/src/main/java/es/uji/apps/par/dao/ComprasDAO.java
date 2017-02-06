@@ -7,10 +7,32 @@ import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.Expression;
 import com.mysema.query.types.QTuple;
 import com.sun.istack.logging.Logger;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
 import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.database.DatabaseHelper;
 import es.uji.apps.par.database.DatabaseHelperFactory;
-import es.uji.apps.par.db.*;
+import es.uji.apps.par.db.AbonadoDTO;
+import es.uji.apps.par.db.ButacaDTO;
+import es.uji.apps.par.db.CompraDTO;
+import es.uji.apps.par.db.QButacaDTO;
+import es.uji.apps.par.db.QCompraDTO;
+import es.uji.apps.par.db.QEventoDTO;
+import es.uji.apps.par.db.QReportDTO;
+import es.uji.apps.par.db.QSalaDTO;
+import es.uji.apps.par.db.QSesionDTO;
+import es.uji.apps.par.db.SesionDTO;
 import es.uji.apps.par.enums.TipoPago;
 import es.uji.apps.par.exceptions.ButacaOcupadaAlActivarException;
 import es.uji.apps.par.exceptions.IncidenciaNotFoundException;
@@ -19,13 +41,6 @@ import es.uji.apps.par.model.Abonado;
 import es.uji.apps.par.model.Sesion;
 import es.uji.apps.par.report.InformeModelReport;
 import es.uji.apps.par.utils.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.*;
 
 @Repository
 public class ComprasDAO extends BaseDAO {
@@ -331,22 +346,40 @@ public class ComprasDAO extends BaseDAO {
     private QTuple getSelectGroupByExpression() {
         QCompraDTO qCompraDTO = QCompraDTO.compraDTO;
 
-        return new QTuple(qCompraDTO.id, qCompraDTO.anulada,
-                qCompraDTO.apellidos, qCompraDTO.caducada,
-                qCompraDTO.codigoPagoPasarela,
-                qCompraDTO.codigoPagoTarjeta, qCompraDTO.cp,
-                qCompraDTO.desde, qCompraDTO.direccion,
-                qCompraDTO.email, qCompraDTO.fecha,
-                qCompraDTO.hasta, qCompraDTO.importe,
-                qCompraDTO.infoPeriodica, qCompraDTO.nombre,
-                qCompraDTO.observacionesReserva,
-                qCompraDTO.pagada, qCompraDTO.parSesion.id,
-                qCompraDTO.poblacion, qCompraDTO.provincia,
-                qCompraDTO.reciboPinpad,
-                qCompraDTO.referenciaPago, qCompraDTO.reserva,
-                qCompraDTO.taquilla, qCompraDTO.telefono,
-                qCompraDTO.uuid,
-				qCompraDTO.tipoPago);
+        return new QTuple(
+                    qCompraDTO.id,
+                    qCompraDTO.anulada,
+                    qCompraDTO.apellidos,
+                    qCompraDTO.caducada,
+                    qCompraDTO.codigoPagoPasarela,
+                    qCompraDTO.codigoPagoTarjeta,
+                    qCompraDTO.cp,
+                    qCompraDTO.desde,
+                    qCompraDTO.direccion,
+                    qCompraDTO.email,
+                    qCompraDTO.fecha,
+                    qCompraDTO.hasta,
+                    qCompraDTO.importe,
+                    qCompraDTO.infoPeriodica,
+                    qCompraDTO.nombre,
+                    qCompraDTO.observacionesReserva,
+                    qCompraDTO.pagada,
+                    qCompraDTO.parSesion.id,
+                    qCompraDTO.poblacion,
+                    qCompraDTO.provincia,
+                    qCompraDTO.reciboPinpad,
+                    qCompraDTO.referenciaPago,
+                    qCompraDTO.reserva,
+                    qCompraDTO.taquilla,
+                    qCompraDTO.telefono,
+                    qCompraDTO.uuid,
+                    qCompraDTO.tipoPago,
+                    qCompraDTO.direccion,
+                    qCompraDTO.poblacion,
+                    qCompraDTO.cp,
+                    qCompraDTO.provincia,
+                    qCompraDTO.infoPeriodica
+        );
     }
 
 	@Transactional
