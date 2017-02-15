@@ -579,6 +579,11 @@ Ext.define('Paranimf.controller.Eventos', {
 
    removeEvento: function(button, event, opts) {
       var gridSesiones = this.getGridSesiones();
+
+      this.getGridEventos().store.proxy.url = urlPrefix + 'evento';
+      this.getGridEventos().store.proxy.extraParams = {
+          activos: (!this.getCheckMostrarTodosEventos().checked).toString()
+      };
       this.getGridEventos().remove(function (borradoCorrectamente) {
          if (borradoCorrectamente)
             gridSesiones.getStore().removeAll();
