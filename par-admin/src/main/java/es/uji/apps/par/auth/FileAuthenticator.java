@@ -1,11 +1,13 @@
 package es.uji.apps.par.auth;
 
+import com.google.common.base.Strings;
+
+import org.jasypt.util.password.BasicPasswordEncryptor;
+
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import org.jasypt.util.password.BasicPasswordEncryptor;
 
 import es.uji.apps.par.config.Configuration;
 
@@ -66,11 +68,11 @@ public class FileAuthenticator implements Authenticator
     private boolean loginOk(HttpServletRequest request, List<String> logins, List<String> passwordsCifrado)
     {
         String loginFromRequest = request.getParameter(LOGIN_PARAM);
-
-        if (loginFromRequest != null && logins.contains(loginFromRequest))
+        String passwordFromRequest = request.getParameter(PASSWORD_PARAM);
+        if (!Strings.isNullOrEmpty(loginFromRequest) && !Strings.isNullOrEmpty(passwordFromRequest) && logins.contains(loginFromRequest))
         {
         	int indexLogin = logins.indexOf(loginFromRequest);
-        	return encryptor.checkPassword(request.getParameter(PASSWORD_PARAM), passwordsCifrado.get(indexLogin));
+        	return encryptor.checkPassword(passwordFromRequest, passwordsCifrado.get(indexLogin));
         }
         else
         {
