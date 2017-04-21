@@ -85,7 +85,7 @@ Ext.define('Paranimf.view.evento.FormEventos', {
 					fieldLabel : UI.i18n.field.description_va,
 					name : 'descripcionVa',
 					hidden: langsAllowed && langsAllowed.length > 1 ? false : true,
-					allowBlank: langsAllowed && langsAllowed.length > 1 ? false : true
+					allowBlank: true
 				} ]
 			},
 

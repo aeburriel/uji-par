@@ -40,7 +40,7 @@
 	      <ref bean="enviaMailsJob" />
 	   </list>
 	</property>
- 
+
 	<property name="triggers">
 	    <list>
 		  <ref bean="enviaMailsTrigger" />

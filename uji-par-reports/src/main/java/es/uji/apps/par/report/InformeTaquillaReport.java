@@ -1,7 +1,18 @@
 package es.uji.apps.par.report;
 
+import java.io.File;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Locale;
+
 import es.uji.apps.fopreports.Report;
-import es.uji.apps.fopreports.fop.*;
+import es.uji.apps.fopreports.fop.Block;
+import es.uji.apps.fopreports.fop.BorderStyleType;
+import es.uji.apps.fopreports.fop.ExternalGraphic;
+import es.uji.apps.fopreports.fop.TableCell;
+import es.uji.apps.fopreports.fop.TextAlignType;
+import es.uji.apps.fopreports.fop.WhiteSpaceType;
 import es.uji.apps.fopreports.serialization.FopPDFSerializer;
 import es.uji.apps.fopreports.serialization.ReportSerializationException;
 import es.uji.apps.fopreports.serialization.ReportSerializer;
@@ -14,12 +25,6 @@ import es.uji.apps.par.model.InformeSesion;
 import es.uji.apps.par.report.components.BaseTable;
 import es.uji.apps.par.report.components.InformeTaquillaReportStyle;
 import es.uji.apps.par.utils.ReportUtils;
-
-import java.io.File;
-import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Locale;
 
 public class InformeTaquillaReport extends Report implements InformeInterface
 {
@@ -264,7 +269,7 @@ public class InformeTaquillaReport extends Report implements InformeInterface
             reportSerializer = new FopPDFSerializer();
     }
 
-    public InformeInterface create(Locale locale, Configuration configuration, String logoReport)
+    public InformeInterface create(Locale locale, Configuration configuration, String logoReport, boolean showIVA, String location)
     {
         try
         {

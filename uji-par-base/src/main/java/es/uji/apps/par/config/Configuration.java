@@ -1,8 +1,5 @@
 package es.uji.apps.par.config;
 
-import es.uji.apps.par.i18n.ResourceProperties;
-import es.uji.apps.par.model.TipoInforme;
-import es.uji.apps.par.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +9,17 @@ import org.thymeleaf.util.StringUtils;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
+
+import es.uji.apps.par.i18n.ResourceProperties;
+import es.uji.apps.par.model.TipoInforme;
+import es.uji.apps.par.utils.DateUtils;
 
 @Component
 public class Configuration
@@ -73,8 +80,6 @@ public class Configuration
 	private static final String TIPOS_INFORME_GENERALES = "uji.reports.tiposGenerales";
     public static final String HORAS_VENTA_ANTICIPADA = "uji.reports.horaVentaAnticipada";
 	private static final String ALLOW_MULTISESION = "uji.par.allowMultisesion";
-    private static final String IDIOMA_POR_DEFECTO = "uji.par.defaultLang";
-    private static final String LANGS_ALLOWED = "uji.par.langsAllowed";
 	private static final String GENERAR_CIFRADO = "uji.pgp.generateCifrado";
 
     private static final String MENU_ABONO = "uji.par.menuAbonos";
@@ -128,17 +133,6 @@ public class Configuration
 		}
         
         return value.trim();
-    }
-
-    public String getIdiomaPorDefecto()
-    {
-        String lang = getNoObligatoryProperty(IDIOMA_POR_DEFECTO);
-        if (lang != null && lang.length() > 0) {
-            return lang;
-        }
-        else {
-            return "ca";
-        }
     }
 
     public boolean isIdEntrada()
@@ -471,14 +465,6 @@ public class Configuration
 		return false;
 	}
 
-    public String getLangsAllowed() {
-        String langsAllowed = getNoObligatoryProperty(LANGS_ALLOWED);
-
-        if (langsAllowed != null && langsAllowed.length() > 0)
-            return langsAllowed;
-        return "[{'locale':'ca', 'alias': 'Valencià'}]";
-    }
-
 	public boolean getGenerarCifrado() {
 		String generarCifrado = getNoObligatoryProperty(GENERAR_CIFRADO);
 		if (generarCifrado == null || generarCifrado.equalsIgnoreCase("true"))
@@ -579,10 +565,4 @@ public class Configuration
 	{
 		return getProperty(MAIL_USERNAME);
 	}
-
-	public boolean getLocalizacionEnValenciano() {
-		String langsAllowed = getProperty(LANGS_ALLOWED);
-		return (langsAllowed.toUpperCase().contains("VALENCI") || langsAllowed.toUpperCase().contains("CATAL"));
-	}
-
 }

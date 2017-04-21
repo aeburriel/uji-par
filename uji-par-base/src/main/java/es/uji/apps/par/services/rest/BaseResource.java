@@ -2,17 +2,19 @@ package es.uji.apps.par.services.rest;
 
 import com.sun.jersey.api.client.ClientResponse.Status;
 import com.sun.jersey.api.core.InjectParam;
-import es.uji.apps.par.config.Configuration;
-import es.uji.apps.par.config.ConfigurationSelector;
-import es.uji.apps.par.exceptions.ResponseMessage;
-import es.uji.apps.par.i18n.ResourceProperties;
+
+import java.util.Locale;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import java.util.Locale;
+
+import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.config.ConfigurationSelector;
+import es.uji.apps.par.exceptions.ResponseMessage;
+import es.uji.apps.par.i18n.ResourceProperties;
 
 public class BaseResource
 {
@@ -46,8 +48,7 @@ public class BaseResource
     
     protected Locale getLocale(String lang)
     {
-        String idiomaFinal = configuration.getIdiomaPorDefecto();
-
+        String idiomaFinal = configurationSelector.getIdiomaPorDefecto();
         if (lang != null && lang.length() > 0)
         {
         	HttpSession session = currentRequest.getSession();
@@ -74,7 +75,6 @@ public class BaseResource
             }
 
             String idiomaParametro = currentRequest.getParameter("idioma");
-
             if (idiomaParametro != null)
             {
                 if (esIdiomaValido(idiomaParametro))

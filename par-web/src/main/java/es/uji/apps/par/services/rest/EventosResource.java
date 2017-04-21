@@ -20,7 +20,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -104,7 +103,7 @@ public class EventosResource extends BaseResource {
     @GET
     @Path("listado")
     @Produces(MediaType.TEXT_HTML)
-    public Template getEventos(@QueryParam("lang") String lang) throws Exception {
+    public Template getListadoEventos() throws Exception {
         try {
             Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
             List<Evento> eventosActivos = eventosService.getEventosActivos("[{\"property\":\"fechaPrimeraSesion\",\"direction\":\"ASC\"}]", 0, 1000, user.getUsuario());
@@ -117,7 +116,7 @@ public class EventosResource extends BaseResource {
                 }
             }
 
-            return getTemplateEventos(eventosActivosConSesiones, lang);
+            return getTemplateEventos(eventosActivosConSesiones);
         } catch (EventoNoEncontradoException e) {
             return getTemplateEventoNoEncontrado();
         }
@@ -126,14 +125,14 @@ public class EventosResource extends BaseResource {
     @GET
     @Path("{contenidoId}")
     @Produces(MediaType.TEXT_HTML)
-    public Template getEvento(@PathParam("contenidoId") Long contenidoId, @QueryParam("lang") String lang) throws Exception {
+    public Template getEvento(@PathParam("contenidoId") Long contenidoId) throws Exception {
         try {
             Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
             Evento evento = eventosService.getEventoByRssId(contenidoId, user.getUsuario());
 			List<Sesion> sesiones = sesionesService.getSesiones(evento.getId(), user.getUsuario());
 			evento.setSesiones(sesiones);
 
-            return getTemplateEvento(evento, lang, user.getUsuario(), sesiones);
+            return getTemplateEvento(evento, user.getUsuario(), sesiones);
         } catch (EventoNoEncontradoException e) {
             return getTemplateEventoNoEncontrado();
         }
@@ -142,14 +141,14 @@ public class EventosResource extends BaseResource {
     @GET
     @Path("id/{id}")
     @Produces(MediaType.TEXT_HTML)
-    public Template getEventoById(@PathParam("id") Long id, @QueryParam("lang") String lang) throws Exception {
+    public Template getEventoById(@PathParam("id") Long id) throws Exception {
         try {
             Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
             Evento evento = eventosService.getEvento(id, user.getUsuario());
 			List<Sesion> sesiones = sesionesService.getSesiones(evento.getId(), user.getUsuario());
 			evento.setSesiones(sesiones);
 
-            return getTemplateEvento(evento, lang, user.getUsuario(), sesiones);
+            return getTemplateEvento(evento, user.getUsuario(), sesiones);
         } catch (EventoNoEncontradoException e) {
             return getTemplateEventoNoEncontrado();
         }
@@ -171,15 +170,16 @@ public class EventosResource extends BaseResource {
         return template;
     }
 
-    private Template getTemplateEventos(List<Evento> eventos, String langparam) throws MalformedURLException, ParseException {
+    private Template getTemplateEventos(List<Evento> eventos) throws MalformedURLException, ParseException {
+        Locale locale = getLocale();
+        String language = locale.getLanguage();
+
         borrarEntradasSeleccionadasConAnterioridad();
 
         Cine cine = usersService.getUserCineByServerName(currentRequest.getServerName());
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + cine.getCodigo() + "/eventosListado", getLocale(), APP);
 
-        String language = getLocale(langparam).getLanguage();
         String url = currentRequest.getRequestURL().toString();
-
         template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(getBaseUrlPublic(), url, language.toString(), configurationSelector.getHtmlTitle()));
         template.put("baseUrl", getBaseUrlPublic());
 
@@ -189,16 +189,17 @@ public class EventosResource extends BaseResource {
         return template;
     }
 
-    private Template getTemplateEvento(Evento evento, String langparam, String userUID, List<Sesion> sesiones) throws
+    private Template getTemplateEvento(Evento evento, String userUID, List<Sesion> sesiones) throws
 			MalformedURLException, ParseException {
+        Locale locale = getLocale();
+        String language = locale.getLanguage();
+
         borrarEntradasSeleccionadasConAnterioridad();
 
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + evento.getSesiones().get(0).getSala().getCine()
 				.getCodigo() + "/eventoDetalle", getLocale(), APP);
 
         String tipoEvento, titulo, companyia, duracion, caracteristicas, premios, descripcion;
-        String language = getLocale(langparam).getLanguage();
-
         if (language.equals("ca")) {
             tipoEvento = evento.getParTiposEvento().getNombreVa();
             titulo = evento.getTituloVa();
@@ -391,12 +392,12 @@ public class EventosResource extends BaseResource {
 	@GET
 	@Path("condicionesprivacidad")
 	@Produces(MediaType.TEXT_HTML)
-	public Template getCondicionesPrivacidad(@QueryParam("lang") String lang) throws ParseException {
-		Cine cine = usersService.getUserCineByServerName(currentRequest.getServerName());
-		lang = (lang == null || lang.toLowerCase().trim().equals("")) ? "es": lang;
-		String language = getLocale(lang).getLanguage();
+	public Template getCondicionesPrivacidad() throws ParseException {
+        Locale locale = getLocale();
+        String language = locale.getLanguage();
 
-		Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + cine.getCodigo() + "/condicionesPrivacidad", getLocale()
+        Cine cine = usersService.getUserCineByServerName(currentRequest.getServerName());
+        Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + cine.getCodigo() + "/condicionesPrivacidad", getLocale()
 				, APP);
 
 		String url = currentRequest.getRequestURL().toString();

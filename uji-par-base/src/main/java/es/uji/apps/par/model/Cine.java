@@ -1,12 +1,13 @@
 package es.uji.apps.par.model;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
 import es.uji.apps.par.db.CineDTO;
 import es.uji.apps.par.exceptions.GeneralPARException;
 import es.uji.apps.par.exceptions.RegistroSerializaException;
-
-import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
-import java.math.BigDecimal;
 
 @XmlRootElement
 public class Cine implements Serializable
@@ -32,6 +33,9 @@ public class Cine implements Serializable
     private String mailFrom;
     private String logoReport;
 	private Boolean showButacasQueHanEntradoEnDistintoColor;
+	private String langs;
+    private String defaultLang;
+    private Boolean showIVA;
 
     public Cine()
     {
@@ -102,6 +106,9 @@ public class Cine implements Serializable
         cine.setMailFrom(cineDTO.getMailFrom());
         cine.setLogoReport(cineDTO.getLogoReport());
 		cine.setShowButacasQueHanEntradoEnDistintoColor(cineDTO.getShowButacasQueHanEntradoEnDistintoColor());
+		cine.setLangs(cineDTO.getLangs());
+        cine.setDefaultLang(cineDTO.getDefaultLang());
+        cine.setShowIVA(cineDTO.getShowIVA());
 
         return cine;
     }
@@ -301,4 +308,28 @@ public class Cine implements Serializable
 	public void setShowButacasQueHanEntradoEnDistintoColor(Boolean showButacasQueHanEntradoEnDistintoColor) {
 		this.showButacasQueHanEntradoEnDistintoColor = showButacasQueHanEntradoEnDistintoColor;
 	}
+
+    public String getLangs() {
+        return langs;
+    }
+
+    public void setLangs(String langs) {
+        this.langs = langs;
+    }
+
+    public String getDefaultLang() {
+        return defaultLang;
+    }
+
+    public void setDefaultLang(String defaultLang) {
+        this.defaultLang = defaultLang;
+    }
+
+    public Boolean getShowIVA() {
+        return showIVA;
+    }
+
+    public void setShowIVA(Boolean showIVA) {
+        this.showIVA = showIVA;
+    }
 }

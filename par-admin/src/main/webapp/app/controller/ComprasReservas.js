@@ -175,10 +175,9 @@ Ext.define('Paranimf.controller.ComprasReservas', {
 
   buscarCompra: function() {
     var idSesion = this.getGridSesionesComprasReservas().getSelectedColumnId();
-    this.getGridCompras().store.getProxy().url = urlPrefix + 'compra/' + idSesion + '?search=' + this.getBuscadorCompras().value,
-    this.getGridCompras().store.load(function(records, operation, success) {
-
-    })
+    this.getGridCompras().store.getProxy().setExtraParam("search", this.getBuscadorCompras().value);
+    this.getGridCompras().store.getProxy().url = urlPrefix + 'compra/' + idSesion;
+    this.getGridCompras().store.loadPage(1);
   },
 
   doRefresh: function() {

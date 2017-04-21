@@ -14,6 +14,7 @@ public class EntradaModelReport
 	private String iniciales;
 	private String nombreEmpresa;
 	private String cifEmpresa;
+	private Boolean showIVA;
 
 	public EntradaModelReport()
 	{
@@ -128,5 +129,13 @@ public class EntradaModelReport
 	public void setSala(String sala)
 	{
 		this.sala = sala;
+	}
+
+	public Boolean getShowIVA() {
+		return showIVA;
+	}
+
+	public void setShowIVA(Boolean showIVA) {
+		this.showIVA = showIVA;
 	}
 }

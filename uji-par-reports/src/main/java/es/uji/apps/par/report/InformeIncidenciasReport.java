@@ -1,23 +1,5 @@
 package es.uji.apps.par.report;
 
-import es.uji.apps.fopreports.Report;
-import es.uji.apps.fopreports.fop.*;
-import es.uji.apps.fopreports.serialization.FopPDFSerializer;
-import es.uji.apps.fopreports.serialization.ReportSerializationException;
-import es.uji.apps.fopreports.serialization.ReportSerializer;
-import es.uji.apps.fopreports.serialization.ReportSerializerInitException;
-import es.uji.apps.par.config.Configuration;
-import es.uji.apps.par.dao.CinesDAO;
-import es.uji.apps.par.dao.SesionesDAO;
-import es.uji.apps.par.db.SesionDTO;
-import es.uji.apps.par.exceptions.SinIvaException;
-import es.uji.apps.par.ficheros.registros.TipoIncidencia;
-import es.uji.apps.par.i18n.ResourceProperties;
-import es.uji.apps.par.model.*;
-import es.uji.apps.par.report.components.BaseTable;
-import es.uji.apps.par.report.components.InformeTaquillaReportStyle;
-import es.uji.apps.par.utils.DateUtils;
-import es.uji.apps.par.utils.ReportUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -31,6 +13,35 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
+import es.uji.apps.fopreports.Report;
+import es.uji.apps.fopreports.fop.Block;
+import es.uji.apps.fopreports.fop.BlockContainer;
+import es.uji.apps.fopreports.fop.BorderStyleType;
+import es.uji.apps.fopreports.fop.ExternalGraphic;
+import es.uji.apps.fopreports.fop.TableCell;
+import es.uji.apps.fopreports.fop.TextAlignType;
+import es.uji.apps.fopreports.fop.WhiteSpaceType;
+import es.uji.apps.fopreports.serialization.FopPDFSerializer;
+import es.uji.apps.fopreports.serialization.ReportSerializationException;
+import es.uji.apps.fopreports.serialization.ReportSerializer;
+import es.uji.apps.fopreports.serialization.ReportSerializerInitException;
+import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.dao.CinesDAO;
+import es.uji.apps.par.dao.SesionesDAO;
+import es.uji.apps.par.db.SesionDTO;
+import es.uji.apps.par.exceptions.SinIvaException;
+import es.uji.apps.par.ficheros.registros.TipoIncidencia;
+import es.uji.apps.par.i18n.ResourceProperties;
+import es.uji.apps.par.model.Cine;
+import es.uji.apps.par.model.Evento;
+import es.uji.apps.par.model.InformeSesion;
+import es.uji.apps.par.model.Sala;
+import es.uji.apps.par.model.Sesion;
+import es.uji.apps.par.report.components.BaseTable;
+import es.uji.apps.par.report.components.InformeTaquillaReportStyle;
+import es.uji.apps.par.utils.DateUtils;
+import es.uji.apps.par.utils.ReportUtils;
 
 @Service
 public class InformeIncidenciasReport extends Report implements InformeInterface, ApplicationContextAware {
@@ -237,7 +248,7 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
             reportSerializer = new FopPDFSerializer();
     }
 
-    public InformeInterface create(Locale locale, Configuration configuration, String logoReport) {
+    public InformeInterface create(Locale locale, Configuration configuration, String logoReport, boolean showIVA, String location) {
         try {
             initStatics();
             InformeTaquillaReportStyle estilo = new InformeTaquillaReportStyle();

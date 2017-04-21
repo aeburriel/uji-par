@@ -1,6 +1,21 @@
 package es.uji.apps.par.services.rest;
 
 import com.sun.jersey.api.core.InjectParam;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import es.uji.apps.par.auth.AuthChecker;
 import es.uji.apps.par.auth.Authenticator;
 import es.uji.apps.par.exceptions.Constantes;
@@ -8,15 +23,6 @@ import es.uji.apps.par.i18n.ResourceProperties;
 import es.uji.apps.par.services.UsersService;
 import es.uji.commons.web.template.HTMLTemplate;
 import es.uji.commons.web.template.Template;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 @Path("index")
 public class IndexResource extends BaseResource
@@ -44,7 +50,7 @@ public class IndexResource extends BaseResource
 		template.put("allowMultisesion", configuration.getAllowMultisesion());
         template.put("payModes", configuration.getPayModes(getLocale()));
         template.put("lang", getLocale().getLanguage());
-        template.put("langsAllowed", configuration.getLangsAllowed());
+        template.put("langsAllowed", configurationSelector.getLangsAllowed());
 
         Boolean b = (Boolean) currentRequest.getSession().getAttribute(Authenticator.READONLY_ATTRIBUTE);
         boolean readOnlyUser = (b == null || !b)?false:true;

@@ -180,7 +180,7 @@ Butacas = (function () {
             }
 
             $('#totalEntradas').text(butacasSeleccionadas.length);
-            $('#totalSeleccionadas').text(UI.i18n.butacas.totalEntradas + total.toFixed(2) + ' €');
+            $('#totalSeleccionadas').text(total.toFixed(2) + ' €');
         }
     }
 

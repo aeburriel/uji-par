@@ -1,9 +1,18 @@
 package es.uji.apps.par.db;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 /**
  * The persistent class for the PAR_CINES database table.
@@ -74,6 +83,15 @@ public class CineDTO implements Serializable {
 
 	@Column(name = "BUTACASENTRADOENDISTINTOCOLOR")
 	private Boolean showButacasQueHanEntradoEnDistintoColor;
+
+	@Column(name = "LANGS")
+	private String langs;
+
+	@Column(name = "DEFAULT_LANG")
+	private String defaultLang;
+
+	@Column(name = "SHOW_IVA")
+	private Boolean showIVA;
 
 	@OneToMany(mappedBy = "parCine", fetch=FetchType.LAZY)
 	private List<SalaDTO> parSalas;
@@ -374,5 +392,29 @@ public class CineDTO implements Serializable {
 
 	public void setShowButacasQueHanEntradoEnDistintoColor(Boolean showButacasQueHanEntradoEnDistintoColor) {
 		this.showButacasQueHanEntradoEnDistintoColor = showButacasQueHanEntradoEnDistintoColor;
+	}
+
+	public String getLangs() {
+		return langs;
+	}
+
+	public void setLangs(String langs) {
+		this.langs = langs;
+	}
+
+	public String getDefaultLang() {
+		return defaultLang;
+	}
+
+	public void setDefaultLang(String defaultLang) {
+		this.defaultLang = defaultLang;
+	}
+
+	public Boolean getShowIVA() {
+		return showIVA;
+	}
+
+	public void setShowIVA(Boolean showIVA) {
+		this.showIVA = showIVA;
 	}
 }

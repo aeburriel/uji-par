@@ -1,6 +1,30 @@
 package es.uji.apps.par.services.rest;
 
 import com.sun.jersey.api.core.InjectParam;
+
+import org.apache.batik.transcoder.TranscoderException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import es.uji.apps.fopreports.serialization.ReportSerializationException;
 import es.uji.apps.par.auth.AuthChecker;
 import es.uji.apps.par.exceptions.SinIvaException;
@@ -8,21 +32,6 @@ import es.uji.apps.par.model.Sesion;
 import es.uji.apps.par.services.ReportService;
 import es.uji.apps.par.services.SesionesService;
 import es.uji.apps.par.utils.DateUtils;
-import org.apache.batik.transcoder.TranscoderException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 @Path("report")
 public class ReportResource extends BaseResource {
@@ -70,7 +79,7 @@ public class ReportResource extends BaseResource {
 		String userUID = AuthChecker.getUserUID(currentRequest);
         ByteArrayOutputStream ostream = new ByteArrayOutputStream();
 
-        reportService.getPdfTaquilla(fechaInicio, fechaFin, ostream, getLocale(), userUID, configurationSelector.getLogoReport());
+        reportService.getPdfTaquilla(fechaInicio, fechaFin, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), configurationSelector.showIVA(), configurationSelector.getNombreMunicipio());
 
         return Response.ok(ostream.toByteArray())
                 .header("Content-Disposition", "attachment; filename =\"informeTaquilla " + fechaInicio + "-" + fechaFin + ".pdf\"")
@@ -87,7 +96,7 @@ public class ReportResource extends BaseResource {
         Sesion sesion = sesionesService.getSesion(idSesion, userUID);
         String fileName = "informeSesion " + DateUtils.dateToSpanishStringWithHour(sesion.getFechaCelebracion()) + ".pdf";
 
-        reportService.getPdfSesion(idSesion, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), true);
+        reportService.getPdfSesion(idSesion, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), configurationSelector.showIVA(), configurationSelector.getNombreMunicipio(), true);
 
         return Response.ok(ostream.toByteArray())
                 .header("Content-Disposition", "attachment; filename =\"" + fileName + "\"")
@@ -111,7 +120,7 @@ public class ReportResource extends BaseResource {
         });
         String fileName = "informeEvento-" + idEvento + ".pdf";
 
-        reportService.getPdfSesiones(sesiones, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), true);
+        reportService.getPdfSesiones(sesiones, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), configurationSelector.showIVA(), configurationSelector.getNombreMunicipio(), true);
 
         return Response.ok(ostream.toByteArray())
                 .header("Content-Disposition", "attachment; filename =\"" + fileName + "\"")
@@ -128,7 +137,7 @@ public class ReportResource extends BaseResource {
 		Sesion sesion = sesionesService.getSesion(idSesion, userUID);
 		String fileName = "informeSesion " + DateUtils.dateToSpanishStringWithHour(sesion.getFechaCelebracion()) + ".pdf";
 
-		reportService.getPdfSesion(idSesion, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), false);
+		reportService.getPdfSesion(idSesion, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), configurationSelector.showIVA(), configurationSelector.getNombreMunicipio(), false);
 
 		return Response.ok(ostream.toByteArray())
 				.header("Content-Disposition", "attachment; filename =\"" + fileName + "\"")
@@ -152,7 +161,7 @@ public class ReportResource extends BaseResource {
 		});
 		String fileName = "informeEvento-" + idEvento + ".pdf";
 
-		reportService.getPdfSesiones(sesiones, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), false);
+		reportService.getPdfSesiones(sesiones, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), configurationSelector.showIVA(), configurationSelector.getNombreMunicipio(), false);
 
 		return Response.ok(ostream.toByteArray())
 				.header("Content-Disposition", "attachment; filename =\"" + fileName + "\"")
@@ -171,7 +180,7 @@ public class ReportResource extends BaseResource {
         Sesion sesion = sesionesService.getSesion(idSesion, userUID);
         String fileName = tipo + "_" + DateUtils.dateToSpanishStringWithHour(sesion.getFechaCelebracion()) + ".pdf";
 
-        reportService.getPdf(idSesion, ostream, tipo, getLocale(), userUID, configurationSelector.getLogoReport());
+        reportService.getPdf(idSesion, ostream, tipo, getLocale(), userUID, configurationSelector.getLogoReport(), configurationSelector.showIVA(), configurationSelector.getNombreMunicipio());
 
         return Response.ok(ostream.toByteArray())
                 .header("Content-Disposition", "attachment; filename =\"" + fileName + "\"")
@@ -187,7 +196,7 @@ public class ReportResource extends BaseResource {
 		ByteArrayOutputStream ostream = new ByteArrayOutputStream();
 		String fileName = tipo + "_" + fechaInicio + "-" + fechaFin + ".pdf";
 		String userUID = AuthChecker.getUserUID(currentRequest);
-		reportService.getPdfPorFechas(fechaInicio, fechaFin, tipo, ostream, getLocale(), userUID, configurationSelector.getLogoReport());
+		reportService.getPdfPorFechas(fechaInicio, fechaFin, tipo, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), configurationSelector.showIVA(), configurationSelector.getNombreMunicipio());
 
 		return Response.ok(ostream.toByteArray())
 				.header("Content-Disposition", "attachment; filename =\"" + fileName + "\"").type("application/pdf").build();
@@ -202,7 +211,7 @@ public class ReportResource extends BaseResource {
 
         try {
 			String userUID = AuthChecker.getUserUID(currentRequest);
-            reportService.getPdfEfectivo(fechaInicio, fechaFin, ostream, getLocale(), userUID, configurationSelector.getLogoReport());
+            reportService.getPdfEfectivo(fechaInicio, fechaFin, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), configurationSelector.showIVA(), configurationSelector.getNombreMunicipio());
         } catch (SinIvaException e) {
             log.error("Error", e);
             String errorMsj = String.format("ERROR: Cal introduir l'IVA de l'event \"%s\"", e.getEvento());
@@ -223,7 +232,7 @@ public class ReportResource extends BaseResource {
 
         try {
 			String userUID = AuthChecker.getUserUID(currentRequest);
-            reportService.getPdfTpvSubtotales(fechaInicio, fechaFin, ostream, getLocale(), userUID, configurationSelector.getLogoReport());
+            reportService.getPdfTpvSubtotales(fechaInicio, fechaFin, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), configurationSelector.showIVA(), configurationSelector.getNombreMunicipio());
         } catch (SinIvaException e) {
             log.error("Error", e);
 
@@ -245,7 +254,7 @@ public class ReportResource extends BaseResource {
 
 		try {
 			String userUID = AuthChecker.getUserUID(currentRequest);
-			reportService.getPdfTpvOnlineSubtotales(fechaInicio, fechaFin, ostream, getLocale(), userUID, configurationSelector.getLogoReport());
+			reportService.getPdfTpvOnlineSubtotales(fechaInicio, fechaFin, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), configurationSelector.showIVA(), configurationSelector.getNombreMunicipio());
 		} catch (SinIvaException e) {
 			log.error("Error", e);
 
@@ -267,7 +276,7 @@ public class ReportResource extends BaseResource {
 
         try {
 			String userUID = AuthChecker.getUserUID(currentRequest);
-            reportService.getPdfEventos(fechaInicio, fechaFin, ostream, getLocale(), userUID, configurationSelector.getLogoReport());
+            reportService.getPdfEventos(fechaInicio, fechaFin, ostream, getLocale(), userUID, configurationSelector.getLogoReport(), configurationSelector.showIVA(), configurationSelector.getNombreMunicipio());
         } catch (SinIvaException e) {
             log.error("Error", e);
 

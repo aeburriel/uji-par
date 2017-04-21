@@ -12,6 +12,11 @@ public interface ConfigurationSelector
 	String getUrlCondicionesPrivacidad();
 	String getUrlPieEntrada();
 	String getLogoReport();
+	String getNombreMunicipio();
 	String getApiKey();
+	String getLangsAllowed();
+	boolean getLocalizacionEnValenciano();
+	String getIdiomaPorDefecto();
 	boolean showButacasHanEntradoEnDistintoColor();
+	boolean showIVA();
 }
