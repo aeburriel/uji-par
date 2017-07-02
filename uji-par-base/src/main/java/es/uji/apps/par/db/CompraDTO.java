@@ -1,15 +1,25 @@
 package es.uji.apps.par.db;
 
-import es.uji.apps.par.enums.TipoPago;
-import es.uji.apps.par.model.Abonado;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import es.uji.apps.par.model.Abonado;
 
 /**
  * The persistent class for the PAR_COMPRAS database table.
@@ -66,6 +76,9 @@ public class CompraDTO implements Serializable {
 
 	@Column(name = "TIPO")
 	private String tipoPago;
+
+    @Column(name="PORCENTAJE_IVA")
+    private BigDecimal porcentajeIva;
 	
     @ManyToOne
     @JoinColumn(name="SESION_ID")
@@ -116,11 +129,12 @@ public class CompraDTO implements Serializable {
     {
     }
 
-	public CompraDTO(SesionDTO sesion, Timestamp fecha, Boolean taquilla, BigDecimal importe, String uuid) {
+	public CompraDTO(SesionDTO sesion, Timestamp fecha, Boolean taquilla, BigDecimal importe, BigDecimal porcentajeIva, String uuid) {
 		this.parSesion = sesion;
 		this.fecha = fecha;
 		this.taquilla = taquilla;
         this.importe = importe;
+        this.porcentajeIva = porcentajeIva;
         this.pagada = false;
         this.uuid = uuid;
         this.infoPeriodica = false;
@@ -129,11 +143,12 @@ public class CompraDTO implements Serializable {
         this.caducada = false;
 	}
 
-    public CompraDTO(SesionDTO sesion, Timestamp fecha, Boolean taquilla, BigDecimal importe, String uuid, String email, String nombre, String apellidos) {
+    public CompraDTO(SesionDTO sesion, Timestamp fecha, Boolean taquilla, BigDecimal importe, BigDecimal porcentajeIva, String uuid, String email, String nombre, String apellidos) {
         this.parSesion = sesion;
         this.fecha = fecha;
         this.taquilla = taquilla;
         this.importe = importe;
+        this.porcentajeIva = porcentajeIva;
         this.pagada = false;
         this.uuid = uuid;
         this.infoPeriodica = false;
@@ -145,11 +160,12 @@ public class CompraDTO implements Serializable {
         this.apellidos = apellidos;
     }
 
-    public CompraDTO(SesionDTO sesion, Timestamp fecha, Boolean taquilla, BigDecimal importe, String uuid, Abonado abonado) {
+    public CompraDTO(SesionDTO sesion, Timestamp fecha, Boolean taquilla, BigDecimal importe, BigDecimal porcentajeIva, String uuid, Abonado abonado) {
         this.parSesion = sesion;
         this.fecha = fecha;
         this.taquilla = taquilla;
         this.importe = importe;
+        this.porcentajeIva = porcentajeIva;
         this.pagada = false;
         this.uuid = uuid;
         this.reserva = false;
@@ -400,6 +416,14 @@ public class CompraDTO implements Serializable {
 
     public void setParAbonado(AbonadoDTO parAbonado) {
         this.parAbonado = parAbonado;
+    }
+
+    public BigDecimal getPorcentajeIva() {
+        return this.porcentajeIva;
+    }
+
+    public void setPorcentajeIva(BigDecimal porcentajeIva) {
+        this.porcentajeIva = porcentajeIva;
     }
 
     public static CompraDTO resultsetToDTO(ResultSet res) throws SQLException {

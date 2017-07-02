@@ -51,6 +51,9 @@ public class ComprasDAO extends BaseDAO {
 	@Autowired
 	private SesionesDAO sesionDAO;
 
+	@Autowired
+	private EventosDAO eventosDAO;
+
     @Autowired
     private AbonadosDAO abonadoDAO;
 
@@ -65,7 +68,7 @@ public class ComprasDAO extends BaseDAO {
 	public CompraDTO insertaCompra(Long sesionId, Date fecha, boolean taquilla, BigDecimal importe, String userUID) {
 		SesionDTO sesion = sesionDAO.getSesion(sesionId, userUID);
 		CompraDTO compraDTO = new CompraDTO(sesion, new Timestamp(
-				fecha.getTime()), taquilla, importe, UUID.randomUUID()
+				fecha.getTime()), taquilla, importe, sesion.getParEvento().getPorcentajeIva(), UUID.randomUUID()
 				.toString());
 
 		entityManager.persist(compraDTO);
@@ -77,9 +80,8 @@ public class ComprasDAO extends BaseDAO {
     public CompraDTO insertaCompra(Long sesionId, Date fecha, boolean taquilla,
                                    BigDecimal importe, String email, String nombre, String apellidos, String userUID) {
         SesionDTO sesion = sesionDAO.getSesion(sesionId, userUID);
-
         CompraDTO compraDTO = new CompraDTO(sesion, new Timestamp(
-                fecha.getTime()), taquilla, importe, UUID.randomUUID()
+                fecha.getTime()), taquilla, importe, sesion.getParEvento().getPorcentajeIva(), UUID.randomUUID()
                 .toString(), email, nombre, apellidos);
 
         entityManager.persist(compraDTO);
@@ -87,13 +89,33 @@ public class ComprasDAO extends BaseDAO {
         return compraDTO;
     }
 
+	@Transactional
+	public void passarACompra(Long sesionId, Long idCompraReserva, String recibo, String tipoPago, String userUID) {
+		SesionDTO sesion = sesionDAO.getSesion(sesionId, userUID);
+		QCompraDTO qCompraDTO = QCompraDTO.compraDTO;
+		JPAUpdateClause updateC = new JPAUpdateClause(entityManager, qCompraDTO);
+		updateC.set(qCompraDTO.reserva, false)
+			.set(qCompraDTO.pagada, true)
+			.set(qCompraDTO.porcentajeIva, sesion.getParEvento().getPorcentajeIva())
+			.setNull(qCompraDTO.desde)
+			.setNull(qCompraDTO.hasta)
+			.set(qCompraDTO.caducada, false)
+			.set(qCompraDTO.anulada, false)
+			.set(qCompraDTO.referenciaPago, recibo)
+			.set(qCompraDTO.fecha, new Timestamp(new Date().getTime()))
+			.set(qCompraDTO.tipoPago, tipoPago)
+			.where(qCompraDTO.id.eq(idCompraReserva).and(
+				qCompraDTO.parSesion.id.eq(sesionId).and(
+					qCompraDTO.reserva.eq(true)))).execute();
+	}
+
     @Transactional
     public CompraDTO insertaCompraAbono(Long sesionId, Date fecha, boolean taquilla,
                                    Abonado abonado, String userUID) {
         SesionDTO sesion = sesionDAO.getSesion(sesionId, userUID);
 
         CompraDTO compraDTO = new CompraDTO(sesion, new Timestamp(
-                fecha.getTime()), taquilla, new BigDecimal(0), UUID.randomUUID()
+                fecha.getTime()), taquilla, new BigDecimal(0), new BigDecimal(0), UUID.randomUUID()
                 .toString(), abonado);
 
         entityManager.persist(compraDTO);
@@ -107,7 +129,7 @@ public class ComprasDAO extends BaseDAO {
 		SesionDTO sesion = sesionDAO.getSesion(sesionId, userUID);
 
 		CompraDTO compraDTO = new CompraDTO(sesion, new Timestamp(
-				fecha.getTime()), true, BigDecimal.ZERO, UUID.randomUUID()
+				fecha.getTime()), true, BigDecimal.ZERO, BigDecimal.ZERO, UUID.randomUUID()
 				.toString());
 
 		compraDTO.setReserva(true);
@@ -120,7 +142,7 @@ public class ComprasDAO extends BaseDAO {
 		return compraDTO;
 	}
 
-	@Transactional
+	/*@Transactional
 	public CompraDTO guardaCompra(Long compraId, Long sesionId, Date fecha,
 			boolean taquilla, BigDecimal importe, String userUID) {
 		CompraDTO compraDTO = getCompraById(compraId);
@@ -138,7 +160,7 @@ public class ComprasDAO extends BaseDAO {
 		}
 
 		return compraDTO;
-	}
+	}*/
 
     @Transactional
     public List<Tuple> getComprasYPresentadas(long sesionId) {
@@ -609,7 +631,7 @@ public class ComprasDAO extends BaseDAO {
 	@Transactional
 	public List<Object[]> getComprasEfectivo(String fechaInicio, String fechaFin, String userUID) {
 		String sql = "select e.titulo_es, s.fecha_celebracion, b.tipo, count(b.id) as cantidad, sum(b.precio) as total, "
-				+ "c.sesion_id, e.porcentaje_iva, "
+				+ "c.sesion_id, c.porcentaje_iva, "
 				+ "f.nombre "
 				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, par_tarifas f, "
 				+ "par_salas sala, par_salas_usuarios su, par_usuarios u "
@@ -620,7 +642,7 @@ public class ComprasDAO extends BaseDAO {
 				+ getSQLCompraIsEfectivo()
 				+ "and f.id = " + dbHelper.toInteger("b.tipo") + " "
 				+ "and c.abonado_id is null "
-				+ "group by c.sesion_id, e.titulo_es, b.tipo, s.fecha_celebracion, e.porcentaje_iva, f.nombre "
+				+ "group by c.sesion_id, e.titulo_es, b.tipo, s.fecha_celebracion, c.porcentaje_iva, f.nombre "
 				+ "order by e.titulo_es, s.fecha_celebracion, f.nombre";
 
 		return entityManager.createNativeQuery(sql).getResultList();
@@ -683,7 +705,7 @@ public class ComprasDAO extends BaseDAO {
 	private List<Object[]> getComprasTpvType(String fechaInicio, String fechaFin, String userUID, boolean onlyOnline) {
 		String formato = "DD";
 		String sql = "select e.titulo_es, s.fecha_celebracion, b.tipo, count(b.id) as cantidad, sum(b.precio) as total, c.sesion_id, "
-				+ "e.porcentaje_iva, "
+				+ "c.porcentaje_iva, "
 				+ dbHelper.trunc("c.fecha", formato)
 				+ ", f.nombre "
 				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, par_tarifas f, "
@@ -694,7 +716,7 @@ public class ComprasDAO extends BaseDAO {
 				+ "and (c.caducada is null or c.caducada = " + dbHelper.falseString() + ") "
 				+ (onlyOnline ? getSQLCompraIsTPVOnline() : getSQLCompraIsTPVTaquilla())
 				+ "and f.id = " + dbHelper.toInteger("b.tipo") + " "
-				+ "group by c.sesion_id, e.titulo_es, b.tipo, s.fecha_celebracion, e.porcentaje_iva, "
+				+ "group by c.sesion_id, e.titulo_es, b.tipo, s.fecha_celebracion, c.porcentaje_iva, "
 				+ dbHelper.trunc("c.fecha", formato) + ", f.nombre "
 				+ "order by " + dbHelper.trunc("c.fecha", formato) + ", s.fecha_celebracion, f.nombre";
 
@@ -705,7 +727,7 @@ public class ComprasDAO extends BaseDAO {
 	@Transactional
 	public List<Object[]> getComprasEventos(String fechaInicio, String fechaFin, String userUID) {
 		String sql = "select e.titulo_es, s.fecha_celebracion, b.tipo, count(b.id) as cantidad, sum(b.precio) as total, "
-				+ "e.porcentaje_iva, "
+				+ "c.porcentaje_iva, "
 				+ dbHelper.caseString("b.tipo", new String[] { "'normal'", "1",
 						"'descuento'", "2", "'aulaTeatro'", "3",
 						"'invitacion'", "4" })
@@ -716,7 +738,7 @@ public class ComprasDAO extends BaseDAO {
 				+ "and sala.id = s.sala_id and u.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = u.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
 				+ "and f.id = "	+ dbHelper.toInteger("b.tipo") + " "
-				+ "group by e.id, s.id, e.titulo_es, b.tipo, s.fecha_celebracion, e.porcentaje_iva, f.nombre "
+				+ "group by e.id, s.id, e.titulo_es, b.tipo, s.fecha_celebracion, c.porcentaje_iva, f.nombre "
 				+ "order by s.fecha_celebracion, tipoOrden";
 
 		return entityManager.createNativeQuery(sql).getResultList();
@@ -909,24 +931,6 @@ public class ComprasDAO extends BaseDAO {
 		r.setTotal(getRecaudacionSesiones(Arrays.asList(sesion)));
 
 		return r;
-	}
-
-	@Transactional
-	public void passarACompra(Long sesionId, Long idCompraReserva, String recibo, String tipoPago) {
-		QCompraDTO qCompraDTO = QCompraDTO.compraDTO;
-		JPAUpdateClause updateC = new JPAUpdateClause(entityManager, qCompraDTO);
-		updateC.set(qCompraDTO.reserva, false)
-				.set(qCompraDTO.pagada, true)
-				.setNull(qCompraDTO.desde)
-				.setNull(qCompraDTO.hasta)
-				.set(qCompraDTO.caducada, false)
-				.set(qCompraDTO.anulada, false)
-				.set(qCompraDTO.referenciaPago, recibo)
-				.set(qCompraDTO.fecha, new Timestamp(new Date().getTime()))
-				.set(qCompraDTO.tipoPago, tipoPago)
-				.where(qCompraDTO.id.eq(idCompraReserva).and(
-						qCompraDTO.parSesion.id.eq(sesionId).and(
-								qCompraDTO.reserva.eq(true)))).execute();
 	}
 
 	@Transactional

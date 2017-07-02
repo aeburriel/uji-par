@@ -138,7 +138,7 @@ public class InformeEfectivoReport extends Report implements InformeInterface
 
     private void creaTabla(List<InformeModelReport> compras) throws SinIvaException
     {
-        BaseTable table = new BaseTable(style, 7, "3.6cm", "3.6cm", "2.7cm", "3cm", "1.5cm", "1.5cm", "1.5cm");
+        BaseTable table = new BaseTable(style, 7, "3.6cm", "3.6cm", "2.7cm", "2cm", "1.5cm", "2.5cm", "1.5cm");
 
         table.withNewRow();
         table.withNewCell(createBoldBlock(ResourceProperties.getProperty(locale, "informeEfectivo.tabla.evento")));
@@ -181,7 +181,7 @@ public class InformeEfectivoReport extends Report implements InformeInterface
             BigDecimal iva = dato.getTotal().subtract(base);
 
             table.withNewCell(blockAlignRight(ReportUtils.formatEuros(base)));
-            table.withNewCell(blockAlignRight(ReportUtils.formatEuros(iva)));
+            table.withNewCell(blockAlignRight(String.format("(%s%%) %s", dato.getIva(), ReportUtils.formatEuros(iva))));
             table.withNewCell(blockAlignRight(ReportUtils.formatEuros(dato.getTotal())));
 
             sumaEntradas = sumaEntradas.add(new BigDecimal(dato.getNumeroEntradas()));

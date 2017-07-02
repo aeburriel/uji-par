@@ -1,27 +1,48 @@
 package es.uji.apps.par.services.rest;
 
 import com.sun.jersey.api.core.InjectParam;
-import es.uji.apps.par.auth.AuthChecker;
-import es.uji.apps.par.enums.TipoPago;
-import es.uji.apps.par.exceptions.*;
-import es.uji.apps.par.model.Butaca;
-import es.uji.apps.par.model.CompraAbonado;
-import es.uji.apps.par.model.DisponiblesLocalizacion;
-import es.uji.apps.par.model.ResultadoCompra;
-import es.uji.apps.par.services.*;
-import es.uji.commons.web.template.HTMLTemplate;
-import es.uji.commons.web.template.Template;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import es.uji.apps.par.auth.AuthChecker;
+import es.uji.apps.par.enums.TipoPago;
+import es.uji.apps.par.exceptions.ButacaOcupadaAlActivarException;
+import es.uji.apps.par.exceptions.ButacaOcupadaException;
+import es.uji.apps.par.exceptions.CompraSinButacasException;
+import es.uji.apps.par.exceptions.Constantes;
+import es.uji.apps.par.exceptions.IncidenciaNotFoundException;
+import es.uji.apps.par.exceptions.NoHayButacasLibresException;
+import es.uji.apps.par.model.Butaca;
+import es.uji.apps.par.model.CompraAbonado;
+import es.uji.apps.par.model.DisponiblesLocalizacion;
+import es.uji.apps.par.model.ResultadoCompra;
+import es.uji.apps.par.model.Usuario;
+import es.uji.apps.par.services.AbonosService;
+import es.uji.apps.par.services.ButacasService;
+import es.uji.apps.par.services.ComprasService;
+import es.uji.apps.par.services.EntradasService;
+import es.uji.apps.par.services.SesionesService;
+import es.uji.apps.par.services.UsersService;
+import es.uji.commons.web.template.HTMLTemplate;
+import es.uji.commons.web.template.Template;
 
 @Path("compra")
 public class CompraResource extends BaseResource
@@ -40,6 +61,9 @@ public class CompraResource extends BaseResource
 
     @InjectParam
     private AbonosService abonosService;
+
+	@InjectParam
+	private UsersService usersService;
 
 	@Context
 	HttpServletResponse currentResponse;
@@ -139,6 +163,8 @@ public class CompraResource extends BaseResource
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response passarACompra(@PathParam("idSesion") Long sesionId, @PathParam("idCompra") Long idCompraReserva, @QueryParam
 			("recibo") String recibo, @QueryParam("tipopago") String tipoPago) {
+		Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
+
 		AuthChecker.canWrite(currentRequest);
 
 		if (!isTipoPagoTarjetaOffline(tipoPago))
@@ -146,7 +172,7 @@ public class CompraResource extends BaseResource
 			recibo = "";
 		}
 
-		comprasService.passarACompra(sesionId, idCompraReserva, recibo, tipoPago);
+		comprasService.passarACompra(sesionId, idCompraReserva, recibo, tipoPago, user.getUsuario());
 		return Response.ok().build();
 	}
 

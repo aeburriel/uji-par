@@ -476,8 +476,8 @@ public class ComprasService
         comprasDAO.rellenaCodigoPagoPasarela(idCompra, recibo);
     }
 
-	public void passarACompra(Long sesionId, Long idCompraReserva, String recibo, String tipoPago) {
-		comprasDAO.passarACompra(sesionId, idCompraReserva, recibo, tipoPago);
+	public void passarACompra(Long sesionId, Long idCompraReserva, String recibo, String tipoPago, String userUID) {
+		comprasDAO.passarACompra(sesionId, idCompraReserva, recibo, tipoPago, userUID);
         if (configuration.isIdEntrada()) {
             butacasDAO.asignarIdEntrada(idCompraReserva);
         }
@@ -515,7 +515,7 @@ public class ComprasService
                 marcarPagadaConReferenciaDePago(resultadoCompra.getId(), recibo, tipoPago);
             }
             else {
-                passarACompra(sesionId, idCompraReserva, recibo, tipoPago);
+                passarACompra(sesionId, idCompraReserva, recibo, tipoPago, userUID);
             }
         }
     }

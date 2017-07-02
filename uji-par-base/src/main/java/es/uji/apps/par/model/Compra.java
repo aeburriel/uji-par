@@ -1,5 +1,6 @@
 package es.uji.apps.par.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +35,7 @@ public class Compra
     private String observacionesReserva;
     private boolean caducada;
     private String idDevolucion;
+    private BigDecimal porcentajeIVA;
 
     public Compra(CompraDTO compraDTO)
     {
@@ -54,6 +56,8 @@ public class Compra
 		this.setCp(compraDTO.getCp());
 		this.setProvincia(compraDTO.getProvincia());
 		this.setInfoPeriodica(compraDTO.getInfoPeriodica());
+		this.setPorcentajeIVA(compraDTO.getPorcentajeIva());
+
         if (compraDTO.getAnulada() != null)
         	this.setAnulada(compraDTO.getAnulada());
         
@@ -290,4 +294,12 @@ public class Compra
 	{
 		this.tipo = tipo;
 	}
+
+    public BigDecimal getPorcentajeIVA() {
+        return porcentajeIVA;
+    }
+
+    public void setPorcentajeIVA(BigDecimal porcentajeIVA) {
+        this.porcentajeIVA = porcentajeIVA;
+    }
 }
