@@ -2,7 +2,10 @@ Ext.define('Paranimf.store.EventosTaquilla', {
    extend: 'Ext.data.Store',
    model: 'Paranimf.model.Evento',
 
-   sorters: ['tituloEs'],
+   sorters: [{
+      property: 'fechaPrimeraSesion',
+      direction: 'DESC'
+   }],
    autoLoad: false,
    autoSync: true,
    pageSize: 20,
