@@ -72,7 +72,7 @@ Ext.define('Paranimf.view.compra.GridCompras', {
       format: 'd/m/Y H:i',
       flex: 3
     }, {
-      hidden: true,
+      hidden: false,
       dataIndex: 'hasta',
       text: UI.i18n.field.finReserva,
       xtype: 'datecolumn',
@@ -82,17 +82,17 @@ Ext.define('Paranimf.view.compra.GridCompras', {
       dataIndex: 'nombre',
       text: UI.i18n.field.nameMulti,
       flex: 5,
-      hidden: true
+      hidden: false
     }, {
       dataIndex: 'apellidos',
       text: UI.i18n.field.surnameMulti,
       flex: 5,
-      hidden: true
+      hidden: false
     }, {
       dataIndex: 'email',
       flex: 5,
       text: UI.i18n.field.email,
-      hidden: true
+      hidden: false
     }, {
       dataIndex: 'telefono',
       flex: 2,
@@ -185,7 +185,7 @@ Ext.define('Paranimf.view.compra.GridCompras', {
     }, {
       dataIndex: 'observacionesReserva',
       text: UI.i18n.field.observacionesReserva,
-      hidden: true,
+      hidden: false,
       flex: 2
     }, {
       flex: 2,
