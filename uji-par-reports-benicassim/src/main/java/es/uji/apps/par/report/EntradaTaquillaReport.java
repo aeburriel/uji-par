@@ -147,8 +147,14 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
         final String fontSizeTxt = fontSize + "pt";
         bc.getMarkerOrBlockOrBlockContainer().add(getBlockWithText(getTextoRecortadoMostrar(this.titulo, 120, Font.PLAIN, fontSize), fontSizeTxt));
 
-    	if (this.fila != null && this.numero != null)
-                bc.getMarkerOrBlockOrBlockContainer().add(getBlockWithText(this.iniciales + " " + this.fila + "-" + this.numero, fontSizeTxt));
+        if (this.fila != null && this.numero != null)
+        {
+            bc.getMarkerOrBlockOrBlockContainer().add(getBlockWithText(this.iniciales + " " + this.fila + "-" + this.numero, fontSizeTxt));
+        }
+        else
+        {
+            bc.getMarkerOrBlockOrBlockContainer().add(getBlockWithText(ResourceProperties.getProperty(locale, "entrada.sinNumerarAbreviada"), fontSizeTxt));
+        }
         bc.getMarkerOrBlockOrBlockContainer().add(getBlockWithText(getTextoRecortadoMostrar(this.tipoEntrada + " " + this.total + " €", 120, Font.PLAIN, fontSize), fontSizeTxt));
         bc.getMarkerOrBlockOrBlockContainer().add(getBlockWithText(this.fecha + "-" + this.hora, fontSizeTxt));
         blockIzquierda.getContent().add(bc);
@@ -230,7 +236,7 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
         }
         else
         {
-            b = new Block();
+            b = createSinNumerar();
         }
         
         Block blockUuid = getBlockWithText(this.barcode, "7pt");
@@ -255,7 +261,19 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
        	filaButaca.getContent().add(getFilaButaca());
         return filaButaca;
     }
-    
+
+    private Block createSinNumerar()
+    {
+        Block sinNumerar = new Block();
+
+        sinNumerar.setFontSize(EntradaTaquillaReport.sizeTxtZonaFilaButaca);
+        sinNumerar.setFontWeight("bold");
+        sinNumerar.setWrapOption(WrapOptionType.WRAP);
+        String texto = ResourceProperties.getProperty(locale, "entrada.sinNumerar");
+        sinNumerar.getContent().add(texto);
+        return sinNumerar;
+    }
+
     private String getFilaButaca() {
     	String txtFila = ResourceProperties.getProperty(locale, "entrada.fila") + this.fila;
        	String txtButaca = ResourceProperties.getProperty(locale, "entrada.butacaSimple") + this.numero;

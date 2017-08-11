@@ -269,15 +269,20 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         table.withNewRow();
         table.withNewCell(zona, "3");
 
+        String butacaText;
         if (this.fila != null && this.numero != null)
         {
-            String butacaText = ResourceProperties.getProperty(locale, "entrada.butaca", this.fila, this.numero);
-            Block butacaBlock = new Block();
-            butacaBlock.getContent().add(butacaText);
-            butacaBlock.setFontSize(DETAIL_SIZE);
-            table.withNewRow();
-            table.withNewCell(butacaBlock, "3");
+            butacaText = ResourceProperties.getProperty(locale, "entrada.butaca", this.fila, this.numero);
         }
+        else
+        {
+            butacaText = ResourceProperties.getProperty(locale, "entrada.sinNumerar");
+        }
+        Block butacaBlock = new Block();
+        butacaBlock.getContent().add(butacaText);
+        butacaBlock.setFontSize(DETAIL_SIZE);
+        table.withNewRow();
+        table.withNewCell(butacaBlock, "3");
 
         block.getContent().add(table);
 
@@ -389,20 +394,21 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         table.withNewRow();
         TableCell zonaCell = table.withNewCell(zona, "2");
 
+        String butacaText;
         if (this.fila != null && this.numero != null)
         {
-            String butacaText = ResourceProperties.getProperty(locale, "entrada.butaca", this.fila, this.numero);
-            Block butacaBlock = new Block();
-            butacaBlock.getContent().add(butacaText);
-            butacaBlock.setFontSize(DETAIL_SIZE);
-            table.withNewRow();
-            TableCell butacaCell = table.withNewCell(butacaBlock, "2");
-            butacaCell.setPaddingBottom("0.2cm");
+            butacaText = ResourceProperties.getProperty(locale, "entrada.butaca", this.fila, this.numero);
         }
         else
         {
-            zonaCell.setPaddingBottom("0.2cm");
+            butacaText = ResourceProperties.getProperty(locale, "entrada.sinNumerar");
         }
+        Block butacaBlock = new Block();
+        butacaBlock.getContent().add(butacaText);
+        butacaBlock.setFontSize(DETAIL_SIZE);
+        table.withNewRow();
+        TableCell butacaCell = table.withNewCell(butacaBlock, "2");
+        butacaCell.setPaddingBottom("0.2cm");
 
         return table;
     }
