@@ -237,7 +237,7 @@ Ext.define('Paranimf.controller.Taquilla', {
 
     setFechaHoraFinalReserva: function (panel) {
         var seccionSeleccionada = this.getGridSesionesTaquilla().getSelectedRecord();
-        var fecha = seccionSeleccionada.data.fechaFinVentaOnline ? seccionSeleccionada.data.fechaFinVentaOnline : seccionSeleccionada.data.fechaCelebracion;
+        var fecha = Ext.Date.add(seccionSeleccionada.data.fechaCelebracion, Ext.Date.DAY, 1);
         this.getReservarHasta().setValue(fecha);
         panel.down('combobox[name=horaFin]').setValue(fecha.getHours());
         panel.down('combobox[name=minutoFin]').setValue(fecha.getMinutes());
