@@ -161,6 +161,11 @@ public class ButacasService
 		return butacasDAO.getTotalButacasCompra(idCompra);
 	}
 
+    public List<Butaca> getButacasCompradas(Long idSesion, String language)
+    {
+         return Butaca.butacasDTOToButacas(butacasDAO.getButacasCompradas(idSesion), configuration.isIdEntrada(), language);
+    }
+
     public List<Butaca> getButacasNoAnuladas(Long idSesion, String language)
     {
          return Butaca.butacasDTOToButacas(butacasDAO.getButacasNoAnuladas(idSesion), configuration.isIdEntrada(), language);

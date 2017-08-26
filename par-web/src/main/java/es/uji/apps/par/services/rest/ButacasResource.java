@@ -19,7 +19,7 @@ public class ButacasResource extends BaseResource
     @GET
     @Path("{idSesion}/butacas")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getButacasNoAnuladas(@PathParam("idSesion") Long idSesion) throws InterruptedException
+    public Response getButacasCompradas(@PathParam("idSesion") Long idSesion) throws InterruptedException
     {
         if (!correctApiKey(currentRequest))
         {
@@ -29,7 +29,7 @@ public class ButacasResource extends BaseResource
         Locale locale = getLocale();
         String language = locale.getLanguage();
         
-        List<Butaca> butacas = butacasService.getButacasNoAnuladas(idSesion, language);
+        List<Butaca> butacas = butacasService.getButacasCompradas(idSesion, language);
 
         return Response.ok().entity(butacas).build();
     }
