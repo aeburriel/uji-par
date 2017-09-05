@@ -662,7 +662,8 @@ Ext.define('Paranimf.controller.Eventos', {
          }
          var strDataSessio = Ext.Date.format(dataSessio, 'd/m/Y H:i');
          var me = this;
-         var sesionId = '&sesionid=' + this.getFormSesiones().getForm().findField('id').value;
+         var valorSesionId = this.getFormSesiones().getForm().findField('id').value;
+         var sesionId = '&sesionid=' + valorSesionId;
          Ext.Ajax.request({
            url : urlPrefix + 'evento/' + eventoId + '?sala=' + sala.getValue() + '&fecha=' + strDataSessio + sesionId,
            method: 'GET',
@@ -674,7 +675,10 @@ Ext.define('Paranimf.controller.Eventos', {
                   if (numeroSesionesMismaHora.second > 0)
                   {
                      guardar = false;
-                     alert(UI.i18n.message.recordatorioDevolverEntradas)
+                     if (valorSesionId)
+                        alert(UI.i18n.message.recordatorioDevolverEntradas);
+                     else
+                        alert(UI.i18n.message.existeSesionEnMismaSalaYHoraConVentasOReservas);
                   }
                   else {
                      if (!confirm(UI.i18n.message.confirmReprogramacio))

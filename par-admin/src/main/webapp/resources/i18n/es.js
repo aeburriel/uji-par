@@ -70,6 +70,7 @@ UI =
             "confirmReprogramacio": "Hay sesiones ya definidas para esta hora en esta sala. ¿Quieres reprogramar la sesión y mantener esta como la válida?",
             "compraAnuladaOk": "Compra anulada correctamente",
             "recordatorioDevolverEntradas": "Hay entradas vendidas: recuerde que primero tiene que devolver todas las entradas de la sesión que se quiere anular",
+            "existeSesionEnMismaSalaYHoraConVentasOReservas": "Ya existe otra sesión en esta sala, en este mismo horario, y tiene entradas vendidas o reservadas",
             "selectAbono": "Es obligatorio seleccionar un abono",
             "addAbonado": "Crear nuevo abonado"
         },
