@@ -59,6 +59,18 @@ public class ReportResource extends BaseResource {
     }
 
     @POST
+    @Path("ventas/{fechaInicio}/{fechaFin}")
+    @Produces("application/vnd.ms-excel")
+    public Response generateExcelVentas(@PathParam("fechaInicio") String fechaInicio, @PathParam("fechaFin") String fechaFin)
+        throws TranscoderException, IOException {
+        String userUID = AuthChecker.getUserUID(currentRequest);
+        ByteArrayOutputStream ostream = reportService.getExcelVentas(fechaInicio, fechaFin, getLocale(), userUID);
+        return Response.ok(ostream.toByteArray())
+            .header("Content-Disposition", "attachment; filename =\"informeVentas " + fechaInicio + "-" + fechaFin + ".xls\"")
+            .build();
+    }
+
+    @POST
     @Path("eventos/{fechaInicio}/{fechaFin}")
     @Produces("application/vnd.ms-excel")
     public Response generateExcelEventos(@PathParam("fechaInicio") String fechaInicio, @PathParam("fechaFin") String fechaFin)
@@ -66,7 +78,7 @@ public class ReportResource extends BaseResource {
 		String userUID = AuthChecker.getUserUID(currentRequest);
         ByteArrayOutputStream ostream = reportService.getExcelEventos(fechaInicio, fechaFin, getLocale(), userUID);
         return Response.ok(ostream.toByteArray())
-                .header("Content-Disposition", "attachment; filename =\"informeEvents " + fechaInicio + "-" + fechaFin + ".xls\"")
+                .header("Content-Disposition", "attachment; filename =\"informeEventos " + fechaInicio + "-" + fechaFin + ".xls\"")
                 .build();
     }
 

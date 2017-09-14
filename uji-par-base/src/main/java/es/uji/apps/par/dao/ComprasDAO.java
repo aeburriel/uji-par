@@ -593,7 +593,7 @@ public class ComprasDAO extends BaseDAO {
 
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<Object[]> getComprasInFechas(String fechaInicio, String fechaFin, String userUID) {
+	public List<Object[]> getComprasInFechas(String fechaInicio, String fechaFin, String userUID, boolean online) {
 		String sql = "select e.titulo_es, s.fecha_celebracion, b.tipo, l.codigo, count(b.id) as cantidad, sum(b.precio) as total, c.sesion_id, "
 				+ "l.nombre_es, f.nombre "
 				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, par_localizaciones l, par_tarifas f, "
@@ -601,8 +601,7 @@ public class ComprasDAO extends BaseDAO {
 				+ "where b.compra_id = c.id and s.id = c.sesion_id and e.id = s.evento_id and l.id=b.localizacion_id "
 				+ "and sala.id = s.sala_id and u.usuario = '" + userUID + "' and sala.id = su.sala_id and su.usuario_id = u.id "
 				+ sqlConditionsToSkipAnuladasIReservas(fechaInicio, fechaFin)
-				+ "and c.taquilla = " + dbHelper.trueString() + " "
-				+ "and c.codigo_pago_tarjeta is null "
+				+ (online ? " " : "and c.taquilla = " + dbHelper.trueString() + " and c.codigo_pago_tarjeta is null ")
 				+ "and f.id = "	+ dbHelper.toInteger("b.tipo") + " "
 				+ "group by c.sesion_id, e.titulo_es, b.tipo, s.fecha_celebracion, l.codigo, l.nombre_es, f.nombre "
 				+ "order by e.titulo_es";

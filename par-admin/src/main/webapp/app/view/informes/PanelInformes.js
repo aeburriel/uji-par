@@ -34,7 +34,7 @@ Ext.define('Paranimf.view.informes.PanelInformes', {
         xtype: 'button',
         action: 'filtrarSessions',
         text: UI.i18n.button.filtrarSessions
-      }], 
+      }]
     }, {
       items: [{
         xtype: 'combo',

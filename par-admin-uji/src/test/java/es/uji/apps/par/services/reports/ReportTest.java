@@ -449,21 +449,64 @@ public class ReportTest {
 		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00", usuario2);
 		Compra compra = altaCompra(sesion, "1", "1", true, usuario);
 		altaCompra(sesion, "1", "2", true, usuario);
+		altaCompra(sesion, "1", "3", false, usuario);
 		altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true, usuario2);
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(compra.getFecha());
 		cal.add(Calendar.DAY_OF_MONTH, -1);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-		ExcelService excelServiceConDosCompras = reportService.getExcelServiceTaquilla(sdf.format(cal.getTime()), sdf.format(compra.getFecha()),
-				new Locale("es"), usuario.getUsuario());
-		Assert.assertEquals(2, excelServiceConDosCompras.getTotalFilas());
-		Object fechaSesionConDosCompras = excelServiceConDosCompras.getCellValue("B2");
-		Assert.assertEquals("12:00", fechaSesionConDosCompras.toString().split(" ")[1]);
-		Object cantidadDeComprasDeSesionConDosCompras = excelServiceConDosCompras.getCellValue("E2");
+		ExcelService excelServiceConDosComprasTaquilla = reportService.getExcelServiceVentas(sdf.format(cal.getTime()), sdf.format(compra.getFecha()),
+				new Locale("es"), usuario.getUsuario(), false);
+		Assert.assertEquals(2, excelServiceConDosComprasTaquilla.getTotalFilas());
+		Object fechaSesionConDosComprasTaquilla = excelServiceConDosComprasTaquilla.getCellValue("B2");
+		Assert.assertEquals("12:00", fechaSesionConDosComprasTaquilla.toString().split(" ")[1]);
+		Object cantidadDeComprasDeSesionConDosCompras = excelServiceConDosComprasTaquilla.getCellValue("E2");
 		Assert.assertEquals(2.0, cantidadDeComprasDeSesionConDosCompras);
-		ExcelService excelServiceConUnaCompra = reportService.getExcelServiceTaquilla(sdf.format(cal.getTime()), sdf.format(compra.getFecha()),
-				new Locale("es"), usuario2.getUsuario());
+		ExcelService excelServiceConUnaCompraTaquilla = reportService.getExcelServiceVentas(sdf.format(cal.getTime()), sdf.format(compra.getFecha()),
+				new Locale("es"), usuario2.getUsuario(), false);
+		Assert.assertEquals(2, excelServiceConUnaCompraTaquilla.getTotalFilas());
+		Object fechaSesionConUnaCompra = excelServiceConUnaCompraTaquilla.getCellValue("B2");
+		Assert.assertEquals("13:00", fechaSesionConUnaCompra.toString().split(" ")[1]);
+		Object cantidadDeComprasDeSesionConUnaCompraTaquilla = excelServiceConUnaCompraTaquilla.getCellValue("E2");
+		Assert.assertEquals(1.0, cantidadDeComprasDeSesionConUnaCompraTaquilla);
+	}
+
+	@Test
+	@Transactional
+	public void testInformeExcelVentasSoloMuestraDatosDeLasSalasDelUsuario() throws IOException {
+		altaCine();
+		Sala sala = altaSala("Sala 1");
+		Sala salaDondeUsuario1NoTienePermiso = altaSala("Sala 2");
+		Usuario usuario = altaUsuario("Nombre", "Mail", "login");
+		Usuario usuario2 = altaUsuario("Nombre", "Mail", "login2");
+		altaRelacionSalaUsuario(sala, usuario);
+		altaRelacionSalaUsuario(salaDondeUsuario1NoTienePermiso, usuario2);
+		Plantilla plantilla = altaPlantilla(sala);
+		Plantilla plantilla2 = altaPlantilla(salaDondeUsuario1NoTienePermiso);
+		altaLocalizacion();
+		altaTarifa();
+		altaEvento();
+		Sesion sesion = altaSesion(sala, plantilla, "12:00", usuario);
+		Sesion sesionDondeUsuarioNoTienePermiso = altaSesion(salaDondeUsuario1NoTienePermiso, plantilla2, "13:00", usuario2);
+		Compra compra = altaCompra(sesion, "1", "1", true, usuario);
+		altaCompra(sesion, "1", "2", true, usuario);
+		altaCompra(sesion, "1", "3", false, usuario);
+		altaCompra(sesionDondeUsuarioNoTienePermiso, "1", "1", true, usuario2);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(compra.getFecha());
+		cal.add(Calendar.DAY_OF_MONTH, -1);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+		ExcelService excelServiceConTresCompras = reportService.getExcelServiceVentas(sdf.format(cal.getTime()), sdf.format(compra.getFecha()),
+			new Locale("es"), usuario.getUsuario(), true);
+		Assert.assertEquals(2, excelServiceConTresCompras.getTotalFilas());
+		Object fechaSesionConDosCompras = excelServiceConTresCompras.getCellValue("B2");
+		Assert.assertEquals("12:00", fechaSesionConDosCompras.toString().split(" ")[1]);
+		Object cantidadDeComprasDeSesionConTresCompras = excelServiceConTresCompras.getCellValue("E2");
+		Assert.assertEquals(3.0, cantidadDeComprasDeSesionConTresCompras);
+		ExcelService excelServiceConUnaCompra = reportService.getExcelServiceVentas(sdf.format(cal.getTime()), sdf.format(compra.getFecha()),
+			new Locale("es"), usuario2.getUsuario(), true);
 		Assert.assertEquals(2, excelServiceConUnaCompra.getTotalFilas());
 		Object fechaSesionConUnaCompra = excelServiceConUnaCompra.getCellValue("B2");
 		Assert.assertEquals("13:00", fechaSesionConUnaCompra.toString().split(" ")[1]);

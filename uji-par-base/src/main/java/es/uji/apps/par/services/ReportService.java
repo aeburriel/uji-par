@@ -81,17 +81,23 @@ public class ReportService {
 
 	public ByteArrayOutputStream getExcelTaquilla(String fechaInicio, String fechaFin, Locale locale, String userUID) throws
 			IOException {
-		ExcelService excelService = getExcelServiceTaquilla(fechaInicio, fechaFin, locale, userUID);
+		ExcelService excelService = getExcelServiceVentas(fechaInicio, fechaFin, locale, userUID, false);
 		return excelService.getExcel();
 	}
 
-	public ExcelService getExcelServiceTaquilla(String fechaInicio, String fechaFin, Locale locale, String userUID) {
-		List<Object[]> files = comprasDAO.getComprasInFechas(fechaInicio, fechaFin, userUID);
+	public ByteArrayOutputStream getExcelVentas(String fechaInicio, String fechaFin, Locale locale, String userUID) throws
+		IOException {
+		ExcelService excelService = getExcelServiceVentas(fechaInicio, fechaFin, locale, userUID, true);
+		return excelService.getExcel();
+	}
+
+	public ExcelService getExcelServiceVentas(String fechaInicio, String fechaFin, Locale locale, String userUID, boolean online) {
+		List<Object[]> files = comprasDAO.getComprasInFechas(fechaInicio, fechaFin, userUID, online);
 		ExcelService excelService = new ExcelService();
 		int rownum = 0;
 
 		if (files != null && files.size() > 0) {
-			excelService.addFulla(ResourceProperties.getProperty(locale, "excelTaquilla.titulo") + " " + fechaInicio + " - "
+			excelService.addFulla(ResourceProperties.getProperty(locale, online ? "excelVentas.titulo" : "excelTaquilla.titulo") + " " + fechaInicio + " - "
 					+ fechaFin);
 
 			excelService.generaCeldes(excelService.getEstilNegreta(), 0,
