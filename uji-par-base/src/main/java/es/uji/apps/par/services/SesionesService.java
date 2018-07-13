@@ -105,7 +105,7 @@ public class SesionesService
     }
     
     public List<Sesion> getSesiones(Long eventoId, String userUID) {
-		return getSesiones(eventoId, false, "", 0, 100, userUID);
+		return getSesiones(eventoId, false, "[{\"property\":\"fechaCelebracion\",\"direction\":\"ASC\"}]", 0, 1000, userUID);
 	}
     
     public List<Sesion> getSesionesActivas(Long eventoId, String sortParameter, int start, int limit, String userUID)
