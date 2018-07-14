@@ -104,7 +104,11 @@ public class EventosResource extends BaseResource {
     @GET
     @Path("listado")
     @Produces(MediaType.TEXT_HTML)
-    public Template getListadoEventos() throws Exception {
+    public Template getListadoEventos(@QueryParam("lang") String lang) throws Exception {
+        if (lang != null) {
+            setLocale(lang);
+        }
+
         try {
             Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
             List<Evento> eventosActivos = eventosService.getEventosActivos("[{\"property\":\"fechaPrimeraSesion\",\"direction\":\"ASC\"}]", 0, 1000, user.getUsuario());
@@ -126,7 +130,11 @@ public class EventosResource extends BaseResource {
     @GET
     @Path("{contenidoId}")
     @Produces(MediaType.TEXT_HTML)
-    public Template getEvento(@PathParam("contenidoId") Long contenidoId) throws Exception {
+    public Template getEvento(@PathParam("contenidoId") Long contenidoId, @QueryParam("lang") String lang) throws Exception {
+        if (lang != null) {
+            setLocale(lang);
+        }
+
         try {
             Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
             Evento evento = eventosService.getEventoByRssId(contenidoId, user.getUsuario());
@@ -142,7 +150,11 @@ public class EventosResource extends BaseResource {
     @GET
     @Path("id/{id}")
     @Produces(MediaType.TEXT_HTML)
-    public Template getEventoById(@PathParam("id") Long id) throws Exception {
+    public Template getEventoById(@PathParam("id") Long id, @QueryParam("lang") String lang) throws Exception {
+        if (lang != null) {
+            setLocale(lang);
+        }
+
         try {
             Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
             Evento evento = eventosService.getEvento(id, user.getUsuario());
