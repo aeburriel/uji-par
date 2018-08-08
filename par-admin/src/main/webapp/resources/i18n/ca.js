@@ -510,12 +510,12 @@ UI =
             "Q": "Original Basc",
             "P": "Original Gallec",
             "Z": "Original Altres Llengües",
-            "W": "Doblegada Castellà",
-            "Y": "Doblegada Valencià",
-            "V": "Doblegada Català",
-            "U": "Doblegada Basc",
-            "T": "Doblegada Gallec",
-            "F": "Doblegada Altres Llengües",
+            "W": "Doblada Castellà",
+            "Y": "Doblada Valencià",
+            "V": "Doblada Català",
+            "U": "Doblada Basc",
+            "T": "Doblada Gallec",
+            "F": "Doblada Altres Llengües",
             "X": "Sense diàlegs"
         },
         "nacionalidades": {
