@@ -430,6 +430,10 @@ public class ComprasService
 		comprasDAO.anularCompraReserva(idCompraReserva, true);
 	}
 
+	public void anularCompraReservaAutomatica(Long idCompraReserva) throws IncidenciaNotFoundException {
+		comprasDAO.anularCompraReserva(idCompraReserva, false);
+	}
+
     @Transactional
     public void anularCompraAbonado(Long idAbonado) throws IncidenciaNotFoundException {
         AbonadoDTO abonado = abonadosDAO.getAbonado(idAbonado);

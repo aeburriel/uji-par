@@ -25,6 +25,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import java.util.Locale;
 
 @Component
@@ -118,12 +119,18 @@ public class TpvResource extends BaseResource implements TpvInterface {
             log.info("Compra caducada");
             // Guardamos código pago de pasarela para luego saber que pago anular
             compras.rellenaCodigoPagoPasarela(compra.getId(), recibo);
-        } else if (isEstadoOk(estado)) {
-            log.info("Compra NO caducada: " + compra.getId());
-            compras.marcaPagadaPasarela(compra.getId(), recibo);
-
-            log.info("Marcada como pagada " + compra.getUuid() + " - " + compra.getEmail());
-            enviaMail(compra.getEmail(), compra.getUuid(), recibo);
+        } else {
+        	if (isEstadoOk(estado)) {
+	            log.info("Compra correcta NO caducada: " + compra.getId());
+	            compras.marcaPagadaPasarela(compra.getId(), recibo);
+	
+	            log.info("Marcada como pagada " + compra.getUuid() + " - " + compra.getEmail());
+	            enviaMail(compra.getEmail(), compra.getUuid(), recibo);
+        	} else {
+        		log.info("Compra fallida NO caducada: " + compra.getId());
+        		compras.rellenaCodigoPagoPasarela(compra.getId(), recibo);
+        		compras.anularCompraReservaAutomatica(compra.getId());
+        	}
         }
         eliminaCompraDeSesion();
     }
@@ -191,6 +198,10 @@ public class TpvResource extends BaseResource implements TpvInterface {
         if (!verificaFirmaSHA256(params, signature, signatureVersion, apiMacSha256, compra)) {
             return Response.status(400).build();
         }
+
+        String recibo = apiMacSha256.getParameter("Ds_Order");
+        String estado = apiMacSha256.getParameter("Ds_Response");
+        asientaCompra(recibo, estado, compra);
 
         return getResponseResultadoKo(compra);
     }
