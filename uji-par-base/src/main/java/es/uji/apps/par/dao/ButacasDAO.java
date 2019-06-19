@@ -199,11 +199,13 @@ public class ButacasDAO extends BaseDAO
                 butacaDTO.setTipo(butaca.getTipo());
                 butacaDTO.setAnulada(false);
     
-                for (PreciosSesionDTO precioSesion : parPreciosSesions)
-                {
-                    if (precioSesion.getParLocalizacione().getCodigo().equals(butaca.getLocalizacion()) &&
-                    		precioSesion.getParTarifa().getId() == Long.valueOf(butaca.getTipo()))
-                        butacaDTO.setPrecio(precioSesion.getPrecio());
+                if (parPreciosSesions != null) {
+	                for (PreciosSesionDTO precioSesion : parPreciosSesions)
+	                {
+	                    if (precioSesion.getParLocalizacione().getCodigo().equals(butaca.getLocalizacion()) &&
+	                    		precioSesion.getParTarifa().getId() == Long.valueOf(butaca.getTipo()))
+	                        butacaDTO.setPrecio(precioSesion.getPrecio());
+	                }
                 }
                 
                 entityManager.persist(butacaDTO);
