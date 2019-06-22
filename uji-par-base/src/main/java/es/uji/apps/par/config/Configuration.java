@@ -40,6 +40,7 @@ public class Configuration
     private static final String ENTORNO = "uji.par.entorno";
     private static final String INFORME_EFECTIVO_CARGO = "uji.par.informeEfectivo.cargo";
     private static final String INFORME_EFECTIVO_FIRMANTE = "uji.par.informeEfectivo.firmante";
+    private static final String MARGEN_FIN_VENTA_ONLINE_MINUTOS = "uji.par.margenFinVentaOnlineMinutos";
     private static final String MARGEN_VENTA_TAQUILLA_MINUTOS = "uji.par.margenVentaTaquillaMinutos";
     private static final String AUTH_CLASS = "uji.par.authClass";
     private static final String ADMIN_LOGIN = "uji.par.auth.admin.login";
@@ -231,6 +232,16 @@ public class Configuration
         return getProperty(INFORME_EFECTIVO_FIRMANTE);
     } 
     
+    public int getMargenFinVentaOnlineMinutos()
+    {
+        try {
+            return Integer.parseInt(getProperty(MARGEN_FIN_VENTA_ONLINE_MINUTOS));
+        }
+        catch (NumberFormatException e) {
+            return 60;
+        }
+    }
+
     public int getMargenVentaTaquillaMinutos()
     {
         try {
@@ -240,7 +251,7 @@ public class Configuration
             return 0;
         }
     }
-    
+
     public String getAuthClass()
     {
         return getProperty(AUTH_CLASS);

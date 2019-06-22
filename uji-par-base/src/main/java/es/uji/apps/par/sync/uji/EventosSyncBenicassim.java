@@ -146,10 +146,10 @@ public class EventosSyncBenicassim implements EventosSync
 				sesion.setFechaCelebracion(DateUtils.dateToSpanishString(fechaCelebracion));
 				sesion.setHoraCelebracion(sesionRss.getFecha().split(" ")[1]);
 
-				// Fin venta online 1 hora antes
+				// Fin venta online x minutos antes del comienzo de la sesión
 				Calendar finVentaOnline = Calendar.getInstance();
 				finVentaOnline.setTime(fechaCelebracion);
-				finVentaOnline.add(Calendar.HOUR, -1);
+				finVentaOnline.add(Calendar.MINUTE, -configuration.getMargenFinVentaOnlineMinutos());
 				sesion.setFechaFinVentaOnline(DateUtils.dateToSpanishString(finVentaOnline.getTime()));
 				sesion.setHoraFinVentaOnline(DateUtils.getHourAndMinutesWithLeadingZeros(finVentaOnline.getTime()));
 
