@@ -1,9 +1,10 @@
 package es.uji.apps.par.i18n;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class ResourceProperties
             try
             {
             	String path = "/etc/uji/par/i18n/properties_" + lenguaje + ".properties";
-            	InputStream inputStream = new FileInputStream(path);
+            	InputStream inputStream = Files.newInputStream(Paths.get(path));
                 properties.put(lenguaje, new PropertyResourceBundle(new InputStreamReader(inputStream, "UTF-8")));
             }
             catch (IOException e)

@@ -15,8 +15,10 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -147,7 +149,7 @@ public class EventosService
 	public byte[] getImagenSustitutivaSiExiste() throws IOException {
 		String path = configuration.getPathImagenSustitutiva();
 		if (path != null) {
-			FileInputStream fis = new FileInputStream("/etc/uji/par/imagenes/" + path);
+			InputStream fis = Files.newInputStream(Paths.get("/etc/uji/par/imagenes/" + path));
 			return IOUtils.toByteArray(fis);
 		} else
 			return null;
@@ -156,7 +158,7 @@ public class EventosService
 	public byte[] getImagenPubliSustitutivaSiExiste() throws IOException {
 		String path = configuration.getPathImagenPubliSustitutiva();
 		if (path != null) {
-			FileInputStream fis = new FileInputStream("/etc/uji/par/imagenes/" + path);
+			InputStream fis = Files.newInputStream(Paths.get("/etc/uji/par/imagenes/" + path));
 			return IOUtils.toByteArray(fis);
 		} else
 			return null;

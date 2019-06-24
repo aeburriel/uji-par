@@ -3,9 +3,10 @@ package es.uji.apps.par.services;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,6 +81,6 @@ public class BarcodeService
 
         BarcodeService service = ctx.getBean(BarcodeService.class);
 
-        service.generaBarcodeDatamatrix("d26e40ab-0c9f-4868-8797-6ce8c8381e6c-123456", new FileOutputStream("/tmp/codigo.png"));
+        service.generaBarcodeDatamatrix("d26e40ab-0c9f-4868-8797-6ce8c8381e6c-123456", Files.newOutputStream(Paths.get("/tmp/codigo.png")));
     }
 }
