@@ -117,13 +117,13 @@ public class ComunicacionesICAAService {
                     EventoDTO eventoDTO = peliculaMultisesion.get(0, EventoDTO.class);
                     String versionLinguistica = peliculaMultisesion.get(1, String.class);
 
-					Evento.checkValidity(new Long(eventoDTO.getId()).intValue(), eventoDTO.getExpediente(),
+					Evento.checkValidity(Long.valueOf(eventoDTO.getId()).intValue(), eventoDTO.getExpediente(),
                             eventoDTO.getTituloEs(), eventoDTO.getCodigoDistribuidora(),
                             eventoDTO.getNombreDistribuidora(), eventoDTO.getVo(),
                             versionLinguistica, eventoDTO.getSubtitulos(), eventoDTO.getFormato());
 				}
 			} else {
-				Evento.checkValidity(new Long(sesion.getParEvento().getId()).intValue(), sesion.getParEvento().getExpediente(),
+				Evento.checkValidity(Long.valueOf(sesion.getParEvento().getId()).intValue(), sesion.getParEvento().getExpediente(),
 						sesion.getParEvento().getTituloEs(), sesion.getParEvento().getCodigoDistribuidora(),
 						sesion.getParEvento().getNombreDistribuidora(), sesion.getParEvento().getVo(),
 						sesion.getVersionLinguistica(), sesion.getParEvento().getSubtitulos(),

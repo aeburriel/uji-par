@@ -154,7 +154,7 @@ public class Utils
 	public static List<Long> listIntegerToListLong(List<Integer> enteros) {
 		List<Long> listaLong = new ArrayList<Long>();
 		for (Integer entero: enteros) {
-			listaLong.add(new Long(entero));
+			listaLong.add(Long.valueOf(entero));
 		}
 		return listaLong;
 	}

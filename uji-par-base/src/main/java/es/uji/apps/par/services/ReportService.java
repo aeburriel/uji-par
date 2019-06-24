@@ -490,7 +490,7 @@ public class ReportService {
 	synchronized
 	public void getPdfSesion(long sesionId, ByteArrayOutputStream bos, Locale locale, String userUID, String logoReport, boolean showIVA, String location, boolean anuladas) throws SinIvaException,
 			ReportSerializationException, IOException {
-		Sesion sesion = new Sesion(new Long(sesionId).intValue());
+		Sesion sesion = new Sesion(Long.valueOf(sesionId).intValue());
 		InformeInterface informe = generaYRellenaPDFSesiones(Arrays.asList(sesion), locale, userUID, logoReport, showIVA, location, anuladas);
 		informe.serialize(bos);
 	}

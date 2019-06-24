@@ -106,7 +106,7 @@ public class TarifasDAO extends BaseDAO
 				.leftJoin(qCineDTO.parSalas, qSalaDTO)
 				.leftJoin(qSalaDTO.parSalasUsuario, qSalasUsuarioDTO)
 				.leftJoin(qSalasUsuarioDTO.parUsuario, qUsuarioDTO)
-				.where((qUsuarioDTO.usuario.eq(userUID).or(qCineDTO.isNull())).and(qTarifaDTO.id.eq(new Long(idTarifa))))
+				.where((qUsuarioDTO.usuario.eq(userUID).or(qCineDTO.isNull())).and(qTarifaDTO.id.eq(Long.valueOf(idTarifa))))
 				.distinct()
 				.list(qTarifaDTO);
 		if (tarifaDTO.size() == 1)
