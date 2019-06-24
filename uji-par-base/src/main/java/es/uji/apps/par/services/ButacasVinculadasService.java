@@ -63,6 +63,7 @@ public class ButacasVinculadasService {
 	private Map<String, List<DatosButaca>> butacasAccesiblesPorLocalizacion = new HashMap<String, List<DatosButaca>>();
 	private Map<String, List<DatosButaca>> butacasAsociadasPorLocalizacion = new HashMap<String, List<DatosButaca>>();
 	private Map<DatosButaca, DatosButaca> butacasVinculadas = new HashMap<DatosButaca, DatosButaca>();
+	private Map<DatosButaca, DatosButaca> butacasAcompanantes = new HashMap<DatosButaca, DatosButaca>();
 	private TarifaDTO tarifaInvitacion;
 
 	/**
@@ -85,6 +86,33 @@ public class ButacasVinculadasService {
 	private Date fechaFinReservaButacasAccesibles(final SesionDTO sesion) {
 		return DateUtils.addMinutes(sesion.getFechaCelebracion(),
 				-configuration.getMargenFinButacasAccesiblesMinutos());
+	}
+
+	/**
+	 * Determina si la butaca indicada es accesible
+	 * @param butaca
+	 * @return true
+	 */
+	private boolean isButacaAccesible(Butaca butaca) {
+		for (final DatosButaca candidata : butacasVinculadas.keySet()) {
+			if (isButacaEqual(candidata, butaca)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Comprueba si ambas butacas son la misma
+	 *
+	 * @param butaca1
+	 * @param butaca2
+	 * @return true si representan la misma butaca
+	 */
+	private boolean isButacaEqual(final DatosButaca butaca1, final Butaca butaca2) {
+		return butaca1.getFila() == Integer.parseInt(butaca2.getFila())
+				&& butaca1.getNumero() == Integer.parseInt(butaca2.getNumero())
+				&& butaca1.getLocalizacion().equals(butaca2.getLocalizacion());
 	}
 
 	/**
@@ -124,6 +152,19 @@ public class ButacasVinculadasService {
 						&& butacaAccesible.getFila() == butaca.getFila()
 						&& butacaAccesible.getLocalizacion().equals(butaca.getLocalizacion())) {
 					butacasVinculadas.put(butacaAccesible, butaca);
+					break; // Continuamos con la siguiente butaca, ya que van por parejas
+				}
+			}
+		}
+
+		// Vinculamos cada butaca de acompañante con su butaca accesible
+		for (final DatosButaca butacaAccesible : butacasVinculadas.keySet()) {
+			for (final DatosButaca butaca : butacasAsociadasPorLocalizacion.get(LOCALIZACION)) {
+				if (butacaAccesible.getNumero() == butaca.getNumero_enlazada()
+						&& butacaAccesible.getFila() == butaca.getFila()
+						&& butacaAccesible.getNumero_enlazada() != butaca.getNumero()
+						&& butacaAccesible.getLocalizacion().equals(butaca.getLocalizacion())) {
+					butacasAcompanantes.put(butaca, butacaAccesible);
 					break; // Continuamos con la siguiente butaca, ya que van por parejas
 				}
 			}
@@ -315,10 +356,56 @@ public class ButacasVinculadasService {
 
 		boolean resultado = false;
 		for (final Butaca butaca : butacasCompradas) {
-			if (inhabilitaButacaAsociada(sesion, butaca, userUID)) {
+			if (isButacaAccesible(butaca) && inhabilitaButacaAsociada(sesion, butaca, userUID)) {
 				resultado = true;
 			}
 		}
 		return resultado;
+	}
+
+	/**
+	 * Verifica si la combinación de butacas elegida está permitida
+	 * Se tiene que llamar cada vez que se comprueban las butacas en una venta en proceso.
+	 * En particular se comprueba que:
+	 * 1. Sea una sesión numerada.
+	 * 2. Los bloqueos de butacas accesibles estén en vigor para la sesión.
+	 * 3. No haya ninguna butaca de acompañante elegida sin su correspondiente butaca accesible.
+	 *
+	 * @param sesionId Identificador de sesión del evento
+	 * @param butacas  Lista con las butacas seleccionadas
+	 * @param butaca   Butaca sobre la que estamos haciendo la comprobación
+	 * @return true si las butacas elegidas están permitidas
+	 */
+	public boolean validaButacas(final Long sesionId, final List<Butaca> butacas, final Butaca butaca) {
+		try {
+			leeJsonsButacas();
+		} catch (IOException e) {
+			return false;
+		}
+
+		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
+		if (!sesion.getParEvento().getAsientosNumerados()) {
+			return true;
+		}
+
+		// Si ya ha finalizado la reserva de butacas accesibles, no hay nada más que comprobar
+		final Date ahora = new Date();
+		if (ahora.after(fechaFinReservaButacasAccesibles(sesion))) {
+			return true;
+		}
+
+		// Si la butaca es de acompañante, no se permite si no lo está también su butaca accesible
+		for (final DatosButaca butacaAcompanante : butacasAcompanantes.keySet()) {
+			if (isButacaEqual(butacaAcompanante, butaca)) {
+				final DatosButaca butacaAccesible = butacasAcompanantes.get(butacaAcompanante);
+				for (final Butaca candidata : butacas) {
+					if (isButacaEqual(butacaAccesible, candidata)) {
+						return true;
+					}
+				}
+				return false;
+			}
+		}
+		return true;
 	}
 }

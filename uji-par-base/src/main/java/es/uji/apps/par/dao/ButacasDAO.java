@@ -12,6 +12,8 @@ import es.uji.apps.par.exceptions.NoHayButacasLibresException;
 import es.uji.apps.par.exceptions.SesionSinFormatoIdiomaIcaaException;
 import es.uji.apps.par.ficheros.registros.TipoIncidencia;
 import es.uji.apps.par.model.Butaca;
+import es.uji.apps.par.services.ButacasVinculadasService;
+
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -33,6 +35,9 @@ public class ButacasDAO extends BaseDAO
 
 	@Autowired
 	Configuration configuration;
+
+	@Autowired
+	ButacasVinculadasService butacasVinculadasService;
 
     private QButacaDTO qButacaDTO = QButacaDTO.butacaDTO;
 
@@ -191,6 +196,10 @@ public class ButacasDAO extends BaseDAO
                 
                 if (butaca.getFila()==null && butaca.getNumero()==null && noHayButacasLibres(sesionDTO, localizacionDTO))
                     throw new NoHayButacasLibresException(sesionId, butaca.getLocalizacion());
+
+                if (!butacasVinculadasService.validaButacas(sesionId, butacas, butacaActual)) {
+                	throw new ButacaOcupadaException(sesionId, butacaActual.getLocalizacion(), butacaActual.getFila(), butacaActual.getNumero());
+                }
 
                 ButacaDTO butacaDTO = Butaca.butacaToButacaDTO(butaca);
                 butacaDTO.setParSesion(sesionDTO);

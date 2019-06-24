@@ -39,6 +39,9 @@ public class ButacasService
 	@Autowired
 	ConfigurationSelector configurationSelector;
 
+	@Autowired
+	ButacasVinculadasService butacasVinculadasService;
+
     public ButacaDTO getButaca(long idButaca)
     {
         return butacasDAO.getButaca(idButaca);
@@ -107,6 +110,10 @@ public class ButacasService
                         if (!compra.getUuid().equals(uuidCompra))
                             ocupadas.add(butaca);
                     }
+                } else {
+                	if (!butacasVinculadasService.validaButacas(sesionId, butacas, butaca)) {
+                		ocupadas.add(butaca);
+                	}
                 }
             }
         }
