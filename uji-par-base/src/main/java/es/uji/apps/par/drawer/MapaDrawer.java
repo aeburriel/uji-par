@@ -11,6 +11,8 @@ import es.uji.apps.par.model.Abono;
 import es.uji.apps.par.model.SesionAbono;
 import es.uji.apps.par.services.AbonosService;
 import es.uji.apps.par.services.ButacasService;
+import es.uji.apps.par.services.ButacasVinculadasService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.imageio.ImageIO;
@@ -39,6 +41,9 @@ public class MapaDrawer implements MapaDrawerInterface
 
     @Autowired
     ConfigurationSelector configurationSelector;
+
+    @Autowired
+    ButacasVinculadasService butacasVinculadasService;
 
     private BufferedImage butacaOcupada;
     private BufferedImage butacaReservada;
@@ -169,7 +174,7 @@ public class MapaDrawer implements MapaDrawerInterface
                         if (mostrarReservadas && configurationSelector.showButacasHanEntradoEnDistintoColor() && butacaPresentada != null && butacaDTO.getPresentada() != null) {
                             imagenOcupada = butacaPresentada;
                         } else {
-                            if (esDiscapacitado(butaca)) {
+                            if (esDiscapacitado(idSesion, butaca)) {
                                 if (mostrarReservadas && esReserva(butacaDTO))
                                     imagenOcupada = butacaReservadaDiscapacitado;
                                 else
@@ -203,14 +208,14 @@ public class MapaDrawer implements MapaDrawerInterface
 		return false;
 	}
 
-	private boolean esDiscapacitado(DatosButaca butaca)
+	private boolean esDiscapacitado(Long sesionId, DatosButaca butaca)
     {
 		if (butaca == null)
 			return false;
 
-		// FIXME: hay que comprobar si esta butaca isDiscapacidad() && si su butaca asociada tiene un bloqueo permanente
-		if (butaca.isDiscapacidad())
+		if (butacasVinculadasService.esDiscapacitado(sesionId, butaca)) {
 			return true;
+		}
 
 		if(butaca.getLocalizacion() != null)
 			return butaca.getLocalizacion().startsWith("discapacitados");

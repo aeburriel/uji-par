@@ -275,26 +275,39 @@ public class ButacasVinculadasService {
 	 */
 	private boolean actualizaBloqueoButacaAsociada(final SesionDTO sesion, final DatosButaca butacaAccesible,
 			final boolean inhabilita, final String userUID) {
-		// La reserva-bloqueo se hace a nombre de la butaca accesible
-		final String textoABloquar = mensajeBloqueo(butacaAccesible);
-
-		final List<Compra> compras = comprasService.getComprasBySesion(Long.valueOf(sesion.getId()), 0,
-				"[{\"property\":\"fecha\",\"direction\":\"ASC\"}]", 0, 1000, 0, textoABloquar);
-		if (compras.isEmpty()) {
+		final List<Compra> reservasBloqueo = getReservasBloqueoButacaAccesible(sesion, butacaAccesible);
+		if (reservasBloqueo.isEmpty()) {
 			return false;
 		}
 
-		for (final Compra compra : compras) {
+		for (final Compra bloqueo : reservasBloqueo) {
 			Date fecha;
 			if (inhabilita) {
 				fecha = fechaInfinito;
 			} else {
 				fecha = fechaFinReservaButacasAccesibles(sesionesDAO.getSesion(sesion.getId(), userUID));
 			}
-			comprasDAO.actualizarFechaCaducidad(compra.getId(), fecha);
+			comprasDAO.actualizarFechaCaducidad(bloqueo.getId(), fecha);
 		}
 
 		return true;
+	}
+
+	/**
+	 * Devuelve los bloqueos-reserva de butacas accesibles en vigor para la sesión
+	 * indicada
+	 *
+	 * @param sesion          Identificador de la sesión
+	 * @param butacaAccesible Butaca sobre la que obtener la lista de bloqueos-reserva
+	 * @return Lista de bloqueos-reserva, el número máximo de elementos a devolver
+	 *         debería ser 1.
+	 */
+	private List<Compra> getReservasBloqueoButacaAccesible(final SesionDTO sesion, DatosButaca butacaAccesible) {
+		// La reserva-bloqueo se hace a nombre de la butaca accesible
+		final String textoABloquar = mensajeBloqueo(butacaAccesible);
+
+		return comprasService.getComprasBySesion(Long.valueOf(sesion.getId()), 0,
+				"[{\"property\":\"fecha\",\"direction\":\"ASC\"}]", 0, 1000, 0, textoABloquar);
 	}
 
 	/**
@@ -407,5 +420,32 @@ public class ButacasVinculadasService {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Determina si la butaca en el evento indicada es de discapacitado (ancho doble)
+	 *
+	 * @param sesionId Identificador de sesión del evento
+	 * @param butaca
+	 * @return true si lo es
+	 */
+	public boolean esDiscapacitado(final Long sesionId, final DatosButaca butaca) {
+		try {
+			leeJsonsButacas();
+		} catch (IOException e) {
+			return false;
+		}
+
+		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
+		if (!sesion.getParEvento().getAsientosNumerados()) {
+			return false;
+		}
+
+		final List<Compra> reservasBloqueo = getReservasBloqueoButacaAccesible(sesion, butaca);
+		for (final Compra bloqueo : reservasBloqueo) {
+			if (bloqueo.getHasta().compareTo(fechaInfinito) >= 0)
+				return true;
+		}
+		return false;
 	}
 }
