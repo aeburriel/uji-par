@@ -68,6 +68,9 @@ public class ComprasService
 	@Autowired
 	Configuration configuration;
 
+	@Autowired
+	private ButacasVinculadasService butacasVinculadasService;
+
     public ResultadoCompra registraCompraTaquilla(Long sesionId, List<Butaca> butacasSeleccionadas, String userUID)
             throws NoHayButacasLibresException, ButacaOcupadaException, CompraSinButacasException, IncidenciaNotFoundException {
         return registraCompra(sesionId, butacasSeleccionadas, true, userUID);
@@ -146,6 +149,7 @@ public class ComprasService
         resultadoCompra.setCorrecta(true);
         resultadoCompra.setId(compraDTO.getId());
         resultadoCompra.setUuid(compraDTO.getUuid());
+        butacasVinculadasService.inhabilitaButacaAsociada(sesionId, butacasSeleccionadas, userUID);
 
         if (taquilla) {
             SesionDTO sesionDTO = sesionesDAO.getSesion(sesionId, userUID);
@@ -428,10 +432,12 @@ public class ComprasService
 
 	public void anularCompraReserva(Long idCompraReserva) throws IncidenciaNotFoundException {
 		comprasDAO.anularCompraReserva(idCompraReserva, true);
+		// TODO: liberar butacas accesibles afectadas
 	}
 
 	public void anularCompraReservaAutomatica(Long idCompraReserva) throws IncidenciaNotFoundException {
 		comprasDAO.anularCompraReserva(idCompraReserva, false);
+		// TODO: liberar butacas accesibles afectadas
 	}
 
     @Transactional

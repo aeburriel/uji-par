@@ -205,8 +205,16 @@ public class MapaDrawer implements MapaDrawerInterface
 
 	private boolean esDiscapacitado(DatosButaca butaca)
     {
-		if (butaca != null && butaca.getLocalizacion() != null)
+		if (butaca == null)
+			return false;
+
+		// FIXME: hay que comprobar si esta butaca isDiscapacidad() && si su butaca asociada tiene un bloqueo permanente
+		if (butaca.isDiscapacidad())
+			return true;
+
+		if(butaca.getLocalizacion() != null)
 			return butaca.getLocalizacion().startsWith("discapacitados");
+
 		return false;
     }
 

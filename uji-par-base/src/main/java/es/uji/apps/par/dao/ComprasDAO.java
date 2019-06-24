@@ -962,4 +962,13 @@ public class ComprasDAO extends BaseDAO {
 				.where(qCompraDTO.uuid.eq(uuidCompra).and(qReportDTO.tipo.toUpperCase().eq(tipo.toUpperCase())))
 				.uniqueResult(qReportDTO.clase);
 	}
+
+	@Transactional
+	public void actualizarFechaCaducidad(long idCompra, Date fecha) {
+		CompraDTO compra = getCompraById(idCompra);
+
+		compra.setHasta(new Timestamp(fecha.getTime()));
+
+		entityManager.persist(compra);
+	}
 }

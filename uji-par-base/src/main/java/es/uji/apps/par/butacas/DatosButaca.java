@@ -4,6 +4,8 @@ public class DatosButaca
 {
     private int fila;
     private int numero;
+    private int numero_enlazada = -1;
+    private boolean discapacidad = false;
     private String localizacion;
     private int xFin;
     private int xIni;
@@ -34,7 +36,23 @@ public class DatosButaca
         this.numero = numero;
     }
 
-    public String getLocalizacion()
+    public int getNumero_enlazada() {
+		return numero_enlazada;
+	}
+
+	public void setNumero_enlazada(int numero_enlazada) {
+		this.numero_enlazada = numero_enlazada;
+	}
+
+	public boolean isDiscapacidad() {
+		return discapacidad;
+	}
+
+	public void setDiscapacidad(boolean discapacidad) {
+		this.discapacidad = discapacidad;
+	}
+
+	public String getLocalizacion()
     {
         return localizacion;
     }
