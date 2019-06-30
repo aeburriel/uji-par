@@ -13,10 +13,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.sun.jersey.api.core.InjectParam;
 
 import es.uji.apps.par.butacas.DatosButaca;
 import es.uji.apps.par.config.Configuration;
@@ -40,6 +43,9 @@ import es.uji.apps.par.model.ResultadoCompra;
 public class ButacasVinculadasService {
 	@Autowired
 	Configuration configuration;
+
+	@InjectParam
+    ButacasService butacasService;
 
 	@Autowired
 	private ComprasDAO comprasDAO;
@@ -113,6 +119,19 @@ public class ButacasVinculadasService {
 		return butaca1.getFila() == Integer.parseInt(butaca2.getFila())
 				&& butaca1.getNumero() == Integer.parseInt(butaca2.getNumero())
 				&& butaca1.getLocalizacion().equals(butaca2.getLocalizacion());
+	}
+
+	/**
+	 * Determina si en el momento de la llamada están en vigor la exclusividad de
+	 * las butacas accesibles
+	 *
+	 * @param sesion del evento
+	 * @return true si la exclusividad de butacas accesibles (dos butacas
+	 *         vinculadas) están en vigor
+	 */
+	public boolean enVigorReservaButacasAccesibles(final SesionDTO sesion) {
+		final Date ahora = new Date();
+		return ahora.before(fechaFinReservaButacasAccesibles(sesion));
 	}
 
 	/**
@@ -402,8 +421,7 @@ public class ButacasVinculadasService {
 		}
 
 		// Si ya ha finalizado la reserva de butacas accesibles, no hay nada más que comprobar
-		final Date ahora = new Date();
-		if (ahora.after(fechaFinReservaButacasAccesibles(sesion))) {
+		if (!enVigorReservaButacasAccesibles(sesion)) {
 			return true;
 		}
 
@@ -447,5 +465,70 @@ public class ButacasVinculadasService {
 				return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Devuelve la lista de butacas de discapacitado en la sesión en el momento de
+	 * la llamada
+	 *
+	 * @param sesionId Identificador de sesión del evento
+	 * @return lista con las butacas de discapacitado
+	 */
+	public List<DatosButaca> getButacasAccesibles(long sesionId) {
+		try {
+			leeJsonsButacas();
+		} catch (IOException e) {
+			return null;
+		}
+
+		List<DatosButaca> butacas = new ArrayList<DatosButaca>();
+
+		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
+		final Collection<DatosButaca> accesibles = butacasAcompanantes.values();
+		if (enVigorReservaButacasAccesibles(sesion)) {
+			butacas.addAll(accesibles);
+		} else {
+			for (final DatosButaca butaca : accesibles) {
+				if (esDiscapacitado(sesion.getId(), butaca)) {
+					butacas.add(butaca);
+				}
+			}
+		}
+
+		return butacas;
+	}
+
+	/**
+	 * Devuelve la lista de butacas de acompañante en la sesión en el momento de la
+	 * llamada
+	 *
+	 * @param sesionId Identificador de sesión del evento
+	 * @return lista con las butacas de acompañante
+	 */
+	public List<DatosButaca> getButacasAcompanantes(long sesionId) {
+		try {
+			leeJsonsButacas();
+		} catch (IOException e) {
+			return null;
+		}
+
+		List<DatosButaca> butacas = new ArrayList<DatosButaca>();
+
+		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
+		final Set<DatosButaca> acompanantes = butacasAcompanantes.keySet();
+		if (enVigorReservaButacasAccesibles(sesion)) {
+			butacas.addAll(acompanantes);
+		} else {
+			for (final DatosButaca butaca : acompanantes) {
+				final DatosButaca accesible = butacasAcompanantes.get(butaca);
+				if (butacasService.estaOcupada(sesion.getId(), butaca.getLocalizacion(),
+						String.valueOf(butaca.getFila()), String.valueOf(butaca.getNumero()))
+						&& esDiscapacitado(sesion.getId(), accesible)) {
+					butacas.add(butaca);
+				}
+			}
+		}
+
+		return butacas;
 	}
 }

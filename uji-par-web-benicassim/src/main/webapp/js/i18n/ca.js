@@ -2,7 +2,9 @@ UI =
 {
     "i18n": {
         "butacas": {
-            "ocupadas": "La butaca seleccionada està ocupada",
+            "acompañante": "Butaca d'acompanyant",
+            "discapacitado": "Butaca de discapacitat",
+            "ocupadas": "La butaca seleccionada no està disponible",
             "localizacion": "Localització",
             "fila": "F.",
             "butaca": "S.",

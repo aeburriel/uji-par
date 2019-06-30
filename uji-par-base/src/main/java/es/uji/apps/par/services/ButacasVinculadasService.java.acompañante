@@ -1,0 +1,262 @@
+package es.uji.apps.par.services;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.time.DateUtils;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.sun.jersey.api.core.InjectParam;
+
+import es.uji.apps.par.butacas.DatosButaca;
+import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.dao.ComprasDAO;
+import es.uji.apps.par.dao.SesionesDAO;
+import es.uji.apps.par.db.PreciosSesionDTO;
+import es.uji.apps.par.db.SesionDTO;
+import es.uji.apps.par.model.Butaca;
+import es.uji.apps.par.model.Compra;
+import es.uji.apps.par.model.ResultadoCompra;
+import es.uji.apps.par.model.Sesion;
+
+@Service
+public class ButacasVinculadasService {
+	@Autowired
+	Configuration configuration;
+
+	@Autowired
+	private ComprasService comprasService;
+
+	@Autowired
+	private ComprasDAO comprasDAO;
+
+	@Autowired
+	private SesionesDAO sesionesDAO;
+
+	private static final String BUTACAS_PATH = "/etc/uji/par/butacas/";
+	private static final String LOCALIZACION = "general";	//TODO: generalizar a múltiples salas
+	private static final String MENSAJE_BLOQUEO = "Butaca discapacitado %s_%s_%s";
+
+	private Map<String, List<DatosButaca>> butacasAccesiblesPorLocalizacion = new HashMap<String, List<DatosButaca>>();
+	private Map<String, List<DatosButaca>> butacasAsociadasPorLocalizacion = new HashMap<String, List<DatosButaca>>();
+	private Map<DatosButaca, DatosButaca> butacasVinculadas = new HashMap<DatosButaca, DatosButaca>();
+	private Map<DatosButaca, DatosButaca> butacasAcompanante = new HashMap<DatosButaca, DatosButaca>();
+	
+	private static final Logger log = LoggerFactory.getLogger(ButacasVinculadasService.class);
+
+
+	private String mensajeBloqueo(DatosButaca butaca) {
+		return String.format(MENSAJE_BLOQUEO, butaca.getLocalizacion(), butaca.getFila(), butaca.getNumero());
+	}
+
+	private void leeJsonsButacas() throws IOException {
+		if(!butacasVinculadas.isEmpty()) {
+			return;
+		}
+
+		// Cargamos JSONs de las butacas vinculadas a butacas para discapacitados (van por parejas)
+		for (String localizacionSala : configuration.getImagenesFondo()) {
+			for (String localizacionZona: configuration.getLocalizacionesEnImagen(localizacionSala)) {
+				for (DatosButaca butaca : parseaJsonButacas(localizacionZona)) {
+					if (butaca.isDiscapacidad() && butaca.getNumero_enlazada() >= 0) {
+						if (!butacasAccesiblesPorLocalizacion.containsKey(localizacionSala)) {
+							butacasAccesiblesPorLocalizacion.put(localizacionSala, new ArrayList<DatosButaca>());
+						}
+						butacasAccesiblesPorLocalizacion.get(localizacionSala).add(butaca);
+					} else {
+						if (!butacasAsociadasPorLocalizacion.containsKey(localizacionSala)) {
+							butacasAsociadasPorLocalizacion.put(localizacionSala, new ArrayList<DatosButaca>());
+						}
+						butacasAsociadasPorLocalizacion.get(localizacionSala).add(butaca);
+					}
+				}
+			}
+		}
+		
+		// Vinculamos cada butaca accesible con su butaca asociada
+		for (DatosButaca butacaAccesible : butacasAccesiblesPorLocalizacion.get(LOCALIZACION)) {
+			for (DatosButaca butaca : butacasAsociadasPorLocalizacion.get(LOCALIZACION)) {
+				if (butacaAccesible.getNumero_enlazada() == butaca.getNumero() &&
+						butacaAccesible.getNumero() == butaca.getNumero_enlazada() && 
+						butacaAccesible.getFila() == butaca.getFila() && 
+						butacaAccesible.getLocalizacion().equals(butaca.getLocalizacion())) {
+					butacasVinculadas.put(butacaAccesible, butaca);
+					break;	// Continuamos con la siguiente butaca, ya que van por parejas
+				}
+			}
+		}
+
+		// Vinculamos cada butaca accesible con su butaca de acompañante
+		for (DatosButaca butacaAccesible : butacasVinculadas.keySet()) {
+			for (DatosButaca butaca : butacasAsociadasPorLocalizacion.get(LOCALIZACION)) {
+				if (butacaAccesible.getNumero() == butaca.getNumero_enlazada() &&
+						butacaAccesible.getFila() == butaca.getFila() &&
+						butacaAccesible.getNumero_enlazada() != butaca.getNumero() && 
+						butacaAccesible.getLocalizacion().equals(butaca.getLocalizacion())) {
+			}
+		}
+	}
+
+	private List<DatosButaca> parseaJsonButacas(String localizacion) throws FileNotFoundException {
+		Gson gson = new Gson();
+		Type fooType = new TypeToken<List<DatosButaca>>()
+		{
+		}.getType();
+
+		InputStream inputStream = new FileInputStream(BUTACAS_PATH + "/" + localizacion + ".json");
+		InputStreamReader jsonReader = new InputStreamReader(inputStream);
+
+		return gson.fromJson(jsonReader, fooType);
+	}
+
+	public boolean bloqueaButacasVinculadasDiscapacidad(SesionDTO sesion, String userUID) {
+		boolean resultado = false;
+		try {
+			leeJsonsButacas();
+		} catch (IOException e) {
+			return resultado;
+		}
+
+		// Buscamos las butacas a bloquear
+		List<DatosButaca> datosButacas = butacasAccesiblesPorLocalizacion.get(LOCALIZACION);
+
+		// Para cada butaca hacemos una reserva-bloqueo
+		for (DatosButaca datosButaca : datosButacas) {
+			if (creaReservaBloqueo(sesion, datosButaca, userUID)) {
+				resultado = true;
+			}
+		}
+
+		return resultado;
+	}
+
+	public boolean creaReservaBloqueo(SesionDTO sesion, DatosButaca datosButacaAccesible, String userUID) {
+		try {
+			leeJsonsButacas();
+		} catch (IOException e) {
+			return false;
+		}
+		final Date desde = new Date(); 
+		Date hasta = fechaFinReservaButacasAccesibles(sesion);
+		/*if (hasta.compareTo(sesion.getFechaFinVentaOnline()) < 0) {
+			hasta = DateUtils.addMinutes(sesion.getFechaFinVentaOnline(), 30);
+		}*/
+		boolean numeradas = sesion.getParEvento().getAsientosNumerados();
+		DatosButaca butacaAsociada = butacasVinculadas.get(datosButacaAccesible);
+		
+		List<Butaca> butacas = new ArrayList<Butaca>();
+		Butaca butaca = new Butaca(butacaAsociada.getLocalizacion(), "3" /* Invitación FIXME*/);
+		butaca.setPrecio(BigDecimal.ZERO);
+		if (numeradas) {
+			butaca.setFila(String.valueOf(butacaAsociada.getFila()));
+			butaca.setNumero(String.valueOf(butacaAsociada.getNumero()));
+		}
+		butacas.add(butaca);
+		log.error("AEB sesionID " + sesion.getId() + " Añadiendo butaca " + butaca.getFila() + " " + butaca.getNumero() + " " + butaca.getLocalizacion() + " " + sesion.getParPreciosSesions());
+		
+		// Hacemos la reserva
+		final String observaciones = mensajeBloqueo(datosButacaAccesible);
+		ResultadoCompra resultadoCompra =  comprasService.reservaButacas(new Long(sesion.getId()), desde, hasta, 
+				butacas, observaciones, desde.getHours(), desde.getMinutes(),
+				hasta.getHours(), hasta.getMinutes(), userUID);
+		
+		return resultadoCompra.getCorrecta();
+	}
+
+	private Date fechaFinReservaButacasAccesibles(SesionDTO sesion) {
+		return DateUtils.addMinutes(sesion.getFechaCelebracion(), -30);
+	}
+	
+	public boolean actualizaBloqueoButacaAsociada(SesionDTO sesion, DatosButaca butacaAccesible, boolean inhabilita) {
+		try {
+			leeJsonsButacas();
+		} catch (IOException e) {
+			return false;
+		}
+		
+		// La reserva-bloqueo se hace a nombre de la butaca accesible
+		final String textoABloquar = mensajeBloqueo(butacaAccesible);
+		
+		List<Compra> compras = comprasService.getComprasBySesion(new Long(sesion.getId()), 0,
+				"[{\"property\":\"fecha\",\"direction\":\"ASC\"}]", 
+				0, 1000, 0, textoABloquar);
+	
+		if (compras.isEmpty()) {
+			return false;
+		}
+		
+		for(Compra compra : compras) {
+			Date fecha;
+			if (inhabilita) {
+				fecha = new Date(95649033600000L);
+			} else {
+				fecha = fechaFinReservaButacasAccesibles(sesionesDAO.getSesion(sesion.getId(), null));	// AEB FIXME
+			}
+			comprasDAO.actualizarFechaCaducidad(compra.getId(), fecha);
+		}
+		
+		return true;
+	}
+	
+	public DatosButaca getDatosButaca(Butaca butaca) {
+		try {
+			leeJsonsButacas();
+		} catch (IOException e) {
+			return null;
+		}
+		for (DatosButaca butacaAccesible : butacasAccesiblesPorLocalizacion.get(LOCALIZACION)) {
+			if (butacaAccesible.getLocalizacion().equals(butaca.getLocalizacion()) &&
+					butacaAccesible.getFila() == Integer.parseInt(butaca.getFila()) &&
+					butacaAccesible.getNumero() == Integer.parseInt(butaca.getNumero())) {
+				return butacaAccesible;
+			}
+		}
+		return null;
+	}
+
+	public boolean inhabilitaButacaAsociada(SesionDTO sesion, Butaca butaca) {
+		try {
+			leeJsonsButacas();
+		} catch (IOException e) {
+			return false;
+		}
+		DatosButaca butacaAsociada = getDatosButaca(butaca);
+		if (butaca == null) {
+			return false;
+		}
+		
+		return actualizaBloqueoButacaAsociada(sesion, butacaAsociada, true);
+	}
+	
+	public boolean inhabilitaButacaAsociada(Long sesionId, List<Butaca> butacasCompradas, String userUID) {
+		boolean resultado = false;
+		try {
+			leeJsonsButacas();
+		} catch (IOException e) {
+			return resultado;
+		}
+
+		SesionDTO sesion = sesionesDAO.getSesion(sesionId, userUID);
+		for (Butaca butaca : butacasCompradas) {
+			if (inhabilitaButacaAsociada(sesion, butaca)) {
+				resultado = true;
+			}
+		}
+		return resultado;
+	}
+}

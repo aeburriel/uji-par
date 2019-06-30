@@ -12,6 +12,8 @@ Butacas = (function() {
 	var tarifas = {};
 	
 	var butacasSeleccionadas = [];
+	var butacasDiscapacitados = [];
+	var butacasAcompañantes = [];
 	
 	function init(url, sesId, butacas, uuid, gastosGest, modoReserva, admin, tipoEv) {
 		baseUrl = url;
@@ -32,6 +34,24 @@ Butacas = (function() {
 		}	
 	}
 	
+	function cargaButacasAccesibles() {
+		$.getJSON(baseUrl + '/rest/entrada/' + sesionId + '/accesibles', function(respuesta){
+			for (var i=0; i<respuesta.data.length; i++) {
+				butacasDiscapacitados.push(respuesta.data[i]);
+			}
+		});
+		console.log(butacasDiscapacitados);
+	}
+
+	function cargaButacasAcompañantes() {
+		$.getJSON(baseUrl + '/rest/entrada/' + sesionId + '/acompanantes', function(respuesta){
+			for (var i=0; i<respuesta.data.length; i++) {
+				butacasAcompañantes.push(respuesta.data[i]);
+			}
+		});
+		console.log(butacasAcompañantes);
+	}
+
 	function cargaPrecios(callback) {
 		$.getJSON(baseUrl + '/rest/entrada/' + sesionId + '/precios', function(respuesta){
 			//console.log("RESPUESTA");
@@ -78,7 +98,23 @@ Butacas = (function() {
 				&& butaca1.fila == butaca2.fila
 				&& butaca1.numero == butaca2.numero;
 	}
-	
+
+	function esAccesible(butaca) {
+		for ( var i = 0; i < butacasDiscapacitados.length; i++)
+			if (iguales(butaca, butacasDiscapacitados[i]))
+				return true;
+
+		return false;
+	}
+
+	function esAcompañante(butaca) {
+		for ( var i = 0; i < butacasAcompañantes.length; i++)
+			if (iguales(butaca, butacasAcompañantes[i]))
+				return true;
+
+		return false;
+	}
+
 	function estaSeleccionada(butaca) {
 		for ( var i = 0; i < butacasSeleccionadas.length; i++)
 			if (iguales(butaca, butacasSeleccionadas[i]))
@@ -89,10 +125,13 @@ Butacas = (function() {
 	
 	function imagenButaca(butaca)
 	{
-		if (esDiscapacitado(butaca.localizacion))
+		if (esDiscapacitado(butaca)) {
 			return "seleccionadaDiscapacitado.png";
-		else
+		} else if (esAcompañante(butaca)) {
+			return "seleccionadaAcompanante.png"
+		} else {
 			return "seleccionada.png";
+		}
 	}
 	
 	function muestraButacaSeleccionada(butaca) {
@@ -246,20 +285,28 @@ Butacas = (function() {
 			precio: precios[localizacion][tarifaDefecto],
 			texto: texto
 		};
-	
+
 		if (estaSeleccionada(butaca))
 			eliminaButacaSeleccionada(butaca);
 		else {
 			anyadeButacaSeleccionada(butaca);
+			/*if (esAccesible(butaca)) {
+				alert(UI.i18n.butacas.discapacitado);
+			} else if (esAcompañante(butaca)) {
+				alert(UI.i18n.butacas.acompañante);
+			}*/
 			compruebaEstadoButacas();
 		}
 	
 		refrescaEstadoButacas();
 	}
 	
-	function esDiscapacitado(localizacion)
+	function esDiscapacitado(butaca)
 	{
-		return localizacion.indexOf('discapacitados') == 0;
+		if (esAccesible(butaca)) {
+			return true;
+		}
+		return butaca.localizacion.indexOf('discapacitados') == 0;
 	}
 	
 	function idDivLocalizacion(localizacion)
@@ -391,6 +438,8 @@ Butacas = (function() {
 	return {
 		selecciona:selecciona,
 		init:init,
+		cargaButacasAccesibles:cargaButacasAccesibles,
+		cargaButacasAcompañantes:cargaButacasAcompañantes,
 		cargaPrecios:cargaPrecios,
 		cambiaTipoButaca: cambiaTipoButaca,
 		cambiaTipoTodasButacas: cambiaTipoTodasButacas

@@ -3,6 +3,7 @@ package es.uji.apps.par.services.rest;
 import com.mysema.commons.lang.Pair;
 import com.sun.jersey.api.core.InjectParam;
 import es.uji.apps.par.builders.PublicPageBuilderInterface;
+import es.uji.apps.par.butacas.DatosButaca;
 import es.uji.apps.par.butacas.EstadoButacasRequest;
 import es.uji.apps.par.db.CompraDTO;
 import es.uji.apps.par.db.TpvsDTO;
@@ -47,6 +48,9 @@ public class EntradasResource extends BaseResource {
 
     @InjectParam
     private ButacasService butacasService;
+
+    @InjectParam
+    private ButacasVinculadasService butacasVinculadasService;
 
     @InjectParam
     private ComprasService comprasService;
@@ -663,6 +667,30 @@ public class EntradasResource extends BaseResource {
         template.put("lang", language);
 
         return Response.ok(template).build();
+    }
+
+    @GET
+    @Path("{id}/accesibles")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response butacasAccesibles(@PathParam("id") Integer idSesion) {
+    	try {
+    		List<DatosButaca> butacas = butacasVinculadasService.getButacasAccesibles(idSesion);
+    		return Response.ok().entity(new RestResponse(true, butacas, butacas.size())).build();
+    	} catch (Exception e) {
+    		return Response.status(404).build();
+    	}
+    }
+
+    @GET
+    @Path("{id}/acompanantes")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response butacasAcompanantes(@PathParam("id") Integer idSesion) {
+    	try {
+    		List<DatosButaca> butacas = butacasVinculadasService.getButacasAcompanantes(idSesion);
+    		return Response.ok().entity(new RestResponse(true, butacas, butacas.size())).build();
+    	} catch (Exception e) {
+    		return Response.status(404).build();
+    	}
     }
 
     @POST
