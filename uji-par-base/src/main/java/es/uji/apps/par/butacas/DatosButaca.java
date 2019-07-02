@@ -16,6 +16,31 @@ public class DatosButaca
     {
     }
 
+    @Override
+    public boolean equals(Object object) {
+    	if (this == object) {
+    		return true;
+    	}
+
+    	if (object == null || this.getClass() != object.getClass()) {
+    		return false;
+    	}
+
+    	final DatosButaca butaca = (DatosButaca) object;
+    	return this.fila == butaca.fila && this.numero == butaca.numero
+    			&& this.localizacion.equals(butaca.localizacion);
+    }
+
+    @Override
+    public String toString() {
+    	return String.format("DatosButaca(%s_%d_%d)", localizacion, fila, numero);
+    }
+
+    @Override
+    public int hashCode() {
+    	return toString().hashCode();
+    }
+
     public int getFila()
     {
         return fila;
