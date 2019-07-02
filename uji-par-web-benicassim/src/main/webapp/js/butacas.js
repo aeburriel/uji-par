@@ -40,7 +40,6 @@ Butacas = (function() {
 				butacasDiscapacitados.push(respuesta.data[i]);
 			}
 		});
-		console.log(butacasDiscapacitados);
 	}
 
 	function cargaButacasAcompañantes() {
@@ -49,7 +48,6 @@ Butacas = (function() {
 				butacasAcompañantes.push(respuesta.data[i]);
 			}
 		});
-		console.log(butacasAcompañantes);
 	}
 
 	function cargaPrecios(callback) {
