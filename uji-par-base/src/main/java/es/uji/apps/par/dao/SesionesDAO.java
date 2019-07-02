@@ -298,6 +298,8 @@ public class SesionesDAO extends BaseDAO {
         ////addSesionFormatoIdiomaIfNeeded(sesion.getEvento().getId(), sesion.getEvento().getFormato(),	sesion.getVersionLinguistica());
         setIncidenciaSesion(fechaCelebracion, sesion.getSala().getId(), userUID);
         anulaSesionesConLaMismaHoraYSala(fechaCelebracion, sesion.getSala().getId(), sesion.getId());
+        
+        butacasVinculadasService.actualizaBloquoButacasVinculadasDiscapacidad(sesionDTO, userUID);
     }
 
     @Transactional

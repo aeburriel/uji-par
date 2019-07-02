@@ -62,7 +62,7 @@ public class ButacasVinculadasService {
 	private static final String ADMIN_UID = "admin";
 	private static final String BUTACAS_PATH = "/etc/uji/par/butacas/";
 	private static final String LOCALIZACION = "general"; // TODO: generalizar a múltiples salas
-	private static final String MENSAJE_BLOQUEO = "Butaca discapacitado %s_%s_%s";
+	private static final String MENSAJE_BLOQUEO = "Butaca discapacitado";
 	private static final String TARIFA_INVITACION = "Invitació";
 	private static final Date fechaInfinito = new Date(95649033600000L);
 
@@ -75,11 +75,15 @@ public class ButacasVinculadasService {
 	/**
 	 * Compone el mensaje de reserva-bloqueo para la butaca accesible indicada
 	 *
-	 * @param butaca accesible
+	 * @param butaca accesible o null para no incluir referencia a la butaca
 	 * @return El mensaje de bloqueo
 	 */
 	private String mensajeBloqueo(final DatosButaca butaca) {
-		return String.format(MENSAJE_BLOQUEO, butaca.getLocalizacion(), butaca.getFila(), butaca.getNumero());
+		if (butaca == null) {
+			return MENSAJE_BLOQUEO;
+		} else {
+			return MENSAJE_BLOQUEO + String.format(" %s_%s_%s", butaca.getLocalizacion(), butaca.getFila(), butaca.getNumero());
+		}
 	}
 
 	/**
@@ -214,6 +218,38 @@ public class ButacasVinculadasService {
 		final InputStreamReader jsonReader = new InputStreamReader(inputStream);
 
 		return gson.fromJson(jsonReader, fooType);
+	}
+
+	/**
+	 * Actualiza el bloquea las butacas asociadas a las butacas accesibles de la sesión hasta el
+	 * fin de la venta online
+	 * Se tiene que llamar obligatoriamente nada más actualizar una sesión.
+	 *
+	 * @param sesion  a aprovisionar
+	 * @param userUID Identificador del usuario
+	 * @return true en caso de que se haya bloqueado alguna butaca asociada
+	 */
+	public boolean actualizaBloquoButacasVinculadasDiscapacidad(final SesionDTO sesion, final String userUID) {
+		try {
+			leeJsonsButacas();
+		} catch (IOException e) {
+			return false;
+		}
+
+		// Buscamos las butacas a bloquear
+		final List<Compra> bloqueos = getReservasBloqueoButacaAccesible(sesion, null);
+		final Date hasta = fechaFinReservaButacasAccesibles(sesion);
+
+		boolean resultado = false;
+		for (Compra bloqueo : bloqueos) {
+			// Solo hay que actualizar las reserva-bloqueo, no los bloqueos-venta accesibles
+			if (bloqueo.getHasta().compareTo(fechaInfinito) < 0) {
+				comprasDAO.actualizarFechaCaducidad(bloqueo.getId(), hasta);
+				resultado = true;
+			}
+		}
+
+		return resultado;
 	}
 
 	/**
