@@ -441,6 +441,31 @@ public class ButacasVinculadasService {
 	}
 
 	/**
+	 * Determina si la butaca en el evento indicada es de acompañante (está ocupada
+	 * y su butaca accesible asociada vendida en la misma operación)
+	 *
+	 * @param sesionId Identificador de sesión del evento
+	 * @param butaca
+	 * @return true si lo es
+	 */
+	public boolean esAcompanante(final Long sesionId, final DatosButaca butaca) {
+		try {
+			leeJsonsButacas();
+		} catch (IOException e) {
+			return false;
+		}
+
+		final DatosButaca accesible = butacasAcompanantes.get(butaca);
+		if (accesible == null) {
+			return false;
+		}
+		return butacasService.estaOcupada(sesionId, butaca.getLocalizacion(), String.valueOf(butaca.getFila()),	String.valueOf(butaca.getNumero()))
+				&& esDiscapacitado(sesionId, accesible)
+				&& butacasService.getCompra(sesionId, butaca.getLocalizacion(), String.valueOf(butaca.getFila()), String.valueOf(butaca.getNumero())).getId()
+				== butacasService.getCompra(sesionId, accesible.getLocalizacion(), String.valueOf(accesible.getFila()), String.valueOf(accesible.getNumero())).getId();
+	}
+
+	/**
 	 * Determina si la butaca en el evento indicada es de discapacitado (ancho doble)
 	 *
 	 * @param sesionId Identificador de sesión del evento
@@ -520,10 +545,7 @@ public class ButacasVinculadasService {
 			butacas.addAll(acompanantes);
 		} else {
 			for (final DatosButaca butaca : acompanantes) {
-				final DatosButaca accesible = butacasAcompanantes.get(butaca);
-				if (butacasService.estaOcupada(sesion.getId(), butaca.getLocalizacion(),
-						String.valueOf(butaca.getFila()), String.valueOf(butaca.getNumero()))
-						&& esDiscapacitado(sesion.getId(), accesible)) {
+				if (esAcompanante(sesion.getId(), butaca)) {
 					butacas.add(butaca);
 				}
 			}

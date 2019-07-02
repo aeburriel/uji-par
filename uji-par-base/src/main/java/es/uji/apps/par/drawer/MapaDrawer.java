@@ -47,6 +47,8 @@ public class MapaDrawer implements MapaDrawerInterface
 
     private BufferedImage butacaOcupada;
     private BufferedImage butacaReservada;
+    private BufferedImage butacaOcupadaAcompanante;
+    private BufferedImage butacaReservadaAcompanante;
     private BufferedImage butacaOcupadaDiscapacitado;
     private BufferedImage butacaReservadaDiscapacitado;
     private BufferedImage butacaPresentada;
@@ -179,6 +181,11 @@ public class MapaDrawer implements MapaDrawerInterface
                                     imagenOcupada = butacaReservadaDiscapacitado;
                                 else
                                     imagenOcupada = butacaOcupadaDiscapacitado;
+                            } else if (esAcompanante(idSesion, butaca)) {
+                            	if (mostrarReservadas && esReserva(butacaDTO))
+                            		imagenOcupada = butacaReservadaAcompanante;
+                            	else
+                            		imagenOcupada = butacaOcupadaAcompanante;
                             } else {
                                 if (mostrarReservadas && esReserva(butacaDTO))
                                     imagenOcupada = butacaReservada;
@@ -207,6 +214,13 @@ public class MapaDrawer implements MapaDrawerInterface
 			return butaca.getLocalizacion().startsWith("discapacitados3");
 		return false;
 	}
+
+    private boolean esAcompanante(Long sesionId, DatosButaca butaca) {
+    	if (butaca == null)
+    		return false;
+
+    	return butacasVinculadasService.esAcompanante(sesionId, butaca);
+    }
 
 	private boolean esDiscapacitado(Long sesionId, DatosButaca butaca)
     {
@@ -238,6 +252,12 @@ public class MapaDrawer implements MapaDrawerInterface
 				butacaOcupada = ImageIO.read(new File(IMAGES_PATH + "/ocupada.png"));
 			}
 
+			if (butacaOcupadaAcompanante == null) {
+				File f = new File(IMAGES_PATH + "/ocupadaAcompanante.png");
+				if (f.exists())
+					butacaOcupadaAcompanante = ImageIO.read(f);
+			}
+
 			if (butacaOcupadaDiscapacitado == null) {
 				File f = new File(IMAGES_PATH + "/ocupadaDiscapacitado.png");
 				if (f.exists())
@@ -246,6 +266,12 @@ public class MapaDrawer implements MapaDrawerInterface
 
 			if (butacaReservada == null) {
 				butacaReservada = ImageIO.read(new File(IMAGES_PATH + "/reservada.png"));
+			}
+
+			if (butacaReservadaAcompanante == null) {
+				File f = new File(IMAGES_PATH + "/reservadaAcompanante.png");
+				if (f.exists())
+					butacaReservadaAcompanante = ImageIO.read(f);
 			}
 
 			if (butacaReservadaDiscapacitado == null) {
