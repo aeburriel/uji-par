@@ -18,6 +18,7 @@ public class Butaca
     private String numero;
     private BigDecimal precio;
     private String localizacion;
+    private String numero_enlazada;
     private String localizacionNombre;
     private String x;
     private String y;
@@ -137,7 +138,15 @@ public class Butaca
         this.numero = numero;
     }
 
-    public BigDecimal getPrecio()
+    public String getNumero_enlazada() {
+		return numero_enlazada;
+	}
+
+	public void setNumero_enlazada(String numero_enlazada) {
+		this.numero_enlazada = numero_enlazada;
+	}
+
+	public BigDecimal getPrecio()
     {
         return precio;
     }

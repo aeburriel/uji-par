@@ -41,6 +41,17 @@
 	display: none;
 }
 
+#divInformacion {
+	color: #CC4B23;
+	background: #EAE5D9;
+	border: 1px solid #AAA;
+	line-height: 125%;
+	padding: 5px;
+	margin-top: 10px;
+	font-size: 11px !important;
+	font-family: Arial !important;
+}
+
 #divSeleccionadas {
 	color: #CC4B23;
 	background: #EAE5D9;
@@ -59,7 +70,7 @@
 	margin-top: 16px;
 }
 
-#divSeleccionadas .tituloEspectaculo {
+#divSeleccionadas .tituloEspectaculo, .tituloInformacion {
 	font-style: italic;
 	font-weight: bold;
 }

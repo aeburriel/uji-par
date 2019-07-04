@@ -11,6 +11,7 @@ Butacas = (function() {
 	var tarifaDefecto = '';
 	var tarifas = {};
 	
+	var ultimaButacaSeleccionada = null;	// Última butaca seleccionada
 	var butacasSeleccionadas = [];
 	var butacasDiscapacitados = [];
 	var butacasAcompañantes = [];
@@ -31,7 +32,9 @@ Butacas = (function() {
 				//console.log('Imágenes cargadas', document.body.scrollHeight);
 				window.scrollTo(0, document.body.scrollHeight);
 			});
-		}	
+		} else {
+			actualizaInformacion();
+		}
 	}
 	
 	function cargaButacasAccesibles() {
@@ -106,9 +109,12 @@ Butacas = (function() {
 	}
 
 	function esAcompañante(butaca) {
-		for ( var i = 0; i < butacasAcompañantes.length; i++)
-			if (iguales(butaca, butacasAcompañantes[i]))
+		for ( var i = 0; i < butacasAcompañantes.length; i++) {
+			if (iguales(butaca, butacasAcompañantes[i])) {
+				butaca.numero_enlazada = butacasAcompañantes[i].numero_enlazada;
 				return true;
+			}
+		}
 
 		return false;
 	}
@@ -218,6 +224,11 @@ Butacas = (function() {
 		return st;
 	}
 	
+	function actualizaInformacion() {
+		$('.tituloInformacion').text(UI.i18n.informativo.titulo);
+		$('.cuerpoInformacion').html(UI.i18n.informativo.cuerpo);
+	}
+
 	function actualizaTotal()
 	{
 		if (reserva)
@@ -284,15 +295,25 @@ Butacas = (function() {
 			texto: texto
 		};
 
-		if (estaSeleccionada(butaca))
+		if (estaSeleccionada(butaca)) {
 			eliminaButacaSeleccionada(butaca);
-		else {
-			anyadeButacaSeleccionada(butaca);
-			/*if (esAccesible(butaca)) {
+		} else {
+			if (esAccesible(butaca)) {
+				// Butaca accesible
 				alert(UI.i18n.butacas.discapacitado);
+				anyadeButacaSeleccionada(butaca);
 			} else if (esAcompañante(butaca)) {
-				alert(UI.i18n.butacas.acompañante);
-			}*/
+				// Butaca de acompañante
+				if (estáVinculadaASeleccionadas(butaca)) {
+					anyadeButacaSeleccionada(butaca);
+				} else {
+					alert(UI.i18n.butacas.acompañante);
+				}
+			} else {
+				// Resto de butacas
+				anyadeButacaSeleccionada(butaca);
+			}
+			ultimaButacaSeleccionada = butaca;
 			compruebaEstadoButacas();
 		}
 	
@@ -305,6 +326,16 @@ Butacas = (function() {
 			return true;
 		}
 		return butaca.localizacion.indexOf('discapacitados') == 0;
+	}
+
+	function estáVinculadaASeleccionadas(butaca) {
+		var asociada = {
+				localizacion : butaca.localizacion,
+				fila : butaca.fila,
+				numero : butaca.numero_enlazada
+		};
+
+		return estaSeleccionada(asociada);
 	}
 	
 	function idDivLocalizacion(localizacion)
@@ -353,7 +384,6 @@ Butacas = (function() {
 		
 		// console.log("ocupadas:", ocupadas);
 		if (ocupadas.length > 0) {
-			
 			for (var i=0; i<ocupadas.length; i++)
 			{
 				eliminaButacaSeleccionada(ocupadas[i]);
@@ -363,8 +393,10 @@ Butacas = (function() {
 			refrescaEstadoButacas();
 			
 			/* [[#{butacasOcupadas}]] */
-			var msj = UI.i18n.butacas.ocupadas; 
-			alert(msj);
+			if (!esAcompañante(ultimaButacaSeleccionada)) {
+				var msj = UI.i18n.butacas.ocupadas;
+				alert(msj);
+			}
 		}
 	}
 	
