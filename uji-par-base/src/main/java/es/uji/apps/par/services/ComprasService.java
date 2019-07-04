@@ -432,12 +432,12 @@ public class ComprasService
 
 	public void anularCompraReserva(Long idCompraReserva) throws IncidenciaNotFoundException {
 		comprasDAO.anularCompraReserva(idCompraReserva, true);
-		// TODO: liberar butacas accesibles afectadas
+		butacasVinculadasService.ventaAnulada(idCompraReserva);
 	}
 
 	public void anularCompraReservaAutomatica(Long idCompraReserva) throws IncidenciaNotFoundException {
 		comprasDAO.anularCompraReserva(idCompraReserva, false);
-		// TODO: liberar butacas accesibles afectadas
+		butacasVinculadasService.ventaAnulada(idCompraReserva);
 	}
 
     @Transactional
@@ -445,6 +445,7 @@ public class ComprasService
         AbonadoDTO abonado = abonadosDAO.getAbonado(idAbonado);
         for (CompraDTO compra : abonado.getParCompras()) {
             comprasDAO.anularCompraReserva(compra.getId(), true);
+            butacasVinculadasService.ventaAnulada(compra.getId());
         }
     }
 

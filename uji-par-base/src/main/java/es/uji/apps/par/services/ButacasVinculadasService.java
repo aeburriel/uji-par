@@ -33,6 +33,8 @@ import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.dao.ComprasDAO;
 import es.uji.apps.par.dao.SesionesDAO;
 import es.uji.apps.par.dao.TarifasDAO;
+import es.uji.apps.par.db.ButacaDTO;
+import es.uji.apps.par.db.CompraDTO;
 import es.uji.apps.par.db.SesionDTO;
 import es.uji.apps.par.db.TarifaDTO;
 import es.uji.apps.par.model.Butaca;
@@ -113,6 +115,20 @@ public class ButacasVinculadasService {
 	}
 
 	/**
+	 * Determina si la butaca indicada es accesible
+	 * @param butaca
+	 * @return true
+	 */
+	private DatosButaca getButacaAccesible(ButacaDTO butaca) {
+		for (final DatosButaca candidata : butacasVinculadas.keySet()) {
+			if (isButacaEqual(candidata, butaca)) {
+				return candidata;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Comprueba si ambas butacas son la misma
 	 *
 	 * @param butaca1
@@ -123,6 +139,19 @@ public class ButacasVinculadasService {
 		return butaca1.getFila() == Integer.parseInt(butaca2.getFila())
 				&& butaca1.getNumero() == Integer.parseInt(butaca2.getNumero())
 				&& butaca1.getLocalizacion().equals(butaca2.getLocalizacion());
+	}
+
+	/**
+	 * Comprueba si ambas butacas son la misma
+	 *
+	 * @param butaca1
+	 * @param butaca2
+	 * @return true si representan la misma butaca
+	 */
+	private boolean isButacaEqual(final DatosButaca butaca1, final ButacaDTO butaca2) {
+		return butaca1.getFila() == Integer.parseInt(butaca2.getFila())
+				&& butaca1.getNumero() == Integer.parseInt(butaca2.getNumero())
+				&& butaca1.getLocalizacion().equals(butaca2.getParLocalizacion().getCodigo());
 	}
 
 	/**
@@ -438,6 +467,38 @@ public class ButacasVinculadasService {
 				resultado = true;
 			}
 		}
+		return resultado;
+	}
+
+	/**
+	 * Libera las butacas asociadas implicadas en una venta cancelada.
+	 * Se tiene que llamar obligatoriamente a este método nada más
+	 * cancelar una compra para garantizar la integridad de los
+	 * bloqueos-reserv.
+	 *
+	 * @param sesionId         Identificador de sesión del evento
+	 * @param userUID          Identificador del usuario
+	 * @return true si la operación se completó con éxito
+	 */
+	public boolean ventaAnulada(Long compraId) {
+		try {
+			leeJsonsButacas();
+		} catch (IOException e) {
+			return false;
+		}
+
+		final CompraDTO compra = comprasDAO.getCompraById(compraId);
+
+		boolean resultado = false;
+		for (ButacaDTO butaca : compra.getParButacas()) {
+			DatosButaca butacaAccesible = getButacaAccesible(butaca);
+			if (butacaAccesible != null) {
+				if (actualizaBloqueoButacaAsociada(compra.getParSesion(), butacaAccesible, false, ADMIN_UID)) {
+					resultado = true;
+				}
+			}
+		}
+
 		return resultado;
 	}
 
