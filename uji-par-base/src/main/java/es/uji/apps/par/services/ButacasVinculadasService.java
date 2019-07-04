@@ -64,7 +64,7 @@ public class ButacasVinculadasService {
 	private static final String LOCALIZACION = "general"; // TODO: generalizar a múltiples salas
 	private static final String MENSAJE_BLOQUEO = "Butaca discapacitado";
 	private static final String TARIFA_INVITACION = "Invitació";
-	private static final Date fechaInfinito = new Date(95649033600000L);
+	private static final Date FECHAINFINITO = new Date(95649033600000L);
 
 	private Map<String, List<DatosButaca>> butacasAccesiblesPorLocalizacion = new HashMap<String, List<DatosButaca>>();
 	private Map<String, List<DatosButaca>> butacasAsociadasPorLocalizacion = new HashMap<String, List<DatosButaca>>();
@@ -123,6 +123,16 @@ public class ButacasVinculadasService {
 		return butaca1.getFila() == Integer.parseInt(butaca2.getFila())
 				&& butaca1.getNumero() == Integer.parseInt(butaca2.getNumero())
 				&& butaca1.getLocalizacion().equals(butaca2.getLocalizacion());
+	}
+
+	/**
+	 * Determina si la Reserva indicada corresponde a un bloqueo de butaca accesible
+	 *
+	 * @param bloqueo La reserva-bloqueo
+	 * @return true si lo es
+	 */
+	private boolean isBloqueoVentaAccesible(final Compra bloqueo) {
+		return bloqueo.getHasta().compareTo(FECHAINFINITO) >= 0;
 	}
 
 	/**
@@ -243,7 +253,7 @@ public class ButacasVinculadasService {
 		boolean resultado = false;
 		for (Compra bloqueo : bloqueos) {
 			// Solo hay que actualizar las reserva-bloqueo, no los bloqueos-venta accesibles
-			if (bloqueo.getHasta().compareTo(fechaInfinito) < 0) {
+			if (!isBloqueoVentaAccesible(bloqueo)) {
 				comprasDAO.actualizarFechaCaducidad(bloqueo.getId(), hasta);
 				resultado = true;
 			}
@@ -338,7 +348,7 @@ public class ButacasVinculadasService {
 		for (final Compra bloqueo : reservasBloqueo) {
 			Date fecha;
 			if (inhabilita) {
-				fecha = fechaInfinito;
+				fecha = FECHAINFINITO;
 			} else {
 				fecha = fechaFinReservaButacasAccesibles(sesionesDAO.getSesion(sesion.getId(), userUID));
 			}
@@ -522,7 +532,7 @@ public class ButacasVinculadasService {
 
 		final List<Compra> reservasBloqueo = getReservasBloqueoButacaAccesible(sesion, butaca);
 		for (final Compra bloqueo : reservasBloqueo) {
-			if (bloqueo.getHasta().compareTo(fechaInfinito) >= 0)
+			if (isBloqueoVentaAccesible(bloqueo))
 				return true;
 		}
 		return false;
