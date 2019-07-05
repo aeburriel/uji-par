@@ -23,6 +23,7 @@ import java.util.Set;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -37,6 +38,7 @@ import es.uji.apps.par.db.ButacaDTO;
 import es.uji.apps.par.db.CompraDTO;
 import es.uji.apps.par.db.SesionDTO;
 import es.uji.apps.par.db.TarifaDTO;
+import es.uji.apps.par.exceptions.ButacaOcupadaAlActivarException;
 import es.uji.apps.par.model.Butaca;
 import es.uji.apps.par.model.Compra;
 import es.uji.apps.par.model.ResultadoCompra;
@@ -174,7 +176,20 @@ public class ButacasVinculadasService {
 	 */
 	public boolean enVigorReservaButacasAccesibles(final SesionDTO sesion) {
 		final Date ahora = new Date();
-		return ahora.before(fechaFinReservaButacasAccesibles(sesion));
+		return enVigorReservaButacasAccesibles(sesion, ahora);
+	}
+
+	/**
+	 * Determina si en la fecha indicada están en vigor la exclusividad de
+	 * las butacas accesibles
+	 *
+	 * @param sesion del evento
+	 * @param fecha a comparar
+	 * @return true si la exclusividad de butacas accesibles (dos butacas
+	 *         vinculadas) están en vigor
+	 */
+	public boolean enVigorReservaButacasAccesibles(final SesionDTO sesion, final Date fecha) {
+		return fecha.before(fechaFinReservaButacasAccesibles(sesion));
 	}
 
 	/**
@@ -374,6 +389,7 @@ public class ButacasVinculadasService {
 			return false;
 		}
 
+		boolean resultado = true;
 		for (final Compra bloqueo : reservasBloqueo) {
 			Date fecha;
 			if (inhabilita) {
@@ -381,10 +397,12 @@ public class ButacasVinculadasService {
 			} else {
 				fecha = fechaFinReservaButacasAccesibles(sesionesDAO.getSesion(sesion.getId(), userUID));
 			}
-			comprasDAO.actualizarFechaCaducidad(bloqueo.getId(), fecha);
+			if (!comprasDAO.actualizarFechaCaducidad(bloqueo.getId(), fecha)) {
+				resultado = false;
+			}
 		}
 
-		return true;
+		return resultado;
 	}
 
 	/**
@@ -495,6 +513,45 @@ public class ButacasVinculadasService {
 			if (butacaAccesible != null) {
 				if (actualizaBloqueoButacaAsociada(compra.getParSesion(), butacaAccesible, false, ADMIN_UID)) {
 					resultado = true;
+				}
+			}
+		}
+
+		return resultado;
+	}
+
+	/**
+	 * Bloquea las butacas asociadas implicadas en una venta desanulada.
+	 * Se tiene que llamar obligatoriamente a este método nada más
+	 * desanular una compra para garantizar la integridad de los
+	 * bloqueos-reserva.
+	 *
+	 * @param sesionId         Identificador de sesión del evento
+	 * @param userUID          Identificador del usuario
+	 * @return true si la operación se completó con éxito
+	 */
+	@Transactional
+	public boolean ventaDesanulada(Long compraId) {
+		try {
+			leeJsonsButacas();
+		} catch (IOException e) {
+			return false;
+		}
+
+		final CompraDTO compra = comprasDAO.getCompraById(compraId);
+		final SesionDTO sesion = compra.getParSesion();;
+
+		boolean resultado = false;
+		for (ButacaDTO butaca : compra.getParButacas()) {
+			DatosButaca butacaAccesible = getButacaAccesible(butaca);
+			if (butacaAccesible != null && enVigorReservaButacasAccesibles(sesion, compra.getFecha())) {
+				if (!actualizaBloqueoButacaAsociada(compra.getParSesion(), butacaAccesible, true, ADMIN_UID)) {
+					// La butaca asociada está bloqueada permanentemente por otra compra, no podemos continuar
+					throw new ButacaOcupadaAlActivarException(butaca
+							.getParSesion().getId(), butaca
+							.getParLocalizacion().getCodigo(),
+							butaca.getFila(), butaca.getNumero(), "",
+							butaca.getParCompra().getTaquilla());
 				}
 			}
 		}

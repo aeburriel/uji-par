@@ -452,6 +452,7 @@ public class ComprasService
 	@Transactional
     public void desanularCompraReserva(Long idCompraReserva, String userUID) throws ButacaOcupadaAlActivarException {
         comprasDAO.desanularCompraReserva(idCompraReserva);
+        butacasVinculadasService.ventaDesanulada(idCompraReserva);
 
 		CompraDTO compraDTO = getCompraById(idCompraReserva);
 		if (compraDTO.getReserva() == null || compraDTO.getReserva() == false) {

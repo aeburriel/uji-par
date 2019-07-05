@@ -964,11 +964,16 @@ public class ComprasDAO extends BaseDAO {
 	}
 
 	@Transactional
-	public void actualizarFechaCaducidad(long idCompra, Date fecha) {
+	public boolean actualizarFechaCaducidad(long idCompra, Date fecha) {
 		CompraDTO compra = getCompraById(idCompra);
+		Timestamp hasta = new Timestamp(fecha.getTime());
 
-		compra.setHasta(new Timestamp(fecha.getTime()));
+		if (compra.getHasta() == hasta) {
+				return false;
+		}
+		compra.setHasta(hasta);
 
 		entityManager.persist(compra);
+		return true;
 	}
 }
