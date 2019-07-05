@@ -283,6 +283,7 @@ public class ButacasVinculadasService {
 	 * @param userUID Identificador del usuario
 	 * @return true en caso de que se haya bloqueado alguna butaca asociada
 	 */
+	@Transactional
 	public boolean actualizaBloquoButacasVinculadasDiscapacidad(final SesionDTO sesion, final String userUID) {
 		try {
 			leeJsonsButacas();
@@ -315,6 +316,7 @@ public class ButacasVinculadasService {
 	 * @param userUID Identificador del usuario
 	 * @return true en caso de que se haya bloqueado alguna butaca asociada
 	 */
+	@Transactional
 	public boolean bloqueaButacasVinculadasDiscapacidad(final SesionDTO sesion, final String userUID) {
 		try {
 			leeJsonsButacas();
@@ -348,6 +350,7 @@ public class ButacasVinculadasService {
 	 * @param userUID              El identificador de usuario
 	 * @return true en caso de éxito
 	 */
+	@Transactional
 	private boolean creaReservaBloqueo(final SesionDTO sesion, final DatosButaca datosButacaAccesible,
 			final String userUID) {
 		final Date desde = new Date();
@@ -382,6 +385,7 @@ public class ButacasVinculadasService {
 	 * @param userUID         Identificador del usuario
 	 * @return true en caso de éxito
 	 */
+	@Transactional
 	private boolean actualizaBloqueoButacaAsociada(final SesionDTO sesion, final DatosButaca butacaAccesible,
 			final boolean inhabilita, final String userUID) {
 		final List<Compra> reservasBloqueo = getReservasBloqueoButacaAccesible(sesion, butacaAccesible);
@@ -467,6 +471,7 @@ public class ButacasVinculadasService {
 	 * @param userUID          Identificador del usuario
 	 * @return true si la operación se completó con éxito
 	 */
+	@Transactional
 	public boolean inhabilitaButacaAsociada(Long sesionId, final List<Butaca> butacasCompradas, final String userUID) {
 		try {
 			leeJsonsButacas();
@@ -498,6 +503,7 @@ public class ButacasVinculadasService {
 	 * @param userUID          Identificador del usuario
 	 * @return true si la operación se completó con éxito
 	 */
+	@Transactional
 	public boolean ventaAnulada(Long compraId) {
 		try {
 			leeJsonsButacas();
