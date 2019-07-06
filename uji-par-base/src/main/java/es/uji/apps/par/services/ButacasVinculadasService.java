@@ -515,6 +515,10 @@ public class ButacasVinculadasService {
 
 		boolean resultado = false;
 		for (ButacaDTO butaca : compra.getParButacas()) {
+			// Saltamos las butacas anuladas
+			if (butaca.getAnulada()) {
+				continue;
+			}
 			DatosButaca butacaAccesible = getButacaAccesible(butaca);
 			if (butacaAccesible != null) {
 				if (actualizaBloqueoButacaAsociada(compra.getParSesion(), butacaAccesible, false, ADMIN_UID)) {
@@ -549,6 +553,10 @@ public class ButacasVinculadasService {
 
 		boolean resultado = false;
 		for (ButacaDTO butaca : compra.getParButacas()) {
+			// Saltamos las butacas anuladas
+			if (butaca.getAnulada()) {
+				continue;
+			}
 			DatosButaca butacaAccesible = getButacaAccesible(butaca);
 			if (butacaAccesible != null && enVigorReservaButacasAccesibles(sesion, compra.getFecha())) {
 				if (!actualizaBloqueoButacaAsociada(compra.getParSesion(), butacaAccesible, true, ADMIN_UID)) {
