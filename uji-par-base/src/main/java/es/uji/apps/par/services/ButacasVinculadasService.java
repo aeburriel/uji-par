@@ -275,7 +275,7 @@ public class ButacasVinculadasService {
 	}
 
 	/**
-	 * Actualiza el bloquea las butacas asociadas a las butacas accesibles de la sesión hasta el
+	 * Actualiza el bloqueo de las butacas asociadas a las butacas accesibles de la sesión hasta el
 	 * fin de la venta online
 	 * Se tiene que llamar obligatoriamente nada más actualizar una sesión.
 	 *
@@ -284,7 +284,7 @@ public class ButacasVinculadasService {
 	 * @return true en caso de que se haya bloqueado alguna butaca asociada
 	 */
 	@Transactional
-	public boolean actualizaBloquoButacasVinculadasDiscapacidad(final SesionDTO sesion, final String userUID) {
+	public boolean actualizaBloqueoButacasVinculadasDiscapacidad(final SesionDTO sesion, final String userUID) {
 		try {
 			leeJsonsButacas();
 		} catch (IOException e) {

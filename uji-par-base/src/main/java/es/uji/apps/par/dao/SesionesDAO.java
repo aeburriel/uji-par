@@ -299,7 +299,7 @@ public class SesionesDAO extends BaseDAO {
         setIncidenciaSesion(fechaCelebracion, sesion.getSala().getId(), userUID);
         anulaSesionesConLaMismaHoraYSala(fechaCelebracion, sesion.getSala().getId(), sesion.getId());
         
-        butacasVinculadasService.actualizaBloquoButacasVinculadasDiscapacidad(sesionDTO, userUID);
+        butacasVinculadasService.actualizaBloqueoButacasVinculadasDiscapacidad(sesionDTO, userUID);
     }
 
     @Transactional
