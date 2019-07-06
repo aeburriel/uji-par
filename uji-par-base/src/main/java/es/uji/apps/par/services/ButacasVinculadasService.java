@@ -197,7 +197,7 @@ public class ButacasVinculadasService {
 	 *
 	 * @throws IOException
 	 */
-	private void leeJsonsButacas() throws IOException {
+	private synchronized void leeJsonsButacas() throws IOException {
 		if (!butacasVinculadas.isEmpty()) {
 			return;
 		}
