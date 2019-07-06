@@ -31,6 +31,7 @@ import com.sun.jersey.api.core.InjectParam;
 
 import es.uji.apps.par.butacas.DatosButaca;
 import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.dao.ButacasDAO;
 import es.uji.apps.par.dao.ComprasDAO;
 import es.uji.apps.par.dao.SesionesDAO;
 import es.uji.apps.par.dao.TarifasDAO;
@@ -38,6 +39,7 @@ import es.uji.apps.par.db.ButacaDTO;
 import es.uji.apps.par.db.CompraDTO;
 import es.uji.apps.par.db.SesionDTO;
 import es.uji.apps.par.db.TarifaDTO;
+import es.uji.apps.par.exceptions.ButacaAccesibleAnularSinAnularButacaAcompanante;
 import es.uji.apps.par.exceptions.ButacaOcupadaAlActivarException;
 import es.uji.apps.par.model.Butaca;
 import es.uji.apps.par.model.Compra;
@@ -50,6 +52,9 @@ public class ButacasVinculadasService {
 
 	@InjectParam
     ButacasService butacasService;
+
+	@Autowired
+	private ButacasDAO butacasDAO;
 
 	@Autowired
 	private ComprasDAO comprasDAO;
@@ -127,6 +132,36 @@ public class ButacasVinculadasService {
 				return candidata;
 			}
 		}
+		return null;
+	}
+
+	/**
+	 * Determina si la butaca indicada es de acompañante
+	 * @param butaca
+	 * @return la butaca de acompañante o null si no lo es
+	 */
+	private DatosButaca getButacaAcompanante(final ButacaDTO butaca) {
+		for (final DatosButaca candidata : butacasAcompanantes.keySet()) {
+			if (isButacaEqual(candidata, butaca)) {
+				return candidata;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Devuelve la butaca de acompañante correspondiente a la butaca accesible indicada
+	 * @param acesible butaca accesible
+	 * @return la butaca de acompañante vinculada o null si no se encuentra
+	 */
+	private DatosButaca getButacaAcompanantePorAccesible(final DatosButaca accesible) {
+		for (final DatosButaca acompanante : butacasAcompanantes.keySet()) {
+			final DatosButaca candidataAccesible = butacasAcompanantes.get(acompanante);
+			if (candidataAccesible.equals(accesible)) {
+				return acompanante;
+			}
+		}
+
 		return null;
 	}
 
@@ -571,6 +606,55 @@ public class ButacasVinculadasService {
 			}
 		}
 
+		return resultado;
+	}
+
+	/**
+	 * Procesa una lista de butacas a anular y gestiona las reservas-bloqueo
+	 * @param idsButacas
+	 * @return
+	 */
+	@Transactional
+	public boolean anularButacas(final List<Long> idsButacas) {
+		boolean resultado = false;
+		for (final Long idButaca : idsButacas) {
+			final ButacaDTO butaca = butacasDAO.getButaca(idButaca);
+			final CompraDTO compra = butaca.getParCompra();
+			final SesionDTO sesion = compra.getParSesion();
+			final DatosButaca butacaAccesible = getButacaAccesible(butaca);
+			if (butacaAccesible != null && enVigorReservaButacasAccesibles(sesion, compra.getFecha())) {
+				// Hay que comprobar que si esta butaca accesible tiene también una butaca de acompañante comprada,
+				// esta esté también incluída en la lista de butacas a cancelar
+				final DatosButaca butacaAcompanante = getButacaAcompanantePorAccesible(butacaAccesible);
+				boolean encontrada = false;
+				for (final Long idCandidata : idsButacas) {
+					if (idButaca.equals(idCandidata)) {
+						continue;
+					}
+
+					final ButacaDTO candidata = butacasDAO.getButaca(idCandidata);
+					if (isButacaEqual(butacaAcompanante, candidata)) {
+						encontrada = true;
+						break;
+					}
+				}
+
+				// Si la butaca de acompanante no está entre las butacas a borrar,
+				// hay que comprobar si forma parte de esta venta
+				if (!encontrada) {
+					for (final ButacaDTO butacaComprada : compra.getParButacas()) {
+						if (!butacaComprada.getAnulada() && butacaAcompanante.equals(getButacaAcompanante(butacaComprada))) {
+							throw new ButacaAccesibleAnularSinAnularButacaAcompanante(compra.getId(), butacaAccesible, butacaAcompanante);
+						}
+					}
+				}
+
+				// Ajustamos el bloqueo-reserva de la butaca accesible
+				if (actualizaBloqueoButacaAsociada(compra.getParSesion(), butacaAccesible, false, ADMIN_UID)) {
+					resultado = true;
+				}
+			}
+		}
 		return resultado;
 	}
 

@@ -472,6 +472,7 @@ public class ComprasService
 	
 	@Transactional
     public void anularButacas(List<Long> idsButacas) throws IncidenciaNotFoundException {
+		butacasVinculadasService.anularButacas(idsButacas);
 	    for (Long idButaca: idsButacas)
         {
             butacasDAO.anularButaca(idButaca);
