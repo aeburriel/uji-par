@@ -464,7 +464,7 @@ public class ButacasVinculadasService {
 	 * Inhabilita permanentemente la butaca asociada a la butaca accesible indicada.
 	 * Se tiene que llamar obligatoriamente a este método al completar la compra
 	 * para garantizar que las butacas asociadas a las butacas accesibles se
-	 * bloqueen indefinidamente par la sesión.
+	 * bloqueen indefinidamente para la sesión.
 	 *
 	 * @param sesionId         Identificador de sesión del evento
 	 * @param butacasCompradas Lista con las butacas compradas
@@ -497,7 +497,7 @@ public class ButacasVinculadasService {
 	 * Libera las butacas asociadas implicadas en una venta cancelada.
 	 * Se tiene que llamar obligatoriamente a este método nada más
 	 * cancelar una compra para garantizar la integridad de los
-	 * bloqueos-reserv.
+	 * bloqueos-reserva.
 	 *
 	 * @param sesionId         Identificador de sesión del evento
 	 * @param userUID          Identificador del usuario
