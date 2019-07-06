@@ -638,10 +638,17 @@ public class ButacasVinculadasService {
 		if (accesible == null) {
 			return false;
 		}
+		final Compra compraAccesible = butacasService.getCompra(sesionId, butaca.getLocalizacion(), String.valueOf(butaca.getFila()), String.valueOf(butaca.getNumero()));
+		if (compraAccesible == null) {
+			return false;
+		}
+		final Compra compraAcompanante = butacasService.getCompra(sesionId, accesible.getLocalizacion(), String.valueOf(accesible.getFila()), String.valueOf(accesible.getNumero()));
+		if (compraAcompanante == null) {
+			return false;
+		}
 		return butacasService.estaOcupada(sesionId, butaca.getLocalizacion(), String.valueOf(butaca.getFila()),	String.valueOf(butaca.getNumero()))
 				&& esDiscapacitado(sesionId, accesible)
-				&& butacasService.getCompra(sesionId, butaca.getLocalizacion(), String.valueOf(butaca.getFila()), String.valueOf(butaca.getNumero())).getId()
-				== butacasService.getCompra(sesionId, accesible.getLocalizacion(), String.valueOf(accesible.getFila()), String.valueOf(accesible.getNumero())).getId();
+				&& compraAccesible.getId() == compraAcompanante.getId();
 	}
 
 	/**
