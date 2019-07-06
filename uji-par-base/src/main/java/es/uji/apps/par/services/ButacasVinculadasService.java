@@ -105,7 +105,7 @@ public class ButacasVinculadasService {
 	/**
 	 * Determina si la butaca indicada es accesible
 	 * @param butaca
-	 * @return true
+	 * @return true si lo es
 	 */
 	private boolean isButacaAccesible(Butaca butaca) {
 		for (final DatosButaca candidata : butacasVinculadas.keySet()) {
@@ -119,7 +119,7 @@ public class ButacasVinculadasService {
 	/**
 	 * Determina si la butaca indicada es accesible
 	 * @param butaca
-	 * @return true
+	 * @return la butaca accesible o null si no lo es
 	 */
 	private DatosButaca getButacaAccesible(ButacaDTO butaca) {
 		for (final DatosButaca candidata : butacasVinculadas.keySet()) {
@@ -418,7 +418,7 @@ public class ButacasVinculadasService {
 	 * @return Lista de bloqueos-reserva, el número máximo de elementos a devolver
 	 *         debería ser 1.
 	 */
-	private List<Compra> getReservasBloqueoButacaAccesible(final SesionDTO sesion, DatosButaca butacaAccesible) {
+	private List<Compra> getReservasBloqueoButacaAccesible(final SesionDTO sesion, final DatosButaca butacaAccesible) {
 		// La reserva-bloqueo se hace a nombre de la butaca accesible
 		final String textoABloquar = mensajeBloqueo(butacaAccesible);
 
@@ -472,7 +472,7 @@ public class ButacasVinculadasService {
 	 * @return true si la operación se completó con éxito
 	 */
 	@Transactional
-	public boolean inhabilitaButacaAsociada(Long sesionId, final List<Butaca> butacasCompradas, final String userUID) {
+	public boolean inhabilitaButacaAsociada(final Long sesionId, final List<Butaca> butacasCompradas, final String userUID) {
 		try {
 			leeJsonsButacas();
 		} catch (IOException e) {
@@ -504,7 +504,7 @@ public class ButacasVinculadasService {
 	 * @return true si la operación se completó con éxito
 	 */
 	@Transactional
-	public boolean ventaAnulada(Long compraId) {
+	public boolean ventaAnulada(final Long compraId) {
 		try {
 			leeJsonsButacas();
 		} catch (IOException e) {
@@ -514,16 +514,15 @@ public class ButacasVinculadasService {
 		final CompraDTO compra = comprasDAO.getCompraById(compraId);
 
 		boolean resultado = false;
-		for (ButacaDTO butaca : compra.getParButacas()) {
+		for (final ButacaDTO butaca : compra.getParButacas()) {
 			// Saltamos las butacas anuladas
 			if (butaca.getAnulada()) {
 				continue;
 			}
-			DatosButaca butacaAccesible = getButacaAccesible(butaca);
-			if (butacaAccesible != null) {
-				if (actualizaBloqueoButacaAsociada(compra.getParSesion(), butacaAccesible, false, ADMIN_UID)) {
-					resultado = true;
-				}
+			final DatosButaca butacaAccesible = getButacaAccesible(butaca);
+			if (butacaAccesible != null
+					&& actualizaBloqueoButacaAsociada(compra.getParSesion(), butacaAccesible, false, ADMIN_UID)) {
+				resultado = true;
 			}
 		}
 
@@ -541,7 +540,7 @@ public class ButacasVinculadasService {
 	 * @return true si la operación se completó con éxito
 	 */
 	@Transactional
-	public boolean ventaDesanulada(Long compraId) {
+	public boolean ventaDesanulada(final Long compraId) {
 		try {
 			leeJsonsButacas();
 		} catch (IOException e) {
@@ -552,14 +551,16 @@ public class ButacasVinculadasService {
 		final SesionDTO sesion = compra.getParSesion();;
 
 		boolean resultado = false;
-		for (ButacaDTO butaca : compra.getParButacas()) {
+		for (final ButacaDTO butaca : compra.getParButacas()) {
 			// Saltamos las butacas anuladas
 			if (butaca.getAnulada()) {
 				continue;
 			}
-			DatosButaca butacaAccesible = getButacaAccesible(butaca);
+			final DatosButaca butacaAccesible = getButacaAccesible(butaca);
 			if (butacaAccesible != null && enVigorReservaButacasAccesibles(sesion, compra.getFecha())) {
-				if (!actualizaBloqueoButacaAsociada(compra.getParSesion(), butacaAccesible, true, ADMIN_UID)) {
+				if (actualizaBloqueoButacaAsociada(compra.getParSesion(), butacaAccesible, true, ADMIN_UID)) {
+					resultado = true;
+				} else {
 					// La butaca asociada está bloqueada permanentemente por otra compra, no podemos continuar
 					throw new ButacaOcupadaAlActivarException(butaca
 							.getParSesion().getId(), butaca
@@ -675,16 +676,16 @@ public class ButacasVinculadasService {
 	 * la llamada
 	 *
 	 * @param sesionId Identificador de sesión del evento
-	 * @return lista con las butacas de discapacitado
+	 * @return lista con las butacas de discapacitado o null en caso de error
 	 */
-	public List<DatosButaca> getButacasAccesibles(long sesionId) {
+	public List<DatosButaca> getButacasAccesibles(final long sesionId) {
 		try {
 			leeJsonsButacas();
 		} catch (IOException e) {
 			return null;
 		}
 
-		List<DatosButaca> butacas = new ArrayList<DatosButaca>();
+		final List<DatosButaca> butacas = new ArrayList<DatosButaca>();
 
 		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
 		final Collection<DatosButaca> accesibles = butacasAcompanantes.values();
@@ -708,14 +709,14 @@ public class ButacasVinculadasService {
 	 * @param sesionId Identificador de sesión del evento
 	 * @return lista con las butacas de acompañante
 	 */
-	public List<DatosButaca> getButacasAcompanantes(long sesionId) {
+	public List<DatosButaca> getButacasAcompanantes(final long sesionId) {
 		try {
 			leeJsonsButacas();
 		} catch (IOException e) {
 			return null;
 		}
 
-		List<DatosButaca> butacas = new ArrayList<DatosButaca>();
+		final List<DatosButaca> butacas = new ArrayList<DatosButaca>();
 
 		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
 		final Set<DatosButaca> acompanantes = butacasAcompanantes.keySet();
