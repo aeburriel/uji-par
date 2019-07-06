@@ -431,13 +431,13 @@ public class ComprasService
 	}
 
 	public void anularCompraReserva(Long idCompraReserva) throws IncidenciaNotFoundException {
-		comprasDAO.anularCompraReserva(idCompraReserva, true);
 		butacasVinculadasService.ventaAnulada(idCompraReserva);
+		comprasDAO.anularCompraReserva(idCompraReserva, true);
 	}
 
 	public void anularCompraReservaAutomatica(Long idCompraReserva) throws IncidenciaNotFoundException {
-		comprasDAO.anularCompraReserva(idCompraReserva, false);
 		butacasVinculadasService.ventaAnulada(idCompraReserva);
+		comprasDAO.anularCompraReserva(idCompraReserva, false);
 	}
 
     @Transactional
