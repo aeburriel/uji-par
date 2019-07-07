@@ -230,6 +230,9 @@ public class ButacasService
 
     public void cambiaFilaNumero(Long butacaId, String fila, String numero) {
         ButacaDTO butaca = getButaca(butacaId);
+        if (!butacasVinculadasService.cambiaFilaNumero(butaca, fila, numero)) {
+            throw new ButacaOcupadaException(butaca.getParSesion().getId(), butaca.getParLocalizacion().getCodigo(), fila, numero);
+        }
         List<ButacaDTO> butacasOcupadasPorLocalizacion = getButacasNoAnuladasPorLocalizacion(butaca.getParSesion().getId(), butaca.getParLocalizacion().getCodigo());
 
         for (ButacaDTO butacaDTO:butacasOcupadasPorLocalizacion) {

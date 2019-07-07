@@ -704,6 +704,58 @@ public class ButacasVinculadasService {
 	}
 
 	/**
+	 * Verifica que el cambio de butaca solicitado sea posible
+	 * Se tiene que llamar antes de hacer un cambio de butaca.
+	 * @param butaca Butaca sobre la que estamos haciendo la comprobación
+	 * @param fila Nueva fila, en la misma zona que la butaca inicial
+	 * @param numero Nuevo número, en la misma zona que la butaca inicial
+	 * @return true si la butaca destino es aceptable
+	 */
+	public boolean cambiaFilaNumero(final ButacaDTO butaca, final String fila, final String numero) {
+		try {
+			leeJsonsButacas();
+		} catch (IOException e) {
+			return false;
+		}
+
+		final CompraDTO compra = butaca.getParCompra();
+
+		// Si la butaca es accesible
+		final DatosButaca butacaAccesible = getButacaAccesible(butaca);
+		if (butacaAccesible != null && esDiscapacitado(compra.getId(), butacaAccesible)) {
+			return false;
+		}
+
+		// Si la butaca puede ser de acompañante
+		final DatosButaca butacaAcompanante = getButacaAcompanante(butaca);
+		if (butacaAcompanante != null) {
+			// Confirmamos si realmente es de acompañante buscando su butaca accesible
+			// asociada en la venta
+			for (final ButacaDTO butacaComprada : compra.getParButacas()) {
+				if (!butacaComprada.getAnulada() && butacaAcompanante.equals(getButacaAcompanante(butacaComprada))) {
+					return false;
+				}
+			}
+		}
+
+		// Butaca origen convencional, validamos butaca destino
+		// Si la reserva de butacas accesibles está en vigor,
+		// comprobamos que el destino no sea butaca accesible o de acompañante
+		if (enVigorReservaButacasAccesibles(compra.getParSesion())) {
+			final DatosButaca candidata = new DatosButaca();
+			candidata.setLocalizacion(butaca.getParLocalizacion().getCodigo());
+			candidata.setFila(Integer.parseInt(fila));
+			candidata.setNumero(Integer.parseInt(numero));
+
+			if (butacasVinculadas.containsKey(candidata) || butacasAcompanantes.containsKey(candidata)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
 	 * Determina si la butaca en el evento indicada es de acompañante (está ocupada
 	 * y su butaca accesible asociada vendida en la misma operación)
 	 *
