@@ -530,8 +530,8 @@ public class ButacasVinculadasService {
 
 	/**
 	 * Libera las butacas asociadas implicadas en una venta cancelada.
-	 * Se tiene que llamar obligatoriamente a este método nada más
-	 * cancelar una compra para garantizar la integridad de los
+	 * Se tiene que llamar obligatoriamente a este método justo antes
+	 * de cancelar una compra para garantizar la integridad de los
 	 * bloqueos-reserva.
 	 *
 	 * @param sesionId         Identificador de sesión del evento
@@ -611,8 +611,8 @@ public class ButacasVinculadasService {
 
 	/**
 	 * Procesa una lista de butacas a anular y gestiona las reservas-bloqueo
-	 * @param idsButacas
-	 * @return
+	 * @param idsButacas Las butacas a anular
+	 * @return true si se ha actualizado alguna reserva-bloqueo accesible
 	 */
 	@Transactional
 	public boolean anularButacas(final List<Long> idsButacas) {
