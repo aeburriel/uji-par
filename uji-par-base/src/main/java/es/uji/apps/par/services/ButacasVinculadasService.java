@@ -608,6 +608,9 @@ public class ButacasVinculadasService {
 				continue;
 			}
 			final CompraDTO compra = butaca.getParCompra();
+			if(!compra.getParSesion().getParEvento().getAsientosNumerados()) {
+				continue;
+			}
 			final SesionDTO sesion = compra.getParSesion();
 			final DatosButaca butacaAccesible = getButacaAccesible(butaca);
 			if (butacaAccesible != null && enVigorReservaButacasAccesibles(sesion, compra.getFecha())) {
