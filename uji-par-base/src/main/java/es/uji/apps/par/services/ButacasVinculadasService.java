@@ -532,6 +532,9 @@ public class ButacasVinculadasService {
 	@Transactional
 	public boolean ventaAnulada(final Long compraId) {
 		final CompraDTO compra = comprasDAO.getCompraById(compraId);
+		if(!compra.getParSesion().getParEvento().getAsientosNumerados()) {
+			return true;
+		}
 
 		boolean resultado = false;
 		for (final ButacaDTO butaca : compra.getParButacas()) {
@@ -562,6 +565,9 @@ public class ButacasVinculadasService {
 	@Transactional
 	public boolean ventaDesanulada(final Long compraId) {
 		final CompraDTO compra = comprasDAO.getCompraById(compraId);
+		if(!compra.getParSesion().getParEvento().getAsientosNumerados()) {
+			return true;
+		}
 		final SesionDTO sesion = compra.getParSesion();
 
 		boolean resultado = false;
