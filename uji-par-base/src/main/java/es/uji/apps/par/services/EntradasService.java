@@ -9,9 +9,10 @@ import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
 
@@ -323,7 +324,7 @@ public class EntradasService {
         EntradasService service = ctx.getBean(EntradasService.class);
 
         //service.generaEntradaTaquilla("e3a762c9-9107-47b7-b13d-175e308aa24f", new FileOutputStream("/tmp/entrada.pdf"));
-        service.generaEntrada("e3a762c9-9107-47b7-b13d-175e308aa24f", new FileOutputStream("/tmp/entrada.pdf"), "", "https", "urlPieEntrada");
+        service.generaEntrada("e3a762c9-9107-47b7-b13d-175e308aa24f", Files.newOutputStream(Paths.get("/tmp/entrada.pdf")), "", "https", "urlPieEntrada");
     }
 
     private Locale getLocale(String userUID) {

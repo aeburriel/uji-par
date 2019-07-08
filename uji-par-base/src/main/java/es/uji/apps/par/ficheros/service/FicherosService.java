@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -151,18 +153,18 @@ public class FicherosService
     	Calendar cal = Calendar.getInstance();
     	String filePath = configuration.getTmpFolder() + "/" + DateUtils.dateToStringForFileNames(cal.getTime());
  
-	    FileOutputStream fileOuputStream =  new FileOutputStream(filePath); 
-	    fileOuputStream.write(contenido);
-	    fileOuputStream.close();
+	    OutputStream ouputStream =  Files.newOutputStream(Paths.get(filePath));
+	    ouputStream.write(contenido);
+	    ouputStream.close();
 	    
 	    String fileEncryptedPath = doPGP(filePath);
-	    FileInputStream fileInputStream = null;
+	    InputStream inputStream = null;
         File file = new File(fileEncryptedPath);
  
         byte[] bFile = new byte[(int) file.length()];
-	    fileInputStream = new FileInputStream(file);
-	    fileInputStream.read(bFile);
-	    fileInputStream.close();
+	    inputStream = Files.newInputStream(Paths.get(fileEncryptedPath));
+	    inputStream.read(bFile);
+	    inputStream.close();
         return bFile;
 	}
     

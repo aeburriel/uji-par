@@ -10,7 +10,8 @@ import org.slf4j.LoggerFactory;
 import javax.mail.*;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
-import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Properties;
 
@@ -25,7 +26,7 @@ public class GmailSMTPAppender extends SMTPAppender
         super();
 		try {
 			Properties properties = new Properties();
-			properties.load(new FileInputStream("/etc/uji/par/app.properties"));
+			properties.load(Files.newInputStream(Paths.get("/etc/uji/par/app.properties")));
 			try {
 				String propEnviarMails = properties.getProperty("uji.par.enviarMailsError");
 				enviarMailsError = (propEnviarMails == null || propEnviarMails.trim().equals("")) ? false : (propEnviarMails.trim

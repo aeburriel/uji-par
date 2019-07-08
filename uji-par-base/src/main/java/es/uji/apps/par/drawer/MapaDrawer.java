@@ -20,6 +20,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -108,7 +110,7 @@ public class MapaDrawer implements MapaDrawerInterface
         }
     }
 
-    private void loadJsonLocalizacion(String localizacion) throws FileNotFoundException
+    private void loadJsonLocalizacion(String localizacion) throws IOException
     {
 		if (!configuration.isLoadedFromResource()) {
 			List<DatosButaca> listaButacas = parseaJsonButacas(localizacion);
@@ -121,14 +123,14 @@ public class MapaDrawer implements MapaDrawerInterface
 		}
     }
 
-    private List<DatosButaca> parseaJsonButacas(String localizacion) throws FileNotFoundException
+    private List<DatosButaca> parseaJsonButacas(String localizacion) throws IOException
     {
         Gson gson = new Gson();
         Type fooType = new TypeToken<List<DatosButaca>>()
         {
         }.getType();
         
-        InputStream inputStream = new FileInputStream(BUTACAS_PATH + "/" + localizacion + ".json");
+        final InputStream inputStream = Files.newInputStream(Paths.get(BUTACAS_PATH + "/" + localizacion + ".json"));
         InputStreamReader jsonReader = new InputStreamReader(inputStream);
 
         return gson.fromJson(jsonReader, fooType);

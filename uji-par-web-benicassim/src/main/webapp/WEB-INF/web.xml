@@ -29,6 +29,11 @@
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
     </listener>
 
+	<listener>
+		<display-name>ImageIO service provider loader/unloader</display-name>
+		<listener-class>com.twelvemonkeys.servlet.image.IIOProviderContextListener</listener-class>
+	</listener>
+
     <servlet>
         <servlet-name>rest-api</servlet-name>
         <servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
