@@ -379,6 +379,9 @@ public class ButacasVinculadasService {
 	@Transactional
 	private boolean creaReservaBloqueo(final SesionDTO sesion, final DatosButaca datosButacaAccesible,
 			final String userUID) {
+		if (datosButacaAccesible == null) {
+			return false;
+		}
 		final Date desde = new Date();
 		final Date hasta = fechaFinReservaButacasAccesibles(sesion);
 		final DatosButaca butacaAsociada = butacasVinculadas.get(datosButacaAccesible);
@@ -414,6 +417,9 @@ public class ButacasVinculadasService {
 	@Transactional
 	private boolean actualizaBloqueoButacaAsociada(final SesionDTO sesion, final DatosButaca butacaAccesible,
 			final boolean inhabilita, final String userUID) {
+		if (butacaAccesible == null) {
+			return false;
+		}
 		final List<Compra> reservasBloqueo = getReservasBloqueoButacaAccesible(sesion, butacaAccesible);
 		if (reservasBloqueo.isEmpty()) {
 			return false;
@@ -506,7 +512,7 @@ public class ButacasVinculadasService {
 
 		boolean resultado = false;
 		for (final Butaca butaca : butacasCompradas) {
-			if (isButacaAccesible(butaca) && inhabilitaButacaAsociada(sesion, butaca, userUID)) {
+			if (butaca != null && isButacaAccesible(butaca) && inhabilitaButacaAsociada(sesion, butaca, userUID)) {
 				resultado = true;
 			}
 		}
@@ -530,7 +536,7 @@ public class ButacasVinculadasService {
 		boolean resultado = false;
 		for (final ButacaDTO butaca : compra.getParButacas()) {
 			// Saltamos las butacas anuladas
-			if (butaca.getAnulada()) {
+			if (butaca == null || butaca.getAnulada()) {
 				continue;
 			}
 			final DatosButaca butacaAccesible = getButacaAccesible(butaca);
@@ -556,12 +562,12 @@ public class ButacasVinculadasService {
 	@Transactional
 	public boolean ventaDesanulada(final Long compraId) {
 		final CompraDTO compra = comprasDAO.getCompraById(compraId);
-		final SesionDTO sesion = compra.getParSesion();;
+		final SesionDTO sesion = compra.getParSesion();
 
 		boolean resultado = false;
 		for (final ButacaDTO butaca : compra.getParButacas()) {
 			// Saltamos las butacas anuladas
-			if (butaca.getAnulada()) {
+			if (butaca == null || butaca.getAnulada()) {
 				continue;
 			}
 			final DatosButaca butacaAccesible = getButacaAccesible(butaca);
@@ -592,6 +598,9 @@ public class ButacasVinculadasService {
 		boolean resultado = false;
 		for (final Long idButaca : idsButacas) {
 			final ButacaDTO butaca = butacasDAO.getButaca(idButaca);
+			if (butaca == null) {
+				continue;
+			}
 			final CompraDTO compra = butaca.getParCompra();
 			final SesionDTO sesion = compra.getParSesion();
 			final DatosButaca butacaAccesible = getButacaAccesible(butaca);
@@ -645,6 +654,9 @@ public class ButacasVinculadasService {
 	 * @return true si las butacas elegidas están permitidas
 	 */
 	public boolean validaButacas(final Long sesionId, final List<Butaca> butacas, final Butaca butaca) {
+		if (butaca == null) {
+			return false;
+		}
 		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
 		if (!sesion.getParEvento().getAsientosNumerados()) {
 			return true;
@@ -660,7 +672,7 @@ public class ButacasVinculadasService {
 			if (isButacaEqual(butacaAcompanante, butaca)) {
 				final DatosButaca butacaAccesible = butacasAcompanantes.get(butacaAcompanante);
 				for (final Butaca candidata : butacas) {
-					if (isButacaEqual(butacaAccesible, candidata)) {
+					if (candidata != null && isButacaEqual(butacaAccesible, candidata)) {
 						return true;
 					}
 				}
@@ -679,6 +691,9 @@ public class ButacasVinculadasService {
 	 * @return true si la butaca destino es aceptable
 	 */
 	public boolean cambiaFilaNumero(final ButacaDTO butaca, final String fila, final String numero) {
+		if (butaca == null || fila == null || numero == null) {
+			return false;
+		}
 		final CompraDTO compra = butaca.getParCompra();
 
 		// Si la butaca es accesible
