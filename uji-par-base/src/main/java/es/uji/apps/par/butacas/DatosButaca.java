@@ -5,12 +5,16 @@ public class DatosButaca
     private int fila;
     private int numero;
     private int numero_enlazada = -1;
-    private boolean discapacidad = false;
+    private String tipo;
     private String localizacion;
     private int xFin;
     private int xIni;
     private int yFin;
     private int yIni;
+
+    public static final String TIPO_ACOMPANANTE = "acompañante";
+    public static final String TIPO_ASOCIADA = "asociada";
+    public static final String TIPO_DISCAPACIDAD = "discapacidad";
 
     public DatosButaca()
     {
@@ -69,12 +73,24 @@ public class DatosButaca
 		this.numero_enlazada = numero_enlazada;
 	}
 
-	public boolean isDiscapacidad() {
-		return discapacidad;
+	public boolean isAcompanante() {
+		return TIPO_ACOMPANANTE.equals(tipo);
 	}
 
-	public void setDiscapacidad(boolean discapacidad) {
-		this.discapacidad = discapacidad;
+	public boolean isAsociada() {
+		return TIPO_ASOCIADA.equals(tipo);
+	}
+
+	public boolean isDiscapacidad() {
+		return TIPO_DISCAPACIDAD.equals(tipo);
+	}
+
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
 	}
 
 	public String getLocalizacion()

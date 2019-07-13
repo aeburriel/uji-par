@@ -27,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.sun.jersey.api.core.InjectParam;
@@ -77,9 +79,10 @@ public class ButacasVinculadasService {
 	private static final String TARIFA_INVITACION = "Invitació";
 	private static final Date FECHAINFINITO = new Date(95649033600000L);
 
-	private Map<String, List<DatosButaca>> butacasAccesiblesPorLocalizacion = new HashMap<String, List<DatosButaca>>();
-	private Map<String, List<DatosButaca>> butacasAsociadasPorLocalizacion = new HashMap<String, List<DatosButaca>>();
-	private Map<DatosButaca, DatosButaca> butacasVinculadas = new HashMap<DatosButaca, DatosButaca>();
+	private Multimap<String, DatosButaca> butacasAccesiblesPorLocalizacion = MultimapBuilder.hashKeys().arrayListValues().build();
+	private Multimap<String, DatosButaca> butacasAcompanantesPorLocalizacion = MultimapBuilder.hashKeys().arrayListValues().build();
+	private Multimap<String, DatosButaca> butacasAsociadasPorLocalizacion = MultimapBuilder.hashKeys().arrayListValues().build();
+	private Multimap<DatosButaca, DatosButaca> butacasVinculadas = MultimapBuilder.hashKeys().arrayListValues().build();
 	private Map<DatosButaca, DatosButaca> butacasAcompanantes = new HashMap<DatosButaca, DatosButaca>();
 	private TarifaDTO tarifaInvitacion;
 
@@ -244,16 +247,12 @@ public class ButacasVinculadasService {
 		for (final String localizacionSala : configuration.getImagenesFondo()) {
 			for (final String localizacionZona : configuration.getLocalizacionesEnImagen(localizacionSala)) {
 				for (final DatosButaca butaca : parseaJsonButacas(localizacionZona)) {
-					if (butaca.isDiscapacidad() && butaca.getNumero_enlazada() >= 0) {
-						if (!butacasAccesiblesPorLocalizacion.containsKey(localizacionSala)) {
-							butacasAccesiblesPorLocalizacion.put(localizacionSala, new ArrayList<DatosButaca>());
-						}
-						butacasAccesiblesPorLocalizacion.get(localizacionSala).add(butaca);
-					} else {
-						if (!butacasAsociadasPorLocalizacion.containsKey(localizacionSala)) {
-							butacasAsociadasPorLocalizacion.put(localizacionSala, new ArrayList<DatosButaca>());
-						}
-						butacasAsociadasPorLocalizacion.get(localizacionSala).add(butaca);
+					if (butaca.isDiscapacidad()) {
+						butacasAccesiblesPorLocalizacion.put(localizacionSala, butaca);
+					} else if (butaca.isAsociada()) {
+						butacasAsociadasPorLocalizacion.put(localizacionSala, butaca);
+					} else if (butaca.isAcompanante()) {
+						butacasAcompanantesPorLocalizacion.put(localizacionSala, butaca);
 					}
 				}
 			}
@@ -262,23 +261,20 @@ public class ButacasVinculadasService {
 		// Vinculamos cada butaca accesible con su butaca asociada
 		for (final DatosButaca butacaAccesible : butacasAccesiblesPorLocalizacion.get(LOCALIZACION)) {
 			for (final DatosButaca butaca : butacasAsociadasPorLocalizacion.get(LOCALIZACION)) {
-				if (butacaAccesible.getNumero_enlazada() == butaca.getNumero()
-						&& butacaAccesible.getNumero() == butaca.getNumero_enlazada()
-						&& butacaAccesible.getFila() == butaca.getFila()
-						&& butacaAccesible.getLocalizacion().equals(butaca.getLocalizacion())) {
+				if (butaca.getNumero_enlazada() == butacaAccesible.getNumero()
+						&& butaca.getFila() == butacaAccesible.getFila()
+						&& butaca.getLocalizacion().equals(butacaAccesible.getLocalizacion())) {
 					butacasVinculadas.put(butacaAccesible, butaca);
-					break; // Continuamos con la siguiente butaca, ya que van por parejas
 				}
 			}
 		}
 
 		// Vinculamos cada butaca de acompañante con su butaca accesible
 		for (final DatosButaca butacaAccesible : butacasVinculadas.keySet()) {
-			for (final DatosButaca butaca : butacasAsociadasPorLocalizacion.get(LOCALIZACION)) {
-				if (butacaAccesible.getNumero() == butaca.getNumero_enlazada()
-						&& butacaAccesible.getFila() == butaca.getFila()
-						&& butacaAccesible.getNumero_enlazada() != butaca.getNumero()
-						&& butacaAccesible.getLocalizacion().equals(butaca.getLocalizacion())) {
+			for (final DatosButaca butaca : butacasAcompanantesPorLocalizacion.get(LOCALIZACION)) {
+				if (butaca.getNumero_enlazada() == butacaAccesible.getNumero()
+						&& butaca.getFila() == butacaAccesible.getFila()
+						&& butaca.getLocalizacion().equals(butacaAccesible.getLocalizacion())) {
 					butacasAcompanantes.put(butaca, butacaAccesible);
 					break; // Continuamos con la siguiente butaca, ya que van por parejas
 				}
@@ -355,7 +351,7 @@ public class ButacasVinculadasService {
 		}
 
 		// Buscamos las butacas a bloquear
-		final List<DatosButaca> datosButacas = butacasAccesiblesPorLocalizacion.get(LOCALIZACION);
+		final Collection<DatosButaca> datosButacas = butacasAccesiblesPorLocalizacion.get(LOCALIZACION);
 
 		// Para cada butaca hacemos una reserva-bloqueo
 		boolean resultado = false;
@@ -384,14 +380,16 @@ public class ButacasVinculadasService {
 		}
 		final Date desde = new Date();
 		final Date hasta = fechaFinReservaButacasAccesibles(sesion);
-		final DatosButaca butacaAsociada = butacasVinculadas.get(datosButacaAccesible);
+		final Collection<DatosButaca> butacasAsociadas = butacasVinculadas.get(datosButacaAccesible);
 
 		final List<Butaca> butacas = new ArrayList<Butaca>();
-		final Butaca butaca = new Butaca(butacaAsociada.getLocalizacion(), String.valueOf(tarifaInvitacion.getId()));
-		butaca.setPrecio(BigDecimal.ZERO);
-		butaca.setFila(String.valueOf(butacaAsociada.getFila()));
-		butaca.setNumero(String.valueOf(butacaAsociada.getNumero()));
-		butacas.add(butaca);
+		for (DatosButaca butacaAsociada : butacasAsociadas) {
+			final Butaca butaca = new Butaca(butacaAsociada.getLocalizacion(), String.valueOf(tarifaInvitacion.getId()));
+			butaca.setPrecio(BigDecimal.ZERO);
+			butaca.setFila(String.valueOf(butacaAsociada.getFila()));
+			butaca.setNumero(String.valueOf(butacaAsociada.getNumero()));
+			butacas.add(butaca);
+		}
 
 		// Hacemos la reserva
 		final String observaciones = mensajeBloqueo(datosButacaAccesible);
@@ -798,7 +796,7 @@ public class ButacasVinculadasService {
 		final List<DatosButaca> butacas = new ArrayList<DatosButaca>();
 
 		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
-		final Collection<DatosButaca> accesibles = butacasAcompanantes.values();
+		final Collection<DatosButaca> accesibles = butacasVinculadas.keySet();
 		if (enVigorReservaButacasAccesibles(sesion)) {
 			butacas.addAll(accesibles);
 		} else {
