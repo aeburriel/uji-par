@@ -54,6 +54,8 @@ public class MapaDrawer implements MapaDrawerInterface
     private BufferedImage butacaOcupadaDiscapacitado;
     private BufferedImage butacaReservadaDiscapacitado;
     private BufferedImage butacaPresentada;
+    private BufferedImage butacaVaciaDiscapacitado;
+    private BufferedImage butacaVaciaAcompanante;
 
     // Para cuando necesitamos saber el (x, y) que ocupa la butaca en la imagen
     private Map<String, DatosButaca> datosButacas;
@@ -158,6 +160,16 @@ public class MapaDrawer implements MapaDrawerInterface
         BufferedImage imgResult = new BufferedImage(imgButacas.getWidth(), imgButacas.getHeight(), imgButacas.getType());
         Graphics2D graphics = imgResult.createGraphics();
         graphics.drawImage(imgButacas, 0, 0, null);
+
+		// Señalamos las butacas accesibles y de acompañante
+		for (final Long idSesion : sesionIds) {
+			for (final DatosButaca butaca : butacasVinculadasService.getButacasAccesibles(idSesion)) {
+				graphics.drawImage(butacaVaciaDiscapacitado, butaca.getxIni(), butaca.getyIni(), null);
+			}
+			for (final DatosButaca butaca : butacasVinculadasService.getButacasAcompanantes(idSesion)) {
+				graphics.drawImage(butacaVaciaAcompanante, butaca.getxIni(), butaca.getyIni(), null);
+			}
+		}
 
         for (String localizacion : getLocalizacionesEnImagen(localizacionDeImagen))
         {
@@ -286,6 +298,16 @@ public class MapaDrawer implements MapaDrawerInterface
 				File f = new File(IMAGES_PATH + "/presentada.png");
 				if (f.exists())
 					butacaPresentada = ImageIO.read(f);
+			}
+			if (butacaVaciaDiscapacitado == null) {
+				File f = new File(IMAGES_PATH + "/vaciaDiscapacitado.png");
+				if (f.exists())
+					butacaVaciaDiscapacitado = ImageIO.read(f);
+			}
+			if (butacaVaciaAcompanante == null) {
+				File f = new File(IMAGES_PATH + "/vaciaAcompanante.png");
+				if (f.exists())
+					butacaVaciaAcompanante = ImageIO.read(f);
 			}
 		}
     }
