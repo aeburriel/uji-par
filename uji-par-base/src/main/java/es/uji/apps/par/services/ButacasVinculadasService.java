@@ -96,7 +96,7 @@ public class ButacasVinculadasService {
 		if (butaca == null) {
 			return MENSAJE_BLOQUEO;
 		} else {
-			return MENSAJE_BLOQUEO + String.format(" %s_%s_%s", butaca.getLocalizacion(), butaca.getFila(), butaca.getNumero());
+			return MENSAJE_BLOQUEO + String.format(" %s_%s_%s ", butaca.getLocalizacion(), butaca.getFila(), butaca.getNumero());
 		}
 	}
 
