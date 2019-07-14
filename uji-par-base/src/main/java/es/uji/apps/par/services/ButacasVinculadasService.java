@@ -457,16 +457,21 @@ public class ButacasVinculadasService {
 	}
 
 	/**
-	 * Devuelve la butaca asociada a la butaca accesible indicada.
+	 * Devuelve la butaca accesible indicada como DatosButaca.
 	 *
 	 * @param butaca accesible
-	 * @return su butaca "normal" asociada o null si no existe
+	 * @return objeto DatosButaca o null si no es butaca accesible
 	 */
-	private DatosButaca getDatosButacaAsociada(final Butaca butaca) {
+	private DatosButaca getDatosButaca(final Butaca butaca) {
+		if (butaca == null) {
+			return null;
+		}
+		final int fila = Integer.parseInt(butaca.getFila());
+		final int numero = Integer.parseInt(butaca.getNumero());
 		for (final DatosButaca butacaAccesible : butacasAccesiblesPorLocalizacion.get(LOCALIZACION)) {
-			if (butacaAccesible.getLocalizacion().equals(butaca.getLocalizacion())
-					&& butacaAccesible.getFila() == Integer.parseInt(butaca.getFila())
-					&& butacaAccesible.getNumero() == Integer.parseInt(butaca.getNumero())) {
+			if (butacaAccesible.getNumero() == numero
+					&& butacaAccesible.getFila() == fila
+					&& butacaAccesible.getLocalizacion().equals(butaca.getLocalizacion())) {
 				return butacaAccesible;
 			}
 		}
@@ -482,10 +487,10 @@ public class ButacasVinculadasService {
 	 * @return true si la operación se completó con éxito
 	 */
 	private boolean inhabilitaButacasAsociadas(final SesionDTO sesion, final Butaca butaca, final String userUID) {
-		if (butaca == null) {
+		final DatosButaca butacaAsociada = getDatosButaca(butaca);
+		if (butacaAsociada == null) {
 			return false;
 		}
-		final DatosButaca butacaAsociada = getDatosButacaAsociada(butaca);
 
 		return actualizaBloqueoButacasAsociadas(sesion, butacaAsociada, true, userUID);
 	}
