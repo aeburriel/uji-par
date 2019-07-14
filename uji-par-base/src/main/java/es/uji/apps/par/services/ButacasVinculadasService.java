@@ -403,7 +403,7 @@ public class ButacasVinculadasService {
 	}
 
 	/**
-	 * Cambia el estado de la butaca asociada a la butaca accesible
+	 * Cambia el estado de las butacas asociadas a la butaca accesible
 	 *
 	 * @param sesion          del evento
 	 * @param butacaAccesible La butaca accesible
@@ -413,7 +413,7 @@ public class ButacasVinculadasService {
 	 * @return true en caso de éxito
 	 */
 	@Transactional
-	private boolean actualizaBloqueoButacaAsociada(final SesionDTO sesion, final DatosButaca butacaAccesible,
+	private boolean actualizaBloqueoButacasAsociadas(final SesionDTO sesion, final DatosButaca butacaAccesible,
 			final boolean inhabilita, final String userUID) {
 		if (butacaAccesible == null) {
 			return false;
@@ -474,24 +474,24 @@ public class ButacasVinculadasService {
 	}
 
 	/**
-	 * Inhabilita permanentemente la butaca asociada a la butaca accesible indicada.
+	 * Inhabilita permanentemente las butacas asociadas a la butaca accesible indicada.
 	 *
 	 * @param sesion  del evento
 	 * @param butaca  accesible
 	 * @param userUID Identificador del usuario
 	 * @return true si la operación se completó con éxito
 	 */
-	private boolean inhabilitaButacaAsociada(final SesionDTO sesion, final Butaca butaca, final String userUID) {
+	private boolean inhabilitaButacasAsociadas(final SesionDTO sesion, final Butaca butaca, final String userUID) {
 		if (butaca == null) {
 			return false;
 		}
 		final DatosButaca butacaAsociada = getDatosButacaAsociada(butaca);
 
-		return actualizaBloqueoButacaAsociada(sesion, butacaAsociada, true, userUID);
+		return actualizaBloqueoButacasAsociadas(sesion, butacaAsociada, true, userUID);
 	}
 
 	/**
-	 * Inhabilita permanentemente la butaca asociada a la butaca accesible indicada.
+	 * Inhabilita permanentemente las butacas asociadas a la butaca accesible indicada.
 	 * Se tiene que llamar obligatoriamente a este método al completar la compra
 	 * para garantizar que las butacas asociadas a las butacas accesibles se
 	 * bloqueen indefinidamente para la sesión.
@@ -502,7 +502,7 @@ public class ButacasVinculadasService {
 	 * @return true si la operación se completó con éxito
 	 */
 	@Transactional
-	public boolean inhabilitaButacaAsociada(final Long sesionId, final List<Butaca> butacasCompradas, final String userUID) {
+	public boolean inhabilitaButacasAsociadas(final Long sesionId, final List<Butaca> butacasCompradas, final String userUID) {
 		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, userUID);
 		if (!sesion.getParEvento().getAsientosNumerados()) {
 			return false;
@@ -510,7 +510,7 @@ public class ButacasVinculadasService {
 
 		boolean resultado = false;
 		for (final Butaca butaca : butacasCompradas) {
-			if (butaca != null && isButacaAccesible(butaca) && inhabilitaButacaAsociada(sesion, butaca, userUID)) {
+			if (butaca != null && isButacaAccesible(butaca) && inhabilitaButacasAsociadas(sesion, butaca, userUID)) {
 				resultado = true;
 			}
 		}
@@ -542,7 +542,7 @@ public class ButacasVinculadasService {
 			}
 			final DatosButaca butacaAccesible = getButacaAccesible(butaca);
 			if (butacaAccesible != null
-					&& actualizaBloqueoButacaAsociada(compra.getParSesion(), butacaAccesible, false, ADMIN_UID)) {
+					&& actualizaBloqueoButacasAsociadas(compra.getParSesion(), butacaAccesible, false, ADMIN_UID)) {
 				resultado = true;
 			}
 		}
@@ -576,10 +576,10 @@ public class ButacasVinculadasService {
 			}
 			final DatosButaca butacaAccesible = getButacaAccesible(butaca);
 			if (butacaAccesible != null && enVigorReservaButacasAccesibles(sesion, compra.getFecha())) {
-				if (actualizaBloqueoButacaAsociada(compra.getParSesion(), butacaAccesible, true, ADMIN_UID)) {
+				if (actualizaBloqueoButacasAsociadas(compra.getParSesion(), butacaAccesible, true, ADMIN_UID)) {
 					resultado = true;
 				} else {
-					// La butaca asociada está bloqueada permanentemente por otra compra, no podemos continuar
+					// Las butacas asociadas están bloqueadas permanentemente por otra compra, no podemos continuar
 					throw new ButacaOcupadaAlActivarException(butaca
 							.getParSesion().getId(), butaca
 							.getParLocalizacion().getCodigo(),
@@ -639,7 +639,7 @@ public class ButacasVinculadasService {
 				}
 
 				// Ajustamos el bloqueo-reserva de la butaca accesible
-				if (actualizaBloqueoButacaAsociada(compra.getParSesion(), butacaAccesible, false, ADMIN_UID)) {
+				if (actualizaBloqueoButacasAsociadas(compra.getParSesion(), butacaAccesible, false, ADMIN_UID)) {
 					resultado = true;
 				}
 			}
