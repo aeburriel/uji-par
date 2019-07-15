@@ -149,7 +149,6 @@ public class ComprasService
         resultadoCompra.setCorrecta(true);
         resultadoCompra.setId(compraDTO.getId());
         resultadoCompra.setUuid(compraDTO.getUuid());
-        butacasVinculadasService.inhabilitaButacasAsociadas(sesionId, butacasSeleccionadas, userUID);
 
         if (taquilla) {
             SesionDTO sesionDTO = sesionesDAO.getSesion(sesionId, userUID);

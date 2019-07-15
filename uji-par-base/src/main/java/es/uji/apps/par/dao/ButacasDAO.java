@@ -221,6 +221,7 @@ public class ButacasDAO extends BaseDAO
                 entityManager.flush();
 				entityManager.clear();
             }
+            butacasVinculadasService.inhabilitaButacasAsociadas(sesionId, butacas, userUID);
         }
         catch (Exception e)
         {
