@@ -163,11 +163,13 @@ public class MapaDrawer implements MapaDrawerInterface
 
 		// Señalamos las butacas accesibles y de acompañante
 		for (final Long idSesion : sesionIds) {
-			for (final DatosButaca butaca : butacasVinculadasService.getButacasAccesibles(idSesion)) {
-				graphics.drawImage(butacaVaciaDiscapacitado, butaca.getxIni(), butaca.getyIni(), null);
-			}
-			for (final DatosButaca butaca : butacasVinculadasService.getButacasAcompanantes(idSesion)) {
-				graphics.drawImage(butacaVaciaAcompanante, butaca.getxIni(), butaca.getyIni(), null);
+			if (butacasVinculadasService.enVigorReservaButacasAccesibles(idSesion)) {
+				for (final DatosButaca butaca : butacasVinculadasService.getButacasAccesibles(idSesion)) {
+					graphics.drawImage(butacaVaciaDiscapacitado, butaca.getxIni(), butaca.getyIni(), null);
+				}
+				for (final DatosButaca butaca : butacasVinculadasService.getButacasAcompanantes(idSesion)) {
+					graphics.drawImage(butacaVaciaAcompanante, butaca.getxIni(), butaca.getyIni(), null);
+				}
 			}
 		}
 

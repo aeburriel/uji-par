@@ -260,6 +260,19 @@ public class ButacasVinculadasService {
 	}
 
 	/**
+	 * Determina si en el momento de la llamada están en vigor la exclusividad de
+	 * las butacas accesibles
+	 *
+	 * @param sesionId identificador de sesión
+	 * @return true si la exclusividad de butacas accesibles (dos butacas
+	 *         vinculadas) están en vigor
+	 */
+	public boolean enVigorReservaButacasAccesibles(final long sesionId) {
+		final SesionDTO sesionDTO = sesionesDAO.getSesion(sesionId, ADMIN_UID);
+		return enVigorReservaButacasAccesibles(sesionDTO);
+	}
+
+	/**
 	 * Determina si en la fecha indicada están en vigor la exclusividad de
 	 * las butacas accesibles
 	 *
