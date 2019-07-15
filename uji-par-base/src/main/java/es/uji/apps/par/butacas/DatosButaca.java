@@ -16,8 +16,13 @@ public class DatosButaca
     public static final String TIPO_ASOCIADA = "asociada";
     public static final String TIPO_DISCAPACIDAD = "discapacidad";
 
-    public DatosButaca()
-    {
+    public DatosButaca() {
+    }
+
+    public DatosButaca(final String localizacion, final int fila, final int numero) {
+    	this.localizacion = localizacion;
+    	this.fila = fila;
+    	this.numero = numero;
     }
 
     @Override

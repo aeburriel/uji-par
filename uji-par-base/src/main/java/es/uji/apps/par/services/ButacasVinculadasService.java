@@ -16,6 +16,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -749,7 +750,8 @@ public class ButacasVinculadasService {
 	 * En particular se comprueba que:
 	 * 1. Sea una sesión numerada.
 	 * 2. Los bloqueos de butacas accesibles estén en vigor para la sesión.
-	 * 3. No haya ninguna butaca de acompañante elegida sin su correspondiente butaca accesible.
+	 * 3. Todas las butacas asociadas formen parte del bloqueo-reserva.
+	 * 4. No haya ninguna butaca de acompañante elegida sin su correspondiente butaca accesible.
 	 *
 	 * @param sesionId Identificador de sesión del evento
 	 * @param butacas  Lista con las butacas seleccionadas
@@ -770,12 +772,33 @@ public class ButacasVinculadasService {
 			return true;
 		}
 
+		// Si es butaca accesible,
+		// el bloqueo-reserva debe contener todas las butacas asociadas
+		final DatosButaca butacaAccesible = getDatosButaca(butaca);
+		if (butacaAccesible != null && enVigorReservaButacasAccesibles(sesion)) {
+			final List<Compra> bloqueos = getReservasBloqueoButacaAccesible(sesion, butacaAccesible);
+			final Collection<DatosButaca> asociadasRealidad = butacasVinculadas.get(butacaAccesible);
+			final Set<DatosButaca> asociadasBloqueo = new HashSet<DatosButaca>();
+			for (final Compra bloqueo : bloqueos) {
+				final CompraDTO compraDTO = comprasService.getCompraById(bloqueo.getId());
+				for (final ButacaDTO butacaBloqueada : compraDTO.getParButacas()) {
+					DatosButaca bloqueada = new DatosButaca(butacaBloqueada.getParLocalizacion().getCodigo(),
+							Integer.parseInt(butacaBloqueada.getFila()), Integer.parseInt(butacaBloqueada.getNumero()));
+					asociadasBloqueo.add(bloqueada);
+				}
+			}
+
+			if (!asociadasBloqueo.containsAll(asociadasRealidad)) {
+				return false;
+			}
+		}
+
 		// Si la butaca es de acompañante, no se permite si no lo está también su butaca accesible
 		for (final DatosButaca butacaAcompanante : butacasAcompanantes.keySet()) {
 			if (isButacaEqual(butacaAcompanante, butaca)) {
-				final DatosButaca butacaAccesible = butacasAcompanantes.get(butacaAcompanante);
+				final DatosButaca butacaAccesibleAsociada = butacasAcompanantes.get(butacaAcompanante);
 				for (final Butaca candidata : butacas) {
-					if (candidata != null && isButacaEqual(butacaAccesible, candidata)) {
+					if (candidata != null && isButacaEqual(butacaAccesibleAsociada, candidata)) {
 						return true;
 					}
 				}
