@@ -28,8 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSetMultimap;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -80,10 +80,10 @@ public class ButacasVinculadasService {
 	private static final String TARIFA_INVITACION = "Invitació";
 	private static final Date FECHAINFINITO = new Date(95649033600000L);
 
-	private Multimap<String, DatosButaca> butacasAccesiblesPorLocalizacion = MultimapBuilder.hashKeys().arrayListValues().build();
-	private Multimap<String, DatosButaca> butacasAcompanantesPorLocalizacion = MultimapBuilder.hashKeys().arrayListValues().build();
-	private Multimap<String, DatosButaca> butacasAsociadasPorLocalizacion = MultimapBuilder.hashKeys().arrayListValues().build();
-	private Multimap<DatosButaca, DatosButaca> butacasVinculadas = MultimapBuilder.hashKeys().arrayListValues().build();
+	private ImmutableMultimap<String, DatosButaca> butacasAccesiblesPorLocalizacion;
+	private ImmutableMultimap<String, DatosButaca> butacasAcompanantesPorLocalizacion;
+	private ImmutableMultimap<String, DatosButaca> butacasAsociadasPorLocalizacion;
+	private ImmutableMultimap<DatosButaca, DatosButaca> butacasVinculadas;
 	private Map<DatosButaca, DatosButaca> butacasAcompanantes = new HashMap<DatosButaca, DatosButaca>();
 	private TarifaDTO tarifaInvitacion;
 
@@ -288,35 +288,43 @@ public class ButacasVinculadasService {
 	 */
 	@PostConstruct
 	private void leeJsonsButacas() throws IOException {
-		if (!butacasVinculadas.isEmpty()) {
+		if (butacasVinculadas != null) {
 			return;
 		}
 
 		// Cargamos JSONs de las butacas vinculadas a butacas para discapacitados (van por parejas)
+		final ImmutableMultimap.Builder<String, DatosButaca> baccBuilder = ImmutableSetMultimap.builder();
+		final ImmutableMultimap.Builder<String, DatosButaca> bacoBuilder = ImmutableSetMultimap.builder();
+		final ImmutableMultimap.Builder<String, DatosButaca> basoBuilder = ImmutableSetMultimap.builder();
 		for (final String localizacionSala : configuration.getImagenesFondo()) {
 			for (final String localizacionZona : configuration.getLocalizacionesEnImagen(localizacionSala)) {
 				for (final DatosButaca butaca : parseaJsonButacas(localizacionZona)) {
 					if (butaca.isDiscapacidad()) {
-						butacasAccesiblesPorLocalizacion.put(localizacionSala, butaca);
+						baccBuilder.put(localizacionSala, butaca);
 					} else if (butaca.isAsociada()) {
-						butacasAsociadasPorLocalizacion.put(localizacionSala, butaca);
+						basoBuilder.put(localizacionSala, butaca);
 					} else if (butaca.isAcompanante()) {
-						butacasAcompanantesPorLocalizacion.put(localizacionSala, butaca);
+						bacoBuilder.put(localizacionSala, butaca);
 					}
 				}
 			}
 		}
+		butacasAccesiblesPorLocalizacion = baccBuilder.build();
+		butacasAcompanantesPorLocalizacion = bacoBuilder.build();
+		butacasAsociadasPorLocalizacion = basoBuilder.build();
 
 		// Vinculamos cada butaca accesible con su butaca asociada
+		final ImmutableMultimap.Builder<DatosButaca, DatosButaca> bvBuilder = ImmutableSetMultimap.builder();
 		for (final DatosButaca butacaAccesible : butacasAccesiblesPorLocalizacion.get(LOCALIZACION)) {
 			for (final DatosButaca butaca : butacasAsociadasPorLocalizacion.get(LOCALIZACION)) {
 				if (butaca.getNumero_enlazada() == butacaAccesible.getNumero()
 						&& butaca.getFila() == butacaAccesible.getFila()
 						&& butaca.getLocalizacion().equals(butacaAccesible.getLocalizacion())) {
-					butacasVinculadas.put(butacaAccesible, butaca);
+					bvBuilder.put(butacaAccesible, butaca);
 				}
 			}
 		}
+		butacasVinculadas = bvBuilder.build();
 
 		// Vinculamos cada butaca de acompañante con su butaca accesible
 		for (final DatosButaca butacaAccesible : butacasVinculadas.keySet()) {
