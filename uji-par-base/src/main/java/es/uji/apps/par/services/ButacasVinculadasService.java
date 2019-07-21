@@ -791,8 +791,7 @@ public class ButacasVinculadasService {
 			for (final Compra bloqueo : bloqueos) {
 				final CompraDTO compraDTO = comprasService.getCompraById(bloqueo.getId());
 				for (final ButacaDTO butacaBloqueada : compraDTO.getParButacas()) {
-					DatosButaca bloqueada = new DatosButaca(butacaBloqueada.getParLocalizacion().getCodigo(),
-							Integer.parseInt(butacaBloqueada.getFila()), Integer.parseInt(butacaBloqueada.getNumero()));
+					DatosButaca bloqueada = new DatosButaca(butacaBloqueada);
 					asociadasBloqueo.add(bloqueada);
 				}
 			}
