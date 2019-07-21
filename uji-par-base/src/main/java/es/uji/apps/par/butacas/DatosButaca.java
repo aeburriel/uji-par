@@ -32,7 +32,10 @@ public class DatosButaca
     	this.localizacion = butaca.getLocalizacion();
     	this.fila = Integer.parseInt(butaca.getFila());
     	this.numero = Integer.parseInt(butaca.getNumero());
-    	this.numero_enlazada = Integer.parseInt(butaca.getNumero_enlazada());
+    	try {
+    		this.numero_enlazada = Integer.parseInt(butaca.getNumero_enlazada());
+    	} catch (NumberFormatException e) {
+    	}
     }
 
     public DatosButaca(final ButacaDTO butaca) {
