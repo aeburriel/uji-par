@@ -1,5 +1,8 @@
 package es.uji.apps.par.butacas;
 
+import es.uji.apps.par.db.ButacaDTO;
+import es.uji.apps.par.model.Butaca;
+
 public class DatosButaca
 {
     private int fila;
@@ -23,6 +26,19 @@ public class DatosButaca
     	this.localizacion = localizacion;
     	this.fila = fila;
     	this.numero = numero;
+    }
+
+    public DatosButaca(final Butaca butaca) {
+    	this.localizacion = butaca.getLocalizacion();
+    	this.fila = Integer.parseInt(butaca.getFila());
+    	this.numero = Integer.parseInt(butaca.getNumero());
+    	this.numero_enlazada = Integer.parseInt(butaca.getNumero_enlazada());
+    }
+
+    public DatosButaca(final ButacaDTO butaca) {
+    	this.localizacion = butaca.getParLocalizacion().getCodigo();
+    	this.fila = Integer.parseInt(butaca.getFila());
+    	this.numero = Integer.parseInt(butaca.getNumero());
     }
 
     @Override

@@ -118,13 +118,9 @@ public class ButacasVinculadasService {
 	 * @param butaca
 	 * @return true si lo es
 	 */
-	private boolean isButacaAccesible(Butaca butaca) {
-		for (final DatosButaca candidata : butacasVinculadas.keySet()) {
-			if (isButacaEqual(candidata, butaca)) {
-				return true;
-			}
-		}
-		return false;
+	private boolean isButacaAccesible(final Butaca butaca) {
+		final DatosButaca datosButaca = new DatosButaca(butaca);
+		return butacasVinculadas.containsKey(datosButaca);
 	}
 
 	/**
