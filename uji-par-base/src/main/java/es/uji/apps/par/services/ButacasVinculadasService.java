@@ -15,10 +15,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -28,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.gson.Gson;
@@ -84,7 +83,7 @@ public class ButacasVinculadasService {
 	private ImmutableMultimap<String, DatosButaca> butacasAcompanantesPorLocalizacion;
 	private ImmutableMultimap<String, DatosButaca> butacasAsociadasPorLocalizacion;
 	private ImmutableMultimap<DatosButaca, DatosButaca> butacasVinculadas;
-	private Map<DatosButaca, DatosButaca> butacasAcompanantes = new HashMap<DatosButaca, DatosButaca>();
+	private ImmutableBiMap<DatosButaca, DatosButaca> butacasAcompanantes;
 	private TarifaDTO tarifaInvitacion;
 
 	/**
@@ -186,14 +185,7 @@ public class ButacasVinculadasService {
 	 * @return la butaca de acompañante vinculada o null si no se encuentra
 	 */
 	private DatosButaca getButacaAcompanantePorAccesible(final DatosButaca accesible) {
-		for (final DatosButaca acompanante : butacasAcompanantes.keySet()) {
-			final DatosButaca candidataAccesible = butacasAcompanantes.get(acompanante);
-			if (candidataAccesible.equals(accesible)) {
-				return acompanante;
-			}
-		}
-
-		return null;
+		return butacasAcompanantes.inverse().get(accesible);
 	}
 
 	/**
@@ -327,16 +319,18 @@ public class ButacasVinculadasService {
 		butacasVinculadas = bvBuilder.build();
 
 		// Vinculamos cada butaca de acompañante con su butaca accesible
+		final ImmutableBiMap.Builder<DatosButaca, DatosButaca> baBuilder = ImmutableBiMap.builder();
 		for (final DatosButaca butacaAccesible : butacasVinculadas.keySet()) {
 			for (final DatosButaca butaca : butacasAcompanantesPorLocalizacion.get(LOCALIZACION)) {
 				if (butaca.getNumero_enlazada() == butacaAccesible.getNumero()
 						&& butaca.getFila() == butacaAccesible.getFila()
 						&& butaca.getLocalizacion().equals(butacaAccesible.getLocalizacion())) {
-					butacasAcompanantes.put(butaca, butacaAccesible);
+					baBuilder.put(butaca, butacaAccesible);
 					break; // Continuamos con la siguiente butaca, ya que van por parejas
 				}
 			}
 		}
+		butacasAcompanantes = baBuilder.build();
 
 		// Obtenemos la tarifa Invitación
 		for (final TarifaDTO tarifa : tarifasDAO.getAll(ADMIN_UID)) {
@@ -810,16 +804,14 @@ public class ButacasVinculadasService {
 		}
 
 		// Si la butaca es de acompañante, no se permite si no lo está también su butaca accesible
-		for (final DatosButaca butacaAcompanante : butacasAcompanantes.keySet()) {
-			if (isButacaEqual(butacaAcompanante, butaca)) {
-				final DatosButaca butacaAccesibleAsociada = butacasAcompanantes.get(butacaAcompanante);
-				for (final Butaca candidata : butacas) {
-					if (candidata != null && isButacaEqual(butacaAccesibleAsociada, candidata)) {
-						return true;
-					}
+		final DatosButaca butacaAccesibleAsociada = butacasAcompanantes.get(new DatosButaca(butaca));
+		if (butacaAccesibleAsociada != null) {
+			for (final Butaca candidata : butacas) {
+				if (candidata != null && isButacaEqual(butacaAccesibleAsociada, candidata)) {
+					return true;
 				}
-				return false;
 			}
+			return false;
 		}
 		return true;
 	}
