@@ -513,14 +513,10 @@ public class ButacasVinculadasService {
 		if (butaca == null) {
 			return null;
 		}
-		final int fila = Integer.parseInt(butaca.getFila());
-		final int numero = Integer.parseInt(butaca.getNumero());
-		for (final DatosButaca butacaAccesible : butacasAccesiblesPorLocalizacion.get(LOCALIZACION)) {
-			if (butacaAccesible.getNumero() == numero
-					&& butacaAccesible.getFila() == fila
-					&& butacaAccesible.getLocalizacion().equals(butaca.getLocalizacion())) {
-				return butacaAccesible;
-			}
+
+		final DatosButaca candidata = new DatosButaca(butaca);
+		if (butacasVinculadas.containsKey(candidata)) {
+			return candidata;
 		}
 		return null;
 	}
