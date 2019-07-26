@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.gson.Gson;
@@ -155,14 +156,11 @@ public class ButacasVinculadasService {
 	 * @return la butaca accesible o null si no lo es
 	 */
 	private DatosButaca getButacaAccesiblePorAsociada(ButacaDTO butaca) {
-		for (final DatosButaca accesible : butacasVinculadas.keySet()) {
-			for (final DatosButaca candidata : butacasVinculadas.get(accesible)) {
-				if (isButacaEqual(candidata, butaca)) {
-					return accesible;
-				}
-			}
+		ImmutableList<DatosButaca> butacas = butacasVinculadas.inverse().get(new DatosButaca(butaca)).asList();
+		if (butacas.isEmpty()) {
+			return null;
 		}
-		return null;
+		return butacas.get(0);
 	}
 
 	/**
