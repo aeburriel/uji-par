@@ -891,7 +891,7 @@ public class ButacasVinculadasService {
 	}
 
 	/**
-	 * Determina si la butaca en el evento indicada es de discapacitado (ancho doble)
+	 * Determina si la butaca en el evento indicada es de discapacitado (ancho múltiple)
 	 *
 	 * @param sesionId Identificador de sesión del evento
 	 * @param butaca
