@@ -856,10 +856,7 @@ public class ButacasVinculadasService {
 		// Si la reserva de butacas accesibles está en vigor,
 		// comprobamos que el destino no sea butaca accesible o de acompañante
 		if (enVigorReservaButacasAccesibles(compra.getParSesion())) {
-			final DatosButaca candidata = new DatosButaca();
-			candidata.setLocalizacion(butaca.getParLocalizacion().getCodigo());
-			candidata.setFila(Integer.parseInt(fila));
-			candidata.setNumero(Integer.parseInt(numero));
+			final DatosButaca candidata = new DatosButaca(butaca);
 
 			if (butacasVinculadas.containsKey(candidata) || butacasAcompanantes.containsKey(candidata)) {
 				return false;
