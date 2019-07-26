@@ -142,10 +142,9 @@ public class ButacasVinculadasService {
 	 * @return la butaca accesible o null si no lo es
 	 */
 	private DatosButaca getButacaAccesible(ButacaDTO butaca) {
-		for (final DatosButaca candidata : butacasVinculadas.keySet()) {
-			if (isButacaEqual(candidata, butaca)) {
-				return candidata;
-			}
+		final DatosButaca candidata = new DatosButaca(butaca);
+		if (butacasVinculadas.containsKey(candidata)) {
+			return candidata;
 		}
 		return null;
 	}
@@ -169,10 +168,9 @@ public class ButacasVinculadasService {
 	 * @return la butaca de acompañante o null si no lo es
 	 */
 	private DatosButaca getButacaAcompanante(final ButacaDTO butaca) {
-		for (final DatosButaca candidata : butacasAcompanantes.keySet()) {
-			if (isButacaEqual(candidata, butaca)) {
-				return candidata;
-			}
+		final DatosButaca candidata = new DatosButaca(butaca);
+		if (butacasAcompanantes.containsKey(candidata)) {
+			return candidata;
 		}
 		return null;
 	}
