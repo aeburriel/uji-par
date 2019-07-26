@@ -156,7 +156,7 @@ public class ButacasVinculadasService {
 	 * @return la butaca accesible o null si no lo es
 	 */
 	private DatosButaca getButacaAccesiblePorAsociada(ButacaDTO butaca) {
-		ImmutableList<DatosButaca> butacas = butacasVinculadas.inverse().get(new DatosButaca(butaca)).asList();
+		final ImmutableList<DatosButaca> butacas = butacasVinculadas.inverse().get(new DatosButaca(butaca)).asList();
 		if (butacas.isEmpty()) {
 			return null;
 		}
