@@ -897,6 +897,10 @@ public class ButacasVinculadasService {
 			return false;
 		}
 
+		if (!butacasVinculadas.containsKey(butaca)) {
+			return false;
+		}
+
 		final List<Compra> reservasBloqueo = getReservasBloqueoButacaAccesible(sesion, butaca);
 		for (final Compra bloqueo : reservasBloqueo) {
 			if (isBloqueoVentaAccesible(bloqueo))
