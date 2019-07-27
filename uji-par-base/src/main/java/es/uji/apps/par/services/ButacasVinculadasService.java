@@ -301,7 +301,7 @@ public class ButacasVinculadasService {
 		butacasAcompanantesPorLocalizacion = bacoBuilder.build();
 		butacasAsociadasPorLocalizacion = basoBuilder.build();
 
-		// Vinculamos cada butaca accesible con su butaca asociada
+		// Vinculamos cada butaca accesible con su butacas asociadas
 		final ImmutableMultimap.Builder<DatosButaca, DatosButaca> bvBuilder = ImmutableSetMultimap.builder();
 		for (final DatosButaca butacaAccesible : butacasAccesiblesPorLocalizacion.get(LOCALIZACION)) {
 			for (final DatosButaca butaca : butacasAsociadasPorLocalizacion.get(LOCALIZACION)) {
