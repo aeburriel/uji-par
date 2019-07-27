@@ -778,7 +778,7 @@ public class ButacasVinculadasService {
 		// Si es butaca accesible,
 		// el bloqueo-reserva debe contener todas las butacas asociadas
 		final DatosButaca butacaAccesible = getDatosButaca(butaca);
-		if (butacaAccesible != null && enVigorReservaButacasAccesibles(sesion)) {
+		if (butacaAccesible != null) {
 			final List<Compra> bloqueos = getReservasBloqueoButacaAccesible(sesion, butacaAccesible);
 			final Collection<DatosButaca> asociadasRealidad = butacasVinculadas.get(butacaAccesible);
 			final Set<DatosButaca> asociadasBloqueo = new HashSet<DatosButaca>();
