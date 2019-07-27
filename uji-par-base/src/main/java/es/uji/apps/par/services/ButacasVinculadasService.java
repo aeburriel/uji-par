@@ -154,6 +154,18 @@ public class ButacasVinculadasService {
 	}
 
 	/**
+	 * Comprueba si en el momento de la llamada se está cambiando el aforo en la
+	 * sesión indicada
+	 *
+	 * @param sesion del evento
+	 * @return true si el aforo está en proceso de cambio
+	 */
+	public boolean enCambioAforo(final long sesionId) {
+		final SesionDTO sesionDTO = sesionesDAO.getSesion(sesionId, ADMIN_UID);
+		return enCambioAforo(sesionDTO);
+	}
+
+	/**
 	 * Determina si la butaca indicada es accesible
 	 * @param butaca
 	 * @return true si lo es
@@ -960,14 +972,18 @@ public class ButacasVinculadasService {
 	 * la llamada
 	 *
 	 * @param sesionId Identificador de sesión del evento
+	 * @param todas    true si siempre hay que devolver todas las butacas accesibles
+	 *                 potenciales. En caso contrario, fuera del periodo de
+	 *                 exlusividad, solo se devuelven las butacas accesibles
+	 *                 asignadas.
 	 * @return lista con las butacas de discapacitado o null en caso de error
 	 */
-	public List<DatosButaca> getButacasAccesibles(final long sesionId) {
+	public List<DatosButaca> getButacasAccesibles(final long sesionId, final boolean todas) {
 		final List<DatosButaca> butacas = new ArrayList<DatosButaca>();
 
 		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
 		final Collection<DatosButaca> accesibles = butacasVinculadas.keySet();
-		if (enVigorReservaButacasAccesibles(sesion)) {
+		if (todas || enVigorReservaButacasAccesibles(sesion)) {
 			butacas.addAll(accesibles);
 		} else {
 			for (final DatosButaca butaca : accesibles) {

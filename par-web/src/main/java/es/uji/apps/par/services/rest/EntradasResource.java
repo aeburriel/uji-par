@@ -674,7 +674,7 @@ public class EntradasResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response butacasAccesibles(@PathParam("id") Integer idSesion) {
     	try {
-    		List<DatosButaca> butacas = butacasVinculadasService.getButacasAccesibles(idSesion);
+    		List<DatosButaca> butacas = butacasVinculadasService.getButacasAccesibles(idSesion, false);
     		return Response.ok().entity(new RestResponse(true, butacas, butacas.size())).build();
     	} catch (Exception e) {
     		return Response.status(404).build();
