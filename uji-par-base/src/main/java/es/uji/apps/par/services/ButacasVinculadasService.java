@@ -79,6 +79,8 @@ public class ButacasVinculadasService {
 	private static final String MENSAJE_BLOQUEO = "Butaca discapacitado";
 	private static final String TARIFA_INVITACION = "Invitació";
 	private static final Date FECHAINFINITO = new Date(95649033600000L);
+	private static final int CADUCIDAD_ONLINE_MINUTOS = 30;
+	private static final long PERIODO_TAREA_BLOQUEOS = 90000L;
 
 	private ImmutableMultimap<String, DatosButaca> butacasAccesiblesPorLocalizacion;
 	private ImmutableMultimap<String, DatosButaca> butacasAcompanantesPorLocalizacion;
@@ -111,6 +113,44 @@ public class ButacasVinculadasService {
 	private Date fechaFinReservaButacasAccesibles(final SesionDTO sesion) {
 		return DateUtils.addMinutes(sesion.getFechaCelebracion(),
 				-configuration.getMargenFinButacasAccesiblesMinutos());
+	}
+
+	/**
+	 * Calcula la fecha de fin de bloqueo de las butacas accesibles para la sesión
+	 * indicada
+	 *
+	 * @param sesion del evento
+	 * @return La fecha y hora de fin del bloqueo de butacas
+	 */
+	private Date fechaFinBloqueoButacasAccesibles(final SesionDTO sesion) {
+		final Date finalAccesible = fechaFinReservaButacasAccesibles(sesion);
+		final Date finalOnline = sesion.getFechaFinVentaOnline();
+
+		if ((finalAccesible.getTime() - finalOnline.getTime()) < (CADUCIDAD_ONLINE_MINUTOS * 60000L)) {
+			return DateUtils.addMinutes(finalAccesible, CADUCIDAD_ONLINE_MINUTOS);
+		}
+		return finalAccesible;
+	}
+
+	/**
+	 * Comprueba si en el momento de la llamada se está cambiando el aforo en la
+	 * sesión indicada
+	 *
+	 * @param sesion del evento
+	 * @return true si el aforo está en proceso de cambio
+	 */
+	private boolean enCambioAforo(final SesionDTO sesion) {
+		final long finAccesible = fechaFinReservaButacasAccesibles(sesion).getTime();
+		final long finReserva = fechaFinBloqueoButacasAccesibles(sesion).getTime();
+
+		// Si coinciden, es porque el cambio se hace con el margen requerido
+		// después del fin de venta online
+		if (finAccesible == finReserva) {
+			return false;
+		}
+
+		final long ahora = new Date().getTime();
+		return ahora >= finAccesible && ahora <= (finReserva + PERIODO_TAREA_BLOQUEOS);
 	}
 
 	/**
@@ -368,7 +408,7 @@ public class ButacasVinculadasService {
 	public boolean actualizaBloqueoButacasVinculadasDiscapacidad(final SesionDTO sesion, final String userUID) {
 		// Buscamos las butacas a bloquear
 		final List<Compra> bloqueos = getReservasBloqueoButacaAccesible(sesion, null);
-		final Date hasta = fechaFinReservaButacasAccesibles(sesion);
+		final Date hasta = fechaFinBloqueoButacasAccesibles(sesion);
 
 		boolean resultado = false;
 		for (Compra bloqueo : bloqueos) {
@@ -426,7 +466,7 @@ public class ButacasVinculadasService {
 			return false;
 		}
 		final Date desde = new Date();
-		final Date hasta = fechaFinReservaButacasAccesibles(sesion);
+		final Date hasta = fechaFinBloqueoButacasAccesibles(sesion);
 		final Collection<DatosButaca> butacasAsociadas = butacasVinculadas.get(datosButacaAccesible);
 
 		final List<Butaca> butacas = new ArrayList<Butaca>();
@@ -476,7 +516,7 @@ public class ButacasVinculadasService {
 			if (inhabilita) {
 				fecha = FECHAINFINITO;
 			} else {
-				fecha = fechaFinReservaButacasAccesibles(sesionesDAO.getSesion(sesion.getId(), userUID));
+				fecha = fechaFinBloqueoButacasAccesibles(sesionesDAO.getSesion(sesion.getId(), userUID));
 			}
 			if (!comprasDAO.actualizarFechaCaducidad(bloqueo.getId(), fecha)) {
 				resultado = false;
@@ -770,6 +810,13 @@ public class ButacasVinculadasService {
 			return true;
 		}
 
+		final DatosButaca butacaAccesible = getDatosButaca(butaca);
+
+		// Si el aforo está en transición, no permitimos butacas accesibles
+		if (enCambioAforo(sesion) && butacaAccesible != null) {
+			return false;
+		}
+
 		// Si ya ha finalizado la reserva de butacas accesibles, no hay nada más que comprobar
 		if (!enVigorReservaButacasAccesibles(sesion)) {
 			return true;
@@ -777,7 +824,6 @@ public class ButacasVinculadasService {
 
 		// Si es butaca accesible,
 		// el bloqueo-reserva debe contener todas las butacas asociadas
-		final DatosButaca butacaAccesible = getDatosButaca(butaca);
 		if (butacaAccesible != null) {
 			final List<Compra> bloqueos = getReservasBloqueoButacaAccesible(sesion, butacaAccesible);
 			final Collection<DatosButaca> asociadasRealidad = butacasVinculadas.get(butacaAccesible);
