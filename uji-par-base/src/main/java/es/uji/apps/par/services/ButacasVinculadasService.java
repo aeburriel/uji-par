@@ -697,12 +697,13 @@ public class ButacasVinculadasService {
 				}
 
 				final DatosButaca butacaAcompanante = getButacaAcompanantePorAccesible(butacaAccesible);
-				final Compra compraAcompanante = butacasService.getCompra(sesion.getId(), butacaAcompanante.getLocalizacion(), String.valueOf(butacaAcompanante.getFila()), String.valueOf(butacaAcompanante.getNumero()));
-				if (compraAcompanante != null) {
-					throw new ButacaOcupadaAlActivarException(sesion.getId(), butacaAcompanante.getLocalizacion(),
-							String.valueOf(butacaAcompanante.getFila()), String.valueOf(butacaAcompanante.getNumero()), "",
-							butaca.getParCompra().getTaquilla());
-
+				if (butacaAcompanante != null) {
+					final Compra compraAcompanante = butacasService.getCompra(sesion.getId(), butacaAcompanante.getLocalizacion(), String.valueOf(butacaAcompanante.getFila()), String.valueOf(butacaAcompanante.getNumero()));
+					if (compraAcompanante != null) {
+						throw new ButacaOcupadaAlActivarException(sesion.getId(), butacaAcompanante.getLocalizacion(),
+								String.valueOf(butacaAcompanante.getFila()), String.valueOf(butacaAcompanante.getNumero()), "",
+								butaca.getParCompra().getTaquilla());
+					}
 				}
 			}
 		}
@@ -767,25 +768,27 @@ public class ButacasVinculadasService {
 				// Hay que comprobar que si esta butaca accesible tiene también una butaca de acompañante comprada,
 				// esta esté también incluída en la lista de butacas a cancelar
 				final DatosButaca butacaAcompanante = getButacaAcompanantePorAccesible(butacaAccesible);
-				boolean encontrada = false;
-				for (final Long idCandidata : idsButacas) {
-					if (idButaca.equals(idCandidata)) {
-						continue;
+				if (butacaAcompanante != null) {
+					boolean encontrada = false;
+					for (final Long idCandidata : idsButacas) {
+						if (idButaca.equals(idCandidata)) {
+							continue;
+						}
+
+						final ButacaDTO candidata = butacasDAO.getButaca(idCandidata);
+						if (candidata != null && isButacaEqual(butacaAcompanante, candidata)) {
+							encontrada = true;
+							break;
+						}
 					}
 
-					final ButacaDTO candidata = butacasDAO.getButaca(idCandidata);
-					if (isButacaEqual(butacaAcompanante, candidata)) {
-						encontrada = true;
-						break;
-					}
-				}
-
-				// Si la butaca de acompanante no está entre las butacas a borrar,
-				// hay que comprobar si forma parte de esta venta
-				if (!encontrada) {
-					for (final ButacaDTO butacaComprada : compra.getParButacas()) {
-						if (!butacaComprada.getAnulada() && butacaAcompanante.equals(getButacaAcompanante(butacaComprada))) {
-							throw new ButacaAccesibleAnularSinAnularButacaAcompanante(compra.getId(), butacaAccesible, butacaAcompanante);
+					// Si la butaca de acompanante no está entre las butacas a borrar,
+					// hay que comprobar si forma parte de esta venta
+					if (!encontrada) {
+						for (final ButacaDTO butacaComprada : compra.getParButacas()) {
+							if (!butacaComprada.getAnulada() && butacaAcompanante.equals(getButacaAcompanante(butacaComprada))) {
+								throw new ButacaAccesibleAnularSinAnularButacaAcompanante(compra.getId(), butacaAccesible, butacaAcompanante);
+							}
 						}
 					}
 				}
