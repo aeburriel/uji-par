@@ -6,7 +6,9 @@ import com.sun.jersey.api.core.InjectParam;
 import es.uji.apps.par.butacas.DatosButaca;
 import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.config.ConfigurationSelector;
+import es.uji.apps.par.dao.SesionesDAO;
 import es.uji.apps.par.db.ButacaDTO;
+import es.uji.apps.par.db.SesionDTO;
 import es.uji.apps.par.model.Abono;
 import es.uji.apps.par.model.SesionAbono;
 import es.uji.apps.par.services.AbonosService;
@@ -41,11 +43,14 @@ public class MapaDrawer implements MapaDrawerInterface
     @InjectParam
     Configuration configuration;
 
-    @Autowired
+    @InjectParam
     ConfigurationSelector configurationSelector;
 
-    @Autowired
+    @InjectParam
     ButacasVinculadasService butacasVinculadasService;
+
+    @InjectParam
+    private SesionesDAO sesionesDAO;
 
     private BufferedImage butacaOcupada;
     private BufferedImage butacaReservada;
@@ -64,11 +69,14 @@ public class MapaDrawer implements MapaDrawerInterface
     private Map<String, BufferedImage> imagenes;
 
 	@Autowired
-    public MapaDrawer(ButacasService butacasService, AbonosService abonosService, Configuration configuration) throws IOException
+    public MapaDrawer(ButacasService butacasService, AbonosService abonosService, Configuration configuration, ConfigurationSelector configurationSelector, ButacasVinculadasService butacasVinculadasService, SesionesDAO sesionesDAO) throws IOException
     {
-                this.butacasService = butacasService;
-                this.abonosService = abonosService;
-		this.configuration = configuration;
+        this.butacasService = butacasService;
+        this.abonosService = abonosService;
+        this.configuration = configuration;
+        this.configurationSelector = configurationSelector;
+        this.butacasVinculadasService = butacasVinculadasService;
+        this.sesionesDAO = sesionesDAO;
         cargaImagenes();
         leeJson();
     }
@@ -156,45 +164,43 @@ public class MapaDrawer implements MapaDrawerInterface
 
     private BufferedImage dibujaButacas(List<Long> sesionIds, String localizacionDeImagen, boolean mostrarReservadas)
     {
-        BufferedImage imgButacas = imagenes.get(localizacionDeImagen);
-        BufferedImage imgResult = new BufferedImage(imgButacas.getWidth(), imgButacas.getHeight(), imgButacas.getType());
-        Graphics2D graphics = imgResult.createGraphics();
+        final BufferedImage imgButacas = imagenes.get(localizacionDeImagen);
+        final BufferedImage imgResult = new BufferedImage(imgButacas.getWidth(), imgButacas.getHeight(), imgButacas.getType());
+        final Graphics2D graphics = imgResult.createGraphics();
         graphics.drawImage(imgButacas, 0, 0, null);
 
 		// Señalamos las butacas accesibles y de acompañante
 		for (final Long idSesion : sesionIds) {
-			if (butacasVinculadasService.enVigorReservaButacasAccesibles(idSesion)) {
-				for (final DatosButaca butaca : butacasVinculadasService.getButacasAccesibles(idSesion, false)) {
+			final SesionDTO sesionDTO = sesionesDAO.getSesion(idSesion, "admin");
+			if (butacasVinculadasService.enVigorReservaButacasAccesibles(sesionDTO)) {
+				for (final DatosButaca butaca : butacasVinculadasService.getButacasAccesibles(sesionDTO, false)) {
 					graphics.drawImage(butacaVaciaDiscapacitado, butaca.getxIni(), butaca.getyIni(), null);
 				}
-				for (final DatosButaca butaca : butacasVinculadasService.getButacasAcompanantes(idSesion)) {
+				for (final DatosButaca butaca : butacasVinculadasService.getButacasAcompanantes(sesionDTO)) {
 					graphics.drawImage(butacaVaciaAcompanante, butaca.getxIni(), butaca.getyIni(), null);
 				}
-			} else if(butacasVinculadasService.enCambioAforo(idSesion)) {
-				for (final DatosButaca butaca : butacasVinculadasService.getButacasAccesibles(idSesion, true)) {
+			} else if(butacasVinculadasService.enCambioAforo(sesionDTO)) {
+				for (final DatosButaca butaca : butacasVinculadasService.getButacasAccesibles(sesionDTO, true)) {
 					graphics.drawImage(butacaOcupada, butaca.getxIni(), butaca.getyIni(), null);
 				}
 
 			}
 		}
 
-        for (String localizacion : getLocalizacionesEnImagen(localizacionDeImagen))
-        {
-            for (Long idSesion : sesionIds) {
-                List<ButacaDTO> butacas = butacasService.getButacas(idSesion, localizacion);
+		final boolean destacaUsadas = configurationSelector.showButacasHanEntradoEnDistintoColor();
+        for (final String localizacion : getLocalizacionesEnImagen(localizacionDeImagen)) {
+            for (final Long idSesion : sesionIds) {
+                final List<ButacaDTO> butacas = butacasService.getButacas(idSesion, localizacion);
 
-                for (ButacaDTO butacaDTO : butacas) {
+                for (final ButacaDTO butacaDTO : butacas) {
                     if (butacaDTO.getAnulada() == null || !butacaDTO.getAnulada()) {
-                        String key = String.format("%s_%s_%s", butacaDTO.getParLocalizacion().getCodigo(),
+                        final String key = String.format("%s_%s_%s", butacaDTO.getParLocalizacion().getCodigo(),
                                 butacaDTO.getFila(), butacaDTO.getNumero());
-                        DatosButaca butaca = datosButacas.get(key);
+                        final DatosButaca butaca = datosButacas.get(key);
 
-                        BufferedImage imagenOcupada;
+                        final BufferedImage imagenOcupada;
 
-                        if (esDiscapacitadoAnfiteatro(butaca))
-                            continue;
-
-                        if (mostrarReservadas && configurationSelector.showButacasHanEntradoEnDistintoColor() && butacaPresentada != null && butacaDTO.getPresentada() != null) {
+                        if (mostrarReservadas && destacaUsadas && butacaPresentada != null && butacaDTO.getPresentada() != null) {
                             imagenOcupada = butacaPresentada;
                         } else {
                             if (esDiscapacitado(idSesion, butaca)) {
@@ -230,12 +236,6 @@ public class MapaDrawer implements MapaDrawerInterface
         return butacaDTO.getParCompra().getReserva();
     }
 
-	private boolean esDiscapacitadoAnfiteatro(DatosButaca butaca) {
-		if (butaca != null && butaca.getLocalizacion() != null)
-			return butaca.getLocalizacion().startsWith("discapacitados3");
-		return false;
-	}
-
     private boolean esAcompanante(Long sesionId, DatosButaca butaca) {
     	if (butaca == null)
     		return false;
@@ -248,14 +248,7 @@ public class MapaDrawer implements MapaDrawerInterface
 		if (butaca == null)
 			return false;
 
-		if (butacasVinculadasService.esDiscapacitado(sesionId, butaca)) {
-			return true;
-		}
-
-		if(butaca.getLocalizacion() != null)
-			return butaca.getLocalizacion().startsWith("discapacitados");
-
-		return false;
+		return butacasVinculadasService.esDiscapacitado(sesionId, butaca);
     }
 
     private void cargaImagenes() throws IOException

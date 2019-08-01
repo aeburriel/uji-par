@@ -139,7 +139,7 @@ public class ButacasVinculadasService {
 	 * @param sesion del evento
 	 * @return true si el aforo está en proceso de cambio
 	 */
-	private boolean enCambioAforo(final SesionDTO sesion) {
+	public boolean enCambioAforo(final SesionDTO sesion) {
 		final long finAccesible = fechaFinReservaButacasAccesibles(sesion).getTime();
 		final long finReserva = fechaFinBloqueoButacasAccesibles(sesion).getTime();
 
@@ -932,15 +932,20 @@ public class ButacasVinculadasService {
 		if (accesible == null) {
 			return false;
 		}
-		final Compra compraAccesible = butacasService.getCompra(sesionId, butaca.getLocalizacion(), String.valueOf(butaca.getFila()), String.valueOf(butaca.getNumero()));
+
+		final String butacaFila = String.valueOf(butaca.getFila());
+		final String butacaNumero = String.valueOf(butaca.getNumero());
+		final Compra compraAccesible = butacasService.getCompra(sesionId, butaca.getLocalizacion(), butacaFila, butacaNumero);
 		if (compraAccesible == null) {
 			return false;
 		}
+
 		final Compra compraAcompanante = butacasService.getCompra(sesionId, accesible.getLocalizacion(), String.valueOf(accesible.getFila()), String.valueOf(accesible.getNumero()));
 		if (compraAcompanante == null) {
 			return false;
 		}
-		return butacasService.estaOcupada(sesionId, butaca.getLocalizacion(), String.valueOf(butaca.getFila()),	String.valueOf(butaca.getNumero()))
+
+		return butacasService.estaOcupada(sesionId, butaca.getLocalizacion(), butacaFila, butacaNumero)
 				&& esDiscapacitado(sesionId, accesible)
 				&& compraAccesible.getId() == compraAcompanante.getId();
 	}
@@ -982,9 +987,24 @@ public class ButacasVinculadasService {
 	 * @return lista con las butacas de discapacitado o null en caso de error
 	 */
 	public List<DatosButaca> getButacasAccesibles(final long sesionId, final boolean todas) {
+		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
+		return getButacasAccesibles(sesion, todas);
+	}
+
+	/**
+	 * Devuelve la lista de butacas de discapacitado en la sesión en el momento de
+	 * la llamada
+	 *
+	 * @param sesion   sesión del evento
+	 * @param todas    true si siempre hay que devolver todas las butacas accesibles
+	 *                 potenciales. En caso contrario, fuera del periodo de
+	 *                 exlusividad, solo se devuelven las butacas accesibles
+	 *                 asignadas.
+	 * @return lista con las butacas de discapacitado o null en caso de error
+	 */
+	public List<DatosButaca> getButacasAccesibles(final SesionDTO sesion, final boolean todas) {
 		final List<DatosButaca> butacas = new ArrayList<DatosButaca>();
 
-		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
 		final Collection<DatosButaca> accesibles = butacasVinculadas.keySet();
 		if (todas || enVigorReservaButacasAccesibles(sesion)) {
 			butacas.addAll(accesibles);
@@ -1007,9 +1027,21 @@ public class ButacasVinculadasService {
 	 * @return lista con las butacas de acompañante
 	 */
 	public List<DatosButaca> getButacasAcompanantes(final long sesionId) {
+		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
+
+		return getButacasAcompanantes(sesion);
+	}
+
+	/**
+	 * Devuelve la lista de butacas de acompañante en la sesión en el momento de la
+	 * llamada
+	 *
+	 * @param sesion sesión del evento
+	 * @return lista con las butacas de acompañante
+	 */
+	public List<DatosButaca> getButacasAcompanantes(final SesionDTO sesion) {
 		final List<DatosButaca> butacas = new ArrayList<DatosButaca>();
 
-		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
 		final Set<DatosButaca> acompanantes = butacasAcompanantes.keySet();
 		if (enVigorReservaButacasAccesibles(sesion)) {
 			butacas.addAll(acompanantes);
