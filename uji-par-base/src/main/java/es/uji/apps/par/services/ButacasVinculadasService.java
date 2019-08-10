@@ -958,8 +958,7 @@ public class ButacasVinculadasService {
 	 * @return true si lo es
 	 */
 	public boolean esDiscapacitado(final Long sesionId, final DatosButaca butaca) {
-		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
-		if (!sesion.getParEvento().getAsientosNumerados()) {
+		if (!butaca.isNumerada()) {
 			return false;
 		}
 
@@ -967,6 +966,7 @@ public class ButacasVinculadasService {
 			return false;
 		}
 
+		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
 		final List<Compra> reservasBloqueo = getReservasBloqueoButacaAccesible(sesion, butaca);
 		for (final Compra bloqueo : reservasBloqueo) {
 			if (isBloqueoVentaAccesible(bloqueo))

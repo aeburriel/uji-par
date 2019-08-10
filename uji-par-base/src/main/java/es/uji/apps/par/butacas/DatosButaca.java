@@ -109,6 +109,10 @@ public class DatosButaca
 		return TIPO_DISCAPACIDAD.equals(tipo);
 	}
 
+	public boolean isNumerada() {
+		return fila != 0 || numero != 0;
+	}
+
 	public String getTipo() {
 		return tipo;
 	}
