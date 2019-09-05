@@ -153,6 +153,11 @@ body {
 	margin-bottom: 60px;
 }
 
+.evento-observaciones {
+	font-size: 13pt !important;
+	color: #CC4B23;
+}
+
 .evento-sesiones {
 	padding-top: 20px;
 	padding-left: 390px;
