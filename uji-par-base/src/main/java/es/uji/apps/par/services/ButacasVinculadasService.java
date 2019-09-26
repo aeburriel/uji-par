@@ -124,7 +124,7 @@ public class ButacasVinculadasService {
 		final Date finalAccesible = fechaFinReservaButacasAccesibles(sesion);
 		final Date finalOnline = sesion.getFechaFinVentaOnline();
 
-		if ((finalAccesible.getTime() - finalOnline.getTime()) < (CADUCIDAD_ONLINE_MINUTOS * 60000L)) {
+		if (finalOnline != null && (finalAccesible.getTime() - finalOnline.getTime()) < (CADUCIDAD_ONLINE_MINUTOS * 60000L)) {
 			return DateUtils.addMinutes(finalAccesible, CADUCIDAD_ONLINE_MINUTOS);
 		}
 		return finalAccesible;
