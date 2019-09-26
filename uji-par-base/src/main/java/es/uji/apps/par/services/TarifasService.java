@@ -12,6 +12,8 @@ import java.util.List;
 @Service
 public class TarifasService
 {
+	private static final String TARIFA_INVITACION = "Invitació";
+
     @Autowired
     private TarifasDAO tarifasDAO;
 
@@ -47,5 +49,21 @@ public class TarifasService
 	public void removeTarifa(Integer id) {
 		Tarifa tarifa = new Tarifa(id);
 		tarifasDAO.removeTarifa(tarifa);
+	}
+
+	/**
+	 * Devuelve la tarifa invitación
+	 * @param userUID
+	 * @return la tarifa o null si no existe
+	 */
+	public TarifaDTO getTarifaInvitacion(final String userUID) {
+		// Obtenemos la tarifa Invitación
+		for (final TarifaDTO tarifa : tarifasDAO.getAll(userUID)) {
+			if (TARIFA_INVITACION.equals(tarifa.getNombre())) {
+				return tarifa;
+			}
+		}
+
+		return null;
 	}
 }

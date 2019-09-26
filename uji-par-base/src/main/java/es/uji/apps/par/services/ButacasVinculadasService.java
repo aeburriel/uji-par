@@ -38,7 +38,6 @@ import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.dao.ButacasDAO;
 import es.uji.apps.par.dao.ComprasDAO;
 import es.uji.apps.par.dao.SesionesDAO;
-import es.uji.apps.par.dao.TarifasDAO;
 import es.uji.apps.par.db.ButacaDTO;
 import es.uji.apps.par.db.CompraDTO;
 import es.uji.apps.par.db.SesionDTO;
@@ -71,13 +70,12 @@ public class ButacasVinculadasService {
 	private SesionesDAO sesionesDAO;
 
 	@Autowired
-	private TarifasDAO tarifasDAO;
+	private TarifasService tarifasService;
 
 	private static final String ADMIN_UID = "admin";
 	private static final String BUTACAS_PATH = "/etc/uji/par/butacas/";
 	private static final String LOCALIZACION = "general"; // TODO: generalizar a múltiples salas
 	private static final String MENSAJE_BLOQUEO = "Butaca discapacitado";
-	private static final String TARIFA_INVITACION = "Invitació";
 	private static final Date FECHAINFINITO = new Date(95649033600000L);
 	private static final int CADUCIDAD_ONLINE_MINUTOS = 30;
 	private static final long PERIODO_TAREA_BLOQUEOS = 90000L;
@@ -380,13 +378,7 @@ public class ButacasVinculadasService {
 		}
 		butacasAcompanantes = baBuilder.build();
 
-		// Obtenemos la tarifa Invitación
-		for (final TarifaDTO tarifa : tarifasDAO.getAll(ADMIN_UID)) {
-			if (TARIFA_INVITACION.equals(tarifa.getNombre())) {
-				tarifaInvitacion = tarifa;
-				break;
-			}
-		}
+		tarifaInvitacion = tarifasService.getTarifaInvitacion(ADMIN_UID);
 	}
 
 	/**
