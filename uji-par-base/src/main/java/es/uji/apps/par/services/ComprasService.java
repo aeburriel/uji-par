@@ -2,6 +2,7 @@ package es.uji.apps.par.services;
 
 import com.mysema.query.Tuple;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -354,6 +355,28 @@ public class ComprasService
         resultadoCompra.setUuid(compraDTO.getUuid());
 
         return resultadoCompra;
+    }
+
+    /**
+     * Hace una reserva de butacas
+     * @param sesion del evento
+     * @param desde fecha y hora inicial de la reserva
+     * @param hasta fecha y hora final de la reserva
+     * @param butacas a reservar
+     * @param observaciones
+     * @param userUID identificador de usuario
+     * @return true si la reserva se ha completado
+     */
+    @Transactional(rollbackForClassName={"NoHayButacasLibresException","ButacaOcupadaException",
+    "CompraSinButacasException"})
+    public boolean reservaButacas(final SesionDTO sesion, final Date desde, final Date hasta, final List<Butaca> butacas, final String observaciones, final String userUID) {
+    	final ResultadoCompra resultadoCompra = reservaButacas(Long.valueOf(sesion.getId()),
+    			DateUtils.truncate(desde, Calendar.DAY_OF_MONTH), DateUtils.truncate(hasta, Calendar.DAY_OF_MONTH),
+    			butacas, observaciones,
+    			desde.getHours(), hasta.getHours(),
+    			desde.getMinutes(), hasta.getMinutes(), userUID);
+
+    	return resultadoCompra.getCorrecta();
     }
 
     public List<Compra> getComprasBySesion(long sesionId, int showAnuladas, String sortParameter, int start, int limit, int showOnline, String search)

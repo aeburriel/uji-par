@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -47,7 +46,6 @@ import es.uji.apps.par.exceptions.ButacaOcupadaAlActivarException;
 import es.uji.apps.par.exceptions.ButacaOcupadaException;
 import es.uji.apps.par.model.Butaca;
 import es.uji.apps.par.model.Compra;
-import es.uji.apps.par.model.ResultadoCompra;
 
 @Service
 public class ButacasVinculadasService {
@@ -484,13 +482,7 @@ public class ButacasVinculadasService {
 
 		// Hacemos la reserva
 		final String observaciones = mensajeBloqueo(datosButacaAccesible);
-		final ResultadoCompra resultadoCompra = comprasService.reservaButacas(Long.valueOf(sesion.getId()),
-				DateUtils.truncate(desde, Calendar.DAY_OF_MONTH), DateUtils.truncate(hasta, Calendar.DAY_OF_MONTH),
-				butacas, observaciones,
-				desde.getHours(), hasta.getHours(),
-				desde.getMinutes(), hasta.getMinutes(), userUID);
-
-		return resultadoCompra.getCorrecta();
+		return comprasService.reservaButacas(sesion, desde, hasta, butacas, observaciones, userUID);
 	}
 
 	/**
