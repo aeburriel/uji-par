@@ -805,7 +805,8 @@ public class ButacasVinculadasService {
 			return false;
 		}
 		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
-		if (!sesion.getParEvento().getAsientosNumerados()) {
+		final Boolean numerado = sesion.getParEvento().getAsientosNumerados();
+		if (numerado == null || !numerado) {
 			return true;
 		}
 
