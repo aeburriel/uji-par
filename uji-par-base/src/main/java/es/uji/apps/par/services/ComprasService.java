@@ -113,9 +113,10 @@ public class ComprasService
         			throw new CompraButacaDescuentoNoDisponible();
         }
         
-        // Si teníamos una compra en marcha la eliminamos (puede pasar cuando intentamos pagar con tarjeta y volvemos atrás)        
-        if (uuidCompraActual != null && !uuidCompraActual.equals(""))
+        // Si teníamos una compra en marcha la eliminamos (puede pasar cuando intentamos pagar con tarjeta y volvemos atrás)
+        if (uuidCompraActual != null && !uuidCompraActual.isEmpty()) {
             comprasDAO.borrarCompraNoPagada(uuidCompraActual);
+        }
 
         return registraCompra(sesionId, butacasSeleccionadas, false, userUID);
     }

@@ -187,8 +187,6 @@ public class EventosResource extends BaseResource {
         Locale locale = getLocale();
         String language = locale.getLanguage();
 
-        borrarEntradasSeleccionadasConAnterioridad();
-
         Cine cine = usersService.getUserCineByServerName(currentRequest.getServerName());
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + cine.getCodigo() + "/eventosListado", getLocale(), APP);
 
@@ -206,8 +204,6 @@ public class EventosResource extends BaseResource {
 			MalformedURLException, ParseException {
         Locale locale = getLocale();
         String language = locale.getLanguage();
-
-        borrarEntradasSeleccionadasConAnterioridad();
 
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + evento.getSesiones().get(0).getSala().getCine()
 				.getCodigo() + "/eventoDetalle", getLocale(), APP);
@@ -250,10 +246,6 @@ public class EventosResource extends BaseResource {
         template.put("lang", language);
 
         return template;
-    }
-
-    private void borrarEntradasSeleccionadasConAnterioridad() {
-        currentRequest.getSession().removeAttribute(EntradasService.BUTACAS_COMPRA);
     }
 
     private List<Map<String, Object>> getSesionesPlantilla(List<Sesion> sesiones, String userUID) {

@@ -92,15 +92,11 @@ public class TpvResource extends BaseResource implements TpvInterface {
             template = paginaError(compraDTO);
 
             template.put("descripcionError", ResourceProperties.getProperty(getLocale(), "error.datosComprador.compraCaducadaTrasPagar"));
-
-            eliminaCompraDeSesion();
 	}
 	else if (estado != null && estado.equals("OK"))
 	{
             compras.marcaPagadaPasarela(compraDTO.getId(), recibo);
             enviaMail(compraDTO.getEmail(), compraDTO.getUuid(), recibo);
-
-            eliminaCompraDeSesion();
 
             template = paginaExito(compraDTO, recibo);
 	}
@@ -132,7 +128,6 @@ public class TpvResource extends BaseResource implements TpvInterface {
         		compras.anularCompraReservaAutomatica(compra.getId());
         	}
         }
-        eliminaCompraDeSesion();
     }
 
     private boolean isEstadoOk(String estado) {
@@ -210,11 +205,6 @@ public class TpvResource extends BaseResource implements TpvInterface {
         Template template = paginaError(compra);
 
         return Response.ok(template).build();
-    }
-
-    private void eliminaCompraDeSesion() {
-        currentRequest.getSession().removeAttribute(EntradasService.BUTACAS_COMPRA);
-        currentRequest.getSession().removeAttribute(EntradasService.UUID_COMPRA);
     }
 
     private Template paginaExito(CompraDTO compra, String recibo) throws Exception {

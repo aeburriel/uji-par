@@ -37,9 +37,6 @@ import es.uji.apps.par.utils.ReportUtils;
 
 @Service
 public class EntradasService {
-    public static final String BUTACAS_COMPRA = "butacasCompra";
-    public static final String UUID_COMPRA = "uuidCompra";
-    public static final String ID_SESION = "idSesion";
     public static final String BEAN_REPORT_SUFFIX = "Report";
     public static final String BEAN_REPORT_PREFIX = "Entrada";
     private static final Logger log = LoggerFactory.getLogger(EntradasService.class);

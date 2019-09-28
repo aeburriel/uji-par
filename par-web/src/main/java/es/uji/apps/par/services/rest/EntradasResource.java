@@ -15,8 +15,10 @@ import es.uji.apps.par.tpv.HmacSha256TPVInterface;
 import es.uji.apps.par.tpv.IdTPVInterface;
 import es.uji.apps.par.tpv.SHA1TPVInterface;
 import es.uji.apps.par.tpv.TpvInterface;
+import es.uji.apps.par.utils.Cart;
 import es.uji.apps.par.utils.DateUtils;
 import es.uji.apps.par.utils.Utils;
+import es.uji.apps.par.utils.UserCarts;
 import es.uji.commons.web.template.HTMLTemplate;
 import es.uji.commons.web.template.Template;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -39,6 +42,7 @@ import java.util.regex.Pattern;
 
 @Path("entrada")
 public class EntradasResource extends BaseResource {
+	public static final String ID_SELECTOR_CARTS = "selectorCarrito";
     private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
     private static final Logger log = LoggerFactory.getLogger(EntradasResource.class);
@@ -82,7 +86,17 @@ public class EntradasResource extends BaseResource {
     @GET
     @Path("{id}")
     @Produces(MediaType.TEXT_HTML)
-    public Response datosEntrada(@PathParam("id") Long sesionId) throws Exception {
+	public Response datosEntrada(@PathParam("id") final Long sesionId) throws Exception {
+		final String selector = initUserCart();
+
+		currentResponse.sendRedirect(getBaseUrlPublicLimpio() + "/rest/entrada/" + sesionId + "/" + selector);
+		return null;
+	}
+
+    @GET
+    @Path("{id}/{selector}")
+    @Produces(MediaType.TEXT_HTML)
+    public Response datosEntrada(@PathParam("id") final Long sesionId, @PathParam("selector") final String selector) throws Exception {
         Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
         Sesion sesion;
         try {
@@ -90,20 +104,26 @@ public class EntradasResource extends BaseResource {
         } catch (SesionNoEncontradaException e) {
             return Response.status(404).build();
         }
-        if (sesion.getCanalInternet() && (sesion.getAnulada() == null || sesion.getAnulada() == false)) {
-            currentRequest.getSession().setAttribute(EntradasService.ID_SESION, sesionId);
 
+        // Si el selector no es válido, redirigimos al inicio del proceso de compra
+        final Cart cart = getUserCarts().getCart(selector);
+        if (cart == null) {
+            currentResponse.sendRedirect(getBaseUrlPublicLimpio() + "/rest/entrada/" + sesionId);
+            return null;
+        }
+
+        if (sesion.getCanalInternet() && (sesion.getAnulada() == null || sesion.getAnulada() == false)) {
             if (Utils.isAsientosNumerados(sesion.getEvento())) {
-                return paginaSeleccionEntradasNumeradas(sesionId, null, null, null, user.getUsuario());
+                return paginaSeleccionEntradasNumeradas(sesionId, cart, null, null, null, user.getUsuario());
             } else {
-                return paginaSeleccionEntradasNoNumeradas(sesionId, null, user.getUsuario());
+                return paginaSeleccionEntradasNoNumeradas(sesionId, cart , null, user.getUsuario());
             }
         } else
             return paginaFueraDePlazo(sesionId, user.getUsuario());
     }
 
-    private Response paginaSeleccionEntradasNumeradas(long sesionId, List<Butaca> butacasSeleccionadas,
-                                                      List<Butaca> butacasOcupadas, String error, String userUID) throws Exception {
+    private Response paginaSeleccionEntradasNumeradas(final long sesionId, final Cart cart, final List<Butaca> butacasSeleccionadas,
+                                                      final List<Butaca> butacasOcupadas, final String error, final String userUID) throws Exception {
         Sesion sesion = sesionesService.getSesion(sesionId, userUID);
         String urlBase = getBaseUrlPublic();
         String url = currentRequest.getRequestURL().toString();
@@ -135,17 +155,8 @@ public class EntradasResource extends BaseResource {
             template.put("error", error);
         }
 
-        String butacasSesion = (String) currentRequest.getSession().getAttribute(EntradasService.BUTACAS_COMPRA);
-        if (butacasSesion == null) {
-            template.put("butacasSesion", "[]");
-        } else {
-            template.put("butacasSesion", butacasSesion);
-        }
-
-        String uuidCompra = (String) currentRequest.getSession().getAttribute(EntradasService.UUID_COMPRA);
-        if (uuidCompra != null) {
-            template.put("uuidCompra", uuidCompra);
-        }
+        template.put("butacasSesion", cart.getButacas());
+        template.put("uuidCompra", cart.getSelector()); // uuidCompra es, en realidad, el selector
 
         if (language.equals("ca")) {
             template.put("titulo", evento.getTituloVa());
@@ -173,7 +184,7 @@ public class EntradasResource extends BaseResource {
         return Utils.noCache(builder).build();
     }
 
-    private Response paginaSeleccionEntradasNoNumeradas(long sesionId, String error, String userUID) throws Exception {
+    private Response paginaSeleccionEntradasNoNumeradas(final long sesionId, final Cart cart, final String error, final String userUID) throws Exception {
         Sesion sesion = sesionesService.getSesion(sesionId, userUID);
         String urlBase = getBaseUrlPublic();
 
@@ -209,10 +220,7 @@ public class EntradasResource extends BaseResource {
             template.put("error", error);
         }
 
-        String uuidCompra = (String) currentRequest.getSession().getAttribute(EntradasService.UUID_COMPRA);
-        if (uuidCompra != null) {
-            template.put("uuidCompra", uuidCompra);
-        }
+        template.put("uuidCompra", cart.getSelector()); // uuidCompra es, en realidad, el selector
 
         if (language.equals("ca")) {
             template.put("titulo", evento.getTituloVa());
@@ -245,25 +253,29 @@ public class EntradasResource extends BaseResource {
     }
 
     @POST
-    @Path("{id}")
+    @Path("{id}/{selector}")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_HTML)
-    public Response compraEntradaHtml(@PathParam("id") Long sesionId,
-                                      @FormParam("butacasSeleccionadas") String butacasSeleccionadasJSON,
-                                      @FormParam("platea1Normal") String platea1Normal, @FormParam("platea1Descuento") String platea1Descuento,
-                                      @FormParam("platea2Normal") String platea2Normal, @FormParam("platea2Descuento") String platea2Descuento,
-                                      @FormParam("uuidCompra") String uuidCompra, @FormParam("b_t") String strButacas) throws Exception {
-        Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
-        Sesion sesion = sesionesService.getSesion(sesionId, user.getUsuario());
+    public Response compraEntradaHtml(@PathParam("id") final Long sesionId, @PathParam("selector") final String selector,
+                                      @FormParam("butacasSeleccionadas") final String butacasSeleccionadasJSON,
+                                      @FormParam("platea1Normal") final String platea1Normal, @FormParam("platea1Descuento") final String platea1Descuento,
+                                      @FormParam("platea2Normal") final String platea2Normal, @FormParam("platea2Descuento") final String platea2Descuento,
+                                      @FormParam("b_t") final String strButacas) throws Exception {
+        final Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
+        final Sesion sesion = sesionesService.getSesion(sesionId, user.getUsuario());
+        final Cart cart = getUserCarts().getCart(selector);
+        if (cart == null) {
+            return Response.status(403).build();
+        }
 
         if (Utils.isAsientosNumerados(sesion.getEvento())) {
-            return compraEntradaNumeradaHtml(sesionId, butacasSeleccionadasJSON, uuidCompra, user.getUsuario());
+            return compraEntradaNumeradaHtml(sesionId, cart, butacasSeleccionadasJSON, user.getUsuario());
         } else {
-            return compraEntradaNoNumeradaHtml(sesionId, strButacas, uuidCompra, user.getUsuario());
+            return compraEntradaNoNumeradaHtml(sesionId, cart, strButacas, user.getUsuario());
         }
     }
 
-    private Response compraEntradaNumeradaHtml(Long sesionId, String butacasSeleccionadasJSON, String uuidCompra, String userUID)
+    private Response compraEntradaNumeradaHtml(final Long sesionId, final Cart cart, final String butacasSeleccionadasJSON, final String userUID)
             throws Exception {
         ResultadoCompra resultadoCompra;
         List<Butaca> butacasSeleccionadas = Butaca.parseaJSON(butacasSeleccionadasJSON);
@@ -282,35 +294,40 @@ public class EntradasResource extends BaseResource {
                 }
             }
 
+            final String uuidCompra = cart.getUuid();
+            if (uuidCompra == null) {
+                return Response.status(403).build();
+            }
+
             resultadoCompra = comprasService.realizaCompraInternet(sesionId, butacasSeleccionadas, uuidCompra, userUID);
         } catch (FueraDePlazoVentaInternetException e) {
             log.error("Fuera de plazo", e);
             return paginaFueraDePlazo(sesionId, userUID);
         } catch (ButacaOcupadaException e) {
             String error = ResourceProperties.getProperty(getLocale(), "error.seleccionEntradas.ocupadas");
-            return paginaSeleccionEntradasNumeradas(sesionId, butacasSeleccionadas, null, error, userUID);
+            return paginaSeleccionEntradasNumeradas(sesionId, cart, butacasSeleccionadas, null, error, userUID);
         } catch (CompraSinButacasException e) {
             String error = ResourceProperties.getProperty(getLocale(), "error.seleccionEntradas.noSeleccionadas");
-            return paginaSeleccionEntradasNumeradas(sesionId, butacasSeleccionadas, null, error, userUID);
+            return paginaSeleccionEntradasNumeradas(sesionId, cart, butacasSeleccionadas, null, error, userUID);
         } catch (CompraInvitacionPorInternetException e) {
             String error = ResourceProperties.getProperty(getLocale(), "error.seleccionEntradas.invitacionPorInternet");
-            return paginaSeleccionEntradasNumeradas(sesionId, butacasSeleccionadas, null, error, userUID);
+            return paginaSeleccionEntradasNumeradas(sesionId, cart, butacasSeleccionadas, null, error, userUID);
         } catch (CompraButacaDescuentoNoDisponible e) {
             String error = ResourceProperties.getProperty(getLocale(), "error.seleccionEntradas.compraDescuentoNoDisponible");
-            return paginaSeleccionEntradasNumeradas(sesionId, butacasSeleccionadas, null, error, userUID);
+            return paginaSeleccionEntradasNumeradas(sesionId, cart, butacasSeleccionadas, null, error, userUID);
         } catch (CompraButacaNoExistente e) {
             String error = ResourceProperties.getProperty(getLocale(), "error.seleccionEntradas.compraButacaNoExistente");
-            return paginaSeleccionEntradasNumeradas(sesionId, butacasSeleccionadas, null, error, userUID);
+            return paginaSeleccionEntradasNumeradas(sesionId, cart, butacasSeleccionadas, null, error, userUID);
         }
 
         if (resultadoCompra.getCorrecta()) {
-            currentRequest.getSession().setAttribute(EntradasService.BUTACAS_COMPRA, butacasSeleccionadasJSON);
-            currentRequest.getSession().setAttribute(EntradasService.UUID_COMPRA, resultadoCompra.getUuid());
+            cart.setButacas(butacasSeleccionadasJSON);
+            cart.setUuid(resultadoCompra.getUuid());
 
-            currentResponse.sendRedirect(getBaseUrlPublicLimpio() + "/rest/entrada/" + resultadoCompra.getUuid() + "/datosComprador");
+            currentResponse.sendRedirect(getBaseUrlPublicLimpio() + "/rest/entrada/" + cart.getSelector() + "/datosComprador");
             return null;
         } else {
-            return paginaSeleccionEntradasNumeradas(sesionId, butacasSeleccionadas,
+            return paginaSeleccionEntradasNumeradas(sesionId, cart, butacasSeleccionadas,
                     resultadoCompra.getButacasOcupadas(), null, userUID);
         }
     }
@@ -325,24 +342,29 @@ public class EntradasResource extends BaseResource {
         return false;
     }
 
-    private Response compraEntradaNoNumeradaHtml(Long sesionId, String butacasSeleccionadasJSON, String uuidCompra, String userUID) throws Exception {
+    private Response compraEntradaNoNumeradaHtml(final Long sesionId, final Cart cart, final String butacasSeleccionadasJSON, final String userUID) throws Exception {
         ResultadoCompra resultadoCompra;
         List<Butaca> butacasSeleccionadas = Butaca.parseaJSON("[" + butacasSeleccionadasJSON + "]");
 
         try {
+            final String uuidCompra = cart.getUuid();
+            if (uuidCompra == null) {
+                return Response.status(403).build();
+            }
+
             resultadoCompra = comprasService.realizaCompraInternet(sesionId, butacasSeleccionadas, uuidCompra, userUID);
         } catch (FueraDePlazoVentaInternetException e) {
             log.error("Fuera de plazo", e);
             return paginaFueraDePlazo(sesionId, userUID);
         } catch (ButacaOcupadaException e) {
             String error = ResourceProperties.getProperty(getLocale(), "error.seleccionEntradas.ocupadas");
-            return paginaSeleccionEntradasNoNumeradas(sesionId, error, userUID);
+            return paginaSeleccionEntradasNoNumeradas(sesionId, cart, error, userUID);
         } catch (CompraSinButacasException e) {
             String error = ResourceProperties.getProperty(getLocale(), "error.seleccionEntradas.noSeleccionadas");
-            return paginaSeleccionEntradasNoNumeradas(sesionId, error, userUID);
+            return paginaSeleccionEntradasNoNumeradas(sesionId, cart, error, userUID);
         } catch (CompraButacaDescuentoNoDisponible e) {
             String error = ResourceProperties.getProperty(getLocale(), "error.seleccionEntradas.compraDescuentoNoDisponible");
-            return paginaSeleccionEntradasNoNumeradas(sesionId, error, userUID);
+            return paginaSeleccionEntradasNoNumeradas(sesionId, cart, error, userUID);
         } catch (NoHayButacasLibresException e) {
             String error = "";
             try {
@@ -352,28 +374,33 @@ public class EntradasResource extends BaseResource {
                 error = ResourceProperties.getProperty(getLocale(), "error.noHayButacasParaLocalizacion");
             }
 
-            return paginaSeleccionEntradasNoNumeradas(sesionId, error, userUID);
+            return paginaSeleccionEntradasNoNumeradas(sesionId, cart, error, userUID);
         } catch (Exception e) {
             String error = ResourceProperties.getProperty(getLocale(), "error.errorGeneral");
-            return paginaSeleccionEntradasNoNumeradas(sesionId, error, userUID);
+            return paginaSeleccionEntradasNoNumeradas(sesionId, cart, error, userUID);
         }
 
         if (resultadoCompra.getCorrecta()) {
-            currentRequest.getSession().setAttribute(EntradasService.UUID_COMPRA, resultadoCompra.getUuid());
+            cart.setUuid(resultadoCompra.getUuid());
 
-            currentResponse.sendRedirect(getBaseUrlPublicLimpio() + "/rest/entrada/" + resultadoCompra.getUuid() + "/datosComprador");
+            currentResponse.sendRedirect(getBaseUrlPublicLimpio() + "/rest/entrada/" + cart.getSelector() + "/datosComprador");
             return null;
         } else {
-            return paginaSeleccionEntradasNoNumeradas(sesionId, "", userUID);
+            return paginaSeleccionEntradasNoNumeradas(sesionId, cart, "", userUID);
         }
     }
 
     @GET
-    @Path("{uuidCompra}/datosComprador")
+    @Path("{selector}/datosComprador")
     @Produces(MediaType.TEXT_HTML)
-    public Response rellenaDatosComprador(@PathParam("uuidCompra") String uuidCompra, String nombre, String apellidos,
+    public Response rellenaDatosComprador(@PathParam("selector") final String selector, String nombre, String apellidos,
                                           String direccion, String poblacion, String cp, String provincia, String telefono, String email,
                                           String infoPeriodica, String condicionesPrivacidad, String error) throws Exception {
+        final String uuidCompra = getUserCarts().getUuid(selector);
+        if (uuidCompra == null) {
+            return Response.status(403).build();
+        }
+
         CompraDTO compra = comprasService.getCompraByUuid(uuidCompra);
 
         Locale locale = getLocale();
@@ -392,8 +419,6 @@ public class EntradasResource extends BaseResource {
 
         template.put("idioma", language);
         template.put("lang", language);
-
-        template.put("uuidCompra", uuidCompra);
 
         template.put("nombre", nombre);
         template.put("apellidos", apellidos);
@@ -429,23 +454,28 @@ public class EntradasResource extends BaseResource {
     }
 
     @POST
-    @Path("{uuidCompra}/datosComprador")
+    @Path("{selector}/datosComprador")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_HTML)
-    public Response guardaDatosComprador(@PathParam("uuidCompra") String uuidCompra,
+    public Response guardaDatosComprador(@PathParam("selector") final String selector,
                                          @FormParam("nombre") String nombre, @FormParam("apellidos") String apellidos,
                                          @FormParam("direccion") String direccion, @FormParam("poblacion") String poblacion,
                                          @FormParam("cp") String cp, @FormParam("provincia") String provincia,
                                          @FormParam("telefono") String telefono, @FormParam("email") String email,
                                          @FormParam("infoPeriodica") String infoPeriodica,
                                          @FormParam("condicionesPrivacidad") String condicionesPrivacidad) throws Exception {
-        if (nombre == null || nombre.equals("")) {
+        final String uuidCompra = getUserCarts().getUuid(selector);
+        if (uuidCompra == null) {
+            return Response.status(403).build();
+        }
+
+        if (nombre == null || nombre.isEmpty()) {
             return rellenaDatosComprador(uuidCompra, nombre, apellidos, direccion, poblacion, cp, provincia, telefono,
                     email, infoPeriodica, condicionesPrivacidad,
                     ResourceProperties.getProperty(getLocale(), "error.datosComprador.nombre"));
         }
 
-        if (apellidos == null || apellidos.equals("")) {
+        if (apellidos == null || apellidos.isEmpty()) {
             return rellenaDatosComprador(uuidCompra, nombre, apellidos, direccion, poblacion, cp, provincia, telefono,
                     email, infoPeriodica, condicionesPrivacidad,
                     ResourceProperties.getProperty(getLocale(), "error.datosComprador.apellidos"));
@@ -458,7 +488,7 @@ public class EntradasResource extends BaseResource {
                     ResourceProperties.getProperty(getLocale(), "error.datosComprador.telefono"));
         }
 
-        if (email == null || email.equals("")) {
+        if (email == null || email.isEmpty()) {
             return rellenaDatosComprador(uuidCompra, nombre, apellidos, direccion, poblacion, cp, provincia, telefono,
                     email, infoPeriodica, condicionesPrivacidad,
                     ResourceProperties.getProperty(getLocale(), "error.datosComprador.email"));
@@ -472,11 +502,11 @@ public class EntradasResource extends BaseResource {
             }
         }
 
-        if (infoPeriodica == null || infoPeriodica.equals("")) {
+        if (infoPeriodica == null || infoPeriodica.isEmpty()) {
             infoPeriodica = "no";
         }
 
-        if (condicionesPrivacidad == null || condicionesPrivacidad.equals("")) {
+        if (condicionesPrivacidad == null || condicionesPrivacidad.isEmpty()) {
             return rellenaDatosComprador(uuidCompra, nombre, apellidos, direccion, poblacion, cp, provincia, telefono,
                     email, infoPeriodica, condicionesPrivacidad,
                     ResourceProperties.getProperty(getLocale(), "error.datosComprador.condicionesPrivacidad"));
@@ -492,6 +522,8 @@ public class EntradasResource extends BaseResource {
                     email, infoPeriodica, condicionesPrivacidad,
                     ResourceProperties.getProperty(getLocale(), "error.datosComprador.compraCaducada"));
         }
+        // En este punto no permitimos volver atrás, pues el TPV prohíbe reutilizar los códigos de pedido
+        getUserCarts().clearCart(selector);
 
         Locale locale = getLocale();
         String language = locale.getLanguage();
@@ -698,7 +730,9 @@ public class EntradasResource extends BaseResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public List<Butaca> estadoButaca(@PathParam("id") Integer idSesion, EstadoButacasRequest params) throws Exception {
-        return butacasService.estanOcupadas(idSesion, params.getButacas(), params.getUuidCompra());
+        // pararms.getUuidCompra() es, en realidad, el selector
+        final String uuidCompra = getUserCarts().getUuid(params.getUuidCompra());
+        return butacasService.estanOcupadas(idSesion, params.getButacas(), uuidCompra);
     }
 
     /*
@@ -783,4 +817,32 @@ public class EntradasResource extends BaseResource {
         return Response.ok().entity(template).header("Content-Type", "text/html; charset=utf-8").build();
     }
 
+	/**
+	 * Devuelve el almacén de carritos de la compra de la sesión
+	 * Si no existe, lo crea
+	 * 
+	 * @return UserCarts
+	 */
+    private UserCarts getUserCarts() {
+		final HttpSession httpSession = currentRequest.getSession();
+		UserCarts userCarts;
+
+		synchronized(httpSession) {
+			userCarts = (UserCarts) httpSession.getAttribute(EntradasResource.ID_SELECTOR_CARTS);
+			if (userCarts == null) {
+				userCarts = new UserCarts();
+				httpSession.setAttribute(EntradasResource.ID_SELECTOR_CARTS, userCarts);
+			}
+		}
+		return userCarts;
+	}
+
+	/**
+	 * Inicializa nuevo carrito de la compra
+	 * 
+	 * @return el selector asignado
+	 */
+    private String initUserCart() {
+		return getUserCarts().newCart().getSelector();
+	}
 }
