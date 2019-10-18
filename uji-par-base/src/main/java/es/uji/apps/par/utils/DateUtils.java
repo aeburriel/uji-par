@@ -166,4 +166,28 @@ public class DateUtils
 		int week = cal.get(Calendar.WEEK_OF_YEAR);
 		return String.format("%03d", week);
 	}
+
+	/**
+	 * Devuelve la fecha y hora del último día hábil (lunes a viernes) a las 14:00
+	 * anterior a la fecha y hora indicada
+	 *
+	 * @param date
+	 * @return La fecha del día "hábil" (lunes a viernes) anterior a las 14:00
+	 */
+	public static Date getUltimoDiaHabil1400(final Date date) {
+		final Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+
+		final int day = cal.get(Calendar.DAY_OF_WEEK);
+		if (day == Calendar.SATURDAY || day == Calendar.SUNDAY) {
+			cal.add(Calendar.WEEK_OF_YEAR, -1);
+			cal.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
+		}
+
+		cal.set(Calendar.HOUR_OF_DAY, 14);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+
+		return cal.getTime();
+	}
 }

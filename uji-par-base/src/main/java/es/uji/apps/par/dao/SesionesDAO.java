@@ -22,6 +22,7 @@ import es.uji.apps.par.model.Plantilla;
 import es.uji.apps.par.model.Sala;
 import es.uji.apps.par.model.Sesion;
 import es.uji.apps.par.services.ButacasVinculadasService;
+import es.uji.apps.par.services.ReservasProtocoloService;
 import es.uji.apps.par.utils.DateUtils;
 import es.uji.apps.par.utils.Pair;
 import es.uji.apps.par.utils.Utils;
@@ -51,6 +52,9 @@ public class SesionesDAO extends BaseDAO {
 
     @Autowired
     private ButacasVinculadasService butacasVinculadasService;
+
+    @Autowired
+    private ReservasProtocoloService reservasProtocoloService;
 
     @Transactional
     public List<SesionDTO> getSesiones(long eventoId, String sortParameter, int start, int limit, String userUID) {
@@ -205,6 +209,7 @@ public class SesionesDAO extends BaseDAO {
         // .getversionLingusitca())
         ////addSesionFormatoIdiomaIfNeeded(sesion.getEvento().getId(), sesion.getEvento().getFormato(),	sesion.getVersionLinguistica());
         butacasVinculadasService.bloqueaButacasVinculadasDiscapacidad(sesionDTO, userUID);
+        reservasProtocoloService.gestionaReservasProtocolo(sesionDTO, userUID);
         return sesion;
     }
 
@@ -300,6 +305,7 @@ public class SesionesDAO extends BaseDAO {
         anulaSesionesConLaMismaHoraYSala(fechaCelebracion, sesion.getSala().getId(), sesion.getId());
         
         butacasVinculadasService.actualizaBloqueoButacasVinculadasDiscapacidad(sesionDTO, userUID);
+        reservasProtocoloService.gestionaReservasProtocolo(sesionDTO, userUID);
     }
 
     @Transactional
