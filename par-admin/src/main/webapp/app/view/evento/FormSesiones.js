@@ -158,7 +158,7 @@ Ext.define('Paranimf.view.evento.FormSesiones', {
       forceSelection: false,
       displayField: 'nombre',
       valueField: 'id',
-      store: 'PlantillasPrecios',
+      store: 'PlantillasPreciosCombo',
       queryMode: 'local',
       typeAhead: true,
       allowBlank: false
