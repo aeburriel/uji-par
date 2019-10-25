@@ -370,7 +370,15 @@ public class ComprasService
      */
     @Transactional(rollbackForClassName={"NoHayButacasLibresException","ButacaOcupadaException",
     "CompraSinButacasException"})
-    public boolean reservaButacas(final SesionDTO sesion, final Date desde, final Date hasta, final List<Butaca> butacas, final String observaciones, final String userUID) {
+    public synchronized boolean reservaButacas(final SesionDTO sesion, final Date desde, final Date hasta, final List<Butaca> butacas, final String observaciones, final String userUID) {
+    	// Comprobamos que todas las butacas estén disponibles
+    	for (final Butaca butaca : butacas) {
+    		if (butacasDAO.estaOcupada(sesion.getId(), butaca.getLocalizacion(), String.valueOf(butaca.getFila()), String.valueOf(butaca.getNumero()))) {
+    			return false;
+    		}
+    	}
+
+    	// Hacemos la reserva
     	final ResultadoCompra resultadoCompra = reservaButacas(Long.valueOf(sesion.getId()),
     			DateUtils.truncate(desde, Calendar.DAY_OF_MONTH), DateUtils.truncate(hasta, Calendar.DAY_OF_MONTH),
     			butacas, observaciones,
