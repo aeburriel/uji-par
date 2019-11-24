@@ -594,7 +594,8 @@ public class ButacasVinculadasService {
 
 		boolean resultado = false;
 		for (final Butaca butaca : butacasCompradas) {
-			if (butaca != null && isButacaAccesible(butaca) && inhabilitaButacasAsociadas(sesion, butaca, userUID)) {
+			if (butaca != null && isButacaAccesible(butaca) && enVigorReservaButacasAccesibles(sesion)
+					&& inhabilitaButacasAsociadas(sesion, butaca, userUID)) {
 				resultado = true;
 			}
 		}
