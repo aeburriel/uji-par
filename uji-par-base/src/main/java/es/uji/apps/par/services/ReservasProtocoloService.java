@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.dao.ComprasDAO;
 import es.uji.apps.par.db.SesionDTO;
 import es.uji.apps.par.db.TarifaDTO;
 import es.uji.apps.par.model.Butaca;
@@ -31,6 +32,9 @@ public class ReservasProtocoloService {
 
 	@Autowired
 	ButacasService butacasService;
+
+	@Autowired
+	private ComprasDAO comprasDAO;
 
 	@Autowired
 	private ComprasService comprasService;
@@ -51,16 +55,15 @@ public class ReservasProtocoloService {
 	}
 	
 	/**
-	 * Determina si existe reserva de protocolo según su descripción
+	 * Devuelve las reservas de protocolo según su descripción
 	 *
 	 * @param sesion      de la reserva
 	 * @param descripcion Texto de la reserva
-	 * @return true si ya hay reserva del tipo indicado en la sesión
+	 * @return lista de las reservas
 	 */
-	private boolean exitsReservaProtocolo(final SesionDTO sesion, final String descripcion) {
-		final List<Compra> reservas = comprasService.getComprasBySesion(Long.valueOf(sesion.getId()), 0,
+	private List<Compra> reservasProtocolo(final SesionDTO sesion, final String descripcion) {
+		return comprasService.getComprasBySesion(Long.valueOf(sesion.getId()), 0,
 				"[{\"property\":\"fecha\",\"direction\":\"ASC\"}]", 0, 1000, 0, descripcion);
-		return !reservas.isEmpty();
 	}
 
 	/**
@@ -137,19 +140,25 @@ public class ReservasProtocoloService {
 	 * (dos primeras filas del anfiteatro central)
 	 *
 	 * @param sesion
-	 * @param userUID
-	 * @return
+	 * @param userUID identificador del usuario
+	 * @return true si la operación se ha completado con éxito
 	 */
 	@Transactional
 	private boolean gestionaReservaProtocoloAnfiteatro(final SesionDTO sesion, final String userUID) {
-		// Si ya existe reserva, no hacemos nada
-		if (exitsReservaProtocolo(sesion, RESERVA_ANFITEATRO_CENTRAL)) {
-			return false;
-		}
-
-		final Date desde = new Date();
 		final Date hasta = DateUtils.getUltimoDiaHabil1400(sesion.getFechaCelebracion());
-		final List<Butaca> butacas = buildButacas("anfiteatro_central", 1, 2, 1, 7, 1);
-		return comprasService.reservaButacas(sesion, desde, hasta, butacas, RESERVA_ANFITEATRO_CENTRAL, userUID);
+
+		final List<Compra> reservas = reservasProtocolo(sesion, RESERVA_ANFITEATRO_CENTRAL);
+		if (reservas.isEmpty()) {
+			// Creamos reserva
+			final Date desde = new Date();
+			final List<Butaca> butacas = buildButacas("anfiteatro_central", 1, 2, 1, 7, 1);
+			return comprasService.reservaButacas(sesion, desde, hasta, butacas, RESERVA_ANFITEATRO_CENTRAL, userUID);
+		} else {
+			// Actualizamos fecha de bloqueo
+			for (final Compra reserva : reservas) {
+				comprasDAO.actualizarFechaCaducidad(reserva.getId(), hasta);
+			}
+			return true;
+		}
 	}
 }
