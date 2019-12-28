@@ -126,7 +126,7 @@ public class ReservasProtocoloService {
 		final long plantillaId = sesion.getParPlantilla().getId();
 
 		final List<Plantilla> plantillas = plantillasService.getBySala(salaId,
-				"[{\"property\":\"id\",\"direction\":\"ASC\"}]", 0, 1000, ADMIN_UID);
+				"[{\"property\":\"id\",\"direction\":\"ASC\"}]", 1, 1000, ADMIN_UID);
 		for (final Plantilla plantilla : plantillas) {
 			if (plantilla.getId() == plantillaId) {
 				return plantilla.getNombre();
