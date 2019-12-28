@@ -145,7 +145,7 @@ public class ReservasProtocoloService {
 	 */
 	@Transactional
 	private boolean gestionaReservaProtocoloAnfiteatro(final SesionDTO sesion, final String userUID) {
-		final Date hasta = DateUtils.getUltimoDiaHabil1400(sesion.getFechaCelebracion());
+		final Date hasta = DateUtils.FECHAINFINITO;
 
 		final List<Compra> reservas = reservasProtocolo(sesion, RESERVA_ANFITEATRO_CENTRAL);
 		if (reservas.isEmpty()) {

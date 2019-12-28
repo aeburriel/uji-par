@@ -16,6 +16,8 @@ public class DateUtils
     private static final SimpleDateFormat DATABASE_WITH_SECONDS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final SimpleDateFormat FORMAT_DDMMYY = new SimpleDateFormat("ddMMyy");
 
+    public static final Date FECHAINFINITO = new Date(95649033600000L);
+
     synchronized public static Date spanishStringToDate(String spanishDate)
     {
     	Calendar cal = Calendar.getInstance();
