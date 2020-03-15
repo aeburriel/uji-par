@@ -543,15 +543,17 @@ public class ButacasVinculadasService {
 	 * Devuelve la butaca accesible indicada como DatosButaca.
 	 *
 	 * @param butaca accesible
+	 * @param sesion del evento
 	 * @return objeto DatosButaca o null si no es butaca accesible
 	 */
-	private DatosButaca getDatosButaca(final Butaca butaca) {
+	private DatosButaca getDatosButaca(final Butaca butaca, final SesionDTO sesion) {
 		if (butaca == null) {
 			return null;
 		}
 
 		final DatosButaca candidata = new DatosButaca(butaca);
-		if (butacasVinculadas.containsKey(candidata)) {
+		if (butacasVinculadas.containsKey(candidata)
+				&& !getReservasBloqueoButacaAccesible(sesion, candidata).isEmpty()) {
 			return candidata;
 		}
 		return null;
@@ -566,7 +568,7 @@ public class ButacasVinculadasService {
 	 * @return true si la operación se completó con éxito
 	 */
 	private boolean inhabilitaButacasAsociadas(final SesionDTO sesion, final Butaca butaca, final String userUID) {
-		final DatosButaca butacaAsociada = getDatosButaca(butaca);
+		final DatosButaca butacaAsociada = getDatosButaca(butaca, sesion);
 		if (butacaAsociada == null) {
 			return false;
 		}
@@ -811,7 +813,7 @@ public class ButacasVinculadasService {
 			return true;
 		}
 
-		final DatosButaca butacaAccesible = getDatosButaca(butaca);
+		final DatosButaca butacaAccesible = getDatosButaca(butaca, sesion);
 
 		// Si el aforo está en transición, no permitimos butacas accesibles
 		if (enCambioAforo(sesion) && butacaAccesible != null) {
@@ -993,7 +995,11 @@ public class ButacasVinculadasService {
 
 		final Collection<DatosButaca> accesibles = butacasVinculadas.keySet();
 		if (todas || enVigorReservaButacasAccesibles(sesion)) {
-			butacas.addAll(accesibles);
+			for (final DatosButaca butaca : accesibles) {
+				if (!getReservasBloqueoButacaAccesible(sesion, butaca).isEmpty()) {
+					butacas.add(butaca);
+				}
+			}
 		} else {
 			for (final DatosButaca butaca : accesibles) {
 				if (esDiscapacitado(sesion.getId(), butaca)) {
@@ -1030,7 +1036,12 @@ public class ButacasVinculadasService {
 
 		final Set<DatosButaca> acompanantes = butacasAcompanantes.keySet();
 		if (enVigorReservaButacasAccesibles(sesion)) {
-			butacas.addAll(acompanantes);
+			for (final DatosButaca acompanante : acompanantes) {
+				final DatosButaca accesible = butacasAcompanantes.get(acompanante);
+				if (!getReservasBloqueoButacaAccesible(sesion, accesible).isEmpty()) {
+					butacas.add(acompanante);
+				}
+			}
 		} else {
 			for (final DatosButaca butaca : acompanantes) {
 				if (esAcompanante(sesion.getId(), butaca)) {
