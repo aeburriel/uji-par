@@ -35,13 +35,21 @@ public class ResourceProperties
     {
         properties = new HashMap<String, PropertyResourceBundle>();
         
-        for (String lenguaje:LENGUAJES)
+        for (final String lenguaje:LENGUAJES)
         {
             try
             {
-            	String path = "/etc/uji/par/i18n/properties_" + lenguaje + ".properties";
-            	InputStream inputStream = Files.newInputStream(Paths.get(path));
-                properties.put(lenguaje, new PropertyResourceBundle(new InputStreamReader(inputStream, "UTF-8")));
+            	final String path = "/etc/uji/par/i18n/properties_" + lenguaje + ".properties";
+            	final InputStream inputStream = Files.newInputStream(Paths.get(path));
+            	final InputStreamReader reader = new InputStreamReader(inputStream, "UTF-8");
+            	try
+            	{
+            		properties.put(lenguaje, new PropertyResourceBundle(reader));
+            	}
+            	finally {
+            		reader.close();
+            		inputStream.close();
+            	}
             }
             catch (IOException e)
             {

@@ -135,15 +135,21 @@ public class MapaDrawer implements MapaDrawerInterface
 
     private List<DatosButaca> parseaJsonButacas(String localizacion) throws IOException
     {
-        Gson gson = new Gson();
-        Type fooType = new TypeToken<List<DatosButaca>>()
+        final Gson gson = new Gson();
+        final Type fooType = new TypeToken<List<DatosButaca>>()
         {
         }.getType();
         
         final InputStream inputStream = Files.newInputStream(Paths.get(BUTACAS_PATH + "/" + localizacion + ".json"));
-        InputStreamReader jsonReader = new InputStreamReader(inputStream);
-
-        return gson.fromJson(jsonReader, fooType);
+        final InputStreamReader jsonReader = new InputStreamReader(inputStream);
+        List<DatosButaca> butacas;
+        try {
+        	butacas = gson.fromJson(jsonReader, fooType);
+        } finally {
+        	jsonReader.close();
+        	inputStream.close();
+        }
+        return butacas;
     }
 
     private ByteArrayOutputStream imagenToOutputStream(BufferedImage img) throws IOException

@@ -393,8 +393,14 @@ public class ButacasVinculadasService {
 
 		final InputStream inputStream = Files.newInputStream(Paths.get(BUTACAS_PATH + "/" + localizacion + ".json"));
 		final InputStreamReader jsonReader = new InputStreamReader(inputStream);
-
-		return gson.fromJson(jsonReader, fooType);
+		List<DatosButaca> butacas;
+		try {
+			butacas = gson.fromJson(jsonReader, fooType);
+		} finally {
+			jsonReader.close();
+			inputStream.close();
+		}
+		return butacas;
 	}
 
 	/**
