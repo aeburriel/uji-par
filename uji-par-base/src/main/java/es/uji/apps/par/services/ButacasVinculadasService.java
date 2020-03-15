@@ -413,7 +413,7 @@ public class ButacasVinculadasService {
 		final Date hasta = fechaFinBloqueoButacasAccesibles(sesion);
 
 		boolean resultado = false;
-		for (Compra bloqueo : bloqueos) {
+		for (final Compra bloqueo : bloqueos) {
 			// Solo hay que actualizar las reserva-bloqueo, no los bloqueos-venta accesibles
 			if (!isBloqueoVentaAccesible(bloqueo)) {
 				comprasDAO.actualizarFechaCaducidad(bloqueo.getId(), hasta);
@@ -472,7 +472,7 @@ public class ButacasVinculadasService {
 		final Collection<DatosButaca> butacasAsociadas = butacasVinculadas.get(datosButacaAccesible);
 
 		final List<Butaca> butacas = new ArrayList<Butaca>();
-		for (DatosButaca butacaAsociada : butacasAsociadas) {
+		for (final DatosButaca butacaAsociada : butacasAsociadas) {
 			final Butaca butaca = new Butaca(butacaAsociada.getLocalizacion(), String.valueOf(tarifaInvitacion.getId()));
 			butaca.setPrecio(BigDecimal.ZERO);
 			butaca.setFila(String.valueOf(butacaAsociada.getFila()));
@@ -618,7 +618,7 @@ public class ButacasVinculadasService {
 	@Transactional
 	public boolean ventaAnulada(final Long compraId) throws ButacaOcupadaException {
 		final CompraDTO compra = comprasDAO.getCompraById(compraId);
-		if(!compra.getParSesion().getParEvento().getAsientosNumerados()) {
+		if (!compra.getParSesion().getParEvento().getAsientosNumerados()) {
 			return true;
 		}
 
