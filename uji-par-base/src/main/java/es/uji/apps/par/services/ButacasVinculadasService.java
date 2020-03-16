@@ -669,7 +669,7 @@ public class ButacasVinculadasService {
 	@Transactional
 	public boolean ventaDesanulada(final Long compraId) throws ButacaOcupadaAlActivarException {
 		final CompraDTO compra = comprasDAO.getCompraById(compraId);
-		if(!compra.getParSesion().getParEvento().getAsientosNumerados()) {
+		if (!compra.getParSesion().getParEvento().getAsientosNumerados()) {
 			return true;
 		}
 		final SesionDTO sesion = compra.getParSesion();
@@ -746,7 +746,7 @@ public class ButacasVinculadasService {
 
 			// Solo hay que procesar las butacas de sesiones numeradas
 			final CompraDTO compra = butaca.getParCompra();
-			if(!compra.getParSesion().getParEvento().getAsientosNumerados()) {
+			if (!compra.getParSesion().getParEvento().getAsientosNumerados()) {
 				continue;
 			}
 
@@ -775,7 +775,7 @@ public class ButacasVinculadasService {
 						}
 					}
 
-					// Si la butaca de acompanante no está entre las butacas a borrar,
+					// Si la butaca de acompañante no está entre las butacas a borrar,
 					// hay que comprobar si forma parte de esta venta
 					if (!encontrada) {
 						for (final ButacaDTO butacaComprada : compra.getParButacas()) {
