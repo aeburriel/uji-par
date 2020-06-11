@@ -624,7 +624,8 @@ public class ButacasVinculadasService {
 	@Transactional
 	public boolean ventaAnulada(final Long compraId) throws ButacaOcupadaException {
 		final CompraDTO compra = comprasDAO.getCompraById(compraId);
-		if (!compra.getParSesion().getParEvento().getAsientosNumerados()) {
+		final SesionDTO sesion = compra.getParSesion();
+		if (!sesion.getParEvento().getAsientosNumerados()) {
 			return true;
 		}
 
@@ -634,7 +635,7 @@ public class ButacasVinculadasService {
 			// por lo que es seguro comprobar solo la primera butaca
 			final ButacaDTO butaca = compra.getParButacas().get(0);
 			final DatosButaca butacaAccesible = getButacaAccesiblePorAsociada(butaca);
-			throw new ButacaOcupadaException(compra.getParSesion().getId(), butacaAccesible.getLocalizacion(),
+			throw new ButacaOcupadaException(sesion.getId(), butacaAccesible.getLocalizacion(),
 					String.valueOf(butacaAccesible.getFila()), String.valueOf(butacaAccesible.getNumero()));
 		}
 
@@ -646,7 +647,7 @@ public class ButacasVinculadasService {
 			}
 			final DatosButaca butacaAccesible = getButacaAccesible(butaca);
 			if (butacaAccesible != null
-					&& actualizaBloqueoButacasAsociadas(compra.getParSesion(), butacaAccesible, false, ADMIN_UID)) {
+					&& actualizaBloqueoButacasAsociadas(sesion, butacaAccesible, false, ADMIN_UID)) {
 				resultado = true;
 			}
 		}
@@ -709,12 +710,11 @@ public class ButacasVinculadasService {
 			}
 			final DatosButaca butacaAccesible = getButacaAccesible(butaca);
 			if (butacaAccesible != null && enVigorReservaButacasAccesibles(sesion, compra.getFecha())) {
-				if (actualizaBloqueoButacasAsociadas(compra.getParSesion(), butacaAccesible, true, ADMIN_UID)) {
+				if (actualizaBloqueoButacasAsociadas(sesion, butacaAccesible, true, ADMIN_UID)) {
 					resultado = true;
 				} else {
 					// Las butacas asociadas están bloqueadas permanentemente por otra compra, no podemos continuar
-					throw new ButacaOcupadaAlActivarException(butaca
-							.getParSesion().getId(), butaca
+					throw new ButacaOcupadaAlActivarException(sesion.getId(), butaca
 							.getParLocalizacion().getCodigo(),
 							butaca.getFila(), butaca.getNumero(), "",
 							butaca.getParCompra().getTaquilla());
@@ -746,7 +746,8 @@ public class ButacasVinculadasService {
 
 			// Solo hay que procesar las butacas de sesiones numeradas
 			final CompraDTO compra = butaca.getParCompra();
-			if (!compra.getParSesion().getParEvento().getAsientosNumerados()) {
+			final SesionDTO sesion = compra.getParSesion();
+			if (!sesion.getParEvento().getAsientosNumerados()) {
 				continue;
 			}
 
@@ -755,9 +756,9 @@ public class ButacasVinculadasService {
 				throw new ButacaOcupadaException(compra.getParSesion().getId(), butaca.getParLocalizacion().getCodigo(), butaca.getFila(), butaca.getNumero());
 			}
 
-			final SesionDTO sesion = compra.getParSesion();
 			final DatosButaca butacaAccesible = getButacaAccesible(butaca);
-			if (butacaAccesible != null && enVigorReservaButacasAccesibles(sesion, compra.getFecha())) {
+			if (butacaAccesible != null && enVigorReservaButacasAccesibles(sesion, compra.getFecha())
+					&& !getReservasBloqueoButacaAccesible(sesion, butacaAccesible).isEmpty()) {
 				// Hay que comprobar que si esta butaca accesible tiene también una butaca de acompañante comprada,
 				// esta esté también incluída en la lista de butacas a cancelar
 				final DatosButaca butacaAcompanante = getButacaAcompanantePorAccesible(butacaAccesible);
@@ -787,7 +788,7 @@ public class ButacasVinculadasService {
 				}
 
 				// Ajustamos el bloqueo-reserva de la butaca accesible
-				if (actualizaBloqueoButacasAsociadas(compra.getParSesion(), butacaAccesible, false, ADMIN_UID)) {
+				if (actualizaBloqueoButacasAsociadas(sesion, butacaAccesible, false, ADMIN_UID)) {
 					resultado = true;
 				}
 			}
