@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.dao.ComprasDAO;
+import es.uji.apps.par.dao.EventosDAO;
+import es.uji.apps.par.db.EventoDTO;
 import es.uji.apps.par.db.SesionDTO;
 import es.uji.apps.par.db.TarifaDTO;
 import es.uji.apps.par.model.Butaca;
@@ -35,6 +37,9 @@ public class ReservasProtocoloService {
 
 	@Autowired
 	private ComprasDAO comprasDAO;
+
+	@Autowired
+	private EventosDAO eventosDAO;
 
 	@Autowired
 	private ComprasService comprasService;
@@ -103,6 +108,12 @@ public class ReservasProtocoloService {
 	 */
 	@Transactional
 	public void gestionaReservasProtocolo(final SesionDTO sesionDTO, final String userUID) {
+		// Solamente tenemos que procesar sesiones numeradas
+		final EventoDTO evento = eventosDAO.getEventoById(sesionDTO.getParEvento().getId(), ADMIN_UID);
+		final Boolean numerado = evento.getAsientosNumerados();
+		if (numerado == null || !numerado) {
+			return;
+		}
 		final String plantilla = getPlantillaNombre(sesionDTO);
 		if (plantilla == null) {
 			return;
