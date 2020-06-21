@@ -360,6 +360,8 @@ public class ComprasService
 
     /**
      * Hace una reserva de butacas
+     * No efectúa la reserva si alguna de las butacas está ya en uso por otra reserva.
+     * Permite incluir butacas anuladas.
      * @param sesion del evento
      * @param desde fecha y hora inicial de la reserva
      * @param hasta fecha y hora final de la reserva
@@ -373,7 +375,7 @@ public class ComprasService
     public synchronized boolean reservaButacas(final SesionDTO sesion, final Date desde, final Date hasta, final List<Butaca> butacas, final String observaciones, final String userUID) {
     	// Comprobamos que todas las butacas estén disponibles
     	for (final Butaca butaca : butacas) {
-    		if (butacasDAO.estaOcupada(sesion.getId(), butaca.getLocalizacion(), String.valueOf(butaca.getFila()), String.valueOf(butaca.getNumero()))) {
+    		if (!butaca.isAnulada() && butacasDAO.estaOcupada(sesion.getId(), butaca.getLocalizacion(), String.valueOf(butaca.getFila()), String.valueOf(butaca.getNumero()))) {
     			return false;
     		}
     	}
