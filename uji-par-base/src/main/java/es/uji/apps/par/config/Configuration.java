@@ -94,6 +94,7 @@ public class Configuration
 	private static final String SHOW_SESIONES_SIN_VENTA_INTERNET = "uji.par.showSesionesSinVentaInternet";
     public static final String JSON_LOCALIZACIONES_PATH = "/etc/uji/par/butacas/";
 	private static final String IS_LOADED_FROM_RESOURCE = "uji.par.isLoadedFromResource";
+	private static final String AFORO_DISTANCIAMIENTO_SOCIAL = "uji.par.aforoDistanciamientoSocial";
 
     private Properties properties;
 
@@ -587,4 +588,9 @@ public class Configuration
 	{
 		return getProperty(MAIL_USERNAME);
 	}
+
+    public boolean isAforoDistanciamientoSocial() {
+        final String valor = getNoObligatoryProperty(AFORO_DISTANCIAMIENTO_SOCIAL);
+        return valor != null && valor.equalsIgnoreCase("true") ? true : false;
+    }
 }

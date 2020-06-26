@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.annotation.PostConstruct;
 
@@ -24,6 +25,7 @@ import es.uji.apps.par.db.SesionDTO;
 import es.uji.apps.par.db.TarifaDTO;
 import es.uji.apps.par.model.Butaca;
 import es.uji.apps.par.model.Compra;
+import es.uji.apps.par.model.Localizacion;
 import es.uji.apps.par.model.Plantilla;
 import es.uji.apps.par.utils.DateUtils;
 
@@ -45,14 +47,91 @@ public class ReservasProtocoloService {
 	private ComprasService comprasService;
 
 	@Autowired
+	private LocalizacionesService localizacionesService;
+
+	@Autowired
 	private PlantillasService plantillasService;
 
 	@Autowired
 	private TarifasService tarifasService;
 
 	private static final String ADMIN_UID = "admin";
+	private static final String ZONA_TEATRO_ANFITEATRO_CENTRO = "anfiteatro_central";
+	private static final String ZONA_TEATRO_ANTITEATRO_IMPAR = "anfiteatro_lateral_senar";
+	private static final String ZONA_TEATRO_ANFITEATRO_PAR = "anfiteatro_lateral_par";
+	private static final String ZONA_TEATRO_GENERAL = "general";
+	private static TarifaDTO tarifaInvitacion;
+
 	private static final String RESERVA_ANFITEATRO_CENTRAL = "Protocolo Anfiteatro Central";
-	private TarifaDTO tarifaInvitacion;
+	class ButacasProtocoloAnfiteatro implements Function<SesionDTO, List<Butaca>> {
+		@Override
+		public List<Butaca> apply(final SesionDTO sesion) {
+			return buildButacas(sesion, ZONA_TEATRO_ANFITEATRO_CENTRO, 1, 2, 1, 7, 1, 1);
+		}
+	}
+
+	private static final String RESERVA_DISTANCIA_SOCIAL = "Distanciamiento Social";
+	class ButacasDistanciamientoSocial implements Function <SesionDTO, List<Butaca>> {
+		@Override
+		public List<Butaca> apply(final SesionDTO sesion) {
+			final List<Butaca> butacas = new ArrayList<Butaca>();
+			final List<Localizacion> localizaciones = localizacionesService.getLocalizacionesSesion(sesion.getId());
+			for (final Localizacion localizacion : localizaciones) {
+				switch (localizacion.getCodigo()) {
+				case ZONA_TEATRO_GENERAL:
+					// Filas sala pares
+					butacas.addAll(buildButacas(sesion, ZONA_TEATRO_GENERAL, 2, 12, 2, 20, 2, 2));
+					// Filas sala impares
+					for (int i = 1; i <= 11; i += 2) {
+						int n;
+						switch (i) {
+						case 1:
+							n = 17;
+							break;
+						case 3:
+							n = 19;
+							break;
+						case 5:
+							n = 21;
+							break;
+						case 7:
+							n = 23;
+							break;
+						default:
+							n = 25;
+							break;
+						}
+						butacas.addAll(buildButacas(sesion, ZONA_TEATRO_GENERAL, i, i, 1, n, 1, 2));
+					}
+					break;
+				case ZONA_TEATRO_ANTITEATRO_IMPAR:
+					for (int i = 1; i <= 5; i += 2) {
+						int n;
+						switch (i) {
+						case 1:
+							n = 13;
+							break;
+						case 3:
+							n = 15;
+							break;
+						default:
+							n = 17;
+							break;
+						}
+						butacas.addAll(buildButacas(sesion, ZONA_TEATRO_ANTITEATRO_IMPAR, i, i, 1, n, 1, 2));
+					}
+					break;
+				case ZONA_TEATRO_ANFITEATRO_CENTRO:
+					butacas.addAll(buildButacas(sesion, ZONA_TEATRO_ANFITEATRO_CENTRO, 2, 4, 1, 7, 2, 1));
+					break;
+				case ZONA_TEATRO_ANFITEATRO_PAR:
+					butacas.addAll(buildButacas(sesion, ZONA_TEATRO_ANFITEATRO_PAR, 1, 5, 2, 14, 2, 2));
+					break;
+				}
+			}
+			return butacas;
+		}
+	}
 
 	@PostConstruct
 	private void inicializa() {
@@ -73,25 +152,31 @@ public class ReservasProtocoloService {
 
 	/**
 	 * Genera un listado de butacas de tipo invitación según un intervalo
+	 * Las butacas que no están disponibles las marca como anuladas
 	 *
+	 * @param sesion  en la que comprobar la disponibilidad de las butacas, si null, no se comprueba
 	 * @param zona    Nombre de la localización según el mapa
 	 * @param fila0   fila inicial
 	 * @param filan   fila final (fila0 <= filan)
 	 * @param numero0 número inicial (numero0 <= numeron)
 	 * @param numeron número final (numero0 <= numeron)
-	 * @param paso    diferencia entre numero1 y numero0 (paso >= 1)
+	 * @param f_paso  paso en la secuencia de filas (f_paso >= 1)
+	 * @param n_paso  diferencia entre numero1 y numero0 (n_paso >= 1)
 	 * @return Lista de butacas
 	 */
-	private List<Butaca> buildButacas(final String zona, final int fila0, final int filan, final int numero0,
-			final int numeron, final int paso) {
+	private List<Butaca> buildButacas(final SesionDTO sesion, final String zona, final int fila0, final int filan, final int numero0,
+			final int numeron, final int f_paso, final int n_paso) {
 		final List<Butaca> butacas = new ArrayList<Butaca>();
 
-		for (int fila = fila0; fila <= filan; fila++) {
-			for (int numero = numero0; numero <= numeron; numero += paso) {
+		for (int fila = fila0; fila <= filan; fila += f_paso) {
+			for (int numero = numero0; numero <= numeron; numero += n_paso) {
 				final Butaca butaca = new Butaca(zona, String.valueOf(tarifaInvitacion.getId()));
 				butaca.setPrecio(BigDecimal.ZERO);
 				butaca.setFila(String.valueOf(fila));
 				butaca.setNumero(String.valueOf(numero));
+				if (sesion != null) {
+					butaca.setAnulada(butacasService.estaOcupada(sesion.getId(), zona, butaca.getFila(), butaca.getNumero()));
+				}
 				butacas.add(butaca);
 			}
 		}
@@ -114,16 +199,17 @@ public class ReservasProtocoloService {
 		if (numerado == null || !numerado) {
 			return;
 		}
-		final String plantilla = getPlantillaNombre(sesionDTO);
-		if (plantilla == null) {
-			return;
+
+		if (configuration.isAforoDistanciamientoSocial()) {
+			// Anulación de butacas para mantener el distanciamiento social por COVID19
+			gestionaReservaDistanciamientoSocial(sesionDTO, userUID);
 		}
 
-		if (StringUtils.startsWithIgnoreCase(plantilla, "Teatro, Música, Danza")) {
+		final String plantilla = getPlantillaNombre(sesionDTO);
+		if (plantilla != null && StringUtils.startsWithIgnoreCase(plantilla, "Teatro, Música, Danza")) {
 			// Primera fila del anfiteatro central
 			gestionaReservaProtocoloAnfiteatro(sesionDTO, userUID);
 		}
-
 	}
 
 	/**
@@ -147,6 +233,44 @@ public class ReservasProtocoloService {
 	}
 
 	/**
+	 * Realiza o actualiza una reserva de protocolo
+	 * @param sesion
+	 * @param generadorButacas Productor de la lista de butacas a incluir en la reserva
+	 * @param descripcion de la reserva
+	 * @param hasta Fecha de fin de validez de la reserva
+	 * @param userUID identificador del usuario
+	 * @return true si la operación se ha completado con éxito
+	 */
+	@Transactional
+	private boolean gestionaReserva(final SesionDTO sesion, final Function <SesionDTO, List<Butaca>> generadorButacas, final String descripcion, final Date hasta, final String userUID) {
+		final List<Compra> reservas = reservasProtocolo(sesion, descripcion);
+		if (reservas.isEmpty()) {
+			// Creamos reserva
+			final Date desde = new Date();
+			final List<Butaca> butacas = generadorButacas.apply(sesion);
+			return comprasService.reservaButacas(sesion, desde, hasta, butacas, descripcion, userUID);
+		} else {
+			// Actualizamos fecha de bloqueo
+			for (final Compra reserva : reservas) {
+				comprasDAO.actualizarFechaCaducidad(reserva.getId(), hasta);
+			}
+			return true;
+		}
+	}
+
+	/**
+	 * Reserva de butacas para mantener la distancia social
+	 *
+	 * @param sesion
+	 * @param userUID identificador del usuario
+	 * @return true si la operación se ha completado con éxito
+	 */
+	@Transactional
+	private boolean gestionaReservaDistanciamientoSocial(final SesionDTO sesion, final String userUID) {
+		return gestionaReserva(sesion, new ButacasDistanciamientoSocial(), RESERVA_DISTANCIA_SOCIAL, DateUtils.FECHAINFINITO, userUID);
+	}
+
+	/**
 	 * Reserva de butacas de protocolo en el anfieatro
 	 * (dos primeras filas del anfiteatro central)
 	 *
@@ -156,20 +280,6 @@ public class ReservasProtocoloService {
 	 */
 	@Transactional
 	private boolean gestionaReservaProtocoloAnfiteatro(final SesionDTO sesion, final String userUID) {
-		final Date hasta = DateUtils.FECHAINFINITO;
-
-		final List<Compra> reservas = reservasProtocolo(sesion, RESERVA_ANFITEATRO_CENTRAL);
-		if (reservas.isEmpty()) {
-			// Creamos reserva
-			final Date desde = new Date();
-			final List<Butaca> butacas = buildButacas("anfiteatro_central", 1, 2, 1, 7, 1);
-			return comprasService.reservaButacas(sesion, desde, hasta, butacas, RESERVA_ANFITEATRO_CENTRAL, userUID);
-		} else {
-			// Actualizamos fecha de bloqueo
-			for (final Compra reserva : reservas) {
-				comprasDAO.actualizarFechaCaducidad(reserva.getId(), hasta);
-			}
-			return true;
-		}
+		return gestionaReserva(sesion, new ButacasProtocoloAnfiteatro(), RESERVA_ANFITEATRO_CENTRAL, DateUtils.FECHAINFINITO, userUID);
 	}
 }
