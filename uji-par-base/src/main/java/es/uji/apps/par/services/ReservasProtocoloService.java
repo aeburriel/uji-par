@@ -57,7 +57,7 @@ public class ReservasProtocoloService {
 
 	private static final String ADMIN_UID = "admin";
 	private static final String ZONA_TEATRO_ANFITEATRO_CENTRO = "anfiteatro_central";
-	private static final String ZONA_TEATRO_ANTITEATRO_IMPAR = "anfiteatro_lateral_senar";
+	private static final String ZONA_TEATRO_ANFITEATRO_IMPAR = "anfiteatro_lateral_senar";
 	private static final String ZONA_TEATRO_ANFITEATRO_PAR = "anfiteatro_lateral_par";
 	private static final String ZONA_TEATRO_GENERAL = "general";
 	private static TarifaDTO tarifaInvitacion;
@@ -104,7 +104,7 @@ public class ReservasProtocoloService {
 						butacas.addAll(buildButacas(sesion, ZONA_TEATRO_GENERAL, i, i, 1, n, 1, 2));
 					}
 					break;
-				case ZONA_TEATRO_ANTITEATRO_IMPAR:
+				case ZONA_TEATRO_ANFITEATRO_IMPAR:
 					for (int i = 1; i <= 5; i += 2) {
 						int n;
 						switch (i) {
@@ -118,7 +118,7 @@ public class ReservasProtocoloService {
 							n = 17;
 							break;
 						}
-						butacas.addAll(buildButacas(sesion, ZONA_TEATRO_ANTITEATRO_IMPAR, i, i, 1, n, 1, 2));
+						butacas.addAll(buildButacas(sesion, ZONA_TEATRO_ANFITEATRO_IMPAR, i, i, 1, n, 1, 2));
 					}
 					break;
 				case ZONA_TEATRO_ANFITEATRO_CENTRO:
