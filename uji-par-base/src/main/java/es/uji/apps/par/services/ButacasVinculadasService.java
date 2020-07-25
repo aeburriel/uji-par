@@ -844,7 +844,7 @@ public class ButacasVinculadasService {
 		final DatosButaca butacaAccesible = getDatosButaca(butaca, sesion);
 
 		// Si el aforo está en transición, no permitimos butacas accesibles
-		if (enCambioAforo(sesion) && butacaAccesible != null) {
+		if (butacaAccesible != null && enCambioAforo(sesion)) {
 			return false;
 		}
 
