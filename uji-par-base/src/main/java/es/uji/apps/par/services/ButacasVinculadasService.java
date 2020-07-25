@@ -579,9 +579,20 @@ public class ButacasVinculadasService {
 		}
 
 		final DatosButaca candidata = new DatosButaca(butaca);
-		if (butacasVinculadas.containsKey(candidata)
-				&& !getReservasBloqueoButacaAccesible(sesion, candidata).isEmpty()) {
-			return candidata;
+		return getDatosButaca(candidata, sesion);
+	}
+
+	/**
+	 * Devuelve la butaca accesible indicada como DatosButaca.
+	 *
+	 * @param butaca accesible
+	 * @param sesion del evento
+	 * @return objeto DatosButaca o null si no es butaca accesible
+	 */
+	private DatosButaca getDatosButaca(final DatosButaca butaca, final SesionDTO sesion) {
+		if (butacasVinculadas.containsKey(butaca)
+				&& !getReservasBloqueoButacaAccesible(sesion, butaca).isEmpty()) {
+			return butaca;
 		}
 		return null;
 	}
@@ -874,7 +885,7 @@ public class ButacasVinculadasService {
 
 		// Si la butaca es de acompañante, no se permite si no lo está también su butaca accesible
 		final DatosButaca butacaAccesibleAsociada = butacasAcompanantes.get(new DatosButaca(butaca));
-		if (butacaAccesibleAsociada != null) {
+		if (getDatosButaca(butacaAccesibleAsociada, sesion) != null) {
 			for (final Butaca candidata : butacas) {
 				if (candidata != null && isButacaEqual(butacaAccesibleAsociada, candidata)) {
 					return true;
