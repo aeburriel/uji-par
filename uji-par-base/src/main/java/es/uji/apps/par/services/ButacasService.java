@@ -40,6 +40,9 @@ public class ButacasService
 	ConfigurationSelector configurationSelector;
 
 	@Autowired
+	ButacasDistanciamientoSocialService butacasDistanciamientoSocialService;
+
+	@Autowired
 	ButacasVinculadasService butacasVinculadasService;
 
     public ButacaDTO getButaca(long idButaca)
@@ -111,8 +114,10 @@ public class ButacasService
                             ocupadas.add(butaca);
                     }
                 } else {
-                	if (!butacasVinculadasService.validaButacas(sesionId, butacas, butaca)) {
-                		ocupadas.add(butaca);
+                    if (!butacasDistanciamientoSocialService.isButacaLibrePermitida(sesionId, butaca)) {
+                        ocupadas.add(butaca);
+                    } else if (!butacasVinculadasService.validaButacas(sesionId, butacas, butaca)) {
+                        ocupadas.add(butaca);
                 	}
                 }
             }
@@ -230,7 +235,8 @@ public class ButacasService
 
     public void cambiaFilaNumero(Long butacaId, String fila, String numero) {
         ButacaDTO butaca = getButaca(butacaId);
-        if (!butacasVinculadasService.cambiaFilaNumero(butaca, fila, numero)) {
+        if (!butacasDistanciamientoSocialService.cambiaFilaNumero(butaca, fila, numero)
+                || !butacasVinculadasService.cambiaFilaNumero(butaca, fila, numero)) {
             throw new ButacaOcupadaException(butaca.getParSesion().getId(), butaca.getParLocalizacion().getCodigo(), fila, numero);
         }
         List<ButacaDTO> butacasOcupadasPorLocalizacion = getButacasNoAnuladasPorLocalizacion(butaca.getParSesion().getId(), butaca.getParLocalizacion().getCodigo());

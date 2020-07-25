@@ -2,6 +2,8 @@ package es.uji.apps.par.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import es.uji.apps.par.db.CompraDTO;
 import es.uji.apps.par.model.Evento;
 import es.uji.apps.par.model.OrdreGrid;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +22,7 @@ import java.util.List;
 public class Utils
 {
 	private static final Logger log = LoggerFactory.getLogger(Utils.class);
+	public static final String COMPRA_NOMBRE_INTERNO = "★★★★★";
 
 	public static String stripAccents(String texto) {
     	return StringUtils.stripAccents(texto);
@@ -168,5 +171,18 @@ public class Utils
 	public static String sinUnicodes(String text)
 	{
 		return text != null ? text.replaceAll("\\u2028", "") : null;
+	}
+
+	public static boolean isCompraInterna(final CompraDTO compra) {
+		return compra.getTaquilla()
+				&& compra.getObservacionesReserva() != null
+				&& COMPRA_NOMBRE_INTERNO.equals(compra.getNombre())
+				&& COMPRA_NOMBRE_INTERNO.equals(compra.getApellidos());
+	}
+
+	public static void setCompraInterna(final CompraDTO compra) {
+		compra.setTaquilla(true);
+		compra.setNombre(Utils.COMPRA_NOMBRE_INTERNO);
+		compra.setApellidos(Utils.COMPRA_NOMBRE_INTERNO);
 	}
 }

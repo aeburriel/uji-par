@@ -7,12 +7,15 @@ import com.mysema.query.jpa.impl.JPAUpdateClause;
 import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.db.*;
 import es.uji.apps.par.exceptions.ButacaOcupadaException;
+import es.uji.apps.par.exceptions.CompraButacaNoExistente;
 import es.uji.apps.par.exceptions.IncidenciaNotFoundException;
 import es.uji.apps.par.exceptions.NoHayButacasLibresException;
 import es.uji.apps.par.exceptions.SesionSinFormatoIdiomaIcaaException;
 import es.uji.apps.par.ficheros.registros.TipoIncidencia;
 import es.uji.apps.par.model.Butaca;
+import es.uji.apps.par.services.ButacasDistanciamientoSocialService;
 import es.uji.apps.par.services.ButacasVinculadasService;
+import es.uji.apps.par.utils.Utils;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,9 @@ public class ButacasDAO extends BaseDAO
 
 	@Autowired
 	Configuration configuration;
+
+	@Autowired
+	ButacasDistanciamientoSocialService butacasDistanciamientoSocialService;
 
 	@Autowired
 	ButacasVinculadasService butacasVinculadasService;
@@ -188,6 +194,9 @@ public class ButacasDAO extends BaseDAO
             deleteButacas(compraDTO);
             
             SesionDTO sesionDTO = sesionesDAO.getSesion(sesionId, userUID);
+            if (!Utils.isCompraInterna(compraDTO) && !butacasDistanciamientoSocialService.validaButacas(sesionId, butacas)) {
+                throw new CompraButacaNoExistente();
+            }
             List<PreciosSesionDTO> parPreciosSesions = sesionDTO.getParPreciosSesions();
             
             for (Butaca butaca : butacas) {

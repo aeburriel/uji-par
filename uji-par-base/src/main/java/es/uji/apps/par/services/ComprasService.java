@@ -44,6 +44,7 @@ import es.uji.apps.par.model.PreciosSesion;
 import es.uji.apps.par.model.ResultadoCompra;
 import es.uji.apps.par.model.Sesion;
 import es.uji.apps.par.model.SesionAbono;
+import es.uji.apps.par.utils.Utils;
 
 @Service
 public class ComprasService
@@ -338,6 +339,15 @@ public class ComprasService
     		int horaInicial, int horaFinal, int minutoInicial, int minutoFinal, String userUID)
             throws NoHayButacasLibresException, ButacaOcupadaException, CompraSinButacasException
     {
+        return  reservaButacas(sesionId, desde, hasta, butacasSeleccionadas, observaciones, horaInicial, horaFinal, minutoInicial, minutoFinal, false, userUID);
+    }
+
+    @Transactional(rollbackForClassName={"NoHayButacasLibresException","ButacaOcupadaException",
+	"CompraSinButacasException"})
+    public ResultadoCompra reservaButacas(Long sesionId, Date desde, Date hasta, List<Butaca> butacasSeleccionadas, String observaciones,
+            int horaInicial, int horaFinal, int minutoInicial, int minutoFinal, boolean interna, String userUID)
+            throws NoHayButacasLibresException, ButacaOcupadaException, CompraSinButacasException
+    {
         if (butacasSeleccionadas.size() == 0)
             throw new CompraSinButacasException();
 
@@ -348,6 +358,9 @@ public class ComprasService
         hasta = addHoraMinutoToFecha(hasta, horaFinal, minutoFinal);
 
         CompraDTO compraDTO = comprasDAO.reserva(sesionId, new Date(), desde, hasta, observaciones, userUID);
+        if (interna) {
+            Utils.setCompraInterna(compraDTO);
+        }
 
         butacasDAO.reservaButacas(sesionId, compraDTO, butacasSeleccionadas, userUID);
 
@@ -359,7 +372,7 @@ public class ComprasService
     }
 
     /**
-     * Hace una reserva de butacas
+     * Hace una reserva interna de butacas
      * No efectúa la reserva si alguna de las butacas está ya en uso por otra reserva.
      * Permite incluir butacas anuladas.
      * @param sesion del evento
@@ -372,7 +385,7 @@ public class ComprasService
      */
     @Transactional(rollbackForClassName={"NoHayButacasLibresException","ButacaOcupadaException",
     "CompraSinButacasException"})
-    public synchronized boolean reservaButacas(final SesionDTO sesion, final Date desde, final Date hasta, final List<Butaca> butacas, final String observaciones, final String userUID) {
+    public synchronized boolean reservaInternaButacas(final SesionDTO sesion, final Date desde, final Date hasta, final List<Butaca> butacas, final String observaciones, final String userUID) {
     	// Comprobamos que todas las butacas estén disponibles
     	for (final Butaca butaca : butacas) {
     		if (!butaca.isAnulada() && butacasDAO.estaOcupada(sesion.getId(), butaca.getLocalizacion(), String.valueOf(butaca.getFila()), String.valueOf(butaca.getNumero()))) {
@@ -385,7 +398,7 @@ public class ComprasService
     			DateUtils.truncate(desde, Calendar.DAY_OF_MONTH), DateUtils.truncate(hasta, Calendar.DAY_OF_MONTH),
     			butacas, observaciones,
     			desde.getHours(), hasta.getHours(),
-    			desde.getMinutes(), hasta.getMinutes(), userUID);
+    			desde.getMinutes(), hasta.getMinutes(), true, userUID);
 
     	return resultadoCompra.getCorrecta();
     }

@@ -488,7 +488,7 @@ public class ButacasVinculadasService {
 
 		// Hacemos la reserva
 		final String observaciones = mensajeBloqueo(datosButacaAccesible);
-		return comprasService.reservaButacas(sesion, desde, hasta, butacas, observaciones, userUID);
+		return comprasService.reservaInternaButacas(sesion, desde, hasta, butacas, observaciones, userUID);
 	}
 
 	/**

@@ -248,7 +248,7 @@ public class ReservasProtocoloService {
 			// Creamos reserva
 			final Date desde = new Date();
 			final List<Butaca> butacas = generadorButacas.apply(sesion);
-			return comprasService.reservaButacas(sesion, desde, hasta, butacas, descripcion, userUID);
+			return comprasService.reservaInternaButacas(sesion, desde, hasta, butacas, descripcion, userUID);
 		} else {
 			// Actualizamos fecha de bloqueo
 			for (final Compra reserva : reservas) {
