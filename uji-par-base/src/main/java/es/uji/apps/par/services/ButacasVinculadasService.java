@@ -460,6 +460,27 @@ public class ButacasVinculadasService {
 	}
 
 	/**
+	 * Anula las butacas accesibles, convirtiendo las butacas accesibles en normales.
+	 *
+	 * @param sesion sobre la que cancelar las butacas accesibles
+	 * @return true si se ha cancelado alguna butaca
+	 */
+	@Transactional
+	public boolean cancelaButacasAccesibles(final SesionDTO sesion) {
+		boolean resultado = false;
+		final List<Compra> bloqueos = getReservasBloqueoButacaAccesible(sesion, null);
+		for (final Compra bloqueo : bloqueos) {
+			// Solo hay que actualizar las reserva-bloqueo, no los bloqueos-venta accesibles
+			if (!isBloqueoVentaAccesible(bloqueo)) {
+				comprasDAO.anularCompraReserva(bloqueo.getId(), false);
+				resultado = true;
+			}
+		}
+
+		return resultado;
+	}
+
+	/**
 	 * Crea la reserva-bloqueo correspondiente a la butaca accesible indicada
 	 *
 	 * @param sesion               del evento

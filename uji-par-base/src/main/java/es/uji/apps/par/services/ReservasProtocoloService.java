@@ -38,6 +38,9 @@ public class ReservasProtocoloService {
 	ButacasService butacasService;
 
 	@Autowired
+	private ButacasVinculadasService butacasVinculadasService;
+
+	@Autowired
 	private ComprasDAO comprasDAO;
 
 	@Autowired
@@ -201,6 +204,9 @@ public class ReservasProtocoloService {
 		}
 
 		if (configuration.isAforoDistanciamientoSocial()) {
+			// No permitimos butacas accesibles
+			butacasVinculadasService.cancelaButacasAccesibles(sesionDTO);
+
 			// Anulación de butacas para mantener el distanciamiento social por COVID19
 			gestionaReservaDistanciamientoSocial(sesionDTO, userUID);
 		}

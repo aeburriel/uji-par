@@ -208,8 +208,8 @@ public class SesionesDAO extends BaseDAO {
         // por cada pelicula de la multisesion (evento.getFormato, evento.getId, evento.getPeliculasMultisesion()
         // .getversionLingusitca())
         ////addSesionFormatoIdiomaIfNeeded(sesion.getEvento().getId(), sesion.getEvento().getFormato(),	sesion.getVersionLinguistica());
-        reservasProtocoloService.gestionaReservasProtocolo(sesionDTO, userUID);
         butacasVinculadasService.bloqueaButacasVinculadasDiscapacidad(sesionDTO, userUID);
+        reservasProtocoloService.gestionaReservasProtocolo(sesionDTO, userUID);
         return sesion;
     }
 
