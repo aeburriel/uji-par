@@ -98,26 +98,22 @@ public class ButacasService
 
     public List<Butaca> estanOcupadas(List<Long> sesionIds, List<Butaca> butacas, String uuidCompra)
     {
-        List<Butaca> ocupadas = new ArrayList<Butaca>();
+        final List<Butaca> ocupadas = new ArrayList<Butaca>();
 
-        for (Butaca butaca : butacas)
-        {
-            for (Long sesionId : sesionIds)
-            {
-                CompraDTO compra = butacasDAO.getCompra(sesionId, butaca.getLocalizacion(), butaca.getFila(), butaca.getNumero());
+        for (final Butaca butaca : butacas) {
+            for (final Long sesionId : sesionIds) {
+                final CompraDTO compra = butacasDAO.getCompra(sesionId, butaca.getLocalizacion(), butaca.getFila(), butaca.getNumero());
 
                 if (compra != null) {
-                    if (compra.getPagada()) {
+                    if (compra.getPagada() || !compra.getUuid().equals(uuidCompra)) {
                         ocupadas.add(butaca);
-                    } else {
-                        if (!compra.getUuid().equals(uuidCompra))
-                            ocupadas.add(butaca);
+                        break;
                     }
                 } else {
-                    if (!butacasDistanciamientoSocialService.isButacaLibrePermitida(sesionId, butaca)) {
+                    if (!butacasDistanciamientoSocialService.isButacaLibrePermitida(sesionId, butaca)
+                            || !butacasVinculadasService.validaButacas(sesionId, butacas, butaca)) {
                         ocupadas.add(butaca);
-                    } else if (!butacasVinculadasService.validaButacas(sesionId, butacas, butaca)) {
-                        ocupadas.add(butaca);
+                        break;
                 	}
                 }
             }
