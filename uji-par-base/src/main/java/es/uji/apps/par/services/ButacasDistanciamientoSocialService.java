@@ -515,13 +515,15 @@ public class ButacasDistanciamientoSocialService {
 
 		final SortedSetMultimap<FilaNumeracion, Butaca> b2f = butacas2Filas(butacas);
 		for (final FilaNumeracion fila : b2f.keySet()) {
+			final SortedSet<Butaca> butacasFila = b2f.get(fila);
+
 			// 3. Butacas contiguas
-			if (!isButacasFilaCompacta(fila, b2f.get(fila))) {
+			if (!isButacasFilaCompacta(fila, butacasFila)) {
 				return false;
 			}
 
 			// 4. Distancia de seguridad con la butaca ocupada más próxima
-			if (!isButacasFilaGuarda(sesionId, fila, b2f.get(fila))) {
+			if (!isButacasFilaGuarda(sesionId, fila, butacasFila)) {
 				return false;
 			}
 		}
