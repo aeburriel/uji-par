@@ -443,28 +443,32 @@ public class ButacasDistanciamientoSocialService {
 		candidata.setFila(String.valueOf(fila.getFila()));
 
 		int distancia = 0;
+		boolean ocupada = false;
 		int i = i0;
 		while (i-- > 0) {
 			candidata.setNumero(String.valueOf(fila.getNumeroButaca(i)));
 			if (isButacaOcupada(sesionId, candidata)) {
+				ocupada = true;
 				break;
 			}
 			distancia++;
 		}
-		if (distancia == BUTACAS_GUARDA) {
+		if (ocupada && distancia == BUTACAS_GUARDA) {
 			return true;
 		}
 
 		distancia = 0;
+		ocupada = false;
 		i = i1;
 		while (++i < fila.getCantidadButacas()) {
 			candidata.setNumero(String.valueOf(fila.getNumeroButaca(i)));
 			if (isButacaOcupada(sesionId, candidata)) {
+				ocupada = true;
 				break;
 			}
 			distancia++;
 		}
-		if (distancia == BUTACAS_GUARDA) {
+		if (ocupada && distancia == BUTACAS_GUARDA) {
 			return true;
 		}
 
