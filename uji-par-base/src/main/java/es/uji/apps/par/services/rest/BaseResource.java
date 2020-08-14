@@ -110,7 +110,7 @@ public class BaseResource
     public Response errorResponse(String messageProperty, Object... values)
     {
         String errorMessage = getProperty(messageProperty, values);
-        return Response.serverError().entity(new ResponseMessage(false, errorMessage)).build();
+        return Response.status(409).entity(new ResponseMessage(false, errorMessage)).build();
     }
 
     public String getProperty(String messageProperty, Object... values)
