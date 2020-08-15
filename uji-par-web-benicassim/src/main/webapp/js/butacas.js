@@ -403,11 +403,25 @@ Butacas = (function() {
 
 	function validaSuccess(response) {
 		// console.log("validez:", response);
-		if (!response.result) {
+		var resultado = response.result;
+
+		activaBotónComprar(resultado);
+
+		if (!resultado) {
 			alert(response.message);
 		}
 	}
-	
+
+	function activaBotónComprar(activar) {
+		var botón = $("#seleccionComprar");
+
+		if (activar) {
+			botón.show();
+		} else {
+			botón.hide();
+		}
+	}
+
 	function compruebaEstadoButacas() {
 		
 		var path = baseUrl + "/rest/entrada/" + $("input[name=idSesion]").val() + "/ocupadas";
