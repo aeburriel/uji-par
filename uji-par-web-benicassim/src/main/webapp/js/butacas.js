@@ -405,7 +405,11 @@ Butacas = (function() {
 		// console.log("validez:", response);
 		var resultado = response.result;
 
-		activaBotónComprar(resultado);
+		if (modoAdmin) {
+			activaBotónSiguiente(resultado);
+		} else {
+			activaBotónComprar(resultado);
+		}
 
 		if (!resultado) {
 			alert(response.message);
@@ -419,6 +423,20 @@ Butacas = (function() {
 			botón.show();
 		} else {
 			botón.hide();
+		}
+	}
+
+	function activaBotónSiguiente(activar) {
+		if (typeof parent.Ext == "undefined") {
+			return;
+		}
+
+		var botón = parent.Ext.getCmp("comprarSiguiente");
+
+		if (activar) {
+			botón.enable();
+		} else {
+			botón.disable();
 		}
 	}
 
