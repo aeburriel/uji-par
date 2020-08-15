@@ -11,6 +11,7 @@ import es.uji.apps.par.db.CompraDTO;
 import es.uji.apps.par.db.LocalizacionDTO;
 import es.uji.apps.par.db.TarifaDTO;
 import es.uji.apps.par.exceptions.ButacaOcupadaException;
+import es.uji.apps.par.exceptions.CompraDistanciamientoSocial;
 import es.uji.apps.par.i18n.ResourceProperties;
 import es.uji.apps.par.model.Butaca;
 import es.uji.apps.par.model.Compra;
@@ -120,6 +121,12 @@ public class ButacasService
         }
 
         return ocupadas;
+    }
+
+    public void validaButacas(final long sesionId, final List<Butaca> butacas, final String uuidCompra) throws CompraDistanciamientoSocial {
+        if (!butacasDistanciamientoSocialService.validaButacas(sesionId, butacas)) {
+            throw new CompraDistanciamientoSocial();
+        }
     }
 
     public Compra getCompra(long sesionId, String localizacion, String fila, String butaca)

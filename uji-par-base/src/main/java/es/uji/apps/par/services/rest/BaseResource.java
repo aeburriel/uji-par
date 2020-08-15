@@ -113,6 +113,18 @@ public class BaseResource
         return Response.status(409).entity(new ResponseMessage(false, errorMessage)).build();
     }
 
+    public Response jsonTextResponse(final boolean status, final String messageProperty, final Object... values)
+    {
+        final String message;
+        if (messageProperty != null && !messageProperty.isEmpty()) {
+            message = getProperty(messageProperty, values);
+        } else {
+            message = "";
+        }
+
+        return Response.ok().entity(new ResponseMessage(status, message)).build();
+    }
+
     public String getProperty(String messageProperty, Object... values)
     {
         return ResourceProperties.getProperty(getLocale(), messageProperty, values);

@@ -63,6 +63,7 @@ public class GeneralPARException extends WebApplicationException
     public static final String SESION_NO_ENCONTRADA= "Sesión no encontrada";
 	public static final String EDICION_ANULADA_EXCEPTION = "No se puede editar una sesión anulada";
     public static final String ABONO_CON_ABONADOS = "Abono con abonados";
+    public static final String DISTANCIAMIENTO_SOCIAL = "La compra no respeta las restricciones de distanciamiento social";
 
     public static final Integer ERROR_GENERAL_CODE = 500;
     public static final Integer REQUIRED_FIELD_CODE = 501;
@@ -117,6 +118,7 @@ public class GeneralPARException extends WebApplicationException
     public static final Integer ABONO_CON_ABONADOS_CODE = 550;
     public static final Integer COMPRA_BUTACA_NO_EXISTENTE_CODE = 551;
     public static final Integer SESION_NO_ENCONTRADA_CODE = 552;
+    public static final Integer COMPRA_DISTANCIAMIENTO_SOCIAL_CODE = 553;
 
     static {
 		messages = new HashMap<Integer,String>();
@@ -173,6 +175,7 @@ public class GeneralPARException extends WebApplicationException
         messages.put(ABONO_CON_ABONADOS_CODE, ABONO_CON_ABONADOS);
         messages.put(COMPRA_BUTACA_NO_EXISTENTE_CODE, COMPRA_BUTACA_NO_EXISTENTE);
                 messages.put(SESION_NO_ENCONTRADA_CODE, SESION_NO_ENCONTRADA);
+        messages.put(COMPRA_DISTANCIAMIENTO_SOCIAL_CODE, DISTANCIAMIENTO_SOCIAL);
     }
 
     public GeneralPARException(int errorCode) {

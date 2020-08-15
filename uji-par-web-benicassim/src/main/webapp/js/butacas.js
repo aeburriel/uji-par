@@ -352,6 +352,7 @@ Butacas = (function() {
 	
 	function refrescaEstadoButacas()
 	{
+		compruebaValidezButacas();
 		muestraBotonLimpiarSeleccion();
 		redibujaButacasSeleccionadas();
 		muestraDetallesSeleccionadas();
@@ -399,11 +400,18 @@ Butacas = (function() {
 			}
 		}
 	}
+
+	function validaSuccess(response) {
+		// console.log("validez:", response);
+		if (!response.result) {
+			alert(response.message);
+		}
+	}
 	
 	function compruebaEstadoButacas() {
 		
 		var path = baseUrl + "/rest/entrada/" + $("input[name=idSesion]").val() + "/ocupadas";
-		
+
 		$.ajax({
 			  url: path,
 			  type:"POST",
@@ -411,6 +419,22 @@ Butacas = (function() {
 			  contentType: "application/json; charset=utf-8",
 			  dataType: "json",
 			  success: ocupadasSuccess});
+	}
+
+	function compruebaValidezButacas() {
+		if (butacasSeleccionadas.length == 0) {
+			return;
+		}
+
+		var path = baseUrl + "/rest/entrada/" + $("input[name=idSesion]").val() + "/valida";
+
+		$.ajax({
+			  url: path,
+			  type:"POST",
+			  data: $.toJSON({uuidCompra:uuidCompra, butacas:butacasSeleccionadas}),
+			  contentType: "application/json; charset=utf-8",
+			  dataType: "json",
+			  success: validaSuccess});
 	}
 	
 	function muestraPrecios() {

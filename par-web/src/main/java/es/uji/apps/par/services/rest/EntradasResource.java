@@ -1,5 +1,4 @@
 package es.uji.apps.par.services.rest;
-
 import com.mysema.commons.lang.Pair;
 import com.sun.jersey.api.core.InjectParam;
 import es.uji.apps.par.builders.PublicPageBuilderInterface;
@@ -733,6 +732,25 @@ public class EntradasResource extends BaseResource {
         // pararms.getUuidCompra() es, en realidad, el selector
         final String uuidCompra = getUserCarts().getUuid(params.getUuidCompra());
         return butacasService.estanOcupadas(idSesion, params.getButacas(), uuidCompra);
+    }
+
+    @POST
+    @Path("{id}/valida")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response validaButacas(@PathParam("id") final Integer idSesion, final EstadoButacasRequest params) {
+        // pararms.getUuidCompra() es, en realidad, el selector
+        final String uuidCompra = getUserCarts().getUuid(params.getUuidCompra());
+
+        boolean status = false;
+        String message = null;
+        try {
+            butacasService.validaButacas(idSesion, params.getButacas(), uuidCompra);
+            status = true;
+        } catch (final CompraDistanciamientoSocial e) {
+            message = "error.seleccionEntradas.distanciamientoSocial";
+        }
+        return jsonTextResponse(status, message);
     }
 
     /*
