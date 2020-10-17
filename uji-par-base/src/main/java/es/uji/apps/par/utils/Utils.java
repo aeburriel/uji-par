@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import es.uji.apps.par.db.CompraDTO;
+import es.uji.apps.par.model.Butaca;
 import es.uji.apps.par.model.Evento;
 import es.uji.apps.par.model.OrdreGrid;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +24,11 @@ public class Utils
 {
 	private static final Logger log = LoggerFactory.getLogger(Utils.class);
 	public static final String COMPRA_NOMBRE_INTERNO = "★★★★★";
+
+	private static final String LOCALIZACION_TEATRO_ANFITEATRO_CENTRO = "anfiteatro_central";
+	private static final String LOCALIZACION_TEATRO_ANFITEATRO_IMPAR = "anfiteatro_lateral_senar";
+	private static final String LOCALIZACION_TEATRO_ANFITEATRO_PAR = "anfiteatro_lateral_par";
+	private static final String LOCALIZACION_TEATRO_GENERAL = "general";
 
 	public static String stripAccents(String texto) {
     	return StringUtils.stripAccents(texto);
@@ -185,4 +191,84 @@ public class Utils
 		compra.setNombre(Utils.COMPRA_NOMBRE_INTERNO);
 		compra.setApellidos(Utils.COMPRA_NOMBRE_INTERNO);
 	}
+
+	/**
+	 * Devuelve los datos de numeración de la fila correspondiente a la butaca
+	 * indicada
+	 *
+	 * @param butaca
+	 * @return FilaNumeracion
+	 */
+	public static FilaNumeracion getFilaNumeracion(final Butaca butaca) {
+		final String localizacion = butaca.getLocalizacion();
+		final int fila = Integer.parseInt(butaca.getFila());
+		final boolean par = Integer.parseInt(butaca.getNumero()) % 2 == 0;
+
+		int primera;
+		int ultima;
+		int paso;
+
+		switch (localizacion) {
+		case LOCALIZACION_TEATRO_ANFITEATRO_CENTRO:
+			primera = 1;
+			ultima = 7;
+			paso = 1;
+			break;
+		case LOCALIZACION_TEATRO_ANFITEATRO_IMPAR:
+			primera = 1;
+			if (fila <= 2) {
+				ultima = 13;
+			} else if (fila <= 4) {
+				ultima = 15;
+			} else {
+				ultima = 17;
+			}
+			paso = 2;
+			break;
+		case LOCALIZACION_TEATRO_ANFITEATRO_PAR:
+			primera = 2;
+			ultima = 14;
+			paso = 2;
+			break;
+		case LOCALIZACION_TEATRO_GENERAL:
+			if (fila == 1) {
+				paso = 2;
+				if (par) {
+					// Butacas pares
+					primera = 2;
+					ultima = 18;
+				} else {
+					// Butacas impares
+					primera = 1;
+					ultima = 17;
+				}
+			} else if (par) {
+				// Resto de butacas pares
+				primera = 2;
+				ultima = 20;
+				paso = 2;
+			} else {
+				// Resto de butacas impares
+				primera = 1;
+				paso = 2;
+				if (fila == 2) {
+					ultima = 17;
+				} else if (fila <= 4) {
+					ultima = 19;
+				} else if (fila <= 6) {
+					ultima = 21;
+				} else if (fila <= 8) {
+					ultima = 23;
+				} else {
+					ultima = 25;
+				}
+			}
+			break;
+		default:
+			return null;
+		}
+
+		return new FilaNumeracion(localizacion, fila, primera, ultima, paso);
+	}
+
 }

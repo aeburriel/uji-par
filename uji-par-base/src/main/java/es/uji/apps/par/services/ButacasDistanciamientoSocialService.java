@@ -22,6 +22,8 @@ import es.uji.apps.par.dao.SesionesDAO;
 import es.uji.apps.par.db.ButacaDTO;
 import es.uji.apps.par.db.SesionDTO;
 import es.uji.apps.par.model.Butaca;
+import es.uji.apps.par.utils.FilaNumeracion;
+import es.uji.apps.par.utils.Utils;
 
 @Service
 public class ButacasDistanciamientoSocialService {
@@ -37,228 +39,7 @@ public class ButacasDistanciamientoSocialService {
 	private static final String ADMIN_UID = "admin";
 
 	private static final int BUTACAS_GUARDA = 2;
-	private static final String LOCALIZACION_TEATRO_ANFITEATRO_CENTRO = "anfiteatro_central";
-	private static final String LOCALIZACION_TEATRO_ANFITEATRO_IMPAR = "anfiteatro_lateral_senar";
-	private static final String LOCALIZACION_TEATRO_ANFITEATRO_PAR = "anfiteatro_lateral_par";
-	private static final String LOCALIZACION_TEATRO_GENERAL = "general";
 
-	class FilaNumeracion {
-		private final String localizacion;
-		private final int fila;
-		private final int primera;
-		private final int ultima;
-		private final int paso;
-
-		FilaNumeracion(final String localizacion, final int fila, final int primera, final int ultima, final int paso) {
-			this.localizacion = localizacion;
-			this.fila = fila;
-			this.primera = primera;
-			this.ultima = ultima;
-			this.paso = paso;
-		}
-
-		@Override
-		public boolean equals(final Object object) {
-			if (this == object) {
-				return true;
-			}
-
-			if (object == null || this.getClass() != object.getClass()) {
-				return false;
-			}
-
-			final FilaNumeracion fila = (FilaNumeracion) object;
-			return this.fila == fila.fila
-					&& this.primera == fila.primera && this.ultima == fila.ultima
-					&& this.paso == fila.paso && this.localizacion.equals(fila.localizacion);
-		}
-
-		@Override
-		public String toString() {
-			return String.format("FilaNumeracion(%s_%d_[%d..%d]|%d)", localizacion, fila, primera, ultima, paso);
-		}
-
-		@Override
-		public int hashCode() {
-			return toString().hashCode();
-		}
-
-		public String getLocalizacion() {
-			return localizacion;
-		}
-
-		public int getFila() {
-			return fila;
-		}
-
-		public int getPrimera() {
-			return primera;
-		}
-
-		public int getUltima() {
-			return ultima;
-		}
-
-		public int getPaso() {
-			return paso;
-		}
-
-		/**
-		 * Comprueba si la butaca indicada pertenece a esta fila
-		 *
-		 * @param butaca
-		 * @return true si pertenece
-		 */
-		public boolean pertenece(final Butaca butaca) {
-			final int numero = Integer.parseInt(butaca.getNumero());
-
-			return pertenece(numero) && fila == Integer.parseInt(butaca.getFila())
-					&& localizacion.equals(butaca.getLocalizacion());
-		}
-
-		/**
-		 * Comprueba si el número de butaca indicado pertenece a esta fila
-		 *
-		 * @param numero de butaca
-		 * @return true si pertenece
-		 */
-		public boolean pertenece(final int numero) {
-			// X_i = primera + paso * (i - 1)
-			// (X_i - primera) / paso = (i - 1)
-			return ((numero - primera) % paso == 0) && ultima >= numero && primera <= numero;
-		}
-
-		/**
-		 * Devuelve el número de butacas de esta fila
-		 *
-		 * @return Número de butacas
-		 */
-		public int getCantidadButacas() {
-			return getCantidadButacas(primera, ultima);
-		}
-
-		/**
-		 * Calcula el número de butacas entre dos extremos, ambos incluídos
-		 *
-		 * @param n0 número de butaca inferior
-		 * @param n1 número de butaca superior
-		 * @return el número de butacas, incluyendo ambos extremos
-		 */
-		public int getCantidadButacas(final int n0, final int n1) {
-			if (n0 > n1 || !pertenece(n0) || !pertenece(n1)) {
-				throw new ArrayIndexOutOfBoundsException();
-			}
-
-			return ((n1 - n0) / paso) + 1;
-		}
-
-		/**
-		 * Devuelve el índice para el número de butaca indicado
-		 *
-		 * @param numero de butaca
-		 * @return el íncide
-		 */
-		public int getIndice(final int numero) {
-			if (!pertenece(numero)) {
-				throw new IndexOutOfBoundsException();
-			}
-			return (numero - primera) / paso;
-		}
-
-		/**
-		 * Devuelve el número de butaca según su posición
-		 *
-		 * @param indice Posición de la butaca, empezando por 0
-		 * @return El número de la butaca indicada
-		 */
-		public int getNumeroButaca(final int indice) {
-			final int numero = primera + paso * indice;
-			if (numero > ultima || numero < primera) {
-				throw new IndexOutOfBoundsException();
-			}
-
-			return numero;
-		}
-	}
-
-	/**
-	 * Devuelve los datos de numeración de la fila correspondiente a la butaca
-	 * indicada
-	 *
-	 * @param butaca
-	 * @return FilaNumeracion
-	 */
-	private FilaNumeracion getFilaNumeracion(final Butaca butaca) {
-		final String localizacion = butaca.getLocalizacion();
-		final int fila = Integer.parseInt(butaca.getFila());
-		final boolean par = Integer.parseInt(butaca.getNumero()) % 2 == 0;
-
-		int primera;
-		int ultima;
-		int paso;
-
-		switch (localizacion) {
-		case LOCALIZACION_TEATRO_ANFITEATRO_CENTRO:
-			primera = 1;
-			ultima = 7;
-			paso = 1;
-			break;
-		case LOCALIZACION_TEATRO_ANFITEATRO_IMPAR:
-			primera = 1;
-			if (fila <= 2) {
-				ultima = 13;
-			} else if (fila <= 4) {
-				ultima = 15;
-			} else {
-				ultima = 17;
-			}
-			paso = 2;
-			break;
-		case LOCALIZACION_TEATRO_ANFITEATRO_PAR:
-			primera = 2;
-			ultima = 14;
-			paso = 2;
-			break;
-		case LOCALIZACION_TEATRO_GENERAL:
-			if (fila == 1) {
-				paso = 2;
-				if (par) {
-					// Butacas pares
-					primera = 2;
-					ultima = 18;
-				} else {
-					// Butacas impares
-					primera = 1;
-					ultima = 17;
-				}
-			} else if (par) {
-				// Resto de butacas pares
-				primera = 2;
-				ultima = 20;
-				paso = 2;
-			} else {
-				// Resto de butacas impares
-				primera = 1;
-				paso = 2;
-				if (fila == 2) {
-					ultima = 17;
-				} else if (fila <= 4) {
-					ultima = 19;
-				} else if (fila <= 6) {
-					ultima = 21;
-				} else if (fila <= 8) {
-					ultima = 23;
-				} else {
-					ultima = 25;
-				}
-			}
-			break;
-		default:
-			return null;
-		}
-
-		return new FilaNumeracion(localizacion, fila, primera, ultima, paso);
-	}
 
 	/**
 	 * Clasifica por filas un conjunto de butacas
@@ -291,7 +72,7 @@ public class ButacasDistanciamientoSocialService {
 				.treeSetValues(new SortbyNumeracion()).build();
 
 		for (final Butaca butaca : butacas) {
-			final FilaNumeracion fila = getFilaNumeracion(butaca);
+			final FilaNumeracion fila = Utils.getFilaNumeracion(butaca);
 			filas.put(fila, butaca);
 		}
 
@@ -345,7 +126,7 @@ public class ButacasDistanciamientoSocialService {
 	 * @return Set con las butacas en el área de distanciamiento social
 	 */
 	private Set<Butaca> getButacasEntorno(final Butaca butaca0) {
-		final FilaNumeracion fila = getFilaNumeracion(butaca0);
+		final FilaNumeracion fila = Utils.getFilaNumeracion(butaca0);
 		final int bi = fila.getIndice(Integer.parseInt(butaca0.getNumero()));
 		return getButacasEntorno(fila, bi, bi);
 	}
