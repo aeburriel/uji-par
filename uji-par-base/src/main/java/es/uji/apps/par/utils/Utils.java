@@ -208,6 +208,31 @@ public class Utils
 	}
 
 	/**
+	 * Devuelve el número de filas para la zona indicada
+	 *
+	 * @return
+	 */
+	public static int getFilas(final String localizacion) {
+		final int filas;
+		switch (localizacion) {
+		case LOCALIZACION_TEATRO_ANFITEATRO_CENTRO:
+			filas = 5;
+			break;
+		case LOCALIZACION_TEATRO_ANFITEATRO_IMPAR:
+		case LOCALIZACION_TEATRO_ANFITEATRO_PAR:
+			filas = 6;
+			break;
+		case LOCALIZACION_TEATRO_GENERAL:
+			filas = 12;
+			break;
+		default:
+			filas = 0;
+		}
+
+		return filas;
+	}
+
+	/**
 	 * Devuelve los datos de numeración de la fila correspondiente a la ubicación
 	 * indicada
 	 *

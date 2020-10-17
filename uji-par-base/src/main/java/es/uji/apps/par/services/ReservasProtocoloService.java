@@ -84,35 +84,36 @@ public class ReservasProtocoloService {
 			final List<Localizacion> localizaciones = localizacionesService.getLocalizacionesSesion(sesion.getId());
 			for (final Localizacion localizacion : localizaciones) {
 				final String clocalizacion = localizacion.getCodigo();
+				final int filas = Utils.getFilas(clocalizacion);
 				FilaNumeracion fn;
 				switch (clocalizacion) {
 				case ZONA_TEATRO_GENERAL:
 					// Filas sala pares
-					for (int fila = 2; fila <= 12; fila += 2) {
+					for (int fila = 2; fila <= filas; fila += 2) {
 						fn = Utils.getFilaNumeracion(clocalizacion, fila, true);
 						butacas.addAll(buildButacasPatron(sesion, fn, BLOQUEO_1_0, 0));
 					}
 
 					// Filas sala impares
-					for (int fila = 1; fila <= 12; fila += 2) {
+					for (int fila = 1; fila <= filas; fila += 2) {
 						fn = Utils.getFilaNumeracion(clocalizacion, fila, false);
 						butacas.addAll(buildButacasPatron(sesion, fn, BLOQUEO_1_0, 0));
 					}
 					break;
 				case ZONA_TEATRO_ANFITEATRO_IMPAR:
-					for (int fila = 1; fila <= 6; fila += 2) {
+					for (int fila = 1; fila <= filas; fila += 2) {
 						fn = Utils.getFilaNumeracion(clocalizacion, fila, false);
 						butacas.addAll(buildButacasPatron(sesion, fn, BLOQUEO_1_0, 0));
 					}
 					break;
 				case ZONA_TEATRO_ANFITEATRO_CENTRO:
-					for (int fila = 2; fila <= 5; fila += 2) {
+					for (int fila = 2; fila <= filas; fila += 2) {
 						fn = Utils.getFilaNumeracion(clocalizacion, fila, false);
 						butacas.addAll(buildButacasPatron(sesion, fn, BLOQUEO_1_0, 0));
 					}
 					break;
 				case ZONA_TEATRO_ANFITEATRO_PAR:
-					for (int fila = 1; fila <= 6; fila += 2) {
+					for (int fila = 1; fila <= filas; fila += 2) {
 						fn = Utils.getFilaNumeracion(clocalizacion, fila, true);
 						butacas.addAll(buildButacasPatron(sesion, fn, BLOQUEO_1_0, 0));
 					}
@@ -132,39 +133,40 @@ public class ReservasProtocoloService {
 			FilaNumeracion fn;
 			for (final Localizacion localizacion : localizaciones) {
 				final String clocalizacion = localizacion.getCodigo();
+				final int filas = Utils.getFilas(clocalizacion);
 				int desplazamiento;
 				switch (clocalizacion) {
 				case ZONA_TEATRO_GENERAL:
 					// Butacas impares
-					for (int fila = 1; fila <= 12; fila++) {
+					for (int fila = 1; fila <= filas; fila++) {
 						fn = Utils.getFilaNumeracion(clocalizacion, fila, false);
 						desplazamiento = fn.isFilaPar() ? 1 : 2;
 						butacas.addAll(buildButacasPatron(sesion, fn, BLOQUEO_2_1, desplazamiento));
 					}
 
 					// Butacas pares
-					for (int fila = 1; fila <= 12; fila++) {
+					for (int fila = 1; fila <= filas; fila++) {
 						fn = Utils.getFilaNumeracion(clocalizacion, fila, true);
 						desplazamiento = fn.isFilaPar() ? 2 : 1;
 						butacas.addAll(buildButacasPatron(sesion, fn, BLOQUEO_2_1, desplazamiento));
 					}
 					break;
 				case ZONA_TEATRO_ANFITEATRO_IMPAR:
-					for (int fila = 1; fila <= 6; fila++) {
+					for (int fila = 1; fila <= filas; fila++) {
 						fn = Utils.getFilaNumeracion(clocalizacion, fila, false);
 						desplazamiento = fn.isFilaPar() ? 2 : 1;
 						butacas.addAll(buildButacasPatron(sesion, fn, BLOQUEO_2_1, desplazamiento));
 					}
 					break;
 				case ZONA_TEATRO_ANFITEATRO_CENTRO:
-					for (int fila = 1; fila <= 5; fila++) {
+					for (int fila = 1; fila <= filas; fila++) {
 						fn = Utils.getFilaNumeracion(clocalizacion, fila, false);
 						desplazamiento = fn.isFilaPar() ? 1 : 2;
 						butacas.addAll(buildButacasPatron(sesion, fn, BLOQUEO_2_1, desplazamiento));
 					}
 					break;
 				case ZONA_TEATRO_ANFITEATRO_PAR:
-					for (int fila = 1; fila <= 6; fila++) {
+					for (int fila = 1; fila <= filas; fila++) {
 						fn = Utils.getFilaNumeracion(clocalizacion, fila, true);
 						desplazamiento = fn.isFilaPar() ? 2 : 1;
 						butacas.addAll(buildButacasPatron(sesion, fn, BLOQUEO_2_1, desplazamiento));
