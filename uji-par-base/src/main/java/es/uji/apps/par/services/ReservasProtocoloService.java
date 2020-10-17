@@ -84,44 +84,45 @@ public class ReservasProtocoloService {
 				case ZONA_TEATRO_GENERAL:
 					// Filas sala pares
 					butacas.addAll(buildButacas(sesion, ZONA_TEATRO_GENERAL, 2, 12, 2, 20, 2, 2));
+
 					// Filas sala impares
-					for (int i = 1; i <= 11; i += 2) {
-						int n;
-						switch (i) {
+					for (int fila = 1; fila <= 11; fila += 2) {
+						int ultima;
+						switch (fila) {
 						case 1:
-							n = 17;
+							ultima = 17;
 							break;
 						case 3:
-							n = 19;
+							ultima = 19;
 							break;
 						case 5:
-							n = 21;
+							ultima = 21;
 							break;
 						case 7:
-							n = 23;
+							ultima = 23;
 							break;
 						default:
-							n = 25;
+							ultima = 25;
 							break;
 						}
-						butacas.addAll(buildButacas(sesion, ZONA_TEATRO_GENERAL, i, i, 1, n, 1, 2));
+						butacas.addAll(buildButacas(sesion, ZONA_TEATRO_GENERAL, fila, fila, 1, ultima, 1, 2));
 					}
 					break;
 				case ZONA_TEATRO_ANFITEATRO_IMPAR:
-					for (int i = 1; i <= 5; i += 2) {
-						int n;
-						switch (i) {
+					for (int fila = 1; fila <= 5; fila += 2) {
+						int ultima;
+						switch (fila) {
 						case 1:
-							n = 13;
+							ultima = 13;
 							break;
 						case 3:
-							n = 15;
+							ultima = 15;
 							break;
 						default:
-							n = 17;
+							ultima = 17;
 							break;
 						}
-						butacas.addAll(buildButacas(sesion, ZONA_TEATRO_ANFITEATRO_IMPAR, i, i, 1, n, 1, 2));
+						butacas.addAll(buildButacas(sesion, ZONA_TEATRO_ANFITEATRO_IMPAR, fila, fila, 1, ultima, 1, 2));
 					}
 					break;
 				case ZONA_TEATRO_ANFITEATRO_CENTRO:
