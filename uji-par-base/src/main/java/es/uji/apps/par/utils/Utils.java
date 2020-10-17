@@ -204,9 +204,22 @@ public class Utils
 		final int fila = Integer.parseInt(butaca.getFila());
 		final boolean par = Integer.parseInt(butaca.getNumero()) % 2 == 0;
 
-		int primera;
-		int ultima;
-		int paso;
+		return getFilaNumeracion(localizacion, fila, par);
+	}
+
+	/**
+	 * Devuelve los datos de numeración de la fila correspondiente a la ubicación
+	 * indicada
+	 *
+	 * @param localizacion
+	 * @param fila
+	 * @param par          true si la numeración de la subzona es par
+	 * @return FilaNumeracion
+	 */
+	public static FilaNumeracion getFilaNumeracion(final String localizacion, final int fila, final boolean par) {
+		final int primera;
+		final int ultima;
+		final int paso;
 
 		switch (localizacion) {
 		case LOCALIZACION_TEATRO_ANFITEATRO_CENTRO:
@@ -270,5 +283,4 @@ public class Utils
 
 		return new FilaNumeracion(localizacion, fila, primera, ultima, paso);
 	}
-
 }
