@@ -375,7 +375,7 @@ public class ButacasDistanciamientoSocialService {
 	 * @return true si la butaca puede estar disponible para su venta
 	 */
 	public boolean isButacaLibrePermitida(final long sesionId, final Butaca butaca) {
-		if (!configuration.isAforoDistanciamientoSocial()) {
+		if (!configuration.isAforoDistanciamientoSocial() || !configuration.isAforoDistanciamientoSocialUF()) {
 			return true;
 		}
 
@@ -506,7 +506,7 @@ public class ButacasDistanciamientoSocialService {
 	 */
 	public boolean validaButacas(final Long sesionId, final List<Butaca> butacas) {
 		// 1. Estado distanciamiento social
-		if (!configuration.isAforoDistanciamientoSocial()) {
+		if (!configuration.isAforoDistanciamientoSocial() || !configuration.isAforoDistanciamientoSocialUF()) {
 			return true;
 		}
 
@@ -549,7 +549,7 @@ public class ButacasDistanciamientoSocialService {
 			return false;
 		}
 
-		if (!configuration.isAforoDistanciamientoSocial()) {
+		if (!(configuration.isAforoDistanciamientoSocial() && configuration.isAforoDistanciamientoSocialUF())) {
 			return true;
 		}
 

@@ -95,6 +95,7 @@ public class Configuration
     public static final String JSON_LOCALIZACIONES_PATH = "/etc/uji/par/butacas/";
 	private static final String IS_LOADED_FROM_RESOURCE = "uji.par.isLoadedFromResource";
 	private static final String AFORO_DISTANCIAMIENTO_SOCIAL = "uji.par.aforoDistanciamientoSocial";
+	private static final String AFORO_DISTANCIAMIENTO_SOCIAL_UF = "uji.par.aforoDistanciamientoSocialUnidadFamiliar";
 
     private Properties properties;
 
@@ -591,6 +592,11 @@ public class Configuration
 
     public boolean isAforoDistanciamientoSocial() {
         final String valor = getNoObligatoryProperty(AFORO_DISTANCIAMIENTO_SOCIAL);
+        return valor != null && valor.equalsIgnoreCase("true") ? true : false;
+    }
+
+    public boolean isAforoDistanciamientoSocialUF() {
+        final String valor = getNoObligatoryProperty(AFORO_DISTANCIAMIENTO_SOCIAL_UF);
         return valor != null && valor.equalsIgnoreCase("true") ? true : false;
     }
 }
