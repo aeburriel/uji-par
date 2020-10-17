@@ -75,6 +75,7 @@ public class ReservasProtocoloService {
 		}
 	}
 
+	private static final boolean[] BLOQUEO_1_0 = {true};
 	private static final String RESERVA_DISTANCIA_SOCIAL = "Distanciamiento Social";
 	class ButacasDistanciamientoSocial_UF implements Function <SesionDTO, List<Butaca>> {
 		@Override
@@ -87,25 +88,34 @@ public class ReservasProtocoloService {
 				switch (clocalizacion) {
 				case ZONA_TEATRO_GENERAL:
 					// Filas sala pares
-					butacas.addAll(buildButacas(sesion, ZONA_TEATRO_GENERAL, 2, 12, 2, 20, 2, 2));
+					for (int fila = 2; fila <= 12; fila += 2) {
+						fn = Utils.getFilaNumeracion(clocalizacion, fila, true);
+						butacas.addAll(buildButacasPatron(sesion, fn, BLOQUEO_1_0, 0));
+					}
 
 					// Filas sala impares
-					for (int fila = 1; fila <= 11; fila += 2) {
+					for (int fila = 1; fila <= 12; fila += 2) {
 						fn = Utils.getFilaNumeracion(clocalizacion, fila, false);
-						butacas.addAll(buildButacas(sesion, ZONA_TEATRO_GENERAL, fila, fila, fn.getPrimera(), fn.getUltima(), 1, fn.getPaso()));
+						butacas.addAll(buildButacasPatron(sesion, fn, BLOQUEO_1_0, 0));
 					}
 					break;
 				case ZONA_TEATRO_ANFITEATRO_IMPAR:
-					for (int fila = 1; fila <= 5; fila += 2) {
+					for (int fila = 1; fila <= 6; fila += 2) {
 						fn = Utils.getFilaNumeracion(clocalizacion, fila, false);
-						butacas.addAll(buildButacas(sesion, ZONA_TEATRO_ANFITEATRO_IMPAR, fila, fila, fn.getPrimera(), fn.getUltima(), 1, fn.getPaso()));
+						butacas.addAll(buildButacasPatron(sesion, fn, BLOQUEO_1_0, 0));
 					}
 					break;
 				case ZONA_TEATRO_ANFITEATRO_CENTRO:
-					butacas.addAll(buildButacas(sesion, ZONA_TEATRO_ANFITEATRO_CENTRO, 2, 4, 1, 7, 2, 1));
+					for (int fila = 2; fila <= 5; fila += 2) {
+						fn = Utils.getFilaNumeracion(clocalizacion, fila, false);
+						butacas.addAll(buildButacasPatron(sesion, fn, BLOQUEO_1_0, 0));
+					}
 					break;
 				case ZONA_TEATRO_ANFITEATRO_PAR:
-					butacas.addAll(buildButacas(sesion, ZONA_TEATRO_ANFITEATRO_PAR, 1, 5, 2, 14, 2, 2));
+					for (int fila = 1; fila <= 6; fila += 2) {
+						fn = Utils.getFilaNumeracion(clocalizacion, fila, true);
+						butacas.addAll(buildButacasPatron(sesion, fn, BLOQUEO_1_0, 0));
+					}
 					break;
 				}
 			}
