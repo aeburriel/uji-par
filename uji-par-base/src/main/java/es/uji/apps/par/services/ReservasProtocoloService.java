@@ -71,7 +71,12 @@ public class ReservasProtocoloService {
 	class ButacasProtocoloAnfiteatro implements Function<SesionDTO, List<Butaca>> {
 		@Override
 		public List<Butaca> apply(final SesionDTO sesion) {
-			return buildButacas(sesion, ZONA_TEATRO_ANFITEATRO_CENTRO, 1, 2, 1, 7, 1, 1);
+			final List<Butaca> butacas = new ArrayList<Butaca>();
+			for (int fila = 1; fila <= 2; fila++) {
+				final FilaNumeracion fn = Utils.getFilaNumeracion(ZONA_TEATRO_ANFITEATRO_CENTRO, fila, false);
+				butacas.addAll(buildButacasPatron(sesion, fn, BLOQUEO_1_0, 0));
+			}
+			return butacas;
 		}
 	}
 
@@ -209,6 +214,7 @@ public class ReservasProtocoloService {
 	 * @param n_paso  diferencia entre numero1 y numero0 (n_paso >= 1)
 	 * @return Lista de butacas
 	 */
+	@Deprecated
 	private List<Butaca> buildButacas(final SesionDTO sesion, final String zona, final int fila0, final int filan, final int numero0,
 			final int numeron, final int f_paso, final int n_paso) {
 		final List<Butaca> butacas = new ArrayList<Butaca>();
