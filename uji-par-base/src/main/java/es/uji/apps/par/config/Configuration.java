@@ -96,6 +96,7 @@ public class Configuration
 	private static final String IS_LOADED_FROM_RESOURCE = "uji.par.isLoadedFromResource";
 	private static final String AFORO_DISTANCIAMIENTO_SOCIAL = "uji.par.aforoDistanciamientoSocial";
 	private static final String AFORO_DISTANCIAMIENTO_SOCIAL_UF = "uji.par.aforoDistanciamientoSocialUnidadFamiliar";
+	private static final String RESERVAS_PROTOCOLO = "uji.par.reservasProtocolo";
 
     private Properties properties;
 
@@ -597,6 +598,11 @@ public class Configuration
 
     public boolean isAforoDistanciamientoSocialUF() {
         final String valor = getNoObligatoryProperty(AFORO_DISTANCIAMIENTO_SOCIAL_UF);
+        return valor != null && valor.equalsIgnoreCase("true") ? true : false;
+    }
+
+    public boolean isReservasProtocolo() {
+        final String valor = getNoObligatoryProperty(RESERVAS_PROTOCOLO);
         return valor != null && valor.equalsIgnoreCase("true") ? true : false;
     }
 }

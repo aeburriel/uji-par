@@ -274,7 +274,7 @@ public class ReservasProtocoloService {
 	 * @param userUID identificador del usuario
 	 */
 	@Transactional
-	public void gestionaReservasProtocolo(final SesionDTO sesionDTO, final String userUID) {
+	public void gestionaReservasAutomaticas(final SesionDTO sesionDTO, final String userUID) {
 		// Solamente tenemos que procesar sesiones numeradas
 		final EventoDTO evento = eventosDAO.getEventoById(sesionDTO.getParEvento().getId(), ADMIN_UID);
 		final Boolean numerado = evento.getAsientosNumerados();
@@ -290,10 +290,13 @@ public class ReservasProtocoloService {
 			gestionaReservaDistanciamientoSocial(sesionDTO, userUID);
 		}
 
-		final String plantilla = getPlantillaNombre(sesionDTO);
-		if (plantilla != null && StringUtils.startsWithIgnoreCase(plantilla, "Teatro, Música, Danza")) {
-			// Primera fila del anfiteatro central
-			gestionaReservaProtocoloAnfiteatro(sesionDTO, userUID);
+		// Reservas de protocolo
+		if (configuration.isReservasProtocolo()) {
+			final String plantilla = getPlantillaNombre(sesionDTO);
+			if (plantilla != null && StringUtils.startsWithIgnoreCase(plantilla, "Teatro, Música, Danza")) {
+				// Primera fila del anfiteatro central
+				gestionaReservaProtocoloAnfiteatro(sesionDTO, userUID);
+			}
 		}
 	}
 

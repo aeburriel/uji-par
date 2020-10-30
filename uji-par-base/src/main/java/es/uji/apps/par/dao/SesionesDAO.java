@@ -209,7 +209,7 @@ public class SesionesDAO extends BaseDAO {
         // .getversionLingusitca())
         ////addSesionFormatoIdiomaIfNeeded(sesion.getEvento().getId(), sesion.getEvento().getFormato(),	sesion.getVersionLinguistica());
         butacasVinculadasService.bloqueaButacasVinculadasDiscapacidad(sesionDTO, userUID);
-        reservasProtocoloService.gestionaReservasProtocolo(sesionDTO, userUID);
+        reservasProtocoloService.gestionaReservasAutomaticas(sesionDTO, userUID);
         return sesion;
     }
 
@@ -304,7 +304,7 @@ public class SesionesDAO extends BaseDAO {
         setIncidenciaSesion(fechaCelebracion, sesion.getSala().getId(), userUID);
         anulaSesionesConLaMismaHoraYSala(fechaCelebracion, sesion.getSala().getId(), sesion.getId());
 
-        reservasProtocoloService.gestionaReservasProtocolo(sesionDTO, userUID);
+        reservasProtocoloService.gestionaReservasAutomaticas(sesionDTO, userUID);
         butacasVinculadasService.actualizaBloqueoButacasVinculadasDiscapacidad(sesionDTO, userUID);
     }
 
