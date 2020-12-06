@@ -196,8 +196,17 @@ public class ReservasProtocoloService {
 	 * @return lista de las reservas
 	 */
 	private List<Compra> reservasProtocolo(final SesionDTO sesion, final String descripcion) {
-		return comprasService.getComprasBySesion(Long.valueOf(sesion.getId()), 0,
+		List<Compra> reservas = new ArrayList<Compra>();
+
+		final List<Compra> compras = comprasService.getComprasBySesion(Long.valueOf(sesion.getId()), 0,
 				"[{\"property\":\"fecha\",\"direction\":\"ASC\"}]", 0, 1000, 0, descripcion);
+		for (final Compra compra : compras) {
+			if (Utils.isCompraInterna(compra)) {
+				reservas.add(compra);
+			}
+		}
+
+		return reservas;
 	}
 
 	/**

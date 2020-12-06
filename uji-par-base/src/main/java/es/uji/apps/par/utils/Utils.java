@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 
 import es.uji.apps.par.db.CompraDTO;
 import es.uji.apps.par.model.Butaca;
+import es.uji.apps.par.model.Compra;
 import es.uji.apps.par.model.Evento;
 import es.uji.apps.par.model.OrdreGrid;
 import org.apache.commons.lang3.StringUtils;
@@ -181,6 +182,13 @@ public class Utils
 
 	public static boolean isCompraInterna(final CompraDTO compra) {
 		return compra.getTaquilla()
+				&& compra.getObservacionesReserva() != null
+				&& COMPRA_NOMBRE_INTERNO.equals(compra.getNombre())
+				&& COMPRA_NOMBRE_INTERNO.equals(compra.getApellidos());
+	}
+
+	public static boolean isCompraInterna(final Compra compra) {
+		return compra.isTaquilla()
 				&& compra.getObservacionesReserva() != null
 				&& COMPRA_NOMBRE_INTERNO.equals(compra.getNombre())
 				&& COMPRA_NOMBRE_INTERNO.equals(compra.getApellidos());
