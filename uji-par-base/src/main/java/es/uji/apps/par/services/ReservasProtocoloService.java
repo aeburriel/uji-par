@@ -386,4 +386,13 @@ public class ReservasProtocoloService {
 	private boolean gestionaReservaProtocoloAnfiteatro(final SesionDTO sesion, final String userUID) {
 		return gestionaReserva(sesion, new ButacasProtocoloAnfiteatro(), RESERVA_ANFITEATRO_CENTRAL, DateUtils.FECHAINFINITO, userUID);
 	}
+
+	/**
+	 * Determina si la sesión indicada tiene algún bloqueo-reserva de distancimiento social simple
+	 * @param sesion
+	 * @return true si lo tiene
+	 */
+	public boolean isDistanciamientoSocialSimple(final SesionDTO sesion) {
+		return !reservasProtocolo(sesion, RESERVA_DISTANCIA_SOCIAL).isEmpty();
+	}
 }

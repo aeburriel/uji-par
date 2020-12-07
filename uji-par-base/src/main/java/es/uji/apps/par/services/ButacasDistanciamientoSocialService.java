@@ -36,6 +36,9 @@ public class ButacasDistanciamientoSocialService {
 	@Autowired
 	private SesionesDAO sesionesDAO;
 
+	@Autowired
+	private ReservasProtocoloService reservasProtocolo;
+
 	private static final String ADMIN_UID = "admin";
 
 	private static final int BUTACAS_GUARDA = 2;
@@ -157,6 +160,12 @@ public class ButacasDistanciamientoSocialService {
 	 */
 	public boolean isButacaLibrePermitida(final long sesionId, final Butaca butaca) {
 		if (!configuration.isAforoDistanciamientoSocial() || !configuration.isAforoDistanciamientoSocialUF()) {
+			return true;
+		}
+
+		// No comprobamos restricciones si la sesión usa bloqueos estáticos de aforo
+		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
+		if (reservasProtocolo.isDistanciamientoSocialSimple(sesion)) {
 			return true;
 		}
 
@@ -295,6 +304,11 @@ public class ButacasDistanciamientoSocialService {
 		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
 		final Boolean numerado = sesion.getParEvento().getAsientosNumerados();
 		if (numerado == null || !numerado) {
+			return true;
+		}
+
+		// Aforo distanciamiento social simple activo
+		if (reservasProtocolo.isDistanciamientoSocialSimple(sesion)) {
 			return true;
 		}
 
