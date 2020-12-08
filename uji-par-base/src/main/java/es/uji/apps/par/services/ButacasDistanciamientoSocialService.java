@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,8 +43,12 @@ public class ButacasDistanciamientoSocialService {
 
 	private static final String ADMIN_UID = "admin";
 
-	private static final int BUTACAS_GUARDA = 2;
+	private static int BUTACAS_GUARDA;
 
+	@PostConstruct
+	private void inicializa() {
+		 BUTACAS_GUARDA = configuration.getAforoDistanciamientoSocialUFGuarda();
+	}
 
 	/**
 	 * Clasifica por filas un conjunto de butacas
