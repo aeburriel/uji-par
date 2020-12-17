@@ -129,8 +129,62 @@ public class ReservasProtocoloService {
 		}
 	}
 
+	private static final boolean[] BLOQUEO_1_1 = {true, false};
+	class ButacasDistanciamientoSocial_1_1 implements Function <SesionDTO, List<Butaca>> {
+		@Override
+		public List<Butaca> apply(final SesionDTO sesion) {
+			final List<Butaca> butacas = new ArrayList<Butaca>();
+			final List<Localizacion> localizaciones = localizacionesService.getLocalizacionesSesion(sesion.getId());
+			FilaNumeracion fn;
+			for (final Localizacion localizacion : localizaciones) {
+				final String clocalizacion = localizacion.getCodigo();
+				final int filas = Utils.getFilas(clocalizacion);
+				int desplazamiento;
+				switch (clocalizacion) {
+				case ZONA_TEATRO_GENERAL:
+					// Butacas impares
+					for (int fila = 1; fila <= filas; fila++) {
+						fn = Utils.getFilaNumeracion(clocalizacion, fila, false);
+						desplazamiento = fn.isFilaPar() ? 0 : 1;
+						butacas.addAll(buildButacasPatron(sesion, fn, BLOQUEO_1_1, desplazamiento));
+					}
+
+					// Butacas pares
+					for (int fila = 1; fila <= filas; fila++) {
+						fn = Utils.getFilaNumeracion(clocalizacion, fila, true);
+						desplazamiento = fn.isFilaPar() ? 1 : 0;
+						butacas.addAll(buildButacasPatron(sesion, fn, BLOQUEO_1_1, desplazamiento));
+					}
+					break;
+				case ZONA_TEATRO_ANFITEATRO_IMPAR:
+					for (int fila = 1; fila <= filas; fila++) {
+						fn = Utils.getFilaNumeracion(clocalizacion, fila, false);
+						desplazamiento = fn.isFilaPar() ? 1 : 0;
+						butacas.addAll(buildButacasPatron(sesion, fn, BLOQUEO_1_1, desplazamiento));
+					}
+					break;
+				case ZONA_TEATRO_ANFITEATRO_CENTRO:
+					for (int fila = 1; fila <= filas; fila++) {
+						fn = Utils.getFilaNumeracion(clocalizacion, fila, false);
+						desplazamiento = fn.isFilaPar() ? 0 : 1;
+						butacas.addAll(buildButacasPatron(sesion, fn, BLOQUEO_1_1, desplazamiento));
+					}
+					break;
+				case ZONA_TEATRO_ANFITEATRO_PAR:
+					for (int fila = 1; fila <= filas; fila++) {
+						fn = Utils.getFilaNumeracion(clocalizacion, fila, true);
+						desplazamiento = fn.isFilaPar() ? 1 : 0;
+						butacas.addAll(buildButacasPatron(sesion, fn, BLOQUEO_1_1, desplazamiento));
+					}
+					break;
+				}
+			}
+			return butacas;
+		}
+	}
+
 	private static final boolean[] BLOQUEO_2_1 = {true, true, false};
-	class ButacasDistanciamientoSocial implements Function <SesionDTO, List<Butaca>> {
+	class ButacasDistanciamientoSocial_2_1 implements Function <SesionDTO, List<Butaca>> {
 		@Override
 		public List<Butaca> apply(final SesionDTO sesion) {
 			final List<Butaca> butacas = new ArrayList<Butaca>();
@@ -368,7 +422,7 @@ public class ReservasProtocoloService {
 		if (configuration.isAforoDistanciamientoSocialUF()) {
 			butacas = new ButacasDistanciamientoSocial_UF();
 		} else {
-			butacas = new ButacasDistanciamientoSocial();
+			butacas = new ButacasDistanciamientoSocial_1_1();
 		}
 
 		return gestionaReserva(sesion, butacas, RESERVA_DISTANCIA_SOCIAL, DateUtils.FECHAINFINITO, userUID);
