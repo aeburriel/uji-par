@@ -34,6 +34,7 @@ Butacas = (function() {
 				//console.log('Imágenes cargadas', document.body.scrollHeight);
 				window.scrollTo(0, document.body.scrollHeight);
 			});
+			setInterval(function(){refrescaImágenes();}, 15000);
 		} else {
 			actualizaInformacion();
 		}
@@ -197,6 +198,10 @@ Butacas = (function() {
 		url = url.replace(/\#.*/, "");
 		
 		imagen.attr("src", url + "#" + (new Date()).getTime());
+	}
+
+	function refrescaImágenes() {
+		refrescaImagen("general");
 	}
 	
 	function muestraDetallesSeleccionadas() {
