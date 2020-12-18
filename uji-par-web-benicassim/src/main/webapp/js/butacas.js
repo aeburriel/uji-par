@@ -194,12 +194,9 @@ Butacas = (function() {
 		var imagen = $(".imagen_" + idDivLocalizacion(localizacion));
 		var url = imagen.attr("src");
 		
-		if (url.indexOf("?") == -1)
-			url += "?";
+		url = url.replace(/\#.*/, "");
 		
-		url = url.replace(/\&rnd=.*/, "");
-		
-		imagen.attr("src", url + "&rnd=" + (new Date()).getTime());
+		imagen.attr("src", url + "#" + (new Date()).getTime());
 	}
 	
 	function muestraDetallesSeleccionadas() {
