@@ -10,13 +10,14 @@ Butacas = (function() {
 	var tipoEvento;
 	var tarifaDefecto = '';
 	var tarifas = {};
+	var secundaria;
 	
 	var ultimaButacaSeleccionada = null;	// Última butaca seleccionada
 	var butacasSeleccionadas = [];
 	var butacasDiscapacitados = [];
 	var butacasAcompañantes = [];
 	
-	function init(url, sesId, butacas, uuid, gastosGest, modoReserva, admin, tipoEv) {
+	function init(url, sesId, butacas, uuid, gastosGest, modoReserva, admin, tipoEv, segundaPantalla) {
 		baseUrl = url;
 		sesionId = sesId;
 		butacasSeleccionadas = butacas;
@@ -25,6 +26,7 @@ Butacas = (function() {
 		reserva = modoReserva;
 		modoAdmin = admin;
 		tipoEvento = tipoEv;
+		secundaria = segundaPantalla;
 		
 		if (modoAdmin)
 		{
@@ -168,9 +170,17 @@ Butacas = (function() {
 	
 	function anyadeButacaSeleccionada(butaca) {
 		butacasSeleccionadas.push(butaca);
+
+		if (secundaria !== null) {
+			secundaria.seleccionaButaca(butaca);
+		}
 	}
 	
 	function eliminaButacaSeleccionada(butaca) {
+		if (secundaria !== null) {
+			secundaria.deseleccionaButaca(butaca);
+		}
+
 		for ( var i = 0; i < butacasSeleccionadas.length; i++) {
 			if (iguales(butaca, butacasSeleccionadas[i])) {
 				butacasSeleccionadas.splice(i, 1);
