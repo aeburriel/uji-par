@@ -17,7 +17,7 @@ Butacas = (function() {
 	var butacasDiscapacitados = [];
 	var butacasAcompañantes = [];
 	
-	function init(url, sesId, butacas, uuid, gastosGest, modoReserva, admin, tipoEv, segundaPantalla) {
+	function init(url, sesId, butacas, uuid, gastosGest, modoReserva, admin, tipoEv, segundaPantalla=null) {
 		baseUrl = url;
 		sesionId = sesId;
 		butacasSeleccionadas = butacas;
