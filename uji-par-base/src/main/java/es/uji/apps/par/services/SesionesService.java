@@ -530,4 +530,22 @@ public class SesionesService
     public int getTotalSesionesAbono(Long abonoId) {
         return sesionAbonoDAO.getTotalSesionesAbono(abonoId);
     }
+
+    /**
+     * Devuelve el aforo total de la sesión
+     * @param sesionId identificador de la sesión
+     * @return número total de butacas
+     */
+    public long getAforoTotal(long sesionId) {
+		return sesionDAO.getAforoTotal(sesionId);
+	}
+
+    /**
+     * Devuelve el aforo ocupado de la sesión
+     * @param sesionId identificador de la sesión
+     * @return número de butacas ocupadas
+     */
+    public long getAforoOcupado(long sesionId) {
+		return sesionDAO.getAforoOcupado(sesionId);
+    }
 }

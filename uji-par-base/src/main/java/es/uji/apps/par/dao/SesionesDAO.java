@@ -31,11 +31,14 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.persistence.Query;
 
 @Repository
 public class SesionesDAO extends BaseDAO {
@@ -856,5 +859,36 @@ public class SesionesDAO extends BaseDAO {
         SesionDTO sesionDTO = getSesion(sesionId, userUID);
         sesionDTO.setIncidenciaId(TipoIncidencia.removeAnulacionVentasFromIncidenciaActual(sesionDTO.getIncidenciaId()));
         entityManager.merge(sesionDTO);
+    }
+
+    /**
+     * Devuelve el aforo total de la sesión
+     * @param sesionId identificador de la sesión
+     * @return número total de butacas
+     */
+    public long getAforoTotal(long sesionId)
+    {
+        final String sql = "SELECT SUM(total_entradas) " +
+                "FROM par_localizaciones WHERE id IN " +
+                "(SELECT DISTINCT localizacion_id FROM par_sesiones " +
+                "INNER JOIN par_precios_plantilla ON par_precios_plantilla.plantilla_id = par_sesiones.plantilla_id " +
+                "WHERE par_sesiones.id = ?1)";
+
+        final Query query = entityManager.createNativeQuery(sql).setParameter(1, sesionId);
+        return ((BigInteger)query.getSingleResult()).longValue();
+    }
+
+    /**
+     * Devuelve el aforo ocupado de la sesión
+     * @param sesionId identificador de la sesión
+     * @return número de butacas ocupadas
+     */
+    public long getAforoOcupado(long sesionId)
+    {
+        final String sql = "SELECT COUNT(*) FROM par_butacas " +
+                "WHERE sesion_id = ?1 AND anulada IS FALSE";
+
+        final Query query = entityManager.createNativeQuery(sql).setParameter(1, sesionId);
+        return ((BigInteger)query.getSingleResult()).longValue();
     }
 }

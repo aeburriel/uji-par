@@ -31,6 +31,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -863,4 +867,51 @@ public class EntradasResource extends BaseResource {
     private String initUserCart() {
 		return getUserCarts().newCart().getSelector();
 	}
+
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public class InfoSesion {
+        private String titulo_es;
+        private String titulo_va;
+        private String descripcion_es;
+        private String descripcion_va;
+        private String duracion;
+        private boolean numerada;
+        private String fecha;
+        private String hora;
+        private long disponibles;
+
+        public InfoSesion(final Evento evento, final Sesion sesion) {
+            this.titulo_es = evento.getTituloEs();
+            this.titulo_va = evento.getTituloVa();
+            this.descripcion_es = evento.getDescripcionEs();
+            this.descripcion_va = evento.getDescripcionVa();
+            this.duracion = evento.getDuracionEs();
+            this.numerada = evento.getAsientosNumerados();
+
+            this.fecha = DateUtils.dateToSpanishString(sesion.getFechaCelebracion());
+            this.hora = sesion.getHoraCelebracion();
+
+            final long sesionId = sesion.getId();
+            this.disponibles = sesionesService.getAforoTotal(sesionId) - sesionesService.getAforoOcupado(sesionId);
+        }
+    }
+
+    @GET
+    @Path("{id}/info")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getInfoSesion(@PathParam("id") final Long idSesion) {
+        try {
+            final Usuario user = usersService.getUserByServerName(currentRequest.getServerName());
+            final Sesion sesion = sesionesService.getSesion(idSesion.longValue(), user.getUsuario());
+            final Evento evento = sesion.getEvento();
+
+            final InfoSesion info = new InfoSesion(evento, sesion);
+
+            return Response.ok().entity(info).build();
+        } catch (SesionNoEncontradaException e) {
+
+        }
+        return Response.status(404).build();
+    }
 }
