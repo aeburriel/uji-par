@@ -162,9 +162,18 @@ public class EventosDAO extends BaseDAO
     }
 
     @Transactional
-    private List<Evento> getEventosConPrimeraFechaCelebracion(boolean activos, String sortParameter, int start, int limit, String userUID)
+    private List<Evento> getEventosConPrimeraFechaCelebracion(final boolean activos, final String sortParameter, final int start, final int limit, final String userUID)
     {
-        String sql = "select distinct e.CARACTERISTICAS_ES, e.CARACTERISTICAS_VA, e.COMENTARIOS_ES, e.COMENTARIOS_VA, e.COMPANYIA_ES, e.COMPANYIA_VA, " +
+        final Type type = new TypeToken<List<Map<String,String>>>(){}.getType();
+        final List<Map<String,String>> order = new Gson().fromJson(sortParameter, type);
+        final String orderField = order.get(0).get("property");
+        final String orderDirection = order.get(0).get("direction");
+
+        if (!orderField.matches("(?i)[a-z0-9_]{1,31}") || !orderDirection.matches("(?i)ASC|DESC")) {
+            throw new RuntimeException();
+        }
+
+        final String sql = "select distinct e.CARACTERISTICAS_ES, e.CARACTERISTICAS_VA, e.COMENTARIOS_ES, e.COMENTARIOS_VA, e.COMPANYIA_ES, e.COMPANYIA_VA, " +
                 " e.DESCRIPCION_ES, e.DESCRIPCION_VA, e.DURACION_ES, e.DURACION_VA, t.ID as tipoId, t.NOMBRE_ES as parTiposEvento, t.NOMBRE_VA , e.PREMIOS_ES, " +
                 " e.PREMIOS_VA, e.TITULO_ES as tituloes, e.TITULO_VA as titulova, e.IMAGEN_SRC as imagensrc, e.IMAGEN_CONTENT_TYPE, e.ID, e.ASIENTOS_NUMERADOS as asientosnumerados, " +
                 " e.RETENCION_SGAE as retencionsgae, e.IVA_SGAE as ivasgae, e.PORCENTAJE_IVA as porcentajeiva, " +
@@ -175,17 +184,12 @@ public class EventosDAO extends BaseDAO
                 + "left outer join PAR_USUARIOS u on u.id=sau.USUARIO_ID "
                 + "left outer join PAR_SESIONES s on e.id=s.EVENTO_ID inner join PAR_TIPOS_EVENTO t on e.TIPO_EVENTO_ID=t"
                 + ".id inner join PAR_TPVS tp on e.TPV_ID=tp.id " +
-                (activos?getWhereActivos(userUID):getWhereTodos(userUID)) +
-                " order by ";
-
-        Type type = new TypeToken<List<Map<String,String>>>(){}.getType();
-        List<Map<String,String>> order = new Gson().fromJson(sortParameter, type);
-
-        sql += order.get(0).get("property") + " " + order.get(0).get("direction");
+                (activos ? getWhereActivos() : getWhereTodos()) +
+                " order by " + orderField + " " + orderDirection;
 
         String sqlPaginado = paginaConsulta(start, limit, sql);
 
-        Query query = entityManager.createNativeQuery(sqlPaginado);
+        Query query = entityManager.createNativeQuery(sqlPaginado).setParameter("userUID", userUID);
 
         List<Object[]> result = query.getResultList();
 
@@ -197,15 +201,15 @@ public class EventosDAO extends BaseDAO
         return databaseHelper.paginate(start, limit, sql);
     }
 
-    private String getWhereTodos(String userUID)
+    private String getWhereTodos()
     {
-        return " where u.usuario = '" + userUID + "' or e.CINE_ID IS NULL";
+        return " where u.usuario = :userUID or e.CINE_ID IS NULL";
     }
 
-    private String getWhereActivos(String userUID)
+    private String getWhereActivos()
     {
         return " where (s.ID IS NOT NULL and (s.FECHA_CELEBRACION >= " + databaseHelper.toDate() + "('" + DateUtils.dateToSpanishStringWithHour
-		(configuration.dateConMargenTrasVenta()) + "','DD/MM/YYYY HH24:MI'))) and (u.usuario = '" + userUID + "' or e.CINE_ID IS "
+		(configuration.dateConMargenTrasVenta()) + "','DD/MM/YYYY HH24:MI'))) and (u.usuario = :userUID or e.CINE_ID IS "
 				+ "NULL)";
     }
 
