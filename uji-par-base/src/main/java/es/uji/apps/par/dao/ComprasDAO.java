@@ -582,8 +582,8 @@ public class ComprasDAO extends BaseDAO {
 	}
 
 	private String sqlConditionsToSkipAnuladasIReservas() {
-		return "and TO_CHAR(c.fecha, 'YYYY-MM-DD HH24:MI') >= :fechaInicio || ' 00:00' "
-				+ "and TO_CHAR(c.fecha, 'YYYY-MM-DD HH24:MI') <= :fechaFin || ' 23:59' "
+		return "and c.fecha >= TO_DATE(:fechaInicio, 'YYYY-MM-DD')"
+				+ "and c.fecha < TO_DATE(:fechaFin, 'YYYY-MM-DD') + INTERVAL '1 day' "
 				+ "and c.pagada = " + dbHelper.trueString() + " "
 				+ "and c.reserva = " + dbHelper.falseString() + " "
 				+ "and b.anulada = " + dbHelper.falseString() + " "
@@ -851,13 +851,13 @@ public class ComprasDAO extends BaseDAO {
 				+ "and sala.id = s.sala_id and u.usuario = :userUID and sala.id = su.sala_id and su.usuario_id = u.id "
 				+ sqlConditionsToSkipAnuladasIReservas()
 		 		+ "and c.taquilla = " + (taquilla ? dbHelper.trueString() : dbHelper.falseString()) + " "
-				+ "and c.tipo IS NOT NULL and lower(c.tipo) = :tipoPago ";
+				+ "and c.tipo IS NOT NULL and c.tipo = CAST(:tipoPago AS mediopago)";
 
 		List<Object[]> result = entityManager.createNativeQuery(sql)
 				.setParameter("fechaInicio", fechaInicio)
 				.setParameter("fechaFin", fechaFin)
 				.setParameter("userUID", userUID)
-				.setParameter("tipoPago", tipoPago.toString().toLowerCase())
+				.setParameter("tipoPago", tipoPago.toString())
 				.getResultList();
 
 		if (result.size() > 0)
