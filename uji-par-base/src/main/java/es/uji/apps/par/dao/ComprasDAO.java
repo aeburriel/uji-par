@@ -746,11 +746,7 @@ public class ComprasDAO extends BaseDAO {
 	@Transactional
 	public List<Object[]> getComprasEventos(final String fechaInicio, final String fechaFin, final String userUID) {
 		final String sql = "select e.titulo_es, s.fecha_celebracion, b.tipo, count(b.id) as cantidad, sum(b.precio) as total, "
-				+ "c.porcentaje_iva, "
-				+ dbHelper.caseString("b.tipo", new String[] { "'normal'", "1",
-						"'descuento'", "2", "'aulaTeatro'", "3",
-						"'invitacion'", "4" })
-				+ " as tipoOrden, e.id as eventoId, s.id as sesionId, f.nombre "
+				+ "c.porcentaje_iva, b.tipo as tipoOrden, e.id as eventoId, s.id as sesionId, f.nombre "
 				+ "from par_butacas b, par_compras c, par_sesiones s, par_eventos e, par_tarifas f, "
 				+ "par_salas sala, par_salas_usuarios su, par_usuarios u "
 				+ "where b.compra_id = c.id and s.id = c.sesion_id and e.id = s.evento_id "
