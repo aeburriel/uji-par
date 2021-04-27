@@ -754,7 +754,7 @@ public class EntradasResource extends BaseResource {
         } catch (final CompraDistanciamientoSocial e) {
             message = "error.seleccionEntradas.distanciamientoSocial";
         }
-        return jsonTextResponse(status, message);
+        return jsonTextResponse(status, message, configuration.getAforoDistanciamientoSocialUFLimite());
     }
 
     /*

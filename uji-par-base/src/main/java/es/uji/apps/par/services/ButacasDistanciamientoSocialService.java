@@ -333,6 +333,15 @@ public class ButacasDistanciamientoSocialService {
 			}
 		}
 
+		// 5. Restricción de aforo máximo
+		final long ocupacion = configuration.getAforoDistanciamientoSocialUFLimite();
+		if (ocupacion < 100L) {
+			final long id_sesion = sesionId.longValue();
+			if (sesionesDAO.getAforoTotal(id_sesion) * ocupacion < (sesionesDAO.getAforoOcupado(id_sesion) + butacas.size()) * 100L) {
+				return false;
+			}
+		}
+
 		return true;
 	}
 

@@ -97,6 +97,7 @@ public class Configuration
 	private static final String AFORO_DISTANCIAMIENTO_SOCIAL = "uji.par.aforoDistanciamientoSocial";
 	private static final String AFORO_DISTANCIAMIENTO_SOCIAL_UF = "uji.par.aforoDistanciamientoSocialUnidadFamiliar";
 	private static final String AFORO_DISTANCIAMIENTO_SOCIAL_UF_GUARDA = "uji.par.aforoDistanciamientoSocialUnidadFamiliar.guarda";
+	private static final String AFORO_DISTANCIAMIENTO_SOCIAL_UF_LIMITE = "uji.par.aforoDistanciamientoSocialUnidadFamiliar.limite";
 	private static final String RESERVAS_PROTOCOLO = "uji.par.reservasProtocolo";
 
     private Properties properties;
@@ -607,6 +608,14 @@ public class Configuration
 			return Integer.parseInt(getProperty(AFORO_DISTANCIAMIENTO_SOCIAL_UF_GUARDA));
 		} catch (NumberFormatException e) {
 			return 2;
+		}
+	}
+
+	public int getAforoDistanciamientoSocialUFLimite() {
+		try {
+			return Integer.parseInt(getProperty(AFORO_DISTANCIAMIENTO_SOCIAL_UF_LIMITE));
+		} catch (NumberFormatException e) {
+			return 100;
 		}
 	}
 
