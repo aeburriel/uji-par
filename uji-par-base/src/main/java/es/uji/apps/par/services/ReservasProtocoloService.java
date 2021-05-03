@@ -345,7 +345,7 @@ public class ReservasProtocoloService {
 			return;
 		}
 
-		if (configuration.isAforoDistanciamientoSocial()) {
+		if (configuration.isAforoDistanciamientoSocial() && !configuration.isAforoDistanciamientoSocialUF()) {
 			// No permitimos butacas accesibles
 			butacasVinculadasService.cancelaButacasAccesibles(sesionDTO);
 
