@@ -41,6 +41,7 @@ import es.uji.apps.par.model.Abonado;
 import es.uji.apps.par.model.Sesion;
 import es.uji.apps.par.report.InformeModelReport;
 import es.uji.apps.par.utils.DateUtils;
+import es.uji.apps.par.utils.Utils;
 
 @Repository
 public class ComprasDAO extends BaseDAO {
@@ -515,10 +516,14 @@ public class ComprasDAO extends BaseDAO {
 			QButacaDTO qButacaDTO = QButacaDTO.butacaDTO;
 			JPAUpdateClause updateCompra = new JPAUpdateClause(entityManager,
 					qCompraDTO);
+
+			final CompraDTO compra = getCompraById(idCompraReserva);
 			updateCompra.set(qCompraDTO.anulada, false)
-					.set(qCompraDTO.caducada, false)
-					.set(qCompraDTO.pagada, true)
-					.where(qCompraDTO.id.eq(idCompraReserva)).execute();
+					.set(qCompraDTO.caducada, false);
+			if (!Utils.isCompraInterna(compra)) {
+					updateCompra.set(qCompraDTO.pagada, true);
+			}
+			updateCompra.where(qCompraDTO.id.eq(idCompraReserva)).execute();
 
 			JPAUpdateClause updateButacas = new JPAUpdateClause(entityManager,
 					qButacaDTO);
