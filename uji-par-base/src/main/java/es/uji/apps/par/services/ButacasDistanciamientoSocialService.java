@@ -19,9 +19,11 @@ import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Sets;
 import com.google.common.collect.SortedSetMultimap;
 
+import es.uji.apps.par.butacas.DatosButaca;
 import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.dao.SesionesDAO;
 import es.uji.apps.par.db.ButacaDTO;
+import es.uji.apps.par.db.CompraDTO;
 import es.uji.apps.par.db.SesionDTO;
 import es.uji.apps.par.model.Butaca;
 import es.uji.apps.par.utils.FilaNumeracion;
@@ -354,6 +356,7 @@ public class ButacasDistanciamientoSocialService {
 	 * @param numero Nuevo número, en la misma localización que la butaca inicial
 	 * @return true si la butaca destino es aceptable
 	 */
+	@SuppressWarnings("unlikely-arg-type")
 	public boolean cambiaFilaNumero(final ButacaDTO butaca, final String fila, final String numero) {
 		if (butaca == null || fila == null || numero == null) {
 			return false;
@@ -363,8 +366,20 @@ public class ButacasDistanciamientoSocialService {
 			return true;
 		}
 
-		// No permitimos cambios de butacas
-		return false;
+		final CompraDTO compra = butaca.getParCompra();
+		final List<ButacaDTO> butacas = compra.getParButacas();
+		DatosButaca origen = new DatosButaca(butaca.getParLocalizacion().getCodigo(), Integer.parseInt(butaca.getFila()), Integer.parseInt(butaca.getNumero()));
+
+		final ArrayList<Butaca> candidatas = new ArrayList<Butaca>();
+		for (final ButacaDTO butacaDTO : butacas) {
+			final Butaca nueva = new Butaca(butacaDTO, false, "");
+			if (origen.equals(butacaDTO)) {
+				nueva.setFila(fila);
+				nueva.setNumero(numero);
+			}
+			candidatas.add(nueva);
+		}
+		return  validaButacas(new Long(compra.getParSesion().getId()), candidatas);
 	}
 
 }
