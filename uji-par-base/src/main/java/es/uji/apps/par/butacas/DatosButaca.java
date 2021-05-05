@@ -50,13 +50,33 @@ public class DatosButaca
     		return true;
     	}
 
-    	if (object == null || this.getClass() != object.getClass()) {
+    	if (object == null) {
     		return false;
     	}
 
-    	final DatosButaca butaca = (DatosButaca) object;
-    	return this.fila == butaca.fila && this.numero == butaca.numero
-    			&& this.localizacion.equals(butaca.localizacion);
+    	final int fila, numero;
+    	final String localizacion;
+    	if (object.getClass() == DatosButaca.class) {
+        	final DatosButaca butaca = (DatosButaca) object;
+        	fila = butaca.fila;
+        	numero = butaca.numero;
+        	localizacion = butaca.localizacion;
+        } else if (object.getClass() == Butaca.class) {
+        	final Butaca butaca = (Butaca) object;
+        	fila = Integer.parseInt(butaca.getFila());
+        	numero = Integer.parseInt(butaca.getNumero());
+        	localizacion = butaca.getLocalizacion();
+        } else if (object.getClass() == ButacaDTO.class) {
+        	final ButacaDTO butaca = (ButacaDTO) object;
+        	fila = Integer.parseInt(butaca.getFila());
+        	numero = Integer.parseInt(butaca.getNumero());
+        	localizacion = butaca.getParLocalizacion().getCodigo();
+    	} else {
+    		return false;
+    	}
+
+    	return this.fila == fila && this.numero == numero
+    			&& this.localizacion.equals(localizacion);
     }
 
     @Override

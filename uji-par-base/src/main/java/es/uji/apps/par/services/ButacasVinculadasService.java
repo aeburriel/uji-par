@@ -233,32 +233,6 @@ public class ButacasVinculadasService {
 	}
 
 	/**
-	 * Comprueba si ambas butacas son la misma
-	 *
-	 * @param butaca1
-	 * @param butaca2
-	 * @return true si representan la misma butaca
-	 */
-	private boolean isButacaEqual(final DatosButaca butaca1, final Butaca butaca2) {
-		return butaca1.getFila() == Integer.parseInt(butaca2.getFila())
-				&& butaca1.getNumero() == Integer.parseInt(butaca2.getNumero())
-				&& butaca1.getLocalizacion().equals(butaca2.getLocalizacion());
-	}
-
-	/**
-	 * Comprueba si ambas butacas son la misma
-	 *
-	 * @param butaca1
-	 * @param butaca2
-	 * @return true si representan la misma butaca
-	 */
-	private boolean isButacaEqual(final DatosButaca butaca1, final ButacaDTO butaca2) {
-		return butaca1.getFila() == Integer.parseInt(butaca2.getFila())
-				&& butaca1.getNumero() == Integer.parseInt(butaca2.getNumero())
-				&& butaca1.getLocalizacion().equals(butaca2.getParLocalizacion().getCodigo());
-	}
-
-	/**
 	 * Determina si la Reserva indicada corresponde a un bloqueo de butaca accesible
 	 *
 	 * @param bloqueo La reserva-bloqueo
@@ -766,6 +740,7 @@ public class ButacasVinculadasService {
 	 * 		reserva-bloqueo
 	 * @return true si se ha actualizado alguna reserva-bloqueo accesible
 	 */
+	@SuppressWarnings("unlikely-arg-type")
 	@Transactional
 	public boolean anularButacas(final List<Long> idsButacas)
 			throws ButacaAccesibleAnularSinAnularButacaAcompanante, ButacaOcupadaException {
@@ -802,7 +777,7 @@ public class ButacasVinculadasService {
 						}
 
 						final ButacaDTO candidata = butacasDAO.getButaca(idCandidata);
-						if (candidata != null && isButacaEqual(butacaAcompanante, candidata)) {
+						if (butacaAcompanante.equals(candidata)) {
 							encontrada = true;
 							break;
 						}
@@ -842,6 +817,7 @@ public class ButacasVinculadasService {
 	 * @param butaca   Butaca sobre la que estamos haciendo la comprobación
 	 * @return true si las butacas elegidas están permitidas
 	 */
+	@SuppressWarnings("unlikely-arg-type")
 	public boolean validaButacas(final Long sesionId, final List<Butaca> butacas, final Butaca butaca) {
 		if (butaca == null) {
 			return false;
@@ -887,7 +863,7 @@ public class ButacasVinculadasService {
 		final DatosButaca butacaAccesibleAsociada = butacasAcompanantes.get(new DatosButaca(butaca));
 		if (getDatosButaca(butacaAccesibleAsociada, sesion) != null) {
 			for (final Butaca candidata : butacas) {
-				if (candidata != null && isButacaEqual(butacaAccesibleAsociada, candidata)) {
+				if (butacaAccesibleAsociada.equals(candidata)) {
 					return true;
 				}
 			}
