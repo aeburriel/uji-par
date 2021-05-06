@@ -246,7 +246,7 @@ public class MapaDrawer implements MapaDrawerInterface
     	if (butaca == null)
     		return false;
 
-    	return butacasVinculadasService.esAcompanante(sesionId, butaca);
+    	return butacasVinculadasService.esAcompananteOcupada(sesionId, butaca);
     }
 
 	private boolean esDiscapacitado(Long sesionId, DatosButaca butaca)
@@ -254,7 +254,7 @@ public class MapaDrawer implements MapaDrawerInterface
 		if (butaca == null)
 			return false;
 
-		return butacasVinculadasService.esDiscapacitado(sesionId, butaca);
+		return butacasVinculadasService.esDiscapacitadoOcupada(sesionId, butaca);
     }
 
     private void cargaImagenes() throws IOException

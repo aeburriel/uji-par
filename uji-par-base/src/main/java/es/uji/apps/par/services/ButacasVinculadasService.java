@@ -892,7 +892,7 @@ public class ButacasVinculadasService {
 
 		// Si la butaca es accesible
 		final DatosButaca butacaAccesible = getButacaAccesible(butaca);
-		if (butacaAccesible != null && esDiscapacitado(compra.getId(), butacaAccesible)) {
+		if (butacaAccesible != null && esDiscapacitadoOcupada(compra.getId(), butacaAccesible)) {
 			return false;
 		}
 
@@ -923,6 +923,29 @@ public class ButacasVinculadasService {
 	}
 
 	/**
+	 * Determina si la butaca en el evento inicada es de acompañante
+	 * y está disponible
+	 *
+	 * @param sesionId Identificador de sesión del evento
+	 * @param butaca
+	 * @return true si lo está
+	 */
+	public boolean esAcompananteDisponible(final Long sesionId, final DatosButaca butaca) {
+		if (!butacasAcompanantes.containsKey(butaca)) {
+			return false;
+		}
+
+		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
+		if(!enVigorReservaButacasAccesibles(sesion)) {
+			return false;
+		}
+
+		final String butacaFila = String.valueOf(butaca.getFila());
+		final String butacaNumero = String.valueOf(butaca.getNumero());
+		return !butacasService.estaOcupada(sesionId, butaca.getLocalizacion(), butacaFila, butacaNumero);
+	}
+
+	/**
 	 * Determina si la butaca en el evento indicada es de acompañante (está ocupada
 	 * y su butaca accesible asociada vendida en la misma operación)
 	 *
@@ -930,7 +953,7 @@ public class ButacasVinculadasService {
 	 * @param butaca
 	 * @return true si lo es
 	 */
-	public boolean esAcompanante(final Long sesionId, final DatosButaca butaca) {
+	public boolean esAcompananteOcupada(final Long sesionId, final DatosButaca butaca) {
 		final DatosButaca accesible = butacasAcompanantes.get(butaca);
 		if (accesible == null) {
 			return false;
@@ -949,18 +972,57 @@ public class ButacasVinculadasService {
 		}
 
 		return butacasService.estaOcupada(sesionId, butaca.getLocalizacion(), butacaFila, butacaNumero)
-				&& esDiscapacitado(sesionId, accesible)
+				&& esDiscapacitadoOcupada(sesionId, accesible)
 				&& compraAccesible.getId() == compraAcompanante.getId();
 	}
 
 	/**
+	 * Determina si la butaca indicada es de discapacitado o de acompañante
+	 * y está disponible para la venta
+	 * @param sesionId Identificador de sesión del evento
+	 * @param butaca
+	 * @return true si lo está
+	 */
+	public boolean esButacaAccesibleDisponible(final Long sesionId, final Butaca butaca) {
+		DatosButaca datosButaca = new DatosButaca(butaca);
+
+		return esDiscapacitadoDisponible(sesionId, datosButaca) || esAcompananteDisponible(sesionId, datosButaca);
+	}
+
+	/**
 	 * Determina si la butaca en el evento indicada es de discapacitado (ancho múltiple)
+	 * y está disponible para la venta
+	 *
+	 * @param sesionId Identificador de sesión del evento
+	 * @param butaca
+	 * @return true si lo está
+	 */
+	public boolean esDiscapacitadoDisponible(final Long sesionId, final DatosButaca butaca) {
+		if (!butaca.isNumerada()) {
+			return false;
+		}
+
+		if (!butacasVinculadas.containsKey(butaca)) {
+			return false;
+		}
+
+		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
+		if(!enVigorReservaButacasAccesibles(sesion)) {
+			return false;
+		}
+
+		return !getReservasBloqueoButacaAccesible(sesion, butaca).isEmpty();
+	}
+
+	/**
+	 * Determina si la butaca en el evento indicada es de discapacitado (ancho múltiple)
+	 * y está ocupada
 	 *
 	 * @param sesionId Identificador de sesión del evento
 	 * @param butaca
 	 * @return true si lo es
 	 */
-	public boolean esDiscapacitado(final Long sesionId, final DatosButaca butaca) {
+	public boolean esDiscapacitadoOcupada(final Long sesionId, final DatosButaca butaca) {
 		if (!butaca.isNumerada()) {
 			return false;
 		}
@@ -1017,7 +1079,7 @@ public class ButacasVinculadasService {
 			}
 		} else {
 			for (final DatosButaca butaca : accesibles) {
-				if (esDiscapacitado(sesion.getId(), butaca)) {
+				if (esDiscapacitadoOcupada(sesion.getId(), butaca)) {
 					butacas.add(butaca);
 				}
 			}
@@ -1059,7 +1121,7 @@ public class ButacasVinculadasService {
 			}
 		} else {
 			for (final DatosButaca butaca : acompanantes) {
-				if (esAcompanante(sesion.getId(), butaca)) {
+				if (esAcompananteOcupada(sesion.getId(), butaca)) {
 					butacas.add(butaca);
 				}
 			}

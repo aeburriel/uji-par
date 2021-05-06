@@ -38,6 +38,9 @@ public class ButacasDistanciamientoSocialService {
 	ButacasService butacasService;
 
 	@Autowired
+	ButacasVinculadasService butacasVinculadasService;
+
+	@Autowired
 	private SesionesDAO sesionesDAO;
 
 	@Autowired
@@ -174,6 +177,11 @@ public class ButacasDistanciamientoSocialService {
 		// No comprobamos restricciones si la sesión usa bloqueos estáticos de aforo
 		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
 		if (reservasProtocolo.isDistanciamientoSocialSimple(sesion)) {
+			return true;
+		}
+
+		// Excluimos de la comprobación las butacas accesibles
+		if (butacasVinculadasService.esButacaAccesibleDisponible(sesionId, butaca)) {
 			return true;
 		}
 
