@@ -235,7 +235,6 @@ public class ButacasDistanciamientoSocialService {
 			final SortedSet<Butaca> butacas) {
 		final int i0 = fila.getIndice(Integer.parseInt(butacas.first().getNumero()));
 		final int i1 = fila.getIndice(Integer.parseInt(butacas.last().getNumero()));
-		final String localizacion = fila.getLocalizacion();
 
 		// 1. Comprobamos si alguna de las butacas está en el extremo de la fila
 		if (i0 == fila.getIndice(fila.getPrimera()) || i1 == fila.getIndice(fila.getUltima())) {
@@ -245,7 +244,7 @@ public class ButacasDistanciamientoSocialService {
 		// 2. Comprobamos si alguno de los extremos está exactamente a la distancia de
 		// seguridad de la siguiente butaca ocupada
 		final Butaca candidata = new Butaca();
-		candidata.setLocalizacion(localizacion);
+		candidata.setLocalizacion(fila.getLocalizacion());
 		candidata.setFila(String.valueOf(fila.getFila()));
 
 		int distancia = 0;
@@ -376,7 +375,7 @@ public class ButacasDistanciamientoSocialService {
 
 		final CompraDTO compra = butaca.getParCompra();
 		final List<ButacaDTO> butacas = compra.getParButacas();
-		DatosButaca origen = new DatosButaca(butaca.getParLocalizacion().getCodigo(), Integer.parseInt(butaca.getFila()), Integer.parseInt(butaca.getNumero()));
+		final DatosButaca origen = new DatosButaca(butaca.getParLocalizacion().getCodigo(), Integer.parseInt(butaca.getFila()), Integer.parseInt(butaca.getNumero()));
 
 		final ArrayList<Butaca> candidatas = new ArrayList<Butaca>();
 		for (final ButacaDTO butacaDTO : butacas) {
@@ -387,7 +386,7 @@ public class ButacasDistanciamientoSocialService {
 			}
 			candidatas.add(nueva);
 		}
-		return  validaButacas(new Long(compra.getParSesion().getId()), candidatas);
+		return  validaButacas(Long.valueOf(compra.getParSesion().getId()), candidatas);
 	}
 
 }
