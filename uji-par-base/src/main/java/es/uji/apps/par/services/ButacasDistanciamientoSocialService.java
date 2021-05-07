@@ -188,8 +188,8 @@ public class ButacasDistanciamientoSocialService {
 		final Set<Butaca> entorno = getButacasEntorno(butaca);
 
 		for (final Butaca candidata : entorno) {
-			if (butacasService.estaOcupada(sesionId, butaca.getLocalizacion(), butaca.getFila(),
-					candidata.getNumero())) {
+			if (butacasService.estaOcupada(sesionId, butaca.getLocalizacion(), butaca.getFila(), candidata.getNumero())
+					|| butacasVinculadasService.esButacaAccesibleDisponible(sesionId, candidata)) {
 				return false;
 			}
 		}
