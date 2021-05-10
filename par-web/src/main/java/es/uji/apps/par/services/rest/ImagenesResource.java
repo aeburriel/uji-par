@@ -33,7 +33,7 @@ public class ImagenesResource extends BaseResource
         ByteArrayOutputStream os = mapaDrawer.generaImagen(sesion, seccion, muestraReservadas!=null && muestraReservadas.equals("true"));
 
         Response response = Response.ok(os.toByteArray())
-                .header("Cache-Control", "public, max-age=10, immutable").build();
+                .header("Cache-Control", "public, max-age=10, must-revalidate, stale-while-revalidate=300").build();
 
         return response;
     }

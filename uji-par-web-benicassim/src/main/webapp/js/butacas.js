@@ -34,7 +34,7 @@ Butacas = (function() {
 				//console.log('Imágenes cargadas', document.body.scrollHeight);
 				window.scrollTo(0, document.body.scrollHeight);
 			});
-			setInterval(function(){refrescaImágenes();}, 15000);
+			setInterval(function(){refrescaImágenes();}, 5000);
 		} else {
 			actualizaInformacion();
 		}
