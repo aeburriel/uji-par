@@ -38,7 +38,7 @@ public class ComprasResource extends BaseResource
         entradasService.generaEntrada(uuidCompra, bos, user.getUsuario(), configurationSelector.getUrlPublicSinHTTPS(), configurationSelector.getUrlPieEntrada());
 
         Response response = Response.ok(bos.toByteArray())
-                .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                .header("Cache-Control", "no-store")
                 .header("Pragma", "no-cache")
                 .header("Expires", "0")
                 .header("Content-Disposition","attachment; filename =\"entrada_" + uuidCompra + ".pdf\"")

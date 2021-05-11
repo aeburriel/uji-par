@@ -375,7 +375,7 @@ public class CompraResource extends BaseResource
 		entradasService.generaEntrada(uuidCompra, bos, userUID, configurationSelector.getUrlPublicSinHTTPS(), configurationSelector.getUrlPieEntrada());
 
 		Response response = Response.ok(bos.toByteArray())
-				.header("Cache-Control", "no-cache, no-store, must-revalidate")
+				.header("Cache-Control", "no-store")
 				.header("Pragma", "no-cache")
 				.header("Expires", "0")
 				.header("Content-Disposition", "attachment; filename=\"entrada " + uuidCompra + ".pdf\"")
@@ -395,7 +395,7 @@ public class CompraResource extends BaseResource
 		entradasService.generaEntradaTaquilla(uuidCompra, bos, userUID, configurationSelector.getUrlPublicSinHTTPS());
 
 		Response response = Response.ok(bos.toByteArray())
-				.header("Cache-Control", "no-cache, no-store, must-revalidate")
+				.header("Cache-Control", "no-store")
 				.header("Pragma", "no-cache")
 				.header("Expires", "0")
 				.header("Content-Disposition", "inline; filename=\"ticket " + uuidCompra + ".pdf\"")

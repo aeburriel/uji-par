@@ -28,7 +28,8 @@ public class ImagenesResource extends BaseResource
         ByteArrayOutputStream os = mapaDrawer.generaImagenAbono(abonoId, seccion, muestraReservadas != null && muestraReservadas.equals("true"), userUID);
 
         Response response = Response.ok(os.toByteArray())
-                .header("Cache-Control", "no-cache, no-store, must-revalidate").header("Pragma", "no-cache")
+                .header("Cache-Control", "no-store")
+                .header("Pragma", "no-cache")
                 .header("Expires", "0").build();
 
         return response;
