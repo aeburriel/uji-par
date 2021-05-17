@@ -4,6 +4,7 @@ import com.sun.jersey.api.core.InjectParam;
 import es.uji.apps.par.model.Usuario;
 import es.uji.apps.par.services.EntradasService;
 import es.uji.apps.par.services.UsersService;
+import es.uji.apps.par.utils.Utils;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
@@ -12,6 +13,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+
 import java.io.ByteArrayOutputStream;
 
 @Path("compra")
@@ -37,13 +40,9 @@ public class ComprasResource extends BaseResource
 
         entradasService.generaEntrada(uuidCompra, bos, user.getUsuario(), configurationSelector.getUrlPublicSinHTTPS(), configurationSelector.getUrlPieEntrada());
 
-        Response response = Response.ok(bos.toByteArray())
-                .header("Cache-Control", "no-store")
-                .header("Pragma", "no-cache")
-                .header("Expires", "0")
-                .header("Content-Disposition","attachment; filename =\"entrada_" + uuidCompra + ".pdf\"")
-                .build();
+        final ResponseBuilder builder = Response.ok(bos.toByteArray())
+                .header("Content-Disposition","attachment; filename =\"entrada_" + uuidCompra + ".pdf\"");
 
-        return response;
+        return Utils.noCache(builder).build();
     }
 }

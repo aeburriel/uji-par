@@ -21,6 +21,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import es.uji.apps.par.auth.AuthChecker;
 import es.uji.apps.par.enums.TipoPago;
@@ -41,6 +42,7 @@ import es.uji.apps.par.services.ComprasService;
 import es.uji.apps.par.services.EntradasService;
 import es.uji.apps.par.services.SesionesService;
 import es.uji.apps.par.services.UsersService;
+import es.uji.apps.par.utils.Utils;
 import es.uji.commons.web.template.HTMLTemplate;
 import es.uji.commons.web.template.Template;
 
@@ -374,14 +376,10 @@ public class CompraResource extends BaseResource
 		String userUID = AuthChecker.getUserUID(currentRequest);
 		entradasService.generaEntrada(uuidCompra, bos, userUID, configurationSelector.getUrlPublicSinHTTPS(), configurationSelector.getUrlPieEntrada());
 
-		Response response = Response.ok(bos.toByteArray())
-				.header("Cache-Control", "no-store")
-				.header("Pragma", "no-cache")
-				.header("Expires", "0")
-				.header("Content-Disposition", "attachment; filename=\"entrada " + uuidCompra + ".pdf\"")
-				.build();
+		final ResponseBuilder builder = Response.ok(bos.toByteArray())
+				.header("Content-Disposition", "attachment; filename=\"entrada " + uuidCompra + ".pdf\"");
 
-		return response;
+		return Utils.noCache(builder).build();
 	}
 
 	@GET
@@ -394,13 +392,9 @@ public class CompraResource extends BaseResource
 		String userUID = AuthChecker.getUserUID(currentRequest);
 		entradasService.generaEntradaTaquilla(uuidCompra, bos, userUID, configurationSelector.getUrlPublicSinHTTPS());
 
-		Response response = Response.ok(bos.toByteArray())
-				.header("Cache-Control", "no-store")
-				.header("Pragma", "no-cache")
-				.header("Expires", "0")
-				.header("Content-Disposition", "inline; filename=\"ticket " + uuidCompra + ".pdf\"")
-				.build();
+		final ResponseBuilder builder = Response.ok(bos.toByteArray())
+				.header("Content-Disposition", "inline; filename=\"ticket " + uuidCompra + ".pdf\"");
 
-		return response;
+		return Utils.noCache(builder).build();
 	}
 }

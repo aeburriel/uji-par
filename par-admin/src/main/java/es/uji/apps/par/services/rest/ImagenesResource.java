@@ -3,11 +3,14 @@ package es.uji.apps.par.services.rest;
 import com.sun.jersey.api.core.InjectParam;
 import es.uji.apps.par.auth.AuthChecker;
 import es.uji.apps.par.drawer.MapaDrawerInterface;
+import es.uji.apps.par.utils.Utils;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+
 import java.io.ByteArrayOutputStream;
 
 @Path("imagenes")
@@ -27,11 +30,8 @@ public class ImagenesResource extends BaseResource
         String userUID = AuthChecker.getUserUID(currentRequest);
         ByteArrayOutputStream os = mapaDrawer.generaImagenAbono(abonoId, seccion, muestraReservadas != null && muestraReservadas.equals("true"), userUID);
 
-        Response response = Response.ok(os.toByteArray())
-                .header("Cache-Control", "no-store")
-                .header("Pragma", "no-cache")
-                .header("Expires", "0").build();
+        final ResponseBuilder builder = Response.ok(os.toByteArray());
 
-        return response;
+        return Utils.noCache(builder).build();
     }
 }

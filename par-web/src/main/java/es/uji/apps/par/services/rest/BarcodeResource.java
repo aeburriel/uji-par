@@ -38,7 +38,7 @@ public class BarcodeResource extends BaseResource
 
         barcodeService.generaBarcodeQr(text, size, bos);
 
-        ResponseBuilder builder = Response.ok(bos.toByteArray());
+        final ResponseBuilder builder = Response.ok(bos.toByteArray());
         
         return Utils.noCache(builder).build();
     }
