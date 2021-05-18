@@ -92,7 +92,8 @@ public class Configuration
 
 	private static final Logger log = LoggerFactory.getLogger(Configuration.class);
 	private static final String SHOW_SESIONES_SIN_VENTA_INTERNET = "uji.par.showSesionesSinVentaInternet";
-    public static final String JSON_LOCALIZACIONES_PATH = "/etc/uji/par/butacas/";
+    public static final String JSON_LOCALIZACIONES_PATH = "/etc/uji/par/butacas/%s.json";
+    public static final String IMAGENES_PATH = "/etc/uji/par/imagenes/%s";
 	private static final String IS_LOADED_FROM_RESOURCE = "uji.par.isLoadedFromResource";
 	private static final String AFORO_DISTANCIAMIENTO_SOCIAL = "uji.par.aforoDistanciamientoSocial";
 	private static final String AFORO_DISTANCIAMIENTO_SOCIAL_UF = "uji.par.aforoDistanciamientoSocialUnidadFamiliar";
@@ -517,8 +518,13 @@ public class Configuration
         return false;
     }
 
-    public String getPathJson() {
-        return JSON_LOCALIZACIONES_PATH;
+
+    public String getPathImagen(final String archivo) {
+        return String.format(IMAGENES_PATH, archivo);
+    }
+
+    public String getPathJson(final String nombre) {
+        return String.format(JSON_LOCALIZACIONES_PATH, nombre);
     }
 
     public boolean isMenuAbono() {

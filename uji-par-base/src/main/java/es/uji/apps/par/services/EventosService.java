@@ -147,18 +147,18 @@ public class EventosService
 	}
 
 	public byte[] getImagenSustitutivaSiExiste() throws IOException {
-		String path = configuration.getPathImagenSustitutiva();
-		if (path != null) {
-			InputStream fis = Files.newInputStream(Paths.get("/etc/uji/par/imagenes/" + path));
+		final String archivo = configuration.getPathImagenSustitutiva();
+		if (archivo != null) {
+			InputStream fis = Files.newInputStream(Paths.get(configuration.getPathImagen(archivo)));
 			return IOUtils.toByteArray(fis);
 		} else
 			return null;
 	}
 
 	public byte[] getImagenPubliSustitutivaSiExiste() throws IOException {
-		String path = configuration.getPathImagenPubliSustitutiva();
-		if (path != null) {
-			InputStream fis = Files.newInputStream(Paths.get("/etc/uji/par/imagenes/" + path));
+		final String archivo = configuration.getPathImagenPubliSustitutiva();
+		if (archivo != null) {
+			InputStream fis = Files.newInputStream(Paths.get(configuration.getPathImagen(archivo)));
 			return IOUtils.toByteArray(fis);
 		} else
 			return null;

@@ -55,12 +55,13 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
     	super(reportSerializer, new EntradaReportStyle());
     }
 
-    private EntradaReport(ReportSerializer serializer, ReportStyle style, Locale locale)
+    private EntradaReport(ReportSerializer serializer, ReportStyle style, Locale locale, Configuration configuration)
             throws ReportSerializerInitException
     {
         super(serializer, style);
 
         this.locale = locale;
+        this.configuration = configuration;
     }
 
     public void generaPaginaButaca(EntradaModelReport entrada, String urlPublic)
@@ -120,7 +121,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         block.setMarginBottom("0.2em");
         
         if (!isTarifaDefecto) {
-        	block.setBackgroundImage("/etc/uji/par/imagenes/entrada_descuento.png");
+            block.setBackgroundImage(configuration.getPathImagen("entrada_descuento.png"));
         	block.setBackgroundRepeat(BackgroundRepeatType.NO_REPEAT);
         	block.setBackgroundPositionVertical("35%");
         }
@@ -231,7 +232,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
     private ExternalGraphic getLogo()
     {
     	ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/logo.svg").getAbsolutePath());
+        externalGraphic.setSrc(new File(configuration.getPathImagen("logo.svg")).getAbsolutePath());
         externalGraphic.setContentWidth("2.5cm");
         return externalGraphic;
     }
@@ -466,7 +467,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
             EntradaReportStyle estilo = new EntradaReportStyle();
             estilo.setSimplePageMasterMarginBottom("0cm");
             estilo.setSimplePageMasterRegionBodyMarginBottom("0cm");
-            return new EntradaReport(reportSerializer, estilo, locale);
+            return new EntradaReport(reportSerializer, estilo, locale, configuration);
         }
         catch (ReportSerializerInitException e)
         {

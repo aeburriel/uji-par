@@ -212,7 +212,7 @@ public class ButacasService
         List<Butaca> butacasDisponibles = new ArrayList<>();
 
 
-        byte[] encoded = Files.readAllBytes(Paths.get(configuration.getPathJson() + tarifaId + ".json"));
+        byte[] encoded = Files.readAllBytes(Paths.get(configuration.getPathJson(tarifaId)));
         List<Butaca> butacasTotales = Butaca.parseaJSON(new String(encoded, "UTF-8"));
 
         int i = 1;

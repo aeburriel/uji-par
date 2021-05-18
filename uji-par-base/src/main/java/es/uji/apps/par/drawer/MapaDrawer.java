@@ -31,9 +31,6 @@ import java.util.Map;
 
 public class MapaDrawer implements MapaDrawerInterface
 {
-    private static final String IMAGES_PATH = "/etc/uji/par/imagenes/";
-    private static final String BUTACAS_PATH = "/etc/uji/par/butacas/";
-
     @InjectParam
     ButacasService butacasService;
 
@@ -140,7 +137,7 @@ public class MapaDrawer implements MapaDrawerInterface
         {
         }.getType();
         
-        final InputStream inputStream = Files.newInputStream(Paths.get(BUTACAS_PATH + "/" + localizacion + ".json"));
+        final InputStream inputStream = Files.newInputStream(Paths.get(configuration.getPathJson(localizacion)));
         final InputStreamReader jsonReader = new InputStreamReader(inputStream);
         List<DatosButaca> butacas;
         try {
@@ -264,64 +261,52 @@ public class MapaDrawer implements MapaDrawerInterface
 				imagenes = new HashMap<String, BufferedImage>();
 
 				for (String localizacion : configuration.getImagenesFondo()) {
-					loadImage(IMAGES_PATH, localizacion);
+					imagenes.put(localizacion, readImage(localizacion));
 				}
 			}
 
 			if (butacaOcupada == null) {
-				butacaOcupada = ImageIO.read(new File(IMAGES_PATH + "/ocupada.png"));
+				butacaOcupada = readImage("ocupada");
 			}
 
 			if (butacaOcupadaAcompanante == null) {
-				File f = new File(IMAGES_PATH + "/ocupadaAcompanante.png");
-				if (f.exists())
-					butacaOcupadaAcompanante = ImageIO.read(f);
+				butacaOcupadaAcompanante = readImage("ocupadaAcompanante");
 			}
 
 			if (butacaOcupadaDiscapacitado == null) {
-				File f = new File(IMAGES_PATH + "/ocupadaDiscapacitado.png");
-				if (f.exists())
-					butacaOcupadaDiscapacitado = ImageIO.read(f);
+				butacaOcupadaDiscapacitado = readImage("ocupadaDiscapacitado");
 			}
 
 			if (butacaReservada == null) {
-				butacaReservada = ImageIO.read(new File(IMAGES_PATH + "/reservada.png"));
+				butacaReservada = readImage("reservada");
 			}
 
 			if (butacaReservadaAcompanante == null) {
-				File f = new File(IMAGES_PATH + "/reservadaAcompanante.png");
-				if (f.exists())
-					butacaReservadaAcompanante = ImageIO.read(f);
+				butacaReservadaAcompanante = readImage("reservadaAcompanante");
 			}
 
 			if (butacaReservadaDiscapacitado == null) {
-				File f = new File(IMAGES_PATH + "/reservadaDiscapacitado.png");
-				if (f.exists())
-					butacaReservadaDiscapacitado = ImageIO.read(f);
+				butacaReservadaDiscapacitado = readImage("reservadaDiscapacitado");
 			}
 
 			if (butacaPresentada == null) {
-				File f = new File(IMAGES_PATH + "/presentada.png");
-				if (f.exists())
-					butacaPresentada = ImageIO.read(f);
+				butacaPresentada = readImage("presentada");
 			}
 			if (butacaVaciaDiscapacitado == null) {
-				File f = new File(IMAGES_PATH + "/vaciaDiscapacitado.png");
-				if (f.exists())
-					butacaVaciaDiscapacitado = ImageIO.read(f);
+				butacaVaciaDiscapacitado = readImage("vaciaDiscapacitado");
 			}
 			if (butacaVaciaAcompanante == null) {
-				File f = new File(IMAGES_PATH + "/vaciaAcompanante.png");
-				if (f.exists())
-					butacaVaciaAcompanante = ImageIO.read(f);
+				butacaVaciaAcompanante = readImage("vaciaAcompanante");
 			}
 		}
     }
 
-    private void loadImage(String imagesPath, String localizacion) throws IOException
-    {
-        File f = new File(imagesPath + localizacion + ".png");
-        imagenes.put(localizacion, ImageIO.read(f));
+    private BufferedImage readImage(final String localizacion) throws IOException {
+        final File f = new File(configuration.getPathImagen(localizacion + ".png"));
+        if (!f.exists()) {
+            return null;
+        }
+        return ImageIO.read(f);
     }
 
 }

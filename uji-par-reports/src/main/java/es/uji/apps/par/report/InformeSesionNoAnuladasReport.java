@@ -129,7 +129,7 @@ public class InformeSesionNoAnuladasReport extends Report implements InformeInte
 	private Block getLogo()
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + logoReport).getAbsolutePath());
+        externalGraphic.setSrc(new File(configuration.getPathImagen(logoReport)).getAbsolutePath());
         externalGraphic.setHeight("1.5cm");
         externalGraphic.setContentHeight("scale-to-fit");
         externalGraphic.setContentWidth("scale-to-fit");

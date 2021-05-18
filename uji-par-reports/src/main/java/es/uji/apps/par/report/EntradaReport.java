@@ -29,6 +29,7 @@ public class EntradaReport extends Report implements EntradaReportOnlineInterfac
 
     private static FopPDFSerializer reportSerializer;
 
+    private Configuration configuration;
     private Locale locale;
 
     private String titulo;
@@ -53,12 +54,13 @@ public class EntradaReport extends Report implements EntradaReportOnlineInterfac
     	super(reportSerializer, new EntradaReportStyle());
     }
 
-    private EntradaReport(ReportSerializer serializer, ReportStyle style, Locale locale)
+    private EntradaReport(ReportSerializer serializer, ReportStyle style, Locale locale, Configuration configuration)
             throws ReportSerializerInitException
     {
         super(serializer, style);
 
         this.locale = locale;
+        this.configuration = configuration;
     }
 
     public void generaPaginaButaca(EntradaModelReport entrada, String urlPublic)
@@ -129,7 +131,7 @@ public class EntradaReport extends Report implements EntradaReportOnlineInterfac
         block.setMarginBottom("0.2em");
         
         if (!isTarifaDefecto) {
-        	block.setBackgroundImage("/etc/uji/par/imagenes/entrada_descuento.png");
+            block.setBackgroundImage(configuration.getPathImagen("entrada_descuento.png"));
         	block.setBackgroundRepeat(BackgroundRepeatType.NO_REPEAT);
         	block.setBackgroundPositionVertical("35%");
         }
@@ -245,7 +247,7 @@ public class EntradaReport extends Report implements EntradaReportOnlineInterfac
     private ExternalGraphic logoUji()
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/uji_logo.png").getAbsolutePath());
+        externalGraphic.setSrc(new File(configuration.getPathImagen("imagenes/uji_logo.png")).getAbsolutePath());
         externalGraphic.setMaxWidth("2cm");
 
         return externalGraphic;
@@ -474,7 +476,7 @@ public class EntradaReport extends Report implements EntradaReportOnlineInterfac
             EntradaReportStyle estilo = new EntradaReportStyle();
             estilo.setSimplePageMasterMarginBottom("0cm");
             estilo.setSimplePageMasterRegionBodyMarginBottom("0cm");
-            return new EntradaReport(reportSerializer, estilo, locale);
+            return new EntradaReport(reportSerializer, estilo, locale, configuration);
         }
         catch (ReportSerializerInitException e)
         {

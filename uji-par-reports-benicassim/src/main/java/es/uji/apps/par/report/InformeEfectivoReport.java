@@ -73,7 +73,7 @@ public class InformeEfectivoReport extends Report implements InformeInterface
     private void creaLogo()
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + logoReport).getAbsolutePath());
+        externalGraphic.setSrc(new File(configuration.getPathImagen(logoReport)).getAbsolutePath());
         externalGraphic.setMaxWidth("2cm");
 
         Block block = withNewBlock();

@@ -297,7 +297,7 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
 	private ExternalGraphic getLogo()
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/logo.svg").getAbsolutePath());
+        externalGraphic.setSrc(new File(configuration.getPathImagen("logo.svg")).getAbsolutePath());
         externalGraphic.setContentWidth(EntradaTaquillaReport.sizeZonaImpresion);
 
         return externalGraphic;

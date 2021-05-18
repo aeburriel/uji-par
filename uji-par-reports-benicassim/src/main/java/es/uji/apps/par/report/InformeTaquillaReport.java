@@ -67,7 +67,7 @@ public class InformeTaquillaReport extends Report implements InformeInterface
 	private void creaLogo()
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + logoReport).getAbsolutePath());
+        externalGraphic.setSrc(new File(configuration.getPathImagen(logoReport)).getAbsolutePath());
         externalGraphic.setMaxWidth("1cm");
         externalGraphic.setWidth("1cm");
 

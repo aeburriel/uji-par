@@ -71,7 +71,6 @@ public class ButacasVinculadasService {
 	private TarifasService tarifasService;
 
 	private static final String ADMIN_UID = "admin";
-	private static final String BUTACAS_PATH = "/etc/uji/par/butacas/";
 	private static final String LOCALIZACION = "general"; // TODO: generalizar a múltiples salas
 	private static final String MENSAJE_BLOQUEO = "Butaca discapacitado";
 	private static final Date FECHAINFINITO = new Date(95649033600000L);
@@ -365,7 +364,7 @@ public class ButacasVinculadasService {
 		final Type fooType = new TypeToken<List<DatosButaca>>() {
 		}.getType();
 
-		final InputStream inputStream = Files.newInputStream(Paths.get(BUTACAS_PATH + "/" + localizacion + ".json"));
+		final InputStream inputStream = Files.newInputStream(Paths.get(configuration.getPathJson(localizacion)));
 		final InputStreamReader jsonReader = new InputStreamReader(inputStream);
 		List<DatosButaca> butacas;
 		try {

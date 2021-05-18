@@ -288,7 +288,7 @@ public class EntradasResource extends BaseResource {
             for (Butaca butacaSeleccionada : butacasSeleccionadas) {
                 String localizacion = butacaSeleccionada.getLocalizacion();
                 if (!butacasExistentes.containsKey(localizacion)) {
-                    byte[] encoded = Files.readAllBytes(Paths.get(configuration.getPathJson() + localizacion + ".json"));
+                    byte[] encoded = Files.readAllBytes(Paths.get(configuration.getPathJson(localizacion)));
                     butacasExistentes.put(localizacion, Butaca.parseaJSON(new String(encoded, "UTF-8")));
                 }
 

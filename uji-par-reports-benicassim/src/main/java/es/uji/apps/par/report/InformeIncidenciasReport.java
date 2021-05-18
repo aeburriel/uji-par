@@ -123,7 +123,7 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
 	private Block creaLogo()
 	{
 		ExternalGraphic externalGraphic = new ExternalGraphic();
-		externalGraphic.setSrc(new File("/etc/uji/par/imagenes/" + logoReport).getAbsolutePath());
+		externalGraphic.setSrc(new File(configuration.getPathImagen(logoReport)).getAbsolutePath());
 		externalGraphic.setMaxWidth("2cm");
 
 		Block block = new Block();

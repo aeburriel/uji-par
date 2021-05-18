@@ -219,7 +219,7 @@ public class EntradaActoGraduacionReport extends Report implements EntradaReport
         Block block = new Block();
 
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc("/etc/uji/par/imagenes/portada_acto_graduacion.jpg");
+        externalGraphic.setSrc(configuration.getPathImagen("portada_acto_graduacion.jpg"));
         externalGraphic.setContentWidth("2.5cm");
 
         externalGraphic.setMaxWidth("2.5cm");
@@ -230,7 +230,7 @@ public class EntradaActoGraduacionReport extends Report implements EntradaReport
     private ExternalGraphic logoUji()
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/uji_logo.png").getAbsolutePath());
+        externalGraphic.setSrc(new File(configuration.getPathImagen("uji_logo.png")).getAbsolutePath());
         externalGraphic.setMaxWidth("2cm");
 
         return externalGraphic;

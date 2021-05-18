@@ -31,6 +31,7 @@ public class EntradaTaquillaReport extends Report implements EntradaReportTaquil
 
     private static FopPDFSerializer reportSerializer;
 
+    private Configuration configuration;
     private Locale locale;
 
     private String titulo;
@@ -54,12 +55,13 @@ public class EntradaTaquillaReport extends Report implements EntradaReportTaquil
     	super(reportSerializer, new EntradaReportStyle());
     }
 
-    private EntradaTaquillaReport(ReportSerializer serializer, ReportStyle style, Locale locale)
+    private EntradaTaquillaReport(ReportSerializer serializer, ReportStyle style, Locale locale, Configuration configuration)
             throws ReportSerializerInitException
     {
         super(serializer, style);
 
         this.locale = locale;
+        this.configuration = configuration;
         
         SimplePageMaster reciboPageMaster = withSimplePageMaster();
         reciboPageMaster.setMasterName("reciboPinpad");
@@ -358,7 +360,7 @@ public class EntradaTaquillaReport extends Report implements EntradaReportTaquil
 	private ExternalGraphic logoUji()
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(new File("/etc/uji/par/imagenes/uji_logo.png").getAbsolutePath());
+        externalGraphic.setSrc(new File(configuration.getPathImagen("uji_logo.png")).getAbsolutePath());
         externalGraphic.setContentWidth("3cm");
 
         return externalGraphic;
@@ -452,7 +454,7 @@ public class EntradaTaquillaReport extends Report implements EntradaReportTaquil
             reportStyle.setSimplePageMasterRegionBodyMarginTop("0cm");
             reportStyle.setSimplePageMasterRegionBodyMarginBottom("0cm");
 
-            return new EntradaTaquillaReport(reportSerializer, reportStyle, locale);
+            return new EntradaTaquillaReport(reportSerializer, reportStyle, locale, configuration);
         }
         catch (ReportSerializerInitException e)
         {
