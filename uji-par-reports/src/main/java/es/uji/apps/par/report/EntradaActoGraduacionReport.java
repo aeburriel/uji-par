@@ -45,6 +45,7 @@ public class EntradaActoGraduacionReport extends Report implements EntradaReport
 	private Configuration configuration;
     private String nombreEntidad;
     private String direccion;
+    private String logo = "uji_logo.png";
 
 	public EntradaActoGraduacionReport() throws ReportSerializerInitException {
         super(reportSerializer, new EntradaReportStyle());
@@ -230,7 +231,7 @@ public class EntradaActoGraduacionReport extends Report implements EntradaReport
     private ExternalGraphic logoUji()
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(new File(configuration.getPathImagen("uji_logo.png")).getAbsolutePath());
+        externalGraphic.setSrc(new File(configuration.getPathImagen(logo)).getAbsolutePath());
         externalGraphic.setMaxWidth("2cm");
 
         return externalGraphic;
@@ -490,5 +491,10 @@ public class EntradaActoGraduacionReport extends Report implements EntradaReport
     public void setCif(String cif)
     {
         this.cif = cif;
+    }
+
+    public void setLogo(final String archivo)
+    {
+        this.logo = archivo;
     }
 }

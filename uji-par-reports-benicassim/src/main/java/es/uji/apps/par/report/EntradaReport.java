@@ -48,6 +48,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
     private String nifPromotor;
     private String nombreEntidad;
     private String direccion;
+    private String logo = "logo.svg";
 
 	private Configuration configuration;
 
@@ -232,7 +233,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
     private ExternalGraphic getLogo()
     {
     	ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(new File(configuration.getPathImagen("logo.svg")).getAbsolutePath());
+        externalGraphic.setSrc(new File(configuration.getPathImagen(logo)).getAbsolutePath());
         externalGraphic.setContentWidth("2.5cm");
         return externalGraphic;
     }
@@ -566,5 +567,10 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
     public void setDireccion(String direccion)
     {
         this.direccion = direccion;
+    }
+
+    public void setLogo(final String archivo)
+    {
+        this.logo = archivo;
     }
 }

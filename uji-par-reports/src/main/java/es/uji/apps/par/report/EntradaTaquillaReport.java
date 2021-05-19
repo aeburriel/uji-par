@@ -50,6 +50,7 @@ public class EntradaTaquillaReport extends Report implements EntradaReportTaquil
 	private String nombreEntidad;
 	private String direccion;
 	private String urlCondiciones;
+	private String logo = "uji_logo.png";
 
     public EntradaTaquillaReport() throws ReportSerializerInitException {
     	super(reportSerializer, new EntradaReportStyle());
@@ -360,7 +361,7 @@ public class EntradaTaquillaReport extends Report implements EntradaReportTaquil
 	private ExternalGraphic logoUji()
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(new File(configuration.getPathImagen("uji_logo.png")).getAbsolutePath());
+        externalGraphic.setSrc(new File(configuration.getPathImagen(logo)).getAbsolutePath());
         externalGraphic.setContentWidth("3cm");
 
         return externalGraphic;
@@ -521,4 +522,9 @@ public class EntradaTaquillaReport extends Report implements EntradaReportTaquil
 	{
 		this.urlCondiciones = urlCondiciones;
 	}
+
+	public void setLogo(final String archivo)
+    {
+        this.logo = archivo;
+    }
 }

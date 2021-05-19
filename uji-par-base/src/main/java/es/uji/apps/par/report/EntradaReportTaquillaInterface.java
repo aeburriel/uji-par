@@ -24,4 +24,5 @@ public interface EntradaReportTaquillaInterface {
 	void setNombreEntidad(String nombreEntidad);
 	void setDireccion(String direccion);
 	void setUrlCondiciones(String urlCondiciones);
+	void setLogo(final String archivo);
 }

@@ -158,6 +158,10 @@ public class EntradasService {
 		entrada.setCif(compra.getParSesion().getParEvento().getParTpv().getCif());
 		entrada.setPromotor(compra.getParSesion().getParEvento().getPromotor());
 		entrada.setNifPromotor(compra.getParSesion().getParEvento().getNifPromotor());
+		final String logo = getLogoVenta(compra);
+		if (logo != null) {
+			entrada.setLogo(logo);
+		}
 
         for (ButacaDTO butaca : compra.getParButacas()) {
             if (butaca.getAnulada() == null || butaca.getAnulada() == false) {
@@ -257,6 +261,10 @@ public class EntradasService {
 		entrada.setCif(compra.getParSesion().getParEvento().getParTpv().getCif());
 		entrada.setPromotor(compra.getParSesion().getParEvento().getPromotor());
 		entrada.setNifPromotor(compra.getParSesion().getParEvento().getNifPromotor());
+		final String logo = getLogoVenta(compra);
+		if (logo != null) {
+			entrada.setLogo(logo);
+		}
         int totalButacas = 0;
 
         for (ButacaDTO butaca : compra.getParButacas()) {
@@ -334,4 +342,9 @@ public class EntradasService {
 			return new Locale(configurationSelector.getIdiomaPorDefecto());
 		}
 	}
+
+    private String getLogoVenta(final CompraDTO compraDTO) {
+        final String logo = compraDTO.getParSesion().getParEvento().getParCine().getLogoReport();
+        return logo == null || logo.isEmpty() ? null : "venta-" + logo;
+    }
 }

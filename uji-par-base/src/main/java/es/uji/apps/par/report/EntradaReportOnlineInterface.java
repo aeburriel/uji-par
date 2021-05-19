@@ -25,4 +25,5 @@ public interface EntradaReportOnlineInterface {
 	void setTotalButacas(int totalButacas);
 	void setNombreEntidad(String nombreEntidad);
 	void setDireccion(String direccion);
+	void setLogo(final String archivo);
 }

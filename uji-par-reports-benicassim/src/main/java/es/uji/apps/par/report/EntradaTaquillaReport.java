@@ -51,6 +51,7 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
     private String nombreEntidad;
     private String direccion;
     private String urlCondiciones;
+    private String logo = "logo.svg";
 
     private Configuration configuration;
 
@@ -297,7 +298,7 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
 	private ExternalGraphic getLogo()
     {
         ExternalGraphic externalGraphic = new ExternalGraphic();
-        externalGraphic.setSrc(new File(configuration.getPathImagen("logo.svg")).getAbsolutePath());
+        externalGraphic.setSrc(new File(configuration.getPathImagen(logo)).getAbsolutePath());
         externalGraphic.setContentWidth(EntradaTaquillaReport.sizeZonaImpresion);
 
         return externalGraphic;
@@ -467,5 +468,10 @@ public class EntradaTaquillaReport extends BenicassimBaseReport implements Entra
     public void setUrlCondiciones(String urlCondiciones)
     {
         this.urlCondiciones = urlCondiciones;
+    }
+
+    public void setLogo(final String archivo)
+    {
+        this.logo = archivo;
     }
 }
