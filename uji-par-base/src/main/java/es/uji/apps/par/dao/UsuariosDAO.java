@@ -123,59 +123,72 @@ public class UsuariosDAO extends BaseDAO
 		return query.from(qUsuarioDTO).join(qUsuarioDTO.parSalasUsuario, qSalasUsuarioDTO).join(qSalasUsuarioDTO.parSala, qSalaDTO).join(qSalaDTO.parReports, qReportDTO).where(qUsuarioDTO.usuario.toUpperCase().eq(login.toUpperCase()).and(qReportDTO.tipo.toUpperCase().eq(tipoInformePdf.toUpperCase()))).uniqueResult(qReportDTO.clase);
 	}
 
-	public Usuario getUserByServerName(String serverName)
+	public Usuario getUserByServerName(final String serverName)
 	{
-		JPAQuery query = new JPAQuery(entityManager);
+		final JPAQuery query = new JPAQuery(entityManager);
 
-		List<UsuarioDTO> users = query.from(qUserDTO).where(qUserDTO.url.eq(serverName)).list(qUserDTO);
+		final List<UsuarioDTO> users = query.from(qUserDTO)
+				.where(qUserDTO.url.eq(serverName))
+				.orderBy(qUserDTO.id.asc())
+				.list(qUserDTO);
 
-		if (users.size() > 0)
-		{
-			return new Usuario(users.get(0));
-		}
-		else
-		{
-			Usuario usuario = new Usuario();
+		final Usuario usuario;
+		if (users.isEmpty()) {
+			usuario = new Usuario();
 			usuario.setUsuario("");
-
-			return usuario;
+		} else {
+			usuario = new Usuario(users.get(0));
 		}
+
+		return usuario;
 	}
 
-	public Cine getUserCineByServerName(String serverName)
+	public Cine getUserCineByServerName(final String serverName)
 	{
-		List<CineDTO> cines = getCineDTOByServerName(serverName);
+		final List<CineDTO> cines = getCineDTOByServerName(serverName);
 
 		return Cine.cineDTOToCine(cines.get(0));
 	}
 
-	public String getApiKeyByServerName(String serverName)
+	public String getApiKeyByServerName(final String serverName)
 	{
-		List<CineDTO> cines = getCineDTOByServerName(serverName);
+		final List<CineDTO> cines = getCineDTOByServerName(serverName);
 
 		return cines.get(0).getApiKey();
 	}
 
-	private List<CineDTO> getCineDTOByServerName(String serverName)
+	private List<CineDTO> getCineDTOByServerName(final String serverName)
 	{
-		JPAQuery query = new JPAQuery(entityManager);
-		QUsuarioDTO qUsuarioDTO = QUsuarioDTO.usuarioDTO;
-		QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
-		QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
-		QCineDTO qCineDTO = QCineDTO.cineDTO;
+		final JPAQuery query = new JPAQuery(entityManager);
+		final QUsuarioDTO qUsuarioDTO = QUsuarioDTO.usuarioDTO;
+		final QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
+		final QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+		final QCineDTO qCineDTO = QCineDTO.cineDTO;
 
-		return query.from(qUsuarioDTO).join(qUsuarioDTO.parSalasUsuario, qSalasUsuarioDTO).join(qSalasUsuarioDTO.parSala, qSalaDTO).join(qSalaDTO.parCine, qCineDTO).where(qUserDTO.url.eq(serverName)).list(qCineDTO);
+		return query.from(qUsuarioDTO)
+				.join(qUsuarioDTO.parSalasUsuario, qSalasUsuarioDTO)
+				.join(qSalasUsuarioDTO.parSala, qSalaDTO)
+				.join(qSalaDTO.parCine, qCineDTO)
+				.where(qUserDTO.url.eq(serverName))
+				.orderBy(qCineDTO.id.asc())
+				.list(qCineDTO);
 	}
 
-	public Cine getUserCineByUserUID(String userUID)
+	public Cine getUserCineByUserUID(final String userUID)
 	{
-		JPAQuery query = new JPAQuery(entityManager);
-		QUsuarioDTO qUsuarioDTO = QUsuarioDTO.usuarioDTO;
-		QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
-		QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
-		QCineDTO qCineDTO = QCineDTO.cineDTO;
+		final JPAQuery query = new JPAQuery(entityManager);
+		final QUsuarioDTO qUsuarioDTO = QUsuarioDTO.usuarioDTO;
+		final QSalasUsuarioDTO qSalasUsuarioDTO = QSalasUsuarioDTO.salasUsuarioDTO;
+		final QSalaDTO qSalaDTO = QSalaDTO.salaDTO;
+		final QCineDTO qCineDTO = QCineDTO.cineDTO;
 
-		List<CineDTO> cines = query.from(qUsuarioDTO).join(qUsuarioDTO.parSalasUsuario, qSalasUsuarioDTO).join(qSalasUsuarioDTO.parSala, qSalaDTO).join(qSalaDTO.parCine, qCineDTO).where(qUserDTO.usuario.eq(userUID)).list(qCineDTO);
+		final List<CineDTO> cines = query.from(qUsuarioDTO)
+				.join(qUsuarioDTO.parSalasUsuario, qSalasUsuarioDTO)
+				.join(qSalasUsuarioDTO.parSala, qSalaDTO)
+				.join(qSalaDTO.parCine, qCineDTO)
+				.where(qUserDTO.usuario.eq(userUID))
+				.orderBy(qCineDTO.id.asc())
+				.list(qCineDTO);
 
 		return Cine.cineDTOToCine(cines.get(0));
 	}
