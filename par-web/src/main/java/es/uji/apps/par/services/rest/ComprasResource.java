@@ -38,7 +38,7 @@ public class ComprasResource extends BaseResource
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-        entradasService.generaEntrada(uuidCompra, bos, user.getUsuario(), configurationSelector.getUrlPublicSinHTTPS(), configurationSelector.getUrlPieEntrada());
+        entradasService.generaEntrada(uuidCompra, bos, user.getUsuario(), configurationSelector.getUrlPublicSinHTTPS(), null);
 
         final ResponseBuilder builder = Response.ok(bos.toByteArray())
                 .header("Content-Disposition","attachment; filename =\"entrada_" + uuidCompra + ".pdf\"");

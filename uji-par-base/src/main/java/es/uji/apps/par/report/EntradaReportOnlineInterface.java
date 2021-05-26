@@ -14,6 +14,7 @@ public interface EntradaReportOnlineInterface {
 	void setFecha(String fecha);
 	void setHora(String hora);
 	void setHoraApertura(String horaApertura);
+	void setEmpresa(String empresa);
 	void setCif(String cif);
 	void setPromotor(String promotor);
 	void setNifPromotor(String nifPromotor);

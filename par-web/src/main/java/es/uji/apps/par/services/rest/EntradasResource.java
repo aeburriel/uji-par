@@ -432,7 +432,7 @@ public class EntradasResource extends BaseResource {
         template.put("telefono", telefono);
         template.put("email", email);
         template.put("condicionesPrivacidad", condicionesPrivacidad);
-        template.put("urlCondicionesPrivacidad", configurationSelector.getUrlCondicionesPrivacidad());
+        template.put("urlCondicionesPrivacidad", compra.getParSesion().getParEvento().getParCine().getUrlPrivacidad());
 
         if (compra != null) {
             if (language.equals("ca"))

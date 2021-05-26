@@ -374,7 +374,7 @@ public class CompraResource extends BaseResource
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
 		String userUID = AuthChecker.getUserUID(currentRequest);
-		entradasService.generaEntrada(uuidCompra, bos, userUID, configurationSelector.getUrlPublicSinHTTPS(), configurationSelector.getUrlPieEntrada());
+		entradasService.generaEntrada(uuidCompra, bos, userUID, configurationSelector.getUrlPublicSinHTTPS(), null);
 
 		final ResponseBuilder builder = Response.ok(bos.toByteArray())
 				.header("Content-Disposition", "attachment; filename=\"entrada " + uuidCompra + ".pdf\"");

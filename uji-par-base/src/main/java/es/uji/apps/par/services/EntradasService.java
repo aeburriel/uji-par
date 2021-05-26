@@ -23,6 +23,7 @@ import es.uji.apps.par.dao.ComprasDAO;
 import es.uji.apps.par.dao.TarifasDAO;
 import es.uji.apps.par.dao.UsuariosDAO;
 import es.uji.apps.par.db.ButacaDTO;
+import es.uji.apps.par.db.CineDTO;
 import es.uji.apps.par.db.CompraDTO;
 import es.uji.apps.par.db.EventoDTO;
 import es.uji.apps.par.db.TarifaDTO;
@@ -90,6 +91,9 @@ public class EntradasService {
 		}
 
 		EntradaReportOnlineInterface entrada = entradaOnlineReport.create(getLocale(userUID), configuration);
+		if (urlPieEntrada == null) {
+			urlPieEntrada = compra.getParSesion().getParSala().getParCine().getUrlPieEntrada();
+		}
 		rellenaEntrada(compra, entrada, userUID, urlPublicSinHTTPS, urlPieEntrada);
 		return entrada;
 	}
@@ -145,6 +149,7 @@ public class EntradasService {
         String fecha = DateUtils.dateToSpanishString(compra.getParSesion().getFechaCelebracion());
         String hora = DateUtils.dateToHourString(compra.getParSesion().getFechaCelebracion());
         String horaApertura = compra.getParSesion().getHoraApertura();
+        final CineDTO cine = compra.getParSesion().getParSala().getParCine();
 
         entrada.setTitulo(titulo);
         entrada.setFecha(fecha);
@@ -152,9 +157,9 @@ public class EntradasService {
         entrada.setHoraApertura(horaApertura);
         entrada.setUrlPortada(urlPublicSinHTTPS + "/rest/evento/"
                 + compra.getParSesion().getParEvento().getId() + "/imagenEntrada");
-		entrada.setNombreEntidad(compra.getParSesion().getParEvento().getParCine().getNombre());
-		entrada.setDireccion(String.format("%s %s %s", compra.getParSesion().getParEvento().getParCine().getDireccion(), compra.getParSesion().getParEvento().getParCine().getCp(), compra.getParSesion().getParEvento().getParCine().getNombreMunicipio()));
-		entrada.setUrlCondiciones( compra.getParSesion().getParEvento().getParCine().getUrlPrivacidad());
+		entrada.setNombreEntidad(cine.getNombre());
+		entrada.setDireccion(String.format("%s %s %s", cine.getDireccion(), cine.getCp(), cine.getNombreMunicipio()));
+		entrada.setUrlCondiciones(cine.getUrlPrivacidad());
 		entrada.setCif(compra.getParSesion().getParEvento().getParTpv().getCif());
 		entrada.setPromotor(compra.getParSesion().getParEvento().getPromotor());
 		entrada.setNifPromotor(compra.getParSesion().getParEvento().getNifPromotor());
@@ -238,6 +243,7 @@ public class EntradasService {
         String fecha = DateUtils.dateToSpanishString(compra.getParSesion().getFechaCelebracion());
         String hora = DateUtils.dateToHourString(compra.getParSesion().getFechaCelebracion());
         String horaApertura = compra.getParSesion().getHoraApertura();
+        final CineDTO cine = compra.getParSesion().getParSala().getParCine();
 
         entrada.setTitulo(titulo);
         entrada.setFecha(fecha);
@@ -256,8 +262,9 @@ public class EntradasService {
 			entrada.setUrlPublicidad(urlPieEntrada);
 		}
 
-		entrada.setNombreEntidad(compra.getParSesion().getParEvento().getParCine().getNombre());
-		entrada.setDireccion(String.format("%s %s %s", compra.getParSesion().getParEvento().getParCine().getDireccion(), compra.getParSesion().getParEvento().getParCine().getCp(), compra.getParSesion().getParEvento().getParCine().getNombreMunicipio()));
+		entrada.setNombreEntidad(cine.getNombre());
+		entrada.setEmpresa(cine.getEmpresa());
+		entrada.setDireccion(String.format("%s %s %s", cine.getDireccion(), cine.getCp(), cine.getNombreMunicipio()));
 		entrada.setCif(compra.getParSesion().getParEvento().getParTpv().getCif());
 		entrada.setPromotor(compra.getParSesion().getParEvento().getPromotor());
 		entrada.setNifPromotor(compra.getParSesion().getParEvento().getNifPromotor());

@@ -43,6 +43,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
     private String urlPortada;
     private String barcode;
     private int totalButacas;
+    private String empresa;
     private String cif;
     private String promotor;
     private String nifPromotor;
@@ -179,9 +180,9 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         BaseTable table = new BaseTable(new EntradaReportStyle(), 2, "9cm", "2cm");
 
         table.withNewRow();
-        Block blockTeatro = getBlockWithText(ResourceProperties.getProperty(locale, "entrada.nombreLocalizacion"), "15pt", true, false);
-        Block blockEntidad = getBlockWithText(ResourceProperties.getProperty(locale, "entrada.nombreEntidad"), "10pt");
-        Block blockDireccion = getBlockWithText(ResourceProperties.getProperty(locale, "entrada.direccion"), "10pt");
+        final Block blockTeatro = getBlockWithText(nombreEntidad, "15pt", true, false);
+        final Block blockEntidad = getBlockWithText(empresa, "10pt");
+        final Block blockDireccion = getBlockWithText(direccion, "10pt");
         BlockContainer bc = new BlockContainer();
         bc.setWidth("100%");
         bc.getMarkerOrBlockOrBlockContainer().add(blockTeatro);
@@ -538,6 +539,10 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
 
     public boolean esAgrupada() {
         return false;
+    }
+
+    public void setEmpresa(final String empresa) {
+        this.empresa = empresa;
     }
 
     public void setCif(String cif)

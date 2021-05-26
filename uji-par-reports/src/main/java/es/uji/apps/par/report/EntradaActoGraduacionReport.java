@@ -39,6 +39,7 @@ public class EntradaActoGraduacionReport extends Report implements EntradaReport
     protected String urlPortada;
     private int totalButacas;
     private String barcode;
+    private String empresa;
     private String cif;
     private String promotor;
     private String nifPromotor;
@@ -486,6 +487,10 @@ public class EntradaActoGraduacionReport extends Report implements EntradaReport
     public void setNifPromotor(String nifPromotor)
     {
         this.nifPromotor = nifPromotor;
+    }
+
+    public void setEmpresa(final String empresa) {
+        this.empresa = empresa;
     }
 
     public void setCif(String cif)

@@ -43,6 +43,7 @@ public class EntradaReport extends Report implements EntradaReportOnlineInterfac
     private String urlPublicidad;
     private String urlPortada;
     private String barcode;
+    private String empresa;
     private String cif;
     private String promotor;
     private String nifPromotor;
@@ -576,5 +577,9 @@ public class EntradaReport extends Report implements EntradaReportOnlineInterfac
     public void setNifPromotor(String nifPromotor)
     {
         this.nifPromotor = nifPromotor;
+    }
+
+    public void setEmpresa(final String empresa) {
+        this.empresa = empresa;
     }
 }
