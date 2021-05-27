@@ -184,7 +184,7 @@ public class InformeSesionNoAnuladasReport extends Report implements InformeInte
 	}
 
 	private void createCabeceraSesionTitulo() {
-		Block titulo = createBoldBlock(ResourceProperties.getProperty(locale, "informeSesion.titulo"));
+		final Block titulo = createBoldBlock(ResourceProperties.getProperty(locale, "informeSesion.titulo", configuration.configurationSelector.getHtmlTitle()).toUpperCase());
 	
 	    titulo.setMarginTop("1cm");
 	    titulo.setMarginLeft("6cm");
@@ -192,7 +192,7 @@ public class InformeSesionNoAnuladasReport extends Report implements InformeInte
 	}
 	
 	private void createCabeceraEventoTitulo() {
-		Block titulo = createBoldBlock(ResourceProperties.getProperty(locale, "informeEventos.titulo"));
+		final Block titulo = createBoldBlock(ResourceProperties.getProperty(locale, "informeEventos.titulo", configuration.configurationSelector.getHtmlTitle()).toUpperCase());
 	
 	    titulo.setMarginTop("1cm");
 	    titulo.setMarginLeft("6cm");
@@ -505,6 +505,7 @@ public class InformeSesionNoAnuladasReport extends Report implements InformeInte
 
         fechaBlock.getContent().add(
                 ResourceProperties.getProperty(locale, "informeEfectivo.subtotales.fecha",
+                        configuration.configurationSelector.getNombreMunicipio(),
                         fecha.get(Calendar.DAY_OF_MONTH), mes, fecha.get(Calendar.YEAR)));
     }
 

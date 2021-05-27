@@ -93,7 +93,7 @@ public class InformeEfectivoReport extends Report implements InformeInterface
 
     private void creaCabecera(String inicio, String fin)
     {
-        Block titulo = createBoldBlock(ResourceProperties.getProperty(locale, "informeEfectivo.titulo"));
+        final Block titulo = createBoldBlock(ResourceProperties.getProperty(locale, "informeEfectivo.titulo", configuration.configurationSelector.getHtmlTitle()).toUpperCase());
 
         titulo.setMarginTop("1cm");
         titulo.setMarginLeft("6cm");
@@ -111,10 +111,10 @@ public class InformeEfectivoReport extends Report implements InformeInterface
 
     private void creaIntro()
     {
-        Block intro = withNewBlock();
+        final Block intro = withNewBlock();
 
         intro.setMarginTop("1cm");
-        intro.getContent().add(ResourceProperties.getProperty(locale, "informeEfectivo.intro"));
+        intro.getContent().add(ResourceProperties.getProperty(locale, "informeEfectivo.intro", configuration.configurationSelector.getHtmlTitle()));
     }
 
     private Block createBoldBlock(String text)
@@ -328,6 +328,7 @@ public class InformeEfectivoReport extends Report implements InformeInterface
         fechaBlock.setMarginTop("1cm");
         fechaBlock.getContent().add(
                 ResourceProperties.getProperty(locale, "informeEfectivo.subtotales.fecha",
+                        configuration.configurationSelector.getNombreMunicipio(),
                         fecha.get(Calendar.DAY_OF_MONTH), ReportUtils.getMesValenciaConDe(fecha), fecha.get(Calendar.YEAR)));
     }
 
@@ -394,6 +395,5 @@ public class InformeEfectivoReport extends Report implements InformeInterface
 	}
 
 	public void genera(String cargo, String firmante, List<InformeSesion> informesSesion, Cine cine, boolean printSesion) throws SinIvaException {
-		
 	}
 }

@@ -103,6 +103,9 @@ public class Configuration
 
     private Properties properties;
 
+    @Autowired
+    public ConfigurationSelector configurationSelector;
+
 	@Autowired
     public Configuration(ConfigurationInterface configurationInterface) throws IOException
     {

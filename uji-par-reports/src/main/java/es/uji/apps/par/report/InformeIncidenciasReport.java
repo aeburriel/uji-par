@@ -143,7 +143,7 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
 
 	private void creaTituloYPeriodo(String inicioTexto, String finTexto)
 	{
-		Block titulo = createBoldBlock(ResourceProperties.getProperty(locale, "informeIncidencias.titulo"));
+		final Block titulo = createBoldBlock(ResourceProperties.getProperty(locale, "informeIncidencias.titulo").toUpperCase());
 
 		titulo.setMarginTop("1cm");
 		titulo.setMarginLeft("6cm");
@@ -240,6 +240,7 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
         fechaBlock.setMarginTop("1cm");
         fechaBlock.getContent().add(
                 ResourceProperties.getProperty(locale, "informeIncidencias.fecha",
+                        configuration.configurationSelector.getNombreMunicipio(),
                         fecha.get(Calendar.DAY_OF_MONTH), ReportUtils.getMesValenciaConDe(fecha), fecha.get(Calendar.YEAR)));
     }
 

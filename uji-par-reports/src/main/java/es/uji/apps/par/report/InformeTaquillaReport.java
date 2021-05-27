@@ -87,12 +87,12 @@ public class InformeTaquillaReport extends Report implements InformeInterface
 
     private void creaCabecera(String inicioTexto, String finTexto)
     {
-        Block titulo = withNewBlock();
+        final Block titulo = withNewBlock();
 
         titulo.setMarginTop("2.5cm");
         titulo.setMarginLeft("6cm");
         //titulo.setTextAlign(TextAlignType.CENTER);
-        titulo.getContent().add(ResourceProperties.getProperty(locale, "informeTaquilla.titulo"));
+        titulo.getContent().add(ResourceProperties.getProperty(locale, "informeTaquilla.titulo", configuration.configurationSelector.getHtmlTitle()).toUpperCase());
 
         Block periodo = withNewBlock();
         periodo.setMarginTop("0.5cm");

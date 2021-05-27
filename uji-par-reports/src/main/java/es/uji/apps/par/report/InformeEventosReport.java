@@ -142,7 +142,7 @@ public class InformeEventosReport extends Report implements InformeInterface
         cell.setBorderRightStyle(BorderStyleType.SOLID);
 
         block = new Block();
-        block.getContent().add(ResourceProperties.getProperty(locale, "informeEventos.tituloCabecera"));
+        block.getContent().add(ResourceProperties.getProperty(locale, "informeEventos.tituloCabecera", configuration.configurationSelector.getHtmlTitle()));
         block.setMarginTop("0.5cm");
         block.setMarginLeft("0.5cm");
         TableCell cellDerecha = table.withNewCell(block);
@@ -176,7 +176,7 @@ public class InformeEventosReport extends Report implements InformeInterface
 
     private void creaTituloYPeriodo(String inicioTexto, String finTexto)
     {
-        Block titulo = createBoldBlock(ResourceProperties.getProperty(locale, "informeEventos.titulo"));
+        final Block titulo = createBoldBlock(ResourceProperties.getProperty(locale, "informeEventos.titulo", configuration.configurationSelector.getHtmlTitle()).toUpperCase());
 
         titulo.setMarginTop("1cm");
         titulo.setMarginLeft("6cm");
@@ -194,10 +194,10 @@ public class InformeEventosReport extends Report implements InformeInterface
 
     private void creaIntro()
     {
-        Block intro = withNewBlock();
+        final Block intro = withNewBlock();
 
         intro.setMarginTop("1cm");
-        intro.getContent().add(ResourceProperties.getProperty(locale, "informeEventos.intro"));
+        intro.getContent().add(ResourceProperties.getProperty(locale, "informeEventos.intro", configuration.configurationSelector.getHtmlTitle()));
     }
 
     private Block createBoldBlock(String text)
@@ -478,6 +478,7 @@ public class InformeEventosReport extends Report implements InformeInterface
         fechaBlock.setMarginTop("1cm");
         fechaBlock.getContent().add(
                 ResourceProperties.getProperty(locale, "informeEventos.subtotales.fecha",
+                        configuration.configurationSelector.getNombreMunicipio(),
                         fecha.get(Calendar.DAY_OF_MONTH), ReportUtils.getMesValenciaConDe(fecha),
                         fecha.get(Calendar.YEAR)));
     }

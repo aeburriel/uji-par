@@ -99,7 +99,7 @@ public class InformeEfectivoReport extends Report implements InformeInterface
 
     private void creaCabecera(String inicio, String fin)
     {
-        Block titulo = createBoldBlock(ResourceProperties.getProperty(locale, "informeEfectivo.titulo"));
+        final Block titulo = createBoldBlock(ResourceProperties.getProperty(locale, "informeEfectivo.titulo", configuration.configurationSelector.getHtmlTitle()).toUpperCase());
 
         titulo.setMarginTop("1cm");
         titulo.setMarginLeft("6cm");
@@ -338,6 +338,7 @@ public class InformeEfectivoReport extends Report implements InformeInterface
         fechaBlock.setMarginTop("1cm");
         fechaBlock.getContent().add(
                 ResourceProperties.getProperty(locale, "informeEfectivo.subtotales.fecha",
+                        configuration.configurationSelector.getNombreMunicipio(),
                         fecha.get(Calendar.DAY_OF_MONTH), ReportUtils.getMesValenciaConDe(fecha), fecha.get(Calendar.YEAR)));
     }
 

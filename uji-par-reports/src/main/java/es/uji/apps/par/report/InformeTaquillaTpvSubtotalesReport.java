@@ -91,7 +91,7 @@ public class InformeTaquillaTpvSubtotalesReport extends Report implements Inform
         cell.setBorderRightStyle(BorderStyleType.SOLID);
 
         block = new Block();
-        block.getContent().add(titulo != null ? titulo : ResourceProperties.getProperty(locale, "informeTaquillaTpvSubtotales.tituloCabecera"));
+        block.getContent().add(titulo != null ? String.format(titulo, configuration.configurationSelector.getHtmlTitle()) : ResourceProperties.getProperty(locale, "informeTaquillaTpvSubtotales.tituloCabecera", configuration.configurationSelector.getHtmlTitle())));
         block.setMarginTop("0.5cm");
         block.setMarginLeft("0.5cm");
         TableCell cellDerecha = table.withNewCell(block);
@@ -125,7 +125,7 @@ public class InformeTaquillaTpvSubtotalesReport extends Report implements Inform
 
     private void creaTituloYPeriodo(String inicioTexto, String finTexto)
     {
-        Block titulo = createBoldBlock(ResourceProperties.getProperty(locale, "informeTaquillaTpvSubtotales.titulo"));
+        final Block titulo = createBoldBlock(ResourceProperties.getProperty(locale, "informeTaquillaTpvSubtotales.titulo", configuration.configurationSelector.getHtmlTitle()).toUpperCase());
 
         titulo.setMarginTop("1cm");
         titulo.setMarginLeft("6cm");
@@ -382,6 +382,7 @@ public class InformeTaquillaTpvSubtotalesReport extends Report implements Inform
         fechaBlock.setMarginTop("1cm");
         fechaBlock.getContent().add(
                 ResourceProperties.getProperty(locale, "informeTaquillaTpvSubtotales.subtotales.fecha",
+                        configuration.configurationSelector.getNombreMunicipio(),
                         fecha.get(Calendar.DAY_OF_MONTH), ReportUtils.getMesValenciaConDe(fecha),
                         fecha.get(Calendar.YEAR)));
     }
