@@ -339,7 +339,7 @@ public class InformeEfectivoReport extends Report implements InformeInterface
         fechaBlock.getContent().add(
                 ResourceProperties.getProperty(locale, "informeEfectivo.subtotales.fecha",
                         configuration.configurationSelector.getNombreMunicipio(),
-                        fecha.get(Calendar.DAY_OF_MONTH), ReportUtils.getMesValenciaConDe(fecha), fecha.get(Calendar.YEAR)));
+                        fecha.get(Calendar.DAY_OF_MONTH), ReportUtils.getMesConDe(locale, fecha), fecha.get(Calendar.YEAR)));
     }
 
     private void setBorders(TableCell cell)

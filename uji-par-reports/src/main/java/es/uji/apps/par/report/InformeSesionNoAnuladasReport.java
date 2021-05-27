@@ -35,6 +35,7 @@ import es.uji.apps.par.report.components.BaseTable;
 import es.uji.apps.par.report.components.InformeTaquillaReportStyle;
 import es.uji.apps.par.utils.DateUtils;
 import es.uji.apps.par.utils.ReportUtils;
+import es.uji.apps.par.utils.Utils;
 
 public class InformeSesionNoAnuladasReport extends Report implements InformeInterface
 {
@@ -167,7 +168,7 @@ public class InformeSesionNoAnuladasReport extends Report implements InformeInte
 	private void creaCabeceraEvento(String inicio, Evento evento, Sala sala)
 	{
 		String titulo;
-		if (locale.getLanguage().equals("ca"))
+		if (Utils.VALENCIANO.equals(locale))
 		{
 			titulo = evento.getTituloVa();
 		}
@@ -492,16 +493,6 @@ public class InformeSesionNoAnuladasReport extends Report implements InformeInte
 
         Block fechaBlock = withNewBlock();
         fechaBlock.setMarginTop("1cm");
-
-		String mes;
-		if (locale.getLanguage().equals("ca"))
-		{
-			mes = ReportUtils.getMesValenciaConDe(fecha);
-		}
-		else
-		{
-			mes = ReportUtils.getMesEspanolConDe(fecha);
-		}
 
         fechaBlock.getContent().add(
                 ResourceProperties.getProperty(locale, "informeEfectivo.subtotales.fecha",

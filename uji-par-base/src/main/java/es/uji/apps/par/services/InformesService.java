@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.model.TipoInforme;
+import es.uji.apps.par.utils.Utils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +36,7 @@ public class InformesService
 
 		for (TipoInforme tipoInformeDisponible:tiposInformeDisponibles) {
 			if (language != null) {
-				if (language.equals("es"))
+				if (Utils.CASTELLANO.getLanguage().contentEquals(language))
 					tipoInformeDisponible.setNombre(tipoInformeDisponible.getNombreES());
 				else
 					tipoInformeDisponible.setNombre(tipoInformeDisponible.getNombreCA());

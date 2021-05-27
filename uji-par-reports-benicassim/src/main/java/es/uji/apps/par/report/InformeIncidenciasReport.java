@@ -235,7 +235,7 @@ public class InformeIncidenciasReport extends Report implements InformeInterface
         fechaBlock.getContent().add(
                 ResourceProperties.getProperty(locale, "informeIncidencias.fecha",
                         configuration.configurationSelector.getNombreMunicipio(),
-                        fecha.get(Calendar.DAY_OF_MONTH), ReportUtils.getMesValenciaConDe(fecha), fecha.get(Calendar.YEAR)));
+                        fecha.get(Calendar.DAY_OF_MONTH), ReportUtils.getMesConDe(locale, fecha), fecha.get(Calendar.YEAR)));
     }
 
     synchronized private static void initStatics() throws ReportSerializerInitException {

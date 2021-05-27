@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class Utils
 {
@@ -30,6 +31,9 @@ public class Utils
 	private static final String LOCALIZACION_TEATRO_ANFITEATRO_IMPAR = "anfiteatro_lateral_senar";
 	private static final String LOCALIZACION_TEATRO_ANFITEATRO_PAR = "anfiteatro_lateral_par";
 	private static final String LOCALIZACION_TEATRO_GENERAL = "general";
+
+	public static final Locale CASTELLANO = new Locale("es");
+	public static final Locale VALENCIANO = new Locale("ca");
 
 	public static String stripAccents(String texto) {
     	return StringUtils.stripAccents(texto);

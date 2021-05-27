@@ -479,7 +479,7 @@ public class InformeEventosReport extends Report implements InformeInterface
         fechaBlock.getContent().add(
                 ResourceProperties.getProperty(locale, "informeEventos.subtotales.fecha",
                         configuration.configurationSelector.getNombreMunicipio(),
-                        fecha.get(Calendar.DAY_OF_MONTH), ReportUtils.getMesValenciaConDe(fecha),
+                        fecha.get(Calendar.DAY_OF_MONTH), ReportUtils.getMesConDe(locale, fecha),
                         fecha.get(Calendar.YEAR)));
     }
 

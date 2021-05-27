@@ -383,7 +383,7 @@ public class InformeTaquillaTpvSubtotalesReport extends Report implements Inform
         fechaBlock.getContent().add(
                 ResourceProperties.getProperty(locale, "informeTaquillaTpvSubtotales.subtotales.fecha",
                         configuration.configurationSelector.getNombreMunicipio(),
-                        fecha.get(Calendar.DAY_OF_MONTH), ReportUtils.getMesValenciaConDe(fecha),
+                        fecha.get(Calendar.DAY_OF_MONTH), ReportUtils.getMesConDe(locale, fecha),
                         fecha.get(Calendar.YEAR)));
     }
 

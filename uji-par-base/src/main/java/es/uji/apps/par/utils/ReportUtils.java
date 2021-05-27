@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Locale;
 
 public class ReportUtils {
 	private static final Logger log = LoggerFactory.getLogger(ReportUtils.class);
@@ -78,5 +79,12 @@ public class ReportUtils {
             default:
                 return "de diciembre";
         }
+    }
+
+    public static String getMesConDe(final Locale locale, final Calendar fecha) {
+        if (Utils.VALENCIANO.equals(locale)) {
+            return getMesValenciaConDe(fecha);
+        }
+        return getMesEspanolConDe(fecha);
     }
 }
