@@ -23,14 +23,14 @@ public class ConfigurationDataBase implements ConfigurationSelector
 
 	public String getUrlPublic()
 	{
-		Cine cine = usuariosDAO.getUserCineByServerName(this.currentRequest.getServerName());
+		final Cine cine = usuariosDAO.getCineByRequest(this.currentRequest);
 
 		return cine.getUrlPublic();
 	}
 
 	public String getUrlPublicSinHTTPS()
 	{
-		Cine cine = usuariosDAO.getUserCineByServerName(this.currentRequest.getServerName());
+		final Cine cine = usuariosDAO.getCineByRequest(this.currentRequest);
 
 		return Utils.sinHTTPS(cine.getUrlPublic());
 	}
@@ -47,42 +47,42 @@ public class ConfigurationDataBase implements ConfigurationSelector
 
 	public String getHtmlTitle()
 	{
-		Cine cine = usuariosDAO.getUserCineByServerName(this.currentRequest.getServerName());
+		final Cine cine = usuariosDAO.getCineByRequest(this.currentRequest);
 
 		return cine.getNombre();
 	}
 
 	public String getMailFrom()
 	{
-		Cine cine = usuariosDAO.getUserCineByServerName(this.currentRequest.getServerName());
+		final Cine cine = usuariosDAO.getCineByRequest(this.currentRequest);
 
 		return cine.getMailFrom();
 	}
 
 	public String getUrlComoLlegar()
 	{
-		Cine cine = usuariosDAO.getUserCineByServerName(this.currentRequest.getServerName());
+		final Cine cine = usuariosDAO.getCineByRequest(this.currentRequest);
 
 		return cine.getUrlComoLlegar();
 	}
 
 	public String getUrlCondicionesPrivacidad()
 	{
-		Cine cine = usuariosDAO.getUserCineByServerName(this.currentRequest.getServerName());
+		final Cine cine = usuariosDAO.getCineByRequest(this.currentRequest);
 
 		return cine.getUrlPrivacidad();
 	}
 
 	public String getUrlPieEntrada()
 	{
-		Cine cine = usuariosDAO.getUserCineByServerName(this.currentRequest.getServerName());
+		final Cine cine = usuariosDAO.getCineByRequest(this.currentRequest);
 
 		return cine.getUrlPieEntrada();
 	}
 
 	public String getLogoReport()
 	{
-		Cine cine = usuariosDAO.getUserCineByServerName(this.currentRequest.getServerName());
+		final Cine cine = usuariosDAO.getCineByRequest(this.currentRequest);
 
 		return cine.getLogoReport();
 	}
@@ -90,7 +90,7 @@ public class ConfigurationDataBase implements ConfigurationSelector
 	@Override
 	public String getNombreMunicipio()
 	{
-		Cine cine = usuariosDAO.getUserCineByServerName(this.currentRequest.getServerName());
+		final Cine cine = usuariosDAO.getCineByRequest(this.currentRequest);
 
 		return cine.getNombreMunicipio();
 	}
@@ -103,7 +103,7 @@ public class ConfigurationDataBase implements ConfigurationSelector
 	@Override
 	public String getLangsAllowed()
 	{
-		Cine cine = usuariosDAO.getUserCineByServerName(this.currentRequest.getServerName());
+		final Cine cine = usuariosDAO.getCineByRequest(this.currentRequest);
 
 		String langsAllowed = cine.getLangs();
 
@@ -123,7 +123,7 @@ public class ConfigurationDataBase implements ConfigurationSelector
 	{
 		try {
 			String serverName = this.currentRequest.getServerName();
-			Cine cine = usuariosDAO.getUserCineByServerName(serverName);
+			final Cine cine = usuariosDAO.getCineByRequest(this.currentRequest);
 
 			String defaultLang = cine.getDefaultLang();
 			if (defaultLang != null && defaultLang.length() > 0)
@@ -138,7 +138,7 @@ public class ConfigurationDataBase implements ConfigurationSelector
 
 	@Override
 	public boolean showButacasHanEntradoEnDistintoColor() {
-		Cine cine = usuariosDAO.getUserCineByServerName(this.currentRequest.getServerName());
+		final Cine cine = usuariosDAO.getCineByRequest(this.currentRequest);
 
 		return (cine.getShowButacasQueHanEntradoEnDistintoColor() != null && cine.getShowButacasQueHanEntradoEnDistintoColor()) ?
 				true : false;
@@ -147,8 +147,7 @@ public class ConfigurationDataBase implements ConfigurationSelector
 	@Override
 	public boolean showIVA() {
 		try {
-			String serverName = this.currentRequest.getServerName();
-			Cine cine = usuariosDAO.getUserCineByServerName(serverName);
+			final Cine cine = usuariosDAO.getCineByRequest(this.currentRequest);
 
 			return cine.getShowIVA();
 		}

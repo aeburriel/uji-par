@@ -3,6 +3,8 @@ package es.uji.apps.par.dao;
 import com.mysema.query.jpa.impl.JPADeleteClause;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.jpa.impl.JPAUpdateClause;
+
+import es.uji.apps.par.auth.AuthChecker;
 import es.uji.apps.par.db.*;
 import es.uji.apps.par.model.Cine;
 import es.uji.apps.par.model.Sala;
@@ -12,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Repository
 public class UsuariosDAO extends BaseDAO
@@ -191,5 +195,18 @@ public class UsuariosDAO extends BaseDAO
 				.list(qCineDTO);
 
 		return Cine.cineDTOToCine(cines.get(0));
+	}
+
+	public Cine getCineByRequest(final HttpServletRequest request) {
+		final Cine cine;
+
+		final String user = AuthChecker.getUserUID(request);
+		if (user == null) {
+			cine = getUserCineByServerName(request.getServerName());
+		} else {
+			cine = getUserCineByUserUID(user);
+		}
+
+		return cine;
 	}
 }

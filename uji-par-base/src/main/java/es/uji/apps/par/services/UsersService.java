@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Service
 public class UsersService
 {
@@ -70,6 +72,10 @@ public class UsersService
     public Cine getUserCineByUserUID(String userUID)
     {
         return usuariosDAO.getUserCineByUserUID(userUID);
+    }
+
+    public Cine getCineByRequest(final HttpServletRequest request) {
+        return usuariosDAO.getCineByRequest(request);
     }
 
     public Usuario getUserById(String userUID)

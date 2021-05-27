@@ -27,7 +27,7 @@ public class NotFoundResource extends BaseResource {
     @Produces(MediaType.TEXT_HTML)
     public Template getNotFound() throws Exception
     {
-        Cine cine = usersService.getUserCineByServerName(currentRequest.getServerName());
+        final Cine cine = usersService.getCineByRequest(currentRequest);
 
         Locale locale = getLocale();
         String language = locale.getLanguage();

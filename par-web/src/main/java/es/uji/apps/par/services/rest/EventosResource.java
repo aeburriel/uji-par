@@ -168,7 +168,7 @@ public class EventosResource extends BaseResource {
     }
 
     private Template getTemplateEventoNoEncontrado() throws MalformedURLException, ParseException {
-        Cine cine = usersService.getUserCineByServerName(currentRequest.getServerName());
+        final Cine cine = usersService.getCineByRequest(currentRequest);
 
         Locale locale = getLocale();
         String language = locale.getLanguage();
@@ -187,7 +187,7 @@ public class EventosResource extends BaseResource {
         Locale locale = getLocale();
         String language = locale.getLanguage();
 
-        Cine cine = usersService.getUserCineByServerName(currentRequest.getServerName());
+        final Cine cine = usersService.getCineByRequest(currentRequest);
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + cine.getCodigo() + "/eventosListado", getLocale(), APP);
 
         String url = currentRequest.getRequestURL().toString();
@@ -401,7 +401,7 @@ public class EventosResource extends BaseResource {
         Locale locale = getLocale();
         String language = locale.getLanguage();
 
-        Cine cine = usersService.getUserCineByServerName(currentRequest.getServerName());
+        final Cine cine = usersService.getCineByRequest(currentRequest);
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + cine.getCodigo() + "/condicionesPrivacidad", getLocale()
 				, APP);
 
