@@ -11,6 +11,7 @@ import es.uji.apps.par.services.ComprasService;
 import es.uji.apps.par.services.EntradasService;
 import es.uji.apps.par.services.JavaMailService;
 import es.uji.apps.par.tpv.TpvInterface;
+import es.uji.apps.par.utils.Utils;
 import es.uji.commons.web.template.HTMLTemplate;
 import es.uji.commons.web.template.Template;
 import org.slf4j.Logger;
@@ -245,10 +246,10 @@ public class TpvResource extends BaseResource implements TpvInterface {
     private void enviaMail(String email, String uuid, String recibo) {
         String urlEntradas = String.format("%s/rest/compra/%s/pdf", configurationSelector.getUrlPublic(), uuid);
 
-        String titulo = ResourceProperties.getProperty(new Locale("ca"), "mail.entradas.titulo") + " | " +
-                ResourceProperties.getProperty(new Locale("es"), "mail.entradas.titulo");
-        String texto = ResourceProperties.getProperty(new Locale("ca"), "mail.entradas.texto", recibo, urlEntradas) + "\n\n" +
-                ResourceProperties.getProperty(new Locale("es"), "mail.entradas.texto", recibo, urlEntradas);
+        String titulo = ResourceProperties.getProperty(Utils.VALENCIANO, "mail.entradas.titulo") + " | " +
+                ResourceProperties.getProperty(Utils.CASTELLANO, "mail.entradas.titulo");
+        String texto = ResourceProperties.getProperty(Utils.VALENCIANO, "mail.entradas.texto", recibo, urlEntradas) + "\n\n" +
+                ResourceProperties.getProperty(Utils.CASTELLANO, "mail.entradas.texto", recibo, urlEntradas);
 
         mailService.anyadeEnvio(configurationSelector.getMailFrom(), email, titulo, texto, uuid, configurationSelector.getUrlPublic(), configurationSelector.getUrlPieEntrada());
     }

@@ -35,6 +35,10 @@ public class Utils
 	public static final Locale CASTELLANO = new Locale("es");
 	public static final Locale VALENCIANO = new Locale("ca");
 
+	public static boolean esIdiomaValido(final String idioma) {
+        return Utils.CASTELLANO.getLanguage().equals(idioma) || Utils.VALENCIANO.getLanguage().equals(idioma);
+    }
+
 	public static String stripAccents(String texto) {
     	return StringUtils.stripAccents(texto);
     }

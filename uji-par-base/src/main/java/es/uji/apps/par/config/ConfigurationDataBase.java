@@ -133,7 +133,7 @@ public class ConfigurationDataBase implements ConfigurationSelector
 		{
 		}
 
-		return "es";
+		return Utils.CASTELLANO.getLanguage();
 	}
 
 	@Override

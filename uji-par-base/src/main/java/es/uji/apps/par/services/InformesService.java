@@ -36,7 +36,7 @@ public class InformesService
 
 		for (TipoInforme tipoInformeDisponible:tiposInformeDisponibles) {
 			if (language != null) {
-				if (Utils.CASTELLANO.getLanguage().contentEquals(language))
+				if (Utils.CASTELLANO.getLanguage().equals(language))
 					tipoInformeDisponible.setNombre(tipoInformeDisponible.getNombreES());
 				else
 					tipoInformeDisponible.setNombre(tipoInformeDisponible.getNombreCA());

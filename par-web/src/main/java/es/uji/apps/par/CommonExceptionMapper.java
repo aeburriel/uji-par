@@ -17,6 +17,7 @@ import javax.ws.rs.ext.Provider;
 
 import es.uji.apps.par.config.ConfigurationSelector;
 import es.uji.apps.par.exceptions.Constantes;
+import es.uji.apps.par.utils.Utils;
 import es.uji.commons.web.template.HTMLTemplate;
 import es.uji.commons.web.template.Template;
 import es.uji.commons.web.template.model.GrupoMenu;
@@ -65,7 +66,7 @@ public class CommonExceptionMapper implements ExceptionMapper<Exception>
                     {
                         String idiomaCookie = cookie.getValue();
 
-                        if (esIdiomaValido(idiomaCookie))
+                        if (Utils.esIdiomaValido(idiomaCookie))
                         {
                             idiomaFinal = idiomaCookie;
                             break;
@@ -77,7 +78,7 @@ public class CommonExceptionMapper implements ExceptionMapper<Exception>
             String idiomaParametro = currentRequest.getParameter("idioma");
             if (idiomaParametro != null)
             {
-                if (esIdiomaValido(idiomaParametro))
+                if (Utils.esIdiomaValido(idiomaParametro))
                 {
                     idiomaFinal = idiomaParametro;
                 }
@@ -85,11 +86,6 @@ public class CommonExceptionMapper implements ExceptionMapper<Exception>
         }
 
         return new Locale(idiomaFinal);
-    }
-
-    private boolean esIdiomaValido(String idioma)
-    {
-        return idioma.equals("es") || idioma.equals("ca");
     }
 
     @Override

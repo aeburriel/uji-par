@@ -10,9 +10,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.PropertyResourceBundle;
 
+import es.uji.apps.par.utils.Utils;
+
 public class ResourceProperties
 {
-    private static final String[] LENGUAJES = new String[]{"es", "ca"};
+    private static final String[] LENGUAJES = new String[]{Utils.CASTELLANO.getLanguage(), Utils.VALENCIANO.getLanguage()};
 
     private static Map<String,PropertyResourceBundle> properties;
     

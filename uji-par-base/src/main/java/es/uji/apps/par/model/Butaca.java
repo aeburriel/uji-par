@@ -3,6 +3,7 @@ package es.uji.apps.par.model;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import es.uji.apps.par.db.ButacaDTO;
+import es.uji.apps.par.utils.Utils;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.math.BigDecimal;
@@ -69,7 +70,7 @@ public class Butaca
         numero = butacaDTO.getNumero();
         precio = butacaDTO.getPrecio();
         localizacion = butacaDTO.getParLocalizacion().getCodigo();
-        if (language.equals("ca"))
+        if (Utils.VALENCIANO.getLanguage().equals(language))
         {
             localizacionNombre = butacaDTO.getParLocalizacion().getNombreVa();
         }

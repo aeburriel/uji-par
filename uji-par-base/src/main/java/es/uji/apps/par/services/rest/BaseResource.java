@@ -15,6 +15,7 @@ import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.config.ConfigurationSelector;
 import es.uji.apps.par.exceptions.ResponseMessage;
 import es.uji.apps.par.i18n.ResourceProperties;
+import es.uji.apps.par.utils.Utils;
 
 public class BaseResource
 {
@@ -40,7 +41,7 @@ public class BaseResource
 
     protected void setLocale(String lang)
     {
-        if (lang != null && lang.length() > 0 && (lang.equals("es") || lang.equals("ca"))) {
+        if (Utils.esIdiomaValido(lang)) {
             HttpSession session = currentRequest.getSession();
             session.setAttribute(LANG, lang);
         }
@@ -65,7 +66,7 @@ public class BaseResource
                     {
                         String idiomaCookie = cookie.getValue();
 
-                        if (esIdiomaValido(idiomaCookie))
+                        if (Utils.esIdiomaValido(idiomaCookie))
                         {
                             idiomaFinal = idiomaCookie;
                             break;
@@ -77,7 +78,7 @@ public class BaseResource
             String idiomaParametro = currentRequest.getParameter("idioma");
             if (idiomaParametro != null)
             {
-                if (esIdiomaValido(idiomaParametro))
+                if (Utils.esIdiomaValido(idiomaParametro))
                 {
                     idiomaFinal = idiomaParametro;
                 }
@@ -85,11 +86,6 @@ public class BaseResource
         }
 
         return new Locale(idiomaFinal);
-    }
-
-    private boolean esIdiomaValido(String idioma)
-    {
-        return idioma.equals("es") || idioma.equals("ca");
     }
 
     protected String getBaseUrlPublic()

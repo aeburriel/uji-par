@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import es.uji.apps.par.utils.Utils;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
@@ -131,7 +133,7 @@ public class ConfigurationProperties implements ConfigurationSelector {
             return lang;
         }
         else {
-            return "ca";
+            return Utils.VALENCIANO.getLanguage();
         }
     }
 

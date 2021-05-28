@@ -44,6 +44,7 @@ import es.uji.apps.par.services.SesionesService;
 import es.uji.apps.par.services.UsersService;
 import es.uji.apps.par.utils.DateUtils;
 import es.uji.apps.par.utils.ImageUtils;
+import es.uji.apps.par.utils.Utils;
 import es.uji.commons.web.template.HTMLTemplate;
 import es.uji.commons.web.template.Template;
 
@@ -209,7 +210,7 @@ public class EventosResource extends BaseResource {
 				.getCodigo() + "/eventoDetalle", getLocale(), APP);
 
         String tipoEvento, titulo, companyia, duracion, caracteristicas, premios, descripcion;
-        if (language.equals("ca")) {
+        if (Utils.VALENCIANO.equals(locale)) {
             tipoEvento = evento.getParTiposEvento().getNombreVa();
             titulo = evento.getTituloVa();
             companyia = evento.getCompanyiaVa();

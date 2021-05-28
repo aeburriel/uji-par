@@ -11,6 +11,7 @@ import es.uji.apps.par.model.SesionAbono;
 import es.uji.apps.par.services.AbonosService;
 import es.uji.apps.par.services.ButacasService;
 import es.uji.apps.par.services.LocalizacionesService;
+import es.uji.apps.par.utils.Utils;
 import es.uji.commons.web.template.HTMLTemplate;
 
 import javax.servlet.http.HttpServletRequest;
@@ -111,7 +112,7 @@ public class EntradasResource extends BaseResource {
         List<String> titulos = new ArrayList<>();
         for (SesionAbono sesion: sesiones)
         {
-            if (language.equals("ca")) {
+            if (Utils.VALENCIANO.equals(locale)) {
                 titulos.add(sesion.getSesion().getEvento().getTituloVa());
             } else {
                 titulos.add(sesion.getSesion().getEvento().getTituloEs());

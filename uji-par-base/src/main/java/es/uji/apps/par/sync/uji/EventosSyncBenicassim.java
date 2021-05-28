@@ -191,7 +191,7 @@ public class EventosSyncBenicassim implements EventosSync
             evento.setImagenContentType(item.getEnclosures().get(0).getType());
         }
 
-        if (item.getIdioma().equals("ca"))
+        if (Utils.VALENCIANO.getLanguage().equals(item.getIdioma()))
         {
             evento.setTituloVa(item.getTitle());
             evento.setCaracteristicasVa(item.getResumen());
@@ -209,7 +209,7 @@ public class EventosSyncBenicassim implements EventosSync
                     evento.setParTiposEvento(tipoEvento);
             }
         }
-        else if (item.getIdioma().equals("es"))
+        else if (Utils.CASTELLANO.getLanguage().equals(item.getIdioma()))
         {
             evento.setTituloEs(item.getTitle());
             evento.setCaracteristicasEs(item.getResumen());

@@ -35,6 +35,7 @@ import es.uji.apps.par.report.EntradaReportOnlineInterface;
 import es.uji.apps.par.report.EntradaReportTaquillaInterface;
 import es.uji.apps.par.utils.DateUtils;
 import es.uji.apps.par.utils.ReportUtils;
+import es.uji.apps.par.utils.Utils;
 
 @Service
 public class EntradasService {
@@ -121,7 +122,7 @@ public class EntradasService {
 		String titulo;
 		List<EventoMultisesion> peliculas = eventosService.getPeliculas(compra.getParSesion().getParEvento().getId());
 		Locale locale = getLocale(userUID);
-		if (locale.getLanguage().equals("ca"))
+		if (Utils.VALENCIANO.equals(locale))
 		{
 			titulo = compra.getParSesion().getParEvento().getTituloVa();
 			if (peliculas.size() > 0)
@@ -173,7 +174,7 @@ public class EntradasService {
                 EntradaModelReport entradaModelReport = new EntradaModelReport();
                 entradaModelReport.setFila(butaca.getFila());
                 entradaModelReport.setNumero(butaca.getNumero());
-				if (locale.getLanguage().equals("ca"))
+				if (Utils.VALENCIANO.equals(locale))
 				{
 					entradaModelReport.setZona(butaca.getParLocalizacion().getNombreVa());
 				}
@@ -214,7 +215,7 @@ public class EntradasService {
 		String titulo;
 		List<EventoMultisesion> peliculas = eventosService.getPeliculas(compra.getParSesion().getParEvento().getId());
 		Locale locale = getLocale(userUID);
-		if (locale.getLanguage().equals("ca"))
+		if (Utils.VALENCIANO.equals(locale))
 		{
 			titulo = compra.getParSesion().getParEvento().getTituloVa();
 			if (peliculas.size() > 0)
@@ -296,7 +297,7 @@ public class EntradasService {
     private void rellenaButaca(EntradaModelReport entradaModelReport, CompraDTO compra, EntradaReportOnlineInterface entrada, ButacaDTO butaca, String userUID, String urlPublicSinHTTPS) {
         TarifaDTO tarifaCompra = tarifasDAO.get(Integer.valueOf(butaca.getTipo()), userUID);
 		Locale locale = getLocale(userUID);
-		if (locale.getLanguage().equals("ca"))
+		if (Utils.VALENCIANO.equals(locale))
 		{
 			entradaModelReport.setZona(butaca.getParLocalizacion().getNombreVa());
 		}

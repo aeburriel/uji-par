@@ -161,7 +161,7 @@ public class EntradasResource extends BaseResource {
         template.put("butacasSesion", cart.getButacas());
         template.put("uuidCompra", cart.getSelector()); // uuidCompra es, en realidad, el selector
 
-        if (language.equals("ca")) {
+        if (Utils.VALENCIANO.equals(locale)) {
             template.put("titulo", evento.getTituloVa());
             template.put("tipoEvento", evento.getParTiposEvento().getNombreVa());
         } else {
@@ -225,7 +225,7 @@ public class EntradasResource extends BaseResource {
 
         template.put("uuidCompra", cart.getSelector()); // uuidCompra es, en realidad, el selector
 
-        if (language.equals("ca")) {
+        if (Utils.VALENCIANO.equals(locale)) {
             template.put("titulo", evento.getTituloVa());
         } else {
             template.put("titulo", evento.getTituloEs());
@@ -435,7 +435,7 @@ public class EntradasResource extends BaseResource {
         template.put("urlCondicionesPrivacidad", compra.getParSesion().getParEvento().getParCine().getUrlPrivacidad());
 
         if (compra != null) {
-            if (language.equals("ca"))
+            if (Utils.VALENCIANO.equals(locale))
                 template.put("tipoEvento", compra.getParSesion().getParEvento().getParTiposEvento().getNombreVa());
             else
                 template.put("tipoEvento", compra.getParSesion().getParEvento().getParTiposEvento().getNombreEs());
@@ -574,7 +574,7 @@ public class EntradasResource extends BaseResource {
                 urlOk,
                 urlKo,
                 email,
-                language.equals("ca") ? parTpv.getLangCaCode() : parTpv.getLangEsCode(),
+                Utils.VALENCIANO.equals(locale) ? parTpv.getLangCaCode() : parTpv.getLangEsCode(),
                 identificador,
                 StringUtils.stripAccents(compra.getParSesion().getParEvento().getTituloVa().toUpperCase()),
                 parTpv.getNombre(),
@@ -605,7 +605,7 @@ public class EntradasResource extends BaseResource {
         String TipoMoneda = parTpv.getCurrency();
         String Exponente = parTpv.getTransactionCode();
         String Pago_soportado = "SSL";
-        String Idioma = language.equals("ca") ? parTpv.getLangCaCode() : parTpv.getLangEsCode();
+        String Idioma = Utils.VALENCIANO.equals(locale) ? parTpv.getLangCaCode() : parTpv.getLangEsCode();
         String Descripcion = StringUtils.stripAccents(compra.getParSesion().getParEvento().getTituloVa().toUpperCase());
 
         String url = parTpv.getWsdlUrl();
@@ -663,7 +663,7 @@ public class EntradasResource extends BaseResource {
         template.put("urlOk", urlOk);
         template.put("urlKo", urlKo);
 
-        if (language.equals("ca"))
+        if (Utils.VALENCIANO.equals(locale))
             template.put("langCode", parTpv.getLangCaCode());
         else
             template.put("langCode", parTpv.getLangEsCode());
@@ -828,7 +828,7 @@ public class EntradasResource extends BaseResource {
 
         template.put("tarifas", tarifas);
 
-        if (language.equals("ca")) {
+        if (Utils.VALENCIANO.equals(locale)) {
             template.put("titulo", sesion.getEvento().getTituloVa());
         } else {
             template.put("titulo", sesion.getEvento().getTituloEs());
