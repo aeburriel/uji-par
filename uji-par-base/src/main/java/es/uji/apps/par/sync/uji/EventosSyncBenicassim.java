@@ -2,6 +2,7 @@ package es.uji.apps.par.sync.uji;
 
 import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.dao.*;
+import es.uji.apps.par.db.CineDTO;
 import es.uji.apps.par.db.CompraDTO;
 import es.uji.apps.par.db.EventoDTO;
 import es.uji.apps.par.db.PlantillaDTO;
@@ -37,6 +38,9 @@ import java.util.List;
 public class EventosSyncBenicassim implements EventosSync
 {
 	private static final Logger log = LoggerFactory.getLogger(EventosSyncBenicassim.class);
+
+    @Autowired
+    CinesDAO cinesDAO;
 
     @Autowired
     EventosDAO eventosDAO;
@@ -246,6 +250,11 @@ public class EventosSyncBenicassim implements EventosSync
         
         if (evento.getPorcentajeIva() == null)
         	evento.setPorcentajeIva(getPorcentajeIvaDefecto());
+
+        final CineDTO cineDTO = cinesDAO.getCineByNombre(item.getLugar());
+        if (cineDTO != null) {
+            evento.setParCine(cineDTO);
+        }
     }
 
     private BigDecimal getPorcentajeIvaDefecto() {

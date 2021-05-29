@@ -26,6 +26,7 @@ public class Item
     private String esquema;
     private Sesiones sesiones;
     private Date date;
+    private String lugar;
 
     public String getTitle()
     {
@@ -194,4 +195,13 @@ public class Item
 
         this.date = gmt.getTime();
     }
+
+	public String getLugar() {
+		return lugar;
+	}
+
+	@XmlElement(namespace = "http://www.uji.es/namespaces/rss#")
+	public void setLugar(String lugar) {
+		this.lugar = lugar;
+	}
 }

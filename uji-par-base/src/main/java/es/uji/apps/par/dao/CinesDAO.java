@@ -48,4 +48,11 @@ public class CinesDAO extends BaseDAO
         
         return cine;
     }
+
+    @Transactional
+    public CineDTO getCineByNombre(final String nombre) {
+        final JPAQuery query = new JPAQuery(entityManager);
+
+        return query.from(qCineDTO).where(qCineDTO.nombre.eq(nombre)).uniqueResult(qCineDTO);
+    }
 }

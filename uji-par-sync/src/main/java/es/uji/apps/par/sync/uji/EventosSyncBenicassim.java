@@ -16,11 +16,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.dao.CinesDAO;
 import es.uji.apps.par.dao.EventosDAO;
 import es.uji.apps.par.dao.PlantillasDAO;
 import es.uji.apps.par.dao.SalasDAO;
 import es.uji.apps.par.dao.SesionesDAO;
 import es.uji.apps.par.dao.TiposEventosDAO;
+import es.uji.apps.par.db.CineDTO;
 import es.uji.apps.par.db.EventoDTO;
 import es.uji.apps.par.db.PlantillaDTO;
 import es.uji.apps.par.db.TipoEventoDTO;
@@ -38,6 +40,9 @@ import es.uji.apps.par.utils.Utils;
 public class EventosSyncBenicassim implements EventosSync
 {
     private static final Logger log = Logger.getLogger(EventosSyncBenicassim.class);
+
+    @Autowired
+    CinesDAO cinesDAO;
 
     @Autowired
     EventosDAO eventosDAO;
@@ -219,6 +224,11 @@ public class EventosSyncBenicassim implements EventosSync
         if (evento.getTituloVa() == null)
         {
             evento.setTituloVa(evento.getTituloEs());
+        }
+
+        final CineDTO cineDTO = cinesDAO.getCineByNombre(item.getLugar());
+        if (cineDTO != null) {
+            evento.setParCine(cineDTO);
         }
     }
 
