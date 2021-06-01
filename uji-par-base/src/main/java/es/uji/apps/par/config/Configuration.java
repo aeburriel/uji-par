@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
+import es.uji.apps.par.dao.UsuariosDAO;
 import es.uji.apps.par.i18n.ResourceProperties;
 import es.uji.apps.par.model.TipoInforme;
 import es.uji.apps.par.utils.DateUtils;
@@ -105,6 +106,9 @@ public class Configuration
 
     @Autowired
     public ConfigurationSelector configurationSelector;
+
+    @Autowired
+    public UsuariosDAO usuariosDAO;
 
 	@Autowired
     public Configuration(ConfigurationInterface configurationInterface) throws IOException

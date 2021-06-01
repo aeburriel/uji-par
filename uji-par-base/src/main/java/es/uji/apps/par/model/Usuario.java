@@ -11,6 +11,8 @@ public class Usuario
     private String nombre;
     private String mail;
     private String usuario;
+    private String password;
+    private boolean readonly;
     private String url;
 
     public Usuario()
@@ -23,6 +25,8 @@ public class Usuario
         this.nombre = usuarioDTO.getNombre();
         this.mail = usuarioDTO.getMail();
         this.usuario = usuarioDTO.getUsuario();
+        this.password = usuarioDTO.getPassword();
+        this.setReadonly(usuarioDTO.isReadonly());
         this.url = usuarioDTO.getUrl();
     }
 
@@ -66,7 +70,23 @@ public class Usuario
         this.usuario = usuario;
     }
 
-    public String getUrl()
+    public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+    public boolean isReadonly() {
+		return readonly;
+	}
+
+	public void setReadonly(boolean readonly) {
+		this.readonly = readonly;
+	}
+
+	public String getUrl()
     {
         return url;
     }

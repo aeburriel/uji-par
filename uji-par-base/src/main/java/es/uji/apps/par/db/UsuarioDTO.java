@@ -25,6 +25,10 @@ public class UsuarioDTO implements Serializable {
 
 	private String usuario;
 
+	private String password;
+
+	private boolean readonly;
+
 	private String url;
 
 	@OneToMany(mappedBy = "parUsuario", fetch = FetchType.LAZY)
@@ -67,6 +71,22 @@ public class UsuarioDTO implements Serializable {
 
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public boolean isReadonly() {
+		return readonly;
+	}
+
+	public void setReadonly(boolean readonly) {
+		this.readonly = readonly;
 	}
 
 	public String getUrl()
