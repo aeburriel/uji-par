@@ -150,7 +150,8 @@ public class ButacasService
         for (LocalizacionDTO localizacion: localizaciones)
         {
             DisponiblesLocalizacion disponible = new DisponiblesLocalizacion(localizacion.getCodigo(), 
-                    localizacion.getTotalEntradas().intValue() - butacasDAO.getOcupadas(idSesion, localizacion.getCodigo()));
+                    butacasDistanciamientoSocialService.getTotalEntradasLimite(localizacion)
+                    - butacasDAO.getOcupadas(idSesion, localizacion.getCodigo()));
             
             disponibles.add(disponible);
         }

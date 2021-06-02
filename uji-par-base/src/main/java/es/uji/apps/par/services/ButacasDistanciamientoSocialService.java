@@ -24,6 +24,7 @@ import es.uji.apps.par.config.Configuration;
 import es.uji.apps.par.dao.SesionesDAO;
 import es.uji.apps.par.db.ButacaDTO;
 import es.uji.apps.par.db.CompraDTO;
+import es.uji.apps.par.db.LocalizacionDTO;
 import es.uji.apps.par.db.SesionDTO;
 import es.uji.apps.par.model.Butaca;
 import es.uji.apps.par.utils.FilaNumeracion;
@@ -299,7 +300,8 @@ public class ButacasDistanciamientoSocialService {
 	 * Verifica si la combinación de butacas elegida esté permitida
 	 * Se tiene que llamar cada vez que se comprueban las butacas en una venta
 	 * en proceso. En particular se comprueba que:
-	 *   1. Las restricciones de distanciamiento social estén activas.
+	 *   0. Las restricciones de distanciamiento social estén activas.
+	 *   1. Se respete la restricción porcentual de aforo.
 	 *   2. Sea una sesión numerada.
 	 *   3. En cada fila, las butacas elegidas sean contiguas.
 	 *   4. En cada fila, se respete el espacio de guarda en ambos extremos o
@@ -310,9 +312,18 @@ public class ButacasDistanciamientoSocialService {
 	 * @return true si las butacas elegidas están permitidas
 	 */
 	public boolean validaButacas(final Long sesionId, final List<Butaca> butacas) {
-		// 1. Estado distanciamiento social
+		// 0. Estado distanciamiento social
 		if (!configuration.isAforoDistanciamientoSocial() || !configuration.isAforoDistanciamientoSocialUF()) {
 			return true;
+		}
+
+		// 1. Restricción de aforo máximo
+		final long ocupacion = configuration.getAforoDistanciamientoSocialUFLimite();
+		if (configuration.isAforoDistanciamientoSocialUF() && ocupacion < 100L) {
+			final long id_sesion = sesionId.longValue();
+			if (sesionesDAO.getAforoTotal(id_sesion) * ocupacion < (sesionesDAO.getAforoOcupado(id_sesion) + butacas.size()) * 100L) {
+				return false;
+			}
 		}
 
 		// 2. Sesión numerada
@@ -338,15 +349,6 @@ public class ButacasDistanciamientoSocialService {
 
 			// 4. Distancia de seguridad con la butaca ocupada más próxima
 			if (!isButacasFilaGuarda(sesionId, fila, butacasFila)) {
-				return false;
-			}
-		}
-
-		// 5. Restricción de aforo máximo
-		final long ocupacion = configuration.getAforoDistanciamientoSocialUFLimite();
-		if (ocupacion < 100L) {
-			final long id_sesion = sesionId.longValue();
-			if (sesionesDAO.getAforoTotal(id_sesion) * ocupacion < (sesionesDAO.getAforoOcupado(id_sesion) + butacas.size()) * 100L) {
 				return false;
 			}
 		}
@@ -389,4 +391,23 @@ public class ButacasDistanciamientoSocialService {
 		return  validaButacas(Long.valueOf(compra.getParSesion().getId()), candidatas);
 	}
 
+	/**
+	 * Calcula el número de butacas totales por localización con limitación
+	 * porcentual del aforo
+	 *
+	 * @param localizacion
+	 * @return máximo número de butacas disponible para su venta
+	 */
+	public int getTotalEntradasLimite(final LocalizacionDTO localizacion) {
+		int total = localizacion.getTotalEntradas().intValue();
+
+		if (configuration.isAforoDistanciamientoSocialUF()) {
+			final int ocupacion = configuration.getAforoDistanciamientoSocialUFLimite();
+			if (ocupacion < 100) {
+				total = total * ocupacion / 100;
+			}
+		}
+
+		return total;
+	}
 }

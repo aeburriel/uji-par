@@ -248,7 +248,8 @@ public class ButacasDAO extends BaseDAO
     @Transactional
     private boolean noHayButacasLibres(SesionDTO sesionDTO, LocalizacionDTO localizacionDTO)
     {
-        return getOcupadas(sesionDTO.getId(), localizacionDTO.getCodigo()) >= localizacionDTO.getTotalEntradas().intValue();
+        return getOcupadas(sesionDTO.getId(), localizacionDTO.getCodigo())
+                >= butacasDistanciamientoSocialService.getTotalEntradasLimite(localizacionDTO);
     }
 
     @Transactional
