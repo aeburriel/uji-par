@@ -180,7 +180,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         BaseTable table = new BaseTable(new EntradaReportStyle(), 2, "9cm", "2cm");
 
         table.withNewRow();
-        final Block blockTeatro = getBlockWithText(nombreEntidad, "15pt", true, false);
+        final Block blockTeatro = getBlockWithText(nombreEntidad, "14pt", true, false);
         final Block blockEntidad = getBlockWithText(empresa, "10pt");
         final Block blockDireccion = getBlockWithText(direccion, "10pt");
         BlockContainer bc = new BlockContainer();
