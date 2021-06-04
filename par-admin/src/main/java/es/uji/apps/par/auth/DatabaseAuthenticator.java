@@ -18,7 +18,7 @@ public class DatabaseAuthenticator implements Authenticator {
     private final StrongPasswordEncryptor encryptor;
 	private Configuration configuration;
 
-	DatabaseAuthenticator() {
+	public DatabaseAuthenticator() {
 		encryptor = new StrongPasswordEncryptor();
 	}
 
