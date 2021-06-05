@@ -215,7 +215,7 @@ public class TpvResource extends BaseResource implements TpvInterface {
         Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + "compraValida", locale, APP);
         String url = request.getRequestURL().toString();
 
-        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(configurationSelector.getUrlPublic(), url, language.toString(), configurationSelector.getHtmlTitle()));
+        template.put("pagina", publicPageBuilderInterface.buildPublicPageInfo(configurationSelector.getUrlBase(currentRequest), url, language.toString(), configurationSelector.getHtmlTitle()));
         template.put("baseUrl", getBaseUrlPublic());
 
         template.put("referencia", recibo);
@@ -244,14 +244,14 @@ public class TpvResource extends BaseResource implements TpvInterface {
     }
 
     private void enviaMail(String email, String uuid, String recibo) {
-        String urlEntradas = String.format("%s/rest/compra/%s/pdf", configurationSelector.getUrlPublic(), uuid);
+        String urlEntradas = String.format("%s/rest/compra/%s/pdf", configurationSelector.getUrlBase(currentRequest), uuid);
 
         String titulo = ResourceProperties.getProperty(Utils.VALENCIANO, "mail.entradas.titulo") + " | " +
                 ResourceProperties.getProperty(Utils.CASTELLANO, "mail.entradas.titulo");
         String texto = ResourceProperties.getProperty(Utils.VALENCIANO, "mail.entradas.texto", recibo, urlEntradas) + "\n\n" +
                 ResourceProperties.getProperty(Utils.CASTELLANO, "mail.entradas.texto", recibo, urlEntradas);
 
-        mailService.anyadeEnvio(configurationSelector.getMailFrom(), email, titulo, texto, uuid, configurationSelector.getUrlPublic(), configurationSelector.getUrlPieEntrada());
+        mailService.anyadeEnvio(configurationSelector.getMailFrom(), email, titulo, texto, uuid, configurationSelector.getUrlBase(currentRequest), configurationSelector.getUrlPieEntrada());
     }
 
     @Override

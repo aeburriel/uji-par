@@ -10,10 +10,13 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
+import javax.servlet.http.HttpServletRequest;
+
 public class ConfigurationProperties implements ConfigurationSelector {
+	private static final String CONTEXT_PUBLIC = "/par-public";
+
     private static final String URL_PUBLIC = "uji.par.urlPublic";
     private static final String URL_PUBLIC_SIN_HTTPS = "uji.par.urlPublicSinHTTPS";
-    private static final String URL_PUBLIC_LIMPIO = "uji.par.urlPublicLimpio";
     private static final String URL_ADMIN = "uji.par.urlAdmin";
     private static final String HTML_TITLE = "uji.par.htmltitle";
     private static final String COMO_LLEGAR = "uji.par.urlComoLlegar";
@@ -61,16 +64,16 @@ public class ConfigurationProperties implements ConfigurationSelector {
         }
     }
 
+    public String getUrlBase(final HttpServletRequest request) {
+        return getProperty(URL_PUBLIC) + request.getContextPath();
+    }
+
     public String getUrlPublic() {
-        return getProperty(URL_PUBLIC);
+        return getProperty(URL_PUBLIC) + CONTEXT_PUBLIC;
     }
 
     public String getUrlPublicSinHTTPS() {
-        return getProperty(URL_PUBLIC_SIN_HTTPS);
-    }
-
-    public String getUrlPublicLimpio() {
-        return getNoObligatoryProperty(URL_PUBLIC_LIMPIO);
+        return getProperty(URL_PUBLIC_SIN_HTTPS) + CONTEXT_PUBLIC;
     }
 
     public String getUrlAdmin() {

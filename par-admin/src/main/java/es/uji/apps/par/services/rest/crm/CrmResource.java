@@ -104,7 +104,7 @@ public class CrmResource extends BaseResource {
 
                     if (resultadoCompra.getCorrecta()) {
                         comprasService.marcaPagada(resultadoCompra.getId(), TipoPago.METALICO);
-                        String urlPdf = configurationSelector.getUrlPublic() + "/rest/compra/" + resultadoCompra.getUuid() + "/pdf";
+                        final String urlPdf = configurationSelector.getUrlPublic() + "/rest/compra/" + resultadoCompra.getUuid() + "/pdf";
                         return Response.ok(new ResponseMessage(true, urlPdf)).build();
                     }
                     else {

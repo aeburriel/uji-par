@@ -92,7 +92,7 @@ public class EntradasResource extends BaseResource {
 	public Response datosEntrada(@PathParam("id") final Long sesionId) throws Exception {
 		final String selector = initUserCart();
 
-		currentResponse.sendRedirect(getBaseUrlPublicLimpio() + "/rest/entrada/" + sesionId + "/" + selector);
+		currentResponse.sendRedirect(getBaseUrlPublic() + "/rest/entrada/" + sesionId + "/" + selector);
 		return null;
 	}
 
@@ -111,7 +111,7 @@ public class EntradasResource extends BaseResource {
         // Si el selector no es válido, redirigimos al inicio del proceso de compra
         final Cart cart = getUserCarts().getCart(selector);
         if (cart == null) {
-            currentResponse.sendRedirect(getBaseUrlPublicLimpio() + "/rest/entrada/" + sesionId);
+            currentResponse.sendRedirect(getBaseUrlPublic() + "/rest/entrada/" + sesionId);
             return null;
         }
 
@@ -327,7 +327,7 @@ public class EntradasResource extends BaseResource {
             cart.setButacas(butacasSeleccionadasJSON);
             cart.setUuid(resultadoCompra.getUuid());
 
-            currentResponse.sendRedirect(getBaseUrlPublicLimpio() + "/rest/entrada/" + cart.getSelector() + "/datosComprador");
+            currentResponse.sendRedirect(getBaseUrlPublic() + "/rest/entrada/" + cart.getSelector() + "/datosComprador");
             return null;
         } else {
             return paginaSeleccionEntradasNumeradas(sesionId, cart, butacasSeleccionadas,
@@ -386,7 +386,7 @@ public class EntradasResource extends BaseResource {
         if (resultadoCompra.getCorrecta()) {
             cart.setUuid(resultadoCompra.getUuid());
 
-            currentResponse.sendRedirect(getBaseUrlPublicLimpio() + "/rest/entrada/" + cart.getSelector() + "/datosComprador");
+            currentResponse.sendRedirect(getBaseUrlPublic() + "/rest/entrada/" + cart.getSelector() + "/datosComprador");
             return null;
         } else {
             return paginaSeleccionEntradasNoNumeradas(sesionId, cart, "", userUID);

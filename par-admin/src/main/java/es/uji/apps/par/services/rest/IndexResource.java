@@ -73,9 +73,9 @@ public class IndexResource extends BaseResource
     public Response index() throws Exception
     {
         List<String> properties = new ArrayList<>();
+        properties.add(configurationSelector.getUrlBase(currentRequest));
         properties.add(configurationSelector.getUrlPublic());
         properties.add(configurationSelector.getUrlPublicSinHTTPS());
-        properties.add(configurationSelector.getUrlPublicLimpio());
         properties.add(configurationSelector.getHtmlTitle());
         properties.add(configurationSelector.getUrlCondicionesPrivacidad());
         properties.add(configurationSelector.getUrlComoLlegar());

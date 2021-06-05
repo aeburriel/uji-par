@@ -24,9 +24,7 @@ public class LogoutResource extends BaseResource
         currentRequest.getSession().removeAttribute(Authenticator.READONLY_ATTRIBUTE);
 		currentRequest.getSession().removeAttribute(Authenticator.ERROR_LOGIN);
 
-        String redirect = this.currentRequest.getRequestURL().toString().replaceFirst("logout$", "login");
-
-        currentResponse.sendRedirect(redirect);
+        currentResponse.sendRedirect(configurationSelector.getUrlBase(currentRequest) + "/rest/login");
         return null;
     }
 }

@@ -13,10 +13,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import es.uji.apps.par.config.Configuration;
+import es.uji.apps.par.config.ConfigurationSelector;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class AuthFilter implements Filter
@@ -28,6 +31,9 @@ public class AuthFilter implements Filter
 
 	@Autowired
 	Configuration configuration;
+
+	@Autowired
+    protected ConfigurationSelector configurationSelector;
 
     public void init(FilterConfig filterConfig) throws ServletException
     {
@@ -86,9 +92,8 @@ public class AuthFilter implements Filter
             {
             	String url = ((HttpServletRequest)request).getRequestURL().toString();
             	log.info("Autenticamos " + url + " KO");
-            	if (url.toLowerCase().contains("par/rest/index")) {
-            	        String redirect = sRequest.getRequestURL().toString().replaceFirst("index$", "login");
-            		sResponse.sendRedirect(redirect);
+				if (StringUtils.containsIgnoreCase(url, "/rest/index")) {
+					sResponse.sendRedirect(configurationSelector.getUrlBase(sRequest) + "/rest/login");
                 }
             	else
             		sResponse.sendError(403);

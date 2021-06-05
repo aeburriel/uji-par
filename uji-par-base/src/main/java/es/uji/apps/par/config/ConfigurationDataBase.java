@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 
 public class ConfigurationDataBase implements ConfigurationSelector
 {
+	private static final String CONTEXT_PUBLIC = "/par-public";
+
 	UsuariosDAO usuariosDAO;
 
 	HttpServletRequest currentRequest;
@@ -21,23 +23,20 @@ public class ConfigurationDataBase implements ConfigurationSelector
 		this.currentRequest = currentRequest;
 	}
 
-	public String getUrlPublic()
-	{
+	public String getUrlBase(final HttpServletRequest request) {
 		final Cine cine = usuariosDAO.getCineByRequest(this.currentRequest);
 
-		return cine.getUrlPublic();
+		return cine.getUrlPublic() + request.getContextPath();
 	}
 
-	public String getUrlPublicSinHTTPS()
-	{
+	public String getUrlPublic() {
 		final Cine cine = usuariosDAO.getCineByRequest(this.currentRequest);
 
-		return Utils.sinHTTPS(cine.getUrlPublic());
+		return cine.getUrlPublic() + CONTEXT_PUBLIC;
 	}
 
-	public String getUrlPublicLimpio()
-	{
-		return getUrlPublic();
+	public String getUrlPublicSinHTTPS() {
+		return Utils.sinHTTPS(getUrlPublic());
 	}
 
 	public String getUrlAdmin()

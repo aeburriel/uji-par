@@ -1,10 +1,12 @@
 package es.uji.apps.par.config;
 
+import javax.servlet.http.HttpServletRequest;
+
 public interface ConfigurationSelector
 {
+	String getUrlBase(final HttpServletRequest request);
 	String getUrlPublic();
 	String getUrlPublicSinHTTPS();
-	String getUrlPublicLimpio();
 	String getUrlAdmin();
 	String getHtmlTitle();
 	String getMailFrom();
