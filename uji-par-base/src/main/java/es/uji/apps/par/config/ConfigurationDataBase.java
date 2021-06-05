@@ -121,7 +121,6 @@ public class ConfigurationDataBase implements ConfigurationSelector
 	public String getIdiomaPorDefecto()
 	{
 		try {
-			String serverName = this.currentRequest.getServerName();
 			final Cine cine = usuariosDAO.getCineByRequest(this.currentRequest);
 
 			String defaultLang = cine.getDefaultLang();
