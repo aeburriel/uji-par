@@ -51,6 +51,9 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
     private String direccion;
     private String logo = "logo.svg";
 
+    private ExternalGraphic eg_logo;
+    private Block b_barcode;
+
 	private Configuration configuration;
 
 	public EntradaReport() throws ReportSerializerInitException {
@@ -73,6 +76,8 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         this.setZona(entrada.getZona());
         this.setTotal(entrada.getTotal());
         this.setBarcode(entrada.getBarcode());
+        this.b_barcode = createBarcode(urlPublic);
+        this.eg_logo = getLogo();
 
         creaSeccionEntrada(urlPublic);
         add(creaHorizontalLine());
@@ -190,7 +195,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         bc.getMarkerOrBlockOrBlockContainer().add(blockDireccion);
         table.withNewCell(bc);
 
-        TableCell cell = table.withNewCell(getLogo());
+        TableCell cell = table.withNewCell(this.eg_logo);
         cell.setTextAlign(TextAlignType.CENTER);
         cell.setDisplayAlign(DisplayAlignType.CENTER);
         cell.setPaddingTop("0px");
@@ -307,7 +312,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         table.withNewCell(ResourceProperties.getProperty(locale, "entrada.importe", this.total));
 
         table.withNewRow();
-        table.withNewCell(createBarcode(urlPublic), "2");
+        table.withNewCell(this.b_barcode, "2");
 
         return table;
     }
@@ -344,7 +349,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         table.withNewRow();
         table.withNewCell("");
 
-        TableCell cellLogo = table.withNewCell(getLogo());
+        TableCell cellLogo = table.withNewCell(this.eg_logo);
         cellLogo.setTextAlign(TextAlignType.RIGHT);
         cellLogo.setDisplayAlign(DisplayAlignType.CENTER);
         cellLogo.setPaddingTop("1px");
@@ -430,7 +435,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         cell.setPaddingRight("10px");
 
         table.withNewRow();
-        table.withNewCell(createBarcode(urlPublic));
+        table.withNewCell(this.b_barcode);
         TableCell cell1 = table.withNewCell(ResourceProperties.getProperty(locale, "entrada.importe", this.total));
         cell1.setTextAlign(TextAlignType.RIGHT);
         cell1.setPaddingRight("10px");
