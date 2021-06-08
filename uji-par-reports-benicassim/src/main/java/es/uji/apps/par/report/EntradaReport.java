@@ -25,6 +25,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
     private static final String FONDO_BLANCO = "#FFFFFF";
 
     private static final String DETAIL_SIZE = "12pt";
+    private static final String HEADER_HEIGHT = "18mm";
 
     private static FopPDFSerializer reportSerializer;
     private static FopFactory fopFactory;
@@ -156,7 +157,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
 
         TableCell cellDerecha = entradaTable.withNewCell(createEntradaDerecha(urlPublic));
         cellDerecha.setPadding("0.3cm");
-        cellDerecha.setPaddingTop("0.3cm");
+        cellDerecha.setPaddingTop("0.0cm");
         cellDerecha.setBackgroundColor(FONDO_GRIS);
         cellDerecha.setBorderLeftWidth("0.03cm");
         cellDerecha.setBorderLeftColor("white");
@@ -184,7 +185,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
     {
         BaseTable table = new BaseTable(new EntradaReportStyle(), 2, "9cm", "2cm");
 
-        table.withNewRow();
+        table.withNewRow().setHeight(HEADER_HEIGHT);
         final Block blockTeatro = getBlockWithText(nombreEntidad, "14pt", true, false);
         final Block blockEntidad = getBlockWithText(empresa, "10pt");
         final Block blockDireccion = getBlockWithText(direccion, "10pt");
@@ -198,7 +199,6 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         TableCell cell = table.withNewCell(this.eg_logo);
         cell.setTextAlign(TextAlignType.CENTER);
         cell.setDisplayAlign(DisplayAlignType.CENTER);
-        cell.setPaddingTop("0px");
 
         return table;
     }
@@ -206,8 +206,6 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
     private BaseTable createEntradaIzquierdaCentro()
     {
         BaseTable table = new BaseTable(new EntradaReportStyle(), 4, "3cm", "8cm");
-
-        table.setMarginTop("0.2cm");
 
         table.withNewRow();
 
@@ -250,7 +248,7 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
 
         BaseTable table = new BaseTable(new EntradaReportStyle(), 3, "2.5cm", "1.8cm", "3.2cm");
 
-        Block titulo = getAdjustedBlock(this.titulo, 350, 10);
+        Block titulo = getAdjustedBlock(this.titulo, 600, 10);
         titulo.setMarginBottom("0.2cm");
 
         table.withNewRow();
@@ -305,11 +303,11 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
 
         table.withNewRow();
         table.withNewCell(ResourceProperties.getProperty(locale, "entrada.cif"));
-        table.withNewCell(ResourceProperties.getProperty(locale, "entrada.total"));
+        table.withNewCell(ResourceProperties.getProperty(locale, "entrada.total")).setTextAlign(TextAlignType.RIGHT);
 
         table.withNewRow();
         table.withNewCell(this.barcode);
-        table.withNewCell(ResourceProperties.getProperty(locale, "entrada.importe", this.total));
+        table.withNewCell(ResourceProperties.getProperty(locale, "entrada.importe", this.total)).setTextAlign(TextAlignType.RIGHT);
 
         table.withNewRow();
         table.withNewCell(this.b_barcode, "2");
@@ -346,13 +344,12 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
     {
         BaseTable table = new BaseTable(new EntradaReportStyle(), 2, "3cm", "2.5cm");
 
-        table.withNewRow();
+        table.withNewRow().setHeight(HEADER_HEIGHT);
         table.withNewCell("");
 
         TableCell cellLogo = table.withNewCell(this.eg_logo);
         cellLogo.setTextAlign(TextAlignType.RIGHT);
         cellLogo.setDisplayAlign(DisplayAlignType.CENTER);
-        cellLogo.setPaddingTop("1px");
 
         return table;
     }
@@ -362,14 +359,13 @@ public class EntradaReport extends BenicassimBaseReport implements EntradaReport
         BaseTable table = new BaseTable(new EntradaReportStyle(), 2, "2.5cm", "2.5cm");
 
         String margin = "0.3cm";
-        table.setMarginTop("0.5cm");
         table.setMarginBottom(margin);
         table.setMarginLeft(margin);
         table.setMarginRight(margin);
 
         table.setBackgroundColor(FONDO_BLANCO);
 
-        Block titulo = getAdjustedBlock(this.titulo, 150, 10);
+        Block titulo = getAdjustedBlock(this.titulo, 130, 10);
         titulo.setMarginBottom("0.2cm");
 
         table.withNewRow();
