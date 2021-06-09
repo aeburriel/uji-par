@@ -4,6 +4,8 @@ import es.uji.apps.par.db.UsuarioDTO;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @XmlRootElement
 public class Usuario
 {
@@ -11,6 +13,7 @@ public class Usuario
     private String nombre;
     private String mail;
     private String usuario;
+    @JsonIgnore
     private String password;
     private boolean readonly;
     private String url;
