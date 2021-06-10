@@ -95,4 +95,26 @@ public class DatabaseAuthenticator implements Authenticator {
 			return false;
 		}
     }
+
+	@Override
+	public boolean changePassword(final String username, final String old_password, final String new_password) {
+		if (Strings.isNullOrEmpty(username) || Strings.isNullOrEmpty(old_password) || Strings.isNullOrEmpty(new_password)) {
+			return false;
+		}
+
+		final Usuario usuario;
+		try {
+			usuario = configuration.usuariosDAO.getUserById(username);
+		} catch (NullPointerException e) {
+			return false;
+		}
+
+		if (!encryptor.checkPassword(old_password, usuario.getPassword())) {
+			return false;
+		}
+
+		usuario.setPassword(encryptor.encryptPassword(new_password));
+		configuration.usuariosDAO.updateUser(usuario);
+		return true;
+	}
 }

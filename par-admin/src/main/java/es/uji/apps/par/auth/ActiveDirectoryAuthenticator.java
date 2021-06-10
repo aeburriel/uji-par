@@ -95,4 +95,10 @@ public class ActiveDirectoryAuthenticator implements Authenticator {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean changePassword(final String username, final String old_password, final String new_password) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

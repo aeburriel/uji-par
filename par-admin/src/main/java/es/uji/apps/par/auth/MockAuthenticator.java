@@ -17,4 +17,10 @@ public class MockAuthenticator implements Authenticator
 	public void setConfiguration(Configuration configuration) {
 
 	}
+
+	@Override
+	public boolean changePassword(final String username, final String old_password, final String new_password) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

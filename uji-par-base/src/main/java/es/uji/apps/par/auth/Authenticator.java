@@ -16,4 +16,5 @@ public interface Authenticator
 
 	public int authenticate(HttpServletRequest request);
 	public void setConfiguration(Configuration configuration);
+	public boolean changePassword(final String username, final String old_password, final String new_password);
 }

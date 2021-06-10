@@ -78,8 +78,11 @@ public class UsuariosDAO extends BaseDAO
 	@Transactional
 	public Usuario updateUser(Usuario user)
 	{
-		JPAUpdateClause update = new JPAUpdateClause(entityManager, qUserDTO);
-		update.set(qUserDTO.nombre, user.getNombre()).set(qUserDTO.mail, user.getMail()).set(qUserDTO.usuario, user.getUsuario()).where(qUserDTO.id.eq(user.getId())).execute();
+		final JPAUpdateClause update = new JPAUpdateClause(entityManager, qUserDTO);
+		update.set(qUserDTO.nombre, user.getNombre()).set(qUserDTO.mail, user.getMail())
+				.set(qUserDTO.usuario, user.getUsuario()).set(qUserDTO.password, user.getPassword())
+				.set(qUserDTO.readonly, user.isReadonly())
+				.where(qUserDTO.id.eq(user.getId())).execute();
 
 		return user;
 	}
