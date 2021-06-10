@@ -81,7 +81,7 @@ public class DatabaseAuthenticator implements Authenticator {
 			return false;
 		}
 
-		boolean correct = encryptor.checkPassword(password, usuario.getPassword());
+		final boolean correct = encryptor.checkPassword(password, usuario.getPassword());
 
 		if (correct) {
 			if (usuario.isReadonly()) {
