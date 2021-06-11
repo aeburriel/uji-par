@@ -828,6 +828,12 @@ a.button_link, input[type="submit"], input[type="reset"], .ui-dialog .ui-dialog-
 	outline:none;
 }
 
+input[type="submit"]:disabled {
+	background: #f2f2f2;
+	border: #f2f2f2;
+	text-shadow: none;
+}
+
 .ui-dialog .ui-dialog-buttonpane button {
 	-moz-box-shadow: none!important;
 	-webkit-box-shadow: none!important;
