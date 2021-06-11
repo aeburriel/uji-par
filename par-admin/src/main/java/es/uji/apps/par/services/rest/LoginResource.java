@@ -63,13 +63,10 @@ public class LoginResource extends BaseResource
     @Path("password")
     @Produces(MediaType.TEXT_HTML)
     public Template doChangePassword(@FormParam("username") final String username,
-            @FormParam("oldpassword") final String password,
-            @FormParam("password1") final String password1, @FormParam("password2") final String password2) {
+            @FormParam("oldpassword") final String oldPassword, @FormParam("newpassword") final String newPassword) {
         final Template template = new HTMLTemplate(Constantes.PLANTILLAS_DIR + PLANTILLA_CAMBIO_PASSWORD, getLocale(), APP);
 
-        if (password1 == null || !password1.equals(password2)) {
-            template.put("new_password_mismatch", true);
-        } else if (authClass.changePassword(username, password, password1)) {
+        if (authClass.changePassword(username, oldPassword, newPassword)) {
             template.put("change_ok", true);
         } else {
             template.put("bad_credentials", true);
