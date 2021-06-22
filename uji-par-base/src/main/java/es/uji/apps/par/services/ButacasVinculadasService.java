@@ -201,8 +201,17 @@ public class ButacasVinculadasService {
 	 * @param butaca
 	 * @return la butaca accesible o null si no lo es
 	 */
-	private DatosButaca getButacaAccesiblePorAsociada(ButacaDTO butaca) {
-		final ImmutableList<DatosButaca> butacas = butacasVinculadas.inverse().get(new DatosButaca(butaca)).asList();
+	private DatosButaca getButacaAccesiblePorAsociada(final ButacaDTO butaca) {
+		return getButacaAccesiblePorAsociada(new DatosButaca(butaca));
+	}
+
+	/**
+	 * Determina la butaca accesible correspondiente a una butaca asociada
+	 * @param butaca
+	 * @return la butaca accesible o null si no lo es
+	 */
+	private DatosButaca getButacaAccesiblePorAsociada(final DatosButaca butaca) {
+		final ImmutableList<DatosButaca> butacas = butacasVinculadas.inverse().get(butaca).asList();
 		if (butacas.isEmpty()) {
 			return null;
 		}
@@ -469,16 +478,7 @@ public class ButacasVinculadasService {
 		}
 		final Date desde = new Date();
 		final Date hasta = fechaFinBloqueoButacasAccesibles(sesion);
-		final Collection<DatosButaca> butacasAsociadas = butacasVinculadas.get(datosButacaAccesible);
-
-		final List<Butaca> butacas = new ArrayList<Butaca>();
-		for (final DatosButaca butacaAsociada : butacasAsociadas) {
-			final Butaca butaca = new Butaca(butacaAsociada.getLocalizacion(), String.valueOf(tarifaInvitacion.getId()));
-			butaca.setPrecio(BigDecimal.ZERO);
-			butaca.setFila(String.valueOf(butacaAsociada.getFila()));
-			butaca.setNumero(String.valueOf(butacaAsociada.getNumero()));
-			butacas.add(butaca);
-		}
+		final List<Butaca> butacas = getButacasAsociadas(datosButacaAccesible);
 
 		// Hacemos la reserva
 		final String observaciones = mensajeBloqueo(datosButacaAccesible);
@@ -989,6 +989,19 @@ public class ButacasVinculadasService {
 	}
 
 	/**
+	 * Determina si la butaca indicada está asociada a una butaca de discapacitado
+	 * que está disponible para la venta
+	 * @param sesionId Identificador de sesión del evento
+	 * @param butaca
+	 * @return true si lo está
+	 */
+	public boolean esButacaAsociadaDisponible(final Long sesionId, final Butaca butaca) {
+		final DatosButaca accesible = getButacaAccesiblePorAsociada(new DatosButaca(butaca));
+
+		return accesible != null && esDiscapacitadoDisponible(sesionId, accesible);
+	}
+
+	/**
 	 * Determina si la butaca en el evento indicada es de discapacitado (ancho múltiple)
 	 * y está disponible para la venta
 	 *
@@ -1126,6 +1139,35 @@ public class ButacasVinculadasService {
 			}
 		}
 
+		return butacas;
+	}
+
+	/**
+	 * Devuelve las butacas asociadas a la butaca accesible indicada
+	 * @param butacaAccesible
+	 * @return butacas asociadas
+	 */
+	public List<Butaca> getButacasAsociadas(final Butaca butacaAccesible) {
+		final DatosButaca datosButacaAccesible = new DatosButaca(butacaAccesible);
+		return getButacasAsociadas(datosButacaAccesible);
+	}
+
+	/**
+	 * Devuelve las butacas asociadas a la butaca accesible indicada
+	 * @param butacaAccesible
+	 * @return butacas asociadas
+	 */
+	public List<Butaca> getButacasAsociadas(final DatosButaca datosButacaAccesible) {
+		final Collection<DatosButaca> butacasAsociadas = butacasVinculadas.get(datosButacaAccesible);
+
+		final List<Butaca> butacas = new ArrayList<Butaca>();
+		for (final DatosButaca butacaAsociada : butacasAsociadas) {
+			final Butaca butaca = new Butaca(butacaAsociada.getLocalizacion(), String.valueOf(tarifaInvitacion.getId()));
+			butaca.setPrecio(BigDecimal.ZERO);
+			butaca.setFila(String.valueOf(butacaAsociada.getFila()));
+			butaca.setNumero(String.valueOf(butacaAsociada.getNumero()));
+			butacas.add(butaca);
+		}
 		return butacas;
 	}
 }

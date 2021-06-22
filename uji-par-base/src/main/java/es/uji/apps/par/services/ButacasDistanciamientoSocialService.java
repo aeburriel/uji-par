@@ -339,14 +339,14 @@ public class ButacasDistanciamientoSocialService {
 			return true;
 		}
 
-		// Generamos un listado de butacas convencionales excluyendo las accesibles
-		final List<Butaca> butacasSA = new ArrayList<Butaca>();
+		// Clonamos la selección de butacas y añadimos las butacas asociadas a las butacas accesibles
+		final List<Butaca> butacasTodas = new ArrayList<Butaca>(butacas);
 		for (final Butaca butaca : butacas) {
-			if (!butacasVinculadasService.esButacaAccesibleDisponible(sesionId, butaca)) {
-				butacasSA.add(butaca);
+			if (butacasVinculadasService.esButacaAccesibleDisponible(sesionId, butaca)) {
+				butacasTodas.addAll(butacasVinculadasService.getButacasAsociadas(butaca));
 			}
 		}
-		final SortedSetMultimap<FilaNumeracion, Butaca> b2f = butacas2Filas(butacasSA);
+		final SortedSetMultimap<FilaNumeracion, Butaca> b2f = butacas2Filas(butacasTodas);
 		for (final FilaNumeracion fila : b2f.keySet()) {
 			final SortedSet<Butaca> butacasFila = b2f.get(fila);
 
