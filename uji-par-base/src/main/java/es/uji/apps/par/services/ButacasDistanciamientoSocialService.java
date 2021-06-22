@@ -189,8 +189,7 @@ public class ButacasDistanciamientoSocialService {
 		final Set<Butaca> entorno = getButacasEntorno(butaca);
 
 		for (final Butaca candidata : entorno) {
-			if (butacasService.estaOcupada(sesionId, butaca.getLocalizacion(), butaca.getFila(), candidata.getNumero())
-					|| butacasVinculadasService.esButacaAccesibleDisponible(sesionId, candidata)) {
+			if (butacasService.estaOcupada(sesionId, butaca.getLocalizacion(), butaca.getFila(), candidata.getNumero())) {
 				return false;
 			}
 		}
@@ -224,7 +223,9 @@ public class ButacasDistanciamientoSocialService {
 	 * Verifica que las butacas seleccionadas de una misma fila respetan la
 	 * distancia de seguridad
 	 * Se comprueba que, o bien están alineadas con uno de los extremos de la fila,
-	 * o bien se respeta la distancia de guarda con la siguiente butaca ocupada.
+	 * o bien se respeta la distancia de guarda con la siguiente butaca ocupada,
+	 * o bien se respeta la distancia de guarda con la siguiente butaca accesible
+	 * o de acompañante.
 	 * No se permite una distancia de guarda mayor que la mínima, con el fin de
 	 * maximizar el aforo.
 	 *
@@ -253,7 +254,7 @@ public class ButacasDistanciamientoSocialService {
 		int i = i0;
 		while (i-- > 0) {
 			candidata.setNumero(String.valueOf(fila.getNumeroButaca(i)));
-			if (isButacaOcupada(sesionId, candidata)) {
+			if (isButacaOcupada(sesionId, candidata) || butacasVinculadasService.esButacaAccesibleDisponible(sesionId, candidata)) {
 				ocupada = true;
 				break;
 			}
@@ -268,7 +269,7 @@ public class ButacasDistanciamientoSocialService {
 		i = i1;
 		while (++i < fila.getCantidadButacas()) {
 			candidata.setNumero(String.valueOf(fila.getNumeroButaca(i)));
-			if (isButacaOcupada(sesionId, candidata)) {
+			if (isButacaOcupada(sesionId, candidata) || butacasVinculadasService.esButacaAccesibleDisponible(sesionId, candidata)) {
 				ocupada = true;
 				break;
 			}
