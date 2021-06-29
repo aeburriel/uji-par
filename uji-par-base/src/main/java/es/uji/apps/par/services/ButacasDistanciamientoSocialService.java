@@ -5,6 +5,7 @@
 package es.uji.apps.par.services;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -170,7 +171,7 @@ public class ButacasDistanciamientoSocialService {
 	 * @param butaca a comprobar
 	 * @return true si la butaca puede estar disponible para su venta
 	 */
-	public boolean isButacaLibrePermitida(final long sesionId, final Butaca butaca) {
+	public boolean isButacaLibrePermitida(final long sesionId, final List<Butaca> butacas, final Butaca butaca) {
 		if (!configuration.isAforoDistanciamientoSocial() || !configuration.isAforoDistanciamientoSocialUF()) {
 			return true;
 		}
@@ -182,14 +183,15 @@ public class ButacasDistanciamientoSocialService {
 		}
 
 		// Excluimos de la comprobación las butacas accesibles
-		if (butacasVinculadasService.esButacaAccesibleDisponible(sesionId, butaca)) {
+		if (butacasVinculadasService.esButacaAccesibleDisponible(sesion, butaca)) {
 			return true;
 		}
 
 		final Set<Butaca> entorno = getButacasEntorno(butaca);
 
 		for (final Butaca candidata : entorno) {
-			if (butacasService.estaOcupada(sesionId, butaca.getLocalizacion(), butaca.getFila(), candidata.getNumero())) {
+			if (butacasService.estaOcupada(sesionId, butaca.getLocalizacion(), butaca.getFila(), candidata.getNumero())
+					|| butacasVinculadasService.esButacaAccesibleAjenaDisponible(sesion, butacas, candidata)) {
 				return false;
 			}
 		}
@@ -203,79 +205,92 @@ public class ButacasDistanciamientoSocialService {
 	 * generar la lista de butacas ocupadas.
 	 *
 	 * @param sesion    de la compra
+	 * @param butacas   seleccionadas en la compra
 	 * @param butacaDTO a comprobar
 	 * @return true si la butaca puede estar disponible para su venta
 	 */
-	public boolean isButacaLibrePermitida(final long sesionId, final ButacaDTO butacaDTO) {
+	public boolean isButacaLibrePermitida(final long sesionId, final List<Butaca> butacas, final ButacaDTO butacaDTO) {
 		final Butaca butaca = new Butaca();
 		butaca.setLocalizacion(butacaDTO.getParLocalizacion().getCodigo());
 		butaca.setFila(butacaDTO.getFila());
 		butaca.setNumero(butacaDTO.getNumero());
 
-		return isButacaLibrePermitida(sesionId, butaca);
+		return isButacaLibrePermitida(sesionId, butacas, butaca);
 	}
 
-	private boolean isButacaOcupada(final long sesionId, final Butaca butaca) {
-		return butacasService.estaOcupada(sesionId, butaca.getLocalizacion(), butaca.getFila(), butaca.getNumero());
+	private boolean isButacaOcupada(final SesionDTO sesion, final Collection<Butaca> butacas, final Butaca butaca) {
+		return (butacasService.estaOcupada(sesion.getId(), butaca.getLocalizacion(), butaca.getFila(), butaca.getNumero()) &&
+				!butacasVinculadasService.esButacaAsociadaPropia(sesion, butacas, butaca))
+				|| butacasVinculadasService.esButacaAccesibleAjenaDisponible(sesion, butacas, butaca);
 	}
 
 	/**
 	 * Verifica que las butacas seleccionadas de una misma fila respetan la
 	 * distancia de seguridad
-	 * Se comprueba que, o bien están alineadas con uno de los extremos de la fila,
-	 * o bien se respeta la distancia de guarda con la siguiente butaca ocupada,
-	 * o bien se respeta la distancia de guarda con la siguiente butaca accesible
-	 * o de acompañante.
+	 * Se comprueba que:
+	 * las butacas estén alineadas con uno de los extremos de la fila, siempre que se
+	 * respete la distancia de seguridad mínima con la siguiente butaca,
+	 * o bien se respeten las distancia de guarda en ambos extremos con la siguiente
+	 * butaca ocupada, o accesible / de acompañante disponible para su venta.
 	 * No se permite una distancia de guarda mayor que la mínima, con el fin de
-	 * maximizar el aforo.
+	 * maximizar la ocupación del aforo.
 	 *
 	 * @param fila    FilaNumeracion
 	 * @param butacas asociadas a la fila
 	 * @return true si no hay huecos innecesarios por alguno de los extremos
 	 */
-	private boolean isButacasFilaGuarda(final long sesionId, final FilaNumeracion fila,
+	private boolean isButacasFilaGuarda(final SesionDTO sesion, final FilaNumeracion fila,
 			final SortedSet<Butaca> butacas) {
 		final int i0 = fila.getIndice(Integer.parseInt(butacas.first().getNumero()));
 		final int i1 = fila.getIndice(Integer.parseInt(butacas.last().getNumero()));
 
-		// 1. Comprobamos si alguna de las butacas está en el extremo de la fila
-		if (i0 == fila.getIndice(fila.getPrimera()) || i1 == fila.getIndice(fila.getUltima())) {
+		// 0. Fila completa, nada más que comprobar
+		if (butacas.size() == fila.getCantidadButacas()) {
 			return true;
 		}
 
-		// 2. Comprobamos si alguno de los extremos está exactamente a la distancia de
-		// seguridad de la siguiente butaca ocupada
+		// 1. Comprobamos las distancias de seguridad en los extremos a la siguiente butaca ocupada
 		final Butaca candidata = new Butaca();
 		candidata.setLocalizacion(fila.getLocalizacion());
 		candidata.setFila(String.valueOf(fila.getFila()));
 
-		int distancia = 0;
-		boolean ocupada = false;
-		int i = i0;
-		while (i-- > 0) {
+		int distanciaSup = 0;
+		boolean ocupadaSup = false;
+		int i = i1;
+		while (++i < fila.getCantidadButacas()) {
 			candidata.setNumero(String.valueOf(fila.getNumeroButaca(i)));
-			if (isButacaOcupada(sesionId, candidata) || butacasVinculadasService.esButacaAccesibleDisponible(sesionId, candidata)) {
-				ocupada = true;
+			if (isButacaOcupada(sesion, butacas, candidata)) {
+				ocupadaSup = true;
 				break;
 			}
-			distancia++;
+			distanciaSup++;
 		}
-		if (ocupada && distancia == BUTACAS_GUARDA) {
+
+		// Extremo inferior con guarda suficiente en el superior
+		if (distanciaSup >= BUTACAS_GUARDA && i0 == fila.getIndice(fila.getPrimera())) {
 			return true;
 		}
 
-		distancia = 0;
-		ocupada = false;
-		i = i1;
-		while (++i < fila.getCantidadButacas()) {
+		int distanciaInf = 0;
+		boolean ocupadaInf = false;
+		i = i0;
+		while (i-- > 0) {
 			candidata.setNumero(String.valueOf(fila.getNumeroButaca(i)));
-			if (isButacaOcupada(sesionId, candidata) || butacasVinculadasService.esButacaAccesibleDisponible(sesionId, candidata)) {
-				ocupada = true;
+			if (isButacaOcupada(sesion, butacas, candidata)) {
+				ocupadaInf = true;
 				break;
 			}
-			distancia++;
+			distanciaInf++;
 		}
-		if (ocupada && distancia == BUTACAS_GUARDA) {
+
+		// Extremo superior con guarda suficiente en el inferior
+		if (distanciaInf >= BUTACAS_GUARDA && i1 == fila.getIndice(fila.getUltima())) {
+			return true;
+		}
+
+		// Guarda mímima en uno de los extremos
+		if ((ocupadaInf && distanciaInf == BUTACAS_GUARDA && distanciaSup >= BUTACAS_GUARDA)
+				|| (ocupadaSup && distanciaSup == BUTACAS_GUARDA && distanciaInf >= BUTACAS_GUARDA)) {
 			return true;
 		}
 
@@ -342,7 +357,7 @@ public class ButacasDistanciamientoSocialService {
 		// Clonamos la selección de butacas y añadimos las butacas asociadas a las butacas accesibles
 		final List<Butaca> butacasTodas = new ArrayList<Butaca>(butacas);
 		for (final Butaca butaca : butacas) {
-			if (butacasVinculadasService.esButacaAccesibleDisponible(sesionId, butaca)) {
+			if (butacasVinculadasService.esButacaAccesibleDisponible(sesion, butaca)) {
 				butacasTodas.addAll(butacasVinculadasService.getButacasAsociadas(butaca));
 			}
 		}
@@ -356,7 +371,7 @@ public class ButacasDistanciamientoSocialService {
 			}
 
 			// 4. Distancia de seguridad con la butaca ocupada más próxima
-			if (!isButacasFilaGuarda(sesionId, fila, butacasFila)) {
+			if (!isButacasFilaGuarda(sesion, fila, butacasFila)) {
 				return false;
 			}
 		}

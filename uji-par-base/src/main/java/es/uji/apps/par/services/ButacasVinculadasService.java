@@ -232,6 +232,17 @@ public class ButacasVinculadasService {
 	}
 
 	/**
+	 * Devuelve la butaca accesible correspondiente a la butaca de acompañante
+	 * indicada
+	 *
+	 * @param acesible butaca de acompañanante
+	 * @return la butaca accesible vinculada o null si no se encuentra
+	 */
+	private DatosButaca getButacaAccesiblePorAcompanante(final DatosButaca acompanante) {
+		return butacasAcompanantes.get(acompanante);
+	}
+
+	/**
 	 * Devuelve la butaca de acompañante correspondiente a la butaca accesible indicada
 	 * @param acesible butaca accesible
 	 * @return la butaca de acompañante vinculada o null si no se encuentra
@@ -523,8 +534,8 @@ public class ButacasVinculadasService {
 	}
 
 	/**
-	 * Devuelve los bloqueos-reserva de butacas accesibles en vigor para la sesión
-	 * indicada
+	 * Devuelve los bloqueos-reserva de butacas accesibles en vigor para la
+	 * butaca accesible indicada
 	 *
 	 * @param sesion          Identificador de la sesión
 	 * @param butacaAccesible Butaca sobre la que obtener la lista de bloqueos-reserva
@@ -533,6 +544,25 @@ public class ButacasVinculadasService {
 	 */
 	private List<Compra> getReservasBloqueoButacaAccesible(final SesionDTO sesion, final DatosButaca butacaAccesible) {
 		// La reserva-bloqueo se hace a nombre de la butaca accesible
+		final String textoABloquar = mensajeBloqueo(butacaAccesible);
+
+		return comprasService.getComprasBySesion(Long.valueOf(sesion.getId()), 0,
+				"[{\"property\":\"fecha\",\"direction\":\"ASC\"}]", 0, 1000, 0, textoABloquar);
+	}
+
+	/**
+	 * Devuelve los bloqueos-reserva de butacas accesibles en vigor para la butaca
+	 * de acompañante indicada
+	 *
+	 * @param sesion          Identificador de la sesión
+	 * @param butacaAccesible Butaca sobre la que obtener la lista de
+	 *                        bloqueos-reserva
+	 * @return Lista de bloqueos-reserva, el número máximo de elementos a devolver
+	 *         debería ser 1.
+	 */
+	private List<Compra> getReservasBloqueoButacaAcompanante(final SesionDTO sesion, final DatosButaca butacaAcompanante) {
+		// La reserva-bloqueo se hace a nombre de la butaca accesible
+		final DatosButaca butacaAccesible = getButacaAccesiblePorAcompanante(butacaAcompanante);
 		final String textoABloquar = mensajeBloqueo(butacaAccesible);
 
 		return comprasService.getComprasBySesion(Long.valueOf(sesion.getId()), 0,
@@ -929,19 +959,18 @@ public class ButacasVinculadasService {
 	 * @param butaca
 	 * @return true si lo está
 	 */
-	public boolean esAcompananteDisponible(final Long sesionId, final DatosButaca butaca) {
+	public boolean esAcompananteDisponible(final SesionDTO sesion, final DatosButaca butaca) {
 		if (!butacasAcompanantes.containsKey(butaca)) {
 			return false;
 		}
 
-		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
-		if(!enVigorReservaButacasAccesibles(sesion)) {
+		if(!enVigorReservaButacasAccesibles(sesion) || getReservasBloqueoButacaAcompanante(sesion, butaca).isEmpty()) {
 			return false;
 		}
 
 		final String butacaFila = String.valueOf(butaca.getFila());
 		final String butacaNumero = String.valueOf(butaca.getNumero());
-		return !butacasService.estaOcupada(sesionId, butaca.getLocalizacion(), butacaFila, butacaNumero);
+		return !butacasService.estaOcupada(sesion.getId(), butaca.getLocalizacion(), butacaFila, butacaNumero);
 	}
 
 	/**
@@ -982,10 +1011,69 @@ public class ButacasVinculadasService {
 	 * @param butaca
 	 * @return true si lo está
 	 */
-	public boolean esButacaAccesibleDisponible(final Long sesionId, final Butaca butaca) {
+	public boolean esButacaAccesibleDisponible(final SesionDTO sesion, final Butaca butaca) {
 		DatosButaca datosButaca = new DatosButaca(butaca);
 
-		return esDiscapacitadoDisponible(sesionId, datosButaca) || esAcompananteDisponible(sesionId, datosButaca);
+		return esDiscapacitadoDisponible(sesion, datosButaca) || esAcompananteDisponible(sesion, datosButaca);
+	}
+
+	/**
+	 * Comprueba que la butaca indicada sea accesible (de discapacitado o de
+	 * acompañante) y no forme parte de la selcción de butacas
+	 *
+	 * @param sesionId Identificador de la sesión del evento
+	 * @param butacas  Selección de butacas
+	 * @param butaca
+	 * @return true si es una butaca accesible que no forme parte de la selección
+	 *         indicada
+	 */
+	@SuppressWarnings("unlikely-arg-type")
+	public boolean esButacaAccesibleAjenaDisponible(final SesionDTO sesion, final Collection<Butaca> butacas, final Butaca butaca) {
+		final DatosButaca datosButaca = new DatosButaca(butaca);
+
+		if (esDiscapacitadoDisponible(sesion, datosButaca)) {
+			return !butacas.contains(butaca);
+		}
+
+		final DatosButaca accesible = getButacaAccesiblePorAcompanante(datosButaca);
+		if (accesible == null || !enVigorReservaButacasAccesibles(sesion) || getReservasBloqueoButacaAccesible(sesion, accesible).isEmpty()) {
+			return false;
+		}
+
+		for (final Butaca candidata : butacas) {
+			if (accesible.equals(candidata)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Comprueba que la butaca indicada sea asociada y forme parte de la selección
+	 * de butacas
+	 *
+	 * @param sesionId Identificador de la sesión del evento
+	 * @param butacas  Selección de butacas
+	 * @param butaca
+	 * @return true si es una butaca asociada que forme parte de la selección
+	 *         indicada
+	 */
+	@SuppressWarnings("unlikely-arg-type")
+	public boolean esButacaAsociadaPropia(final SesionDTO sesion, final Collection<Butaca> butacas, final Butaca butaca) {
+		final DatosButaca accesible = getButacaAccesiblePorAsociada(new DatosButaca(butaca));
+
+		if (accesible == null || !enVigorReservaButacasAccesibles(sesion) || getReservasBloqueoButacaAccesible(sesion, accesible).isEmpty()) {
+			return false;
+		}
+
+		for (final Butaca candidata : butacas) {
+			if (accesible.equals(candidata)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -995,10 +1083,10 @@ public class ButacasVinculadasService {
 	 * @param butaca
 	 * @return true si lo está
 	 */
-	public boolean esButacaAsociadaDisponible(final Long sesionId, final Butaca butaca) {
+	public boolean esButacaAsociadaDisponible(final SesionDTO sesion, final Butaca butaca) {
 		final DatosButaca accesible = getButacaAccesiblePorAsociada(new DatosButaca(butaca));
 
-		return accesible != null && esDiscapacitadoDisponible(sesionId, accesible);
+		return accesible != null && esDiscapacitadoDisponible(sesion, accesible);
 	}
 
 	/**
@@ -1009,7 +1097,7 @@ public class ButacasVinculadasService {
 	 * @param butaca
 	 * @return true si lo está
 	 */
-	public boolean esDiscapacitadoDisponible(final Long sesionId, final DatosButaca butaca) {
+	public boolean esDiscapacitadoDisponible(final SesionDTO sesion, final DatosButaca butaca) {
 		if (!butaca.isNumerada()) {
 			return false;
 		}
@@ -1018,7 +1106,6 @@ public class ButacasVinculadasService {
 			return false;
 		}
 
-		final SesionDTO sesion = sesionesDAO.getSesion(sesionId, ADMIN_UID);
 		if(!enVigorReservaButacasAccesibles(sesion)) {
 			return false;
 		}

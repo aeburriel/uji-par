@@ -111,7 +111,7 @@ public class ButacasService
                         break;
                     }
                 } else {
-                    if (!butacasDistanciamientoSocialService.isButacaLibrePermitida(sesionId, butaca)
+                    if (!butacasDistanciamientoSocialService.isButacaLibrePermitida(sesionId, butacas, butaca)
                             || !butacasVinculadasService.validaButacas(sesionId, butacas, butaca)) {
                         ocupadas.add(butaca);
                         break;
