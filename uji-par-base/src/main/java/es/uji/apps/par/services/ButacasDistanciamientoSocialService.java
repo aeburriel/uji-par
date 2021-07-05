@@ -365,6 +365,12 @@ public class ButacasDistanciamientoSocialService {
 		for (final FilaNumeracion fila : b2f.keySet()) {
 			final SortedSet<Butaca> butacasFila = b2f.get(fila);
 
+			// Omitimos comprobaciones si hay seleccionada más de una butaca accesible en la
+			// misma fila
+			if (butacasAccesibles(sesion, butacasFila) > 1) {
+				continue;
+			}
+
 			// 3. Butacas contiguas
 			if (!isButacasFilaCompacta(fila, butacasFila)) {
 				return false;
@@ -432,5 +438,21 @@ public class ButacasDistanciamientoSocialService {
 		}
 
 		return total;
+	}
+
+	/**
+	 * Calcula el número de butacas accesibles que hay en la selección
+	 * @param sesion
+	 * @param butacas
+	 * @return número de butacas accesibles incluidas en la selección
+	 */
+	private int butacasAccesibles(final SesionDTO sesion, final Set<Butaca> butacas) {
+		int cuenta = 0;
+		for (final Butaca butaca: butacas) {
+			if (butacasVinculadasService.esButacaAccesibleDisponible(sesion, butaca)) {
+				cuenta++;
+			}
+		}
+		return cuenta;
 	}
 }
